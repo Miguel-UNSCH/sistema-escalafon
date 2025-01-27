@@ -2,6 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
+/** light -- dark */
+
+@layer base {
+  :root {
+    --background: #f8f9fa;
+    --foreground: #f3f5f7;
+    --card: #ffffff;
+    --card-foreground: #e7eaee;
+    --popover: #f1f1f1;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 142.1 76.2% 36.3%;
+    --primary-foreground: 355.7 100% 97.3%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 142.1 76.2% 36.3%;
+    --radius: 0.5rem;
+    --buttom-bg: #e6edfb;
+    --title-color: #434858;
+    --error-color: #eb3f29;
+    --warn-color: #e58a00;
+    --success-color: #2ca87f;
+  }
+
+  .dark {
+    --background: #131920;
+    --foreground: #1b232d;
+    --card: #1b232d;
+    --card-foreground: #263240;
+    --popover: #52575e;
+    --popover-foreground: 0 0% 95%;
+    --primary: 142.1 70.6% 45.3%;
+    --primary-foreground: 144.9 80.4% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 12 6.5% 15.1%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 85.7% 97.3%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 142.4 71.8% 29.2%;
+    --buttom-bg: #182337;
+    --title-color: #d1d3d2;
+    --error-color: #dc2626;
+    --warn-color: #e58a00;
+    --success-color: #2ca87f;
+  }
+}
+
+
 *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
