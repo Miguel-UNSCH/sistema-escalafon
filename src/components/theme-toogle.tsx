@@ -17,41 +17,41 @@ export function ThemeToggle() {
   return (
     <div className="relative">
       <button
-        className="flex items-center gap-2 text-[#5B6B79] dark:text-[#6F747F] focus:outline-none"
+        className="flex items-center gap-2 text-icon-main p-2 hover:bg-icon-hover rounded-md transition-all duration-100 focus:outline-none"
         onClick={toggleDropdown}
       >
-        <PiSunDimFill className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-        <IoMdMoon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+        <PiSunDimFill className="h-6 w-6 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+        <PiSunDimFill className="absolute h-6 w-6 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
       </button>
 
       {isDropdownOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg overflow-hidden">
+        <div className="absolute right-8 top-12 w-48 bg-bg-dropdown rounded-xl shadow-xl overflow-hidden p-2">
           <button
-            className="w-full px-4 py-2 text-left text-sm flex items-center gap-2 text-[#5B6B79] dark:text-[#6F747F]  hover:bg-gray-200 dark:hover:bg-gray-700"
+            className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 text-text-secondary font-medium hover:bg-icon-hover rounded-md transition-all duration-100"
             onClick={() => {
               setTheme("light");
               setIsDropdownOpen(false);
             }}
           >
-            <PiSunDimFill className="h-4 w-4" /> Claro
+            <PiSunDimFill className="h-4 w-4 text-icon-main" /> Claro
           </button>
           <button
-            className="w-full px-4 py-2 text-left text-sm flex items-center gap-2 text-[#5B6B79] dark:text-[#6F747F]  hover:bg-gray-200 dark:hover:bg-gray-700"
+            className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 text-text-secondary font-medium hover:bg-icon-hover rounded-md transition-all duration-100"
             onClick={() => {
               setTheme("dark");
               setIsDropdownOpen(false);
             }}
           >
-            <IoMdMoon className="h-4 w-4" /> Oscuro
+            <IoMdMoon className="h-4 w-4 text-icon-main" /> Oscuro
           </button>
           <button
-            className="w-full px-4 py-2 text-left text-sm flex items-center gap-2 text-[#5B6B79] dark:text-[#6F747F]  hover:bg-gray-200 dark:hover:bg-gray-700"
+            className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 text-text-secondary font-medium hover:bg-icon-hover rounded-md transition-all duration-100"
             onClick={() => {
               setTheme("system");
               setIsDropdownOpen(false);
             }}
           >
-            <FcSettings className="h-4 w-4" /> Predeterminado
+            <FcSettings className="h-4 w-4 text-icon-main" /> Predeterminado
           </button>
         </div>
       )}

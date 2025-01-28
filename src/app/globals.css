@@ -7,18 +7,19 @@
 @layer base {
   :root {
     --bg-primary: #f8f9fa;
-    --bg-main: #;
+    --bg-main: #f8f9fa;
     --bg-section: #;
     --bg-block: #;
     --bg-alt: #;
     --bg-secondary: #;
-    --bg-card: #;
+    --bg-card: #ffffff;
     --bg-elevated: #;
     --bg-button: #;
+    --bg-dropdown: #ffffff;
 
-    --text-primary: #3e4853;
-    --text-main: #;
-    --text-secondary: #;
+    --text-primary: #1D2630;
+    --text-main: #DC2626;
+    --text-secondary: #5B6B79;
     --text-muted: #;
     --text-title: #;
     --text-headline: #;
@@ -43,7 +44,7 @@
     --button-confirm: #4ab491;
     --button-cancel: #e04545;
     --button-danger: #e89a25;
-    --button-hover: #e6edfb;
+    --button-hover: #F3F5F7;
     --button-disabled: #;
 
     --link-main: #;
@@ -51,8 +52,8 @@
     --link-disabled: #;
 
     --box-shadow: #;
-    --border-primary: #;
-    --border-focus: #;
+    --border-primary: #E7EAEE;
+    --border-focus: #DC2626;
     --border-disabled: #;
     --text-shadow: #;
 
@@ -61,7 +62,8 @@
     --alert-error: #;
     --alert-info: #;
 
-    --icon-main: #;
+    --icon-main: #5B6B79;
+    --icon-hover: #F3F5F7;
     --icon-action: #;
     --icon-disabled: #;
 
@@ -74,19 +76,20 @@
   }
 
   .dark {
-    --bg-primary: #1f2937;
-    --bg-main: #;
+    --bg-primary: #131920;
+    --bg-main: #131920;
     --bg-section: #;
     --bg-block: #;
     --bg-alt: #;
     --bg-secondary: #;
-    --bg-card: #;
+    --bg-card: #1B232D;
     --bg-elevated: #;
     --bg-button: #;
+    --bg-dropdown: #263240;
 
-    --text-primary: #d0d1d2;
-    --text-main: #;
-    --text-secondary: #;
+    --text-primary: #D1D3D5;
+    --text-main: #DC2626;
+    --text-secondary: #898C90;
     --text-muted: #;
     --text-title: #;
     --text-headline: #;
@@ -111,7 +114,7 @@
     --button-confirm: #289371;
     --button-cancel: #be2425;
     --button-danger: #c67905;
-    --button-hover: #182337;
+    --button-hover: #19212A;
     --button-disabled: #;
 
     --link-main: #;
@@ -119,8 +122,8 @@
     --link-disabled: #;
 
     --box-shadow: #;
-    --border-primary: #;
-    --border-focus: #;
+    --border-primary: #263240;
+    --border-focus: #DC2626;
     --border-disabled: #;
     --text-shadow: #;
 
@@ -129,7 +132,8 @@
     --alert-error: #;
     --alert-info: #;
 
-    --icon-main: #;
+    --icon-main: #6F747F;
+    --icon-hover: #19212A;
     --icon-action: #;
     --icon-disabled: #;
 

@@ -36,7 +36,7 @@ export default function Dashboard({ children }: { children: ReactNode }) {
       />
       <div
         className={`flex flex-col flex-1 overflow-hidden transition-all duration-300 ease-in-out ${
-          isSidebarOpen && !isMobile ? "md:ml-64" : ""
+          isSidebarOpen && !isMobile ? "md:ml-72" : ""
         }`}
       >
         <Navbar onMenuClick={toggleSidebar} />
