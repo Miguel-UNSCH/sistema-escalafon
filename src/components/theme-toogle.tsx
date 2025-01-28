@@ -17,7 +17,7 @@ export function ThemeToggle() {
   return (
     <div className="relative">
       <button
-        className="flex items-center gap-2 bg-white dark:bg-gray-800 text-black dark:text-white rounded-full px-3 py-2 focus:outline-none"
+        className="flex items-center gap-2 text-[#5B6B79] dark:text-[#6F747F] focus:outline-none"
         onClick={toggleDropdown}
       >
         <PiSunDimFill className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -25,9 +25,9 @@ export function ThemeToggle() {
       </button>
 
       {isDropdownOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg">
+        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg overflow-hidden">
           <button
-            className="w-full px-4 py-2 text-left text-sm flex items-center gap-2 hover:bg-gray-200 dark:hover:bg-gray-700"
+            className="w-full px-4 py-2 text-left text-sm flex items-center gap-2 text-[#5B6B79] dark:text-[#6F747F]  hover:bg-gray-200 dark:hover:bg-gray-700"
             onClick={() => {
               setTheme("light");
               setIsDropdownOpen(false);
@@ -36,7 +36,7 @@ export function ThemeToggle() {
             <PiSunDimFill className="h-4 w-4" /> Light
           </button>
           <button
-            className="w-full px-4 py-2 text-left text-sm flex items-center gap-2 hover:bg-gray-200 dark:hover:bg-gray-700"
+            className="w-full px-4 py-2 text-left text-sm flex items-center gap-2 text-[#5B6B79] dark:text-[#6F747F]  hover:bg-gray-200 dark:hover:bg-gray-700"
             onClick={() => {
               setTheme("dark");
               setIsDropdownOpen(false);
@@ -45,7 +45,7 @@ export function ThemeToggle() {
             <IoMdMoon className="h-4 w-4" /> Dark
           </button>
           <button
-            className="w-full px-4 py-2 text-left text-sm flex items-center gap-2 hover:bg-gray-200 dark:hover:bg-gray-700"
+            className="w-full px-4 py-2 text-left text-sm flex items-center gap-2 text-[#5B6B79] dark:text-[#6F747F]  hover:bg-gray-200 dark:hover:bg-gray-700"
             onClick={() => {
               setTheme("system");
               setIsDropdownOpen(false);
