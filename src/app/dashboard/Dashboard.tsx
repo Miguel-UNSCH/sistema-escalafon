@@ -1,37 +1,43 @@
-"use client"
+"use client";
 
-import Navbar from "@/components/layout/NavBar"
-import Sidebar from "@/components/layout/Sidebar"
-import { useState, useEffect } from "react"
+import Navbar from "@/components/layout/NavBar";
+import Sidebar from "@/components/layout/Sidebar";
+import { useState, useEffect } from "react";
 
 import { ReactNode } from "react";
 
-export default function Dashboard({children}: {children: ReactNode}) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true)
-  const [isMobile, setIsMobile] = useState(false)
+export default function Dashboard({ children }: { children: ReactNode }) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
+      setIsMobile(window.innerWidth < 768);
       if (window.innerWidth < 768) {
-        setIsSidebarOpen(false)
+        setIsSidebarOpen(false);
       } else {
-        setIsSidebarOpen(true)
+        setIsSidebarOpen(true);
       }
-    }
+    };
 
-    checkMobile()
-    window.addEventListener("resize", checkMobile)
-    return () => window.removeEventListener("resize", checkMobile)
-  }, [])
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
-  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen)
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
     <div className="flex h-screen overflow-hidden relative">
-      <Sidebar isOpen={isSidebarOpen} isMobile={isMobile} onClose={toggleSidebar} />
+      <Sidebar
+        isOpen={isSidebarOpen}
+        isMobile={isMobile}
+        onClose={toggleSidebar}
+      />
       <div
-        className={`flex flex-col flex-1 overflow-hidden transition-all duration-300 ease-in-out ${isSidebarOpen && !isMobile ? "md:ml-64" : ""}`}
+        className={`flex flex-col flex-1 overflow-hidden transition-all duration-300 ease-in-out ${
+          isSidebarOpen && !isMobile ? "md:ml-64" : ""
+        }`}
       >
         <Navbar onMenuClick={toggleSidebar} />
         <main
@@ -41,9 +47,11 @@ export default function Dashboard({children}: {children: ReactNode}) {
         </main>
       </div>
       {isMobile && isSidebarOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={toggleSidebar}></div>
+        <div
+          className="fixed inset-0 bg-ctp-base bg-opacity-50 z-40"
+          onClick={toggleSidebar}
+        ></div>
       )}
     </div>
-  )
+  );
 }
-

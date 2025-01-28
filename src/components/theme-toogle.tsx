@@ -17,7 +17,7 @@ export function ThemeToggle() {
   return (
     <div className="relative">
       <button
-        className="flex items-center gap-2 bg-white dark:bg-gray-800 text-black dark:text-white rounded-full px-3 py-2 focus:outline-none"
+        className="flex items-center gap-2 text-black dark:text-white rounded-full px-3 py-2 focus:outline-none"
         onClick={toggleDropdown}
       >
         <PiSunDimFill className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -33,7 +33,7 @@ export function ThemeToggle() {
               setIsDropdownOpen(false);
             }}
           >
-            <PiSunDimFill className="h-4 w-4" /> Light
+            <PiSunDimFill className="h-4 w-4" /> Claro
           </button>
           <button
             className="w-full px-4 py-2 text-left text-sm flex items-center gap-2 hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -42,7 +42,7 @@ export function ThemeToggle() {
               setIsDropdownOpen(false);
             }}
           >
-            <IoMdMoon className="h-4 w-4" /> Dark
+            <IoMdMoon className="h-4 w-4" /> Oscuro
           </button>
           <button
             className="w-full px-4 py-2 text-left text-sm flex items-center gap-2 hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -51,7 +51,7 @@ export function ThemeToggle() {
               setIsDropdownOpen(false);
             }}
           >
-            <FcSettings className="h-4 w-4" /> System
+            <FcSettings className="h-4 w-4" /> Predeterminado
           </button>
         </div>
       )}
