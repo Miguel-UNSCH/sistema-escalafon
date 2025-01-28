@@ -33,7 +33,7 @@ export function ThemeToggle() {
               setIsDropdownOpen(false);
             }}
           >
-            <PiSunDimFill className="h-4 w-4" /> Light
+            <PiSunDimFill className="h-4 w-4" /> Claro
           </button>
           <button
             className="w-full px-4 py-2 text-left text-sm flex items-center gap-2 text-[#5B6B79] dark:text-[#6F747F]  hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -42,7 +42,7 @@ export function ThemeToggle() {
               setIsDropdownOpen(false);
             }}
           >
-            <IoMdMoon className="h-4 w-4" /> Dark
+            <IoMdMoon className="h-4 w-4" /> Oscuro
           </button>
           <button
             className="w-full px-4 py-2 text-left text-sm flex items-center gap-2 text-[#5B6B79] dark:text-[#6F747F]  hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -51,7 +51,7 @@ export function ThemeToggle() {
               setIsDropdownOpen(false);
             }}
           >
-            <FcSettings className="h-4 w-4" /> System
+            <FcSettings className="h-4 w-4" /> Predeterminado
           </button>
         </div>
       )}

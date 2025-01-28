@@ -2,6 +2,147 @@
 @tailwind components;
 @tailwind utilities;
 
+/** light -- dark */
+
+@layer base {
+  :root {
+    --bg-primary: #f8f9fa;
+    --bg-main: #;
+    --bg-section: #;
+    --bg-block: #;
+    --bg-alt: #;
+    --bg-secondary: #;
+    --bg-card: #;
+    --bg-elevated: #;
+    --bg-button: #;
+
+    --text-primary: #3e4853;
+    --text-main: #;
+    --text-secondary: #;
+    --text-muted: #;
+    --text-title: #;
+    --text-headline: #;
+    --text-subtitle: #;
+    --text-section: #;
+    --text-section-title: #;
+    --text-link: #;
+    --text-link-hover: #;
+    --text-button: #;
+    --text-warning: #;
+    --text-error: #;
+
+    --header-primary: #;
+    --title-main: #;
+    --header-secondary: #; 
+    --title-sub: #;
+    --section-header: #;
+    --subsection-header: #;
+
+    --button-primary: #6092fe;
+    --button-secondary: #;
+    --button-confirm: #4ab491;
+    --button-cancel: #e04545;
+    --button-danger: #e89a25;
+    --button-hover: #e6edfb;
+    --button-disabled: #;
+
+    --link-main: #;
+    --link-hover: #;
+    --link-disabled: #;
+
+    --box-shadow: #;
+    --border-primary: #;
+    --border-focus: #;
+    --border-disabled: #;
+    --text-shadow: #;
+
+    --alert-success: #;
+    --alert-warning: #;
+    --alert-error: #;
+    --alert-info: #;
+
+    --icon-main: #;
+    --icon-action: #;
+    --icon-disabled: #;
+
+    --navbar-background: #;
+    --footer-background: #;
+    --input-checked: #;
+    --input-placeholder: #;
+    --loading-bar: #;
+    --loading-spinner: #;
+  }
+
+  .dark {
+    --bg-primary: #1f2937;
+    --bg-main: #;
+    --bg-section: #;
+    --bg-block: #;
+    --bg-alt: #;
+    --bg-secondary: #;
+    --bg-card: #;
+    --bg-elevated: #;
+    --bg-button: #;
+
+    --text-primary: #d0d1d2;
+    --text-main: #;
+    --text-secondary: #;
+    --text-muted: #;
+    --text-title: #;
+    --text-headline: #;
+    --text-subtitle: #;
+    --text-section: #;
+    --text-section-title: #;
+    --text-link: #;
+    --text-link-hover: #;
+    --text-button: #;
+    --text-warning: #;
+    --text-error: #;
+
+    --header-primary: #;
+    --title-main: #;
+    --header-secondary: #; 
+    --title-sub: #;
+    --section-header: #;
+    --subsection-header: #;
+
+    --button-primary: #3e71de;
+    --button-secondary: #;
+    --button-confirm: #289371;
+    --button-cancel: #be2425;
+    --button-danger: #c67905;
+    --button-hover: #182337;
+    --button-disabled: #;
+
+    --link-main: #;
+    --link-hover: #;
+    --link-disabled: #;
+
+    --box-shadow: #;
+    --border-primary: #;
+    --border-focus: #;
+    --border-disabled: #;
+    --text-shadow: #;
+
+    --alert-success: #;
+    --alert-warning: #;
+    --alert-error: #;
+    --alert-info: #;
+
+    --icon-main: #;
+    --icon-action: #;
+    --icon-disabled: #;
+
+    --navbar-background: #;
+    --footer-background: #;
+    --input-checked: #;
+    --input-placeholder: #;
+    --loading-bar: #;
+    --loading-spinner: #;
+  }
+}
+
+
 *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -35,3 +176,4 @@
 *::-webkit-scrollbar-corner {
   display: none;
 }
+
