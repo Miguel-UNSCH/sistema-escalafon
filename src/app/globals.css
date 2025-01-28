@@ -6,17 +6,17 @@
 
 @layer base {
   :root {
-    --bg-primary: #;
+    --bg-primary: #f8f9fa;
     --bg-main: #;
-    --bg-primary: #;
-    --bg-main: #;
-    --bg-primary: #;
-    --bg-main: #;
-    --bg-primary: #;
-    --bg-main: #;
+    --bg-section: #;
+    --bg-block: #;
+    --bg-alt: #;
+    --bg-secondary: #;
+    --bg-card: #;
+    --bg-elevated: #;
     --bg-button: #;
 
-    --text-primary: #;
+    --text-primary: #3e4853;
     --text-main: #;
     --text-secondary: #;
     --text-muted: #;
@@ -38,12 +38,12 @@
     --section-header: #;
     --subsection-header: #;
 
-    --button-primary: #;
+    --button-primary: #6092fe;
     --button-secondary: #;
-    --button-confirm: #;
-    --button-cancel: #;
-    --button-danger: #;
-    --button-hover: #;
+    --button-confirm: #4ab491;
+    --button-cancel: #e04545;
+    --button-danger: #e89a25;
+    --button-hover: #e6edfb;
     --button-disabled: #;
 
     --link-main: #;
@@ -74,17 +74,17 @@
   }
 
   .dark {
-    --bg-primary: #;
+    --bg-primary: #1f2937;
     --bg-main: #;
-    --bg-primary: #;
-    --bg-main: #;
-    --bg-primary: #;
-    --bg-main: #;
-    --bg-primary: #;
-    --bg-main: #;
+    --bg-section: #;
+    --bg-block: #;
+    --bg-alt: #;
+    --bg-secondary: #;
+    --bg-card: #;
+    --bg-elevated: #;
     --bg-button: #;
 
-    --text-primary: #;
+    --text-primary: #d0d1d2;
     --text-main: #;
     --text-secondary: #;
     --text-muted: #;
@@ -106,12 +106,12 @@
     --section-header: #;
     --subsection-header: #;
 
-    --button-primary: #;
+    --button-primary: #3e71de;
     --button-secondary: #;
-    --button-confirm: #;
-    --button-cancel: #;
-    --button-danger: #;
-    --button-hover: #;
+    --button-confirm: #289371;
+    --button-cancel: #be2425;
+    --button-danger: #c67905;
+    --button-hover: #182337;
     --button-disabled: #;
 
     --link-main: #;
