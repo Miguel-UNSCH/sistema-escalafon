@@ -35,13 +35,13 @@ export default function Dashboard({ children }: { children: ReactNode }) {
         onClose={toggleSidebar}
       />
       <div
-        className={`flex flex-col flex-1 overflow-hidden transition-all duration-300 ease-in-out ${
+        className={`relative flex flex-col flex-1 overflow-hidden transition-all duration-300 ease-in-out ${
           isSidebarOpen && !isMobile ? "md:ml-72" : ""
         }`}
       >
-        <Navbar onMenuClick={toggleSidebar} />
+        <Navbar onMenuClick={toggleSidebar} isSidebarOpen={isSidebarOpen} isMobile={isMobile}/>
         <main
-          className={`flex-1 overflow-x-hidden overflow-y-auto p-4 transition-all duration-300 ease-in-out`}
+          className={`flex-1 overflow-x-hidden overflow-y-auto py-4 px-8 transition-all duration-300 ease-in-out pt-20`}
         >
           {children}
         </main>

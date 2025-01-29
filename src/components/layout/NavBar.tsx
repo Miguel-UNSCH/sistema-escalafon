@@ -6,12 +6,16 @@ import { FaBell } from "react-icons/fa";
 import UserCard from "../cards/UserCard";
 
 interface NavbarProps {
+  isSidebarOpen: boolean;
+  isMobile: boolean;
   onMenuClick: () => void;
 }
 
-export default function Navbar({ onMenuClick }: NavbarProps) {
+export default function Navbar({ isSidebarOpen, isMobile, onMenuClick }: NavbarProps) {
   return (
-    <nav className="sticky top-0 left-0 right-0 z-30 py-4 px-8 flex items-center justify-between bg-bg-primary">
+    <nav className={`fixed top-0 left-0 right-0 z-30 py-4 px-8 flex items-center justify-between bg-bg-primary/80 backdrop-blur-md transition-all duration-300 ease-in-out ${
+      isSidebarOpen && !isMobile ? "md:ml-72" : ""
+    }`}>
       <div className="flex items-center">
         <button
           onClick={onMenuClick}
