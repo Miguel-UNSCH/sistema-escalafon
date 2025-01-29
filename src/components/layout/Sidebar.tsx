@@ -13,18 +13,21 @@ const navigationItems: MenuItem[] = [
   {
     label: "test",
     icon: <FaTachometerAlt />,
-    badge: 0,
+    badge: 3,
     path: "/test",
     submenus: [
       {
         label: "subtest",
         path: "/test/subtest",
+        badge: 2,
         submenus: [
           {
             label: "subsubtest",
             path: "/test/subtest/subsubtest",
             submenus: [
-              { label: "subsubtest", path: "/test/subtest/subsubtest" },
+              { label: "subsubtest1", path: "/test/subtest/subsubtest1" },
+              { label: "subsubtest2", path: "/test/subtest/subsubtest2" },
+              { label: "subsubtest3", path: "/test/subtest/subsubtest3" },
             ],
           },
         ],
@@ -41,7 +44,11 @@ const navigationItems: MenuItem[] = [
       {
         label: "subitem",
         path: "/minted/subitem",
-        submenus: [{ label: "subsubitem", path: "/minted/subitem/subsubitem" }],
+        submenus: [
+          { label: "subsubitem1", path: "/minted/subitem/subsubitem1" },
+          { label: "subsubitem2", path: "/minted/subitem/subsubitem2" },
+          { label: "subsubitem3", path: "/minted/subitem/subsubitem3" },
+        ],
       },
     ],
   },
