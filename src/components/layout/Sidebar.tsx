@@ -10,6 +10,27 @@ interface SidebarProps {
 }
 
 const navigationItems: MenuItem[] = [
+  {
+    label: "test",
+    icon: <FaTachometerAlt />,
+    badge: 0,
+    path: "/test",
+    submenus: [
+      {
+        label: "subtest",
+        path: "/test/subtest",
+        submenus: [
+          {
+            label: "subsubtest",
+            path: "/test/subtest/subsubtest",
+            submenus: [
+              { label: "subsubtest", path: "/test/subtest/subsubtest" },
+            ],
+          },
+        ],
+      },
+    ],
+  },
   /* 2 levels SidebarMenuItems */
   {
     label: "minted",
