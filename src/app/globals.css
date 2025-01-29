@@ -25,8 +25,8 @@
     --text-headline: #;
     --text-subtitle: #;
     --text-section: #;
-    --text-section-title: #;
-    --text-link: #;
+    --text-section-title: #3E4853;
+    --text-link: #5B6B79;
     --text-link-hover: #;
     --text-button: #;
     --text-warning: #;
@@ -39,7 +39,7 @@
     --section-header: #;
     --subsection-header: #;
 
-    --button-primary: #6092fe;
+    --button-primary: #4680FF;
     --button-secondary: #;
     --button-confirm: #4ab491;
     --button-cancel: #e04545;
@@ -47,13 +47,13 @@
     --button-hover: #EFF0F2;
     --button-disabled: #;
 
-    --link-main: #;
-    --link-hover: #;
+    --link-main: #4680FF;
+    --link-hover: #E8EBED;
     --link-disabled: #;
 
     --box-shadow: #;
     --border-primary: #E7EAEE;
-    --border-focus: #DC2626;
+    --border-focus: #4680FF;
     --border-disabled: #;
     --text-shadow: #;
 
@@ -95,8 +95,8 @@
     --text-headline: #;
     --text-subtitle: #;
     --text-section: #;
-    --text-section-title: #;
-    --text-link: #;
+    --text-section-title: #D0D1D2;
+    --text-link: #898C90;
     --text-link-hover: #;
     --text-button: #;
     --text-warning: #;
@@ -109,7 +109,7 @@
     --section-header: #;
     --subsection-header: #;
 
-    --button-primary: #3e71de;
+    --button-primary: #4680FF;
     --button-secondary: #;
     --button-confirm: #289371;
     --button-cancel: #be2425;
@@ -117,13 +117,13 @@
     --button-hover: #28313C;
     --button-disabled: #;
 
-    --link-main: #;
-    --link-hover: #;
+    --link-main: #4680FF;
+    --link-hover: #1F252B;
     --link-disabled: #;
 
     --box-shadow: #;
     --border-primary: #263240;
-    --border-focus: #DC2626;
+    --border-focus: #4680FF;
     --border-disabled: #;
     --text-shadow: #;
 

@@ -1,6 +1,16 @@
+<<<<<<< HEAD
 import { LuDot } from "react-icons/lu";
 import UserInfo from "../cards/UserInfo";
 import { ImStatsDots } from "react-icons/im";
+=======
+import { MenuItem } from "@/interfaces/MenuItem";
+import UserInfo from "../cards/UserInfo";
+import {
+  FaTachometerAlt,
+  FaFileAlt,
+} from "react-icons/fa";
+import SidebarMenuGroup from "../menus/SidebarMenuGroup";
+>>>>>>> origin/main
 
 interface SidebarProps {
   isOpen: boolean;
@@ -8,6 +18,7 @@ interface SidebarProps {
   onClose: () => void;
 }
 
+<<<<<<< HEAD
 const Navigation = () => {
   // const items: string[] = [
   //   "navigation",
@@ -77,6 +88,27 @@ const Navigation = () => {
   );
 };
 
+=======
+const navigationItems: MenuItem[] = [
+  {
+    label: "Dashboard",
+    icon: <FaTachometerAlt />,
+    badge: "2",
+    path: "/dashboard",
+    submenus: [
+      { label: "Default", path: "/dashboard/default" },
+      { label: "Analytics", path: "/dashboard/analytics" },
+      { label: "Finance", path: "/dashboard/finance" },
+    ],
+  },
+  {
+    label: "Layouts",
+    icon: <FaFileAlt />,
+    path: "/layouts",
+    badge: "1"
+  },
+];
+>>>>>>> origin/main
 export default function Sidebar({ isOpen, isMobile }: SidebarProps) {
   return (
     <>
@@ -99,7 +131,11 @@ export default function Sidebar({ isOpen, isMobile }: SidebarProps) {
             </span>
           </div>
           <UserInfo />
+<<<<<<< HEAD
           <Navigation />
+=======
+          <SidebarMenuGroup title="INICIO" items={navigationItems} />
+>>>>>>> origin/main
         </div>
       </aside>
     </>
