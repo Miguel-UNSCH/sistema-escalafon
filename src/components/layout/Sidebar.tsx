@@ -6,11 +6,35 @@ interface SidebarProps {
   onClose: () => void;
 }
 
+const Navigation = () => {
+  const items: string[] = [
+    "navigation",
+    "widget",
+    "admin panel",
+    "ui components",
+    "forms",
+    "panels",
+    "chart & maps",
+    "application",
+    "pages",
+    "other",
+  ];
+  return (
+    <div className="flex flex-col">
+      {items.map((i) => (
+        <p key={i} className="py-1 font-bold text-xs uppercase">
+          {i}
+        </p>
+      ))}
+    </div>
+  );
+};
+
 export default function Sidebar({ isOpen, isMobile }: SidebarProps) {
   return (
     <>
       {isOpen && isMobile && (
-        <div className="absolute bg-black/30 backdrop-blur-sm top-0 left-0 w-full h-full z-40"></div>
+        <div className="top-0 left-0 z-40 absolute bg-black/30 backdrop-blur-sm w-full h-full"></div>
       )}
       <aside
         className={`
@@ -20,14 +44,15 @@ export default function Sidebar({ isOpen, isMobile }: SidebarProps) {
         w-72 bg-bg-primary text-text-primary transition-transform duration-300 ease-in-out
       `}
       >
-        <div className="p-6 space-y-6">
+        <div className="space-y-6 p-6">
           <div className="relative">
-            <h1 className="text-xl font-bold text-text-primary">WorkTrace</h1>
-            <span className="absolute top-0 left-28 py-1 px-2 text-button-confirm bg-green-700/15 rounded-full text-xs font-medium">
+            <h1 className="font-bold text-text-primary text-xl">WorkTrace</h1>
+            <span className="top-0 left-28 absolute bg-green-700/15 px-2 py-1 rounded-full font-medium text-button-confirm text-xs">
               v1.0.0
             </span>
           </div>
           <UserInfo />
+          <Navigation />
         </div>
       </aside>
     </>
