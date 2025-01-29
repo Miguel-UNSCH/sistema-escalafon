@@ -1,4 +1,6 @@
+import { LuDot } from "react-icons/lu";
 import UserInfo from "../cards/UserInfo";
+import { ImStatsDots } from "react-icons/im";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -7,24 +9,69 @@ interface SidebarProps {
 }
 
 const Navigation = () => {
-  const items: string[] = [
-    "navigation",
-    "widget",
-    "admin panel",
-    "ui components",
-    "forms",
-    "panels",
-    "chart & maps",
-    "application",
-    "pages",
-    "other",
+  // const items: string[] = [
+  //   "navigation",
+  //   "widget",
+  //   "admin panel",
+  //   "ui components",
+  //   "forms",
+  //   "panels",
+  //   "chart & maps",
+  //   "application",
+  //   "pages",
+  //   "other",
+  // ];
+  const items = [
+    {
+      title: "navigation",
+      options: [
+        {
+          icon: <ImStatsDots />,
+          title: "dashboard",
+          subOptions: ["default", "analytics", "finance"],
+        },
+        {
+          icon: <LuDot />,
+          title: "layouts",
+          subOptions: ["vertical", "horizontal", "layouts 2", "compact", "tab"],
+        },
+      ],
+    },
+    {
+      title: "widget",
+      options: [
+        {
+          icon: "",
+          title: "statistics",
+        },
+        {
+          icon: "",
+          title: "data",
+        },
+        {
+          icon: "",
+          title: "chart",
+        },
+      ],
+    },
   ];
   return (
     <div className="flex flex-col">
       {items.map((i) => (
-        <p key={i} className="py-1 font-bold text-xs uppercase">
-          {i}
-        </p>
+        <div key={i.title} className="flex flex-col">
+          <p className="py-1 font-bold text-text-primary text-xs uppercase">
+            {i.title}
+          </p>
+          {i.options.map(({ icon, title }) => (
+            <div
+              className="flex flex-row items-center gap-2 text-[#898C90]"
+              key={title}
+            >
+              {icon}
+              <span className="">{title}</span>
+            </div>
+          ))}
+        </div>
       ))}
     </div>
   );
