@@ -1,16 +1,7 @@
-<<<<<<< HEAD
-import { LuDot } from "react-icons/lu";
 import UserInfo from "../cards/UserInfo";
-import { ImStatsDots } from "react-icons/im";
-=======
 import { MenuItem } from "@/interfaces/MenuItem";
-import UserInfo from "../cards/UserInfo";
-import {
-  FaTachometerAlt,
-  FaFileAlt,
-} from "react-icons/fa";
+import { FaTachometerAlt, FaFileAlt } from "react-icons/fa";
 import SidebarMenuGroup from "../menus/SidebarMenuGroup";
->>>>>>> origin/main
 
 interface SidebarProps {
   isOpen: boolean;
@@ -18,97 +9,37 @@ interface SidebarProps {
   onClose: () => void;
 }
 
-<<<<<<< HEAD
-const Navigation = () => {
-  // const items: string[] = [
-  //   "navigation",
-  //   "widget",
-  //   "admin panel",
-  //   "ui components",
-  //   "forms",
-  //   "panels",
-  //   "chart & maps",
-  //   "application",
-  //   "pages",
-  //   "other",
-  // ];
-  const items = [
-    {
-      title: "navigation",
-      options: [
-        {
-          icon: <ImStatsDots />,
-          title: "dashboard",
-          subOptions: ["default", "analytics", "finance"],
-        },
-        {
-          icon: <LuDot />,
-          title: "layouts",
-          subOptions: ["vertical", "horizontal", "layouts 2", "compact", "tab"],
-        },
-      ],
-    },
-    {
-      title: "widget",
-      options: [
-        {
-          icon: "",
-          title: "statistics",
-        },
-        {
-          icon: "",
-          title: "data",
-        },
-        {
-          icon: "",
-          title: "chart",
-        },
-      ],
-    },
-  ];
-  return (
-    <div className="flex flex-col">
-      {items.map((i) => (
-        <div key={i.title} className="flex flex-col">
-          <p className="py-1 font-bold text-text-primary text-xs uppercase">
-            {i.title}
-          </p>
-          {i.options.map(({ icon, title }) => (
-            <div
-              className="flex flex-row items-center gap-2 text-[#898C90]"
-              key={title}
-            >
-              {icon}
-              <span className="">{title}</span>
-            </div>
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-};
-
-=======
 const navigationItems: MenuItem[] = [
+  /* 2 levels SidebarMenuItems */
   {
-    label: "Dashboard",
+    label: "minted",
     icon: <FaTachometerAlt />,
-    badge: "2",
-    path: "/dashboard",
+    badge: 0,
+    path: "/minted",
     submenus: [
-      { label: "Default", path: "/dashboard/default" },
-      { label: "Analytics", path: "/dashboard/analytics" },
-      { label: "Finance", path: "/dashboard/finance" },
+      {
+        label: "subitem",
+        path: "/minted/subitem",
+        submenus: [{ label: "subsubitem", path: "/minted/subitem/subsubitem" }],
+      },
     ],
   },
+  /* 1 levels SidebarMenuItems */
   {
-    label: "Layouts",
-    icon: <FaFileAlt />,
-    path: "/layouts",
-    badge: "1"
+    label: "widget",
+    icon: <FaTachometerAlt />,
+    badge: 0,
+    path: "/widget",
+    submenus: [
+      { label: "default", path: "/widget/default" },
+      { label: "analytics", path: "/widget/analytics" },
+      { label: "finance", path: "/widget/finance" },
+    ],
   },
+  /* 0 levels -- SidebarMenuItem */
+  { label: "chart", icon: <FaFileAlt />, badge: 0, path: "/widget/chart" },
 ];
->>>>>>> origin/main
+
 export default function Sidebar({ isOpen, isMobile }: SidebarProps) {
   return (
     <>
@@ -131,11 +62,7 @@ export default function Sidebar({ isOpen, isMobile }: SidebarProps) {
             </span>
           </div>
           <UserInfo />
-<<<<<<< HEAD
-          <Navigation />
-=======
-          <SidebarMenuGroup title="INICIO" items={navigationItems} />
->>>>>>> origin/main
+          <SidebarMenuGroup title="inicio" items={navigationItems} />
         </div>
       </aside>
     </>
