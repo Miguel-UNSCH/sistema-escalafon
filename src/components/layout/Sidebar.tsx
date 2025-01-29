@@ -1,4 +1,10 @@
+import { MenuItem } from "@/interfaces/MenuItem";
 import UserInfo from "../cards/UserInfo";
+import {
+  FaTachometerAlt,
+  FaFileAlt,
+} from "react-icons/fa";
+import SidebarMenuGroup from "../menus/SidebarMenuGroup";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -6,6 +12,25 @@ interface SidebarProps {
   onClose: () => void;
 }
 
+const navigationItems: MenuItem[] = [
+  {
+    label: "Dashboard",
+    icon: <FaTachometerAlt />,
+    badge: "2",
+    path: "/dashboard",
+    submenus: [
+      { label: "Default", path: "/dashboard/default" },
+      { label: "Analytics", path: "/dashboard/analytics" },
+      { label: "Finance", path: "/dashboard/finance" },
+    ],
+  },
+  {
+    label: "Layouts",
+    icon: <FaFileAlt />,
+    path: "/layouts",
+    badge: "1"
+  },
+];
 export default function Sidebar({ isOpen, isMobile }: SidebarProps) {
   return (
     <>
@@ -28,6 +53,7 @@ export default function Sidebar({ isOpen, isMobile }: SidebarProps) {
             </span>
           </div>
           <UserInfo />
+          <SidebarMenuGroup title="INICIO" items={navigationItems} />
         </div>
       </aside>
     </>
