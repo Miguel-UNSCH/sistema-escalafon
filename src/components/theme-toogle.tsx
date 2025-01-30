@@ -9,10 +9,24 @@ import { FcSettings } from "react-icons/fc";
 export function ThemeToggle() {
   const { setTheme } = useTheme();
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
+
+  React.useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      setIsDropdownOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="relative">
@@ -25,7 +39,7 @@ export function ThemeToggle() {
       </button>
 
       {isDropdownOpen && (
-        <div className="absolute right-8 top-12 w-48 bg-bg-dropdown rounded-xl shadow-xl overflow-hidden p-2">
+        <div className="absolute right-8 top-12 w-48 bg-bg-dropdown rounded-xl shadow-xl overflow-hidden p-2" ref={dropdownRef}>
           <button
             className="w-full px-3 py-2 text-left text-sm flex items-center gap-2 text-text-secondary font-medium hover:bg-icon-hover rounded-md transition-all duration-100"
             onClick={() => {

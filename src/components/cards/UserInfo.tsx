@@ -10,7 +10,7 @@ function UserInfo() {
 
   return (
     <div
-      className={`p-4 bg-bg-card rounded-xl border border-border-primary overflow-hidden transition-all duration-400 ${
+      className={`mr-4 p-4 bg-bg-card rounded-xl border border-border-primary overflow-hidden transition-all duration-400 ${
         isExpanded ? "h-auto" : "h-fit"
       }`}
     >

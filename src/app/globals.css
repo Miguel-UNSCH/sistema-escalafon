@@ -18,7 +18,7 @@
     --bg-dropdown: #ffffff;
 
     --text-primary: #1D2630;
-    --text-main: #DC2626;
+    --text-main: #4680FF;
     --text-secondary: #5B6B79;
     --text-muted: #;
     --text-title: #;
@@ -49,6 +49,7 @@
 
     --link-main: #4680FF;
     --link-hover: #E8EBED;
+    --link-active: #E6EDFB;
     --link-disabled: #;
 
     --box-shadow: #;
@@ -88,7 +89,7 @@
     --bg-dropdown: #263240;
 
     --text-primary: #D1D3D5;
-    --text-main: #DC2626;
+    --text-main: #4680FF;
     --text-secondary: #898C90;
     --text-muted: #;
     --text-title: #;
@@ -119,6 +120,7 @@
 
     --link-main: #4680FF;
     --link-hover: #1F252B;
+    --link-active: #182337;
     --link-disabled: #;
 
     --box-shadow: #;

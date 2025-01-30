@@ -54,6 +54,7 @@ export default {
 
         "link-main": "var(--link-main)",
         "link-hover": "var(--link-hover)",
+        "link-active": "var(--link-active)",
         "link-disabled": "var(--link-disabled)",
 
         "box-shadow": "var(--box-shadow)",
