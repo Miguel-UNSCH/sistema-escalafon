@@ -10,6 +10,18 @@ interface SidebarProps {
 }
 
 const navigationItems: MenuItem[] = [
+  { label: "chart", icon: <FaFileAlt />, badge: 0, path: "/widget/chart" },
+  {
+    label: "widget",
+    icon: <FaTachometerAlt />,
+    badge: 0,
+    path: "/widget",
+    submenus: [
+      { label: "default", path: "/widget/default" },
+      { label: "analytics", path: "/widget/analytics" },
+      { label: "finance", path: "/widget/finance" },
+    ],
+  },
   {
     label: "test",
     icon: <FaTachometerAlt />,
@@ -34,7 +46,6 @@ const navigationItems: MenuItem[] = [
       },
     ],
   },
-  /* 2 levels SidebarMenuItems */
   {
     label: "minted",
     icon: <FaTachometerAlt />,
@@ -45,27 +56,36 @@ const navigationItems: MenuItem[] = [
         label: "subitem",
         path: "/minted/subitem",
         submenus: [
-          { label: "subsubitem1", path: "/minted/subitem/subsubitem1" },
+          {
+            label: "subsubitem1",
+            path: "/minted/subitem/subsubitem1",
+            submenus: [
+              {
+                label: "subsubtest",
+                path: "/test/subtest/subsubtest",
+                submenus: [
+                  { label: "subsubtest1", path: "/test/subtest/subsubtest1" },
+                  { label: "subsubtest2", path: "/test/subtest/subsubtest2" },
+                  { label: "subsubtest3", path: "/test/subtest/subsubtest3" },
+                ],
+              },
+              {
+                label: "subitem",
+                path: "/minted/subitem",
+                submenus: [
+                  { label: "subsubitem1", path: "/minted/subitem/subsubitem1" },
+                  { label: "subsubitem2", path: "/minted/subitem/subsubitem2" },
+                  { label: "subsubitem3", path: "/minted/subitem/subsubitem3" },
+                ],
+              },
+            ],
+          },
           { label: "subsubitem2", path: "/minted/subitem/subsubitem2" },
           { label: "subsubitem3", path: "/minted/subitem/subsubitem3" },
         ],
       },
     ],
   },
-  /* 1 levels SidebarMenuItems */
-  {
-    label: "widget",
-    icon: <FaTachometerAlt />,
-    badge: 0,
-    path: "/widget",
-    submenus: [
-      { label: "default", path: "/widget/default" },
-      { label: "analytics", path: "/widget/analytics" },
-      { label: "finance", path: "/widget/finance" },
-    ],
-  },
-  /* 0 levels -- SidebarMenuItem */
-  { label: "chart", icon: <FaFileAlt />, badge: 0, path: "/widget/chart" },
 ];
 
 export default function Sidebar({ isOpen, isMobile }: SidebarProps) {
