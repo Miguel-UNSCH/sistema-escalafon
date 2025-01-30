@@ -1,6 +1,6 @@
 import UserInfo from "../cards/UserInfo";
 import { MenuItem } from "@/interfaces/MenuItem";
-import { FaTachometerAlt, FaFileAlt } from "react-icons/fa";
+import { FaFileAlt } from "react-icons/fa";
 import SidebarMenuGroup from "../menus/SidebarMenuGroup";
 
 interface SidebarProps {
@@ -11,29 +11,15 @@ interface SidebarProps {
 
 const navigationItems: MenuItem[] = [
   {
-    label: "minted",
-    icon: <FaTachometerAlt />,
-    badge: 3,
-    path: "/minted",
+    label: "datos personales",
+    icon: <FaFileAlt />,
+    badge: 1,
+    path: "/personal-data",
     submenus: [
-      {
-        label: "subitem",
-        path: "/minted/subitem",
-        submenus: [{ label: "subsubitem", path: "/minted/subitem/subsubitem" }],
-      },
+      { label: "datos del cónyuge", path: "/personal-data/default" },
+      { label: "datos de los hijos", path: "/personal-data/soon" },
     ],
   },
-  {
-    label: "widget",
-    icon: <FaTachometerAlt />,
-    badge: 0,
-    path: "/widget",
-    submenus: [
-      { label: "default", path: "/widget/default" },
-      { label: "analytics", path: "/widget/analytics", badge: 2 },
-    ],
-  },
-  { label: "chart", icon: <FaFileAlt />, badge: 0, path: "/widget/chart" },
 ];
 
 export default function Sidebar({ isOpen, isMobile }: SidebarProps) {
@@ -58,7 +44,10 @@ export default function Sidebar({ isOpen, isMobile }: SidebarProps) {
             </span>
           </div>
           <UserInfo />
-          <SidebarMenuGroup title="inicio" items={navigationItems} />
+          <SidebarMenuGroup
+            title="información personal"
+            items={navigationItems}
+          />
         </div>
       </aside>
     </>
