@@ -10,11 +10,10 @@ interface SidebarProps {
 }
 
 const navigationItems: MenuItem[] = [
-  /* 2 levels SidebarMenuItems */
   {
     label: "minted",
     icon: <FaTachometerAlt />,
-    badge: 0,
+    badge: 3,
     path: "/minted",
     submenus: [
       {
@@ -24,7 +23,6 @@ const navigationItems: MenuItem[] = [
       },
     ],
   },
-  /* 1 levels SidebarMenuItems */
   {
     label: "widget",
     icon: <FaTachometerAlt />,
@@ -32,11 +30,9 @@ const navigationItems: MenuItem[] = [
     path: "/widget",
     submenus: [
       { label: "default", path: "/widget/default" },
-      { label: "analytics", path: "/widget/analytics" },
-      { label: "finance", path: "/widget/finance" },
+      { label: "analytics", path: "/widget/analytics", badge: 2 },
     ],
   },
-  /* 0 levels -- SidebarMenuItem */
   { label: "chart", icon: <FaFileAlt />, badge: 0, path: "/widget/chart" },
 ];
 
