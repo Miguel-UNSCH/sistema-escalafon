@@ -12,15 +12,25 @@ interface SidebarMenuGroupProps {
   setOpenMenu: (menu: string | null) => void;
 }
 
-const SidebarMenuGroup: React.FC<SidebarMenuGroupProps> = ({ title, items, openMenu, setOpenMenu }) => {
+const SidebarMenuGroup: React.FC<SidebarMenuGroupProps> = ({
+  title,
+  items,
+  openMenu,
+  setOpenMenu,
+}) => {
   return (
     <nav className="mt-4">
-      <h2 className="px-4 text-xs font-semibold text-text-section-title uppercase tracking-wide">
+      <h2 className="px-4 font-semibold text-text-section-title text-xs uppercase tracking-wide">
         {title}
       </h2>
-      <ul className="mt-2 space-y-1">
+      <ul className="space-y-1 mt-2">
         {items.map((item, idx) => (
-          <SidebarMenuItem key={idx} item={item} openMenu={openMenu} setOpenMenu={setOpenMenu} />
+          <SidebarMenuItem
+            key={idx}
+            item={item}
+            openMenu={openMenu}
+            setOpenMenu={setOpenMenu}
+          />
         ))}
       </ul>
     </nav>
@@ -29,11 +39,16 @@ const SidebarMenuGroup: React.FC<SidebarMenuGroupProps> = ({ title, items, openM
 
 export default SidebarMenuGroup;
 
-const SidebarMenuItem: React.FC<{ item: MenuItem; openMenu: string | null; setOpenMenu: (menu: string | null) => void }> = ({ item, openMenu, setOpenMenu }) => {
+const SidebarMenuItem: React.FC<{
+  item: MenuItem;
+  openMenu: string | null;
+  setOpenMenu: (menu: string | null) => void;
+}> = ({ item, openMenu, setOpenMenu }) => {
   const pathname = usePathname();
   const hasSubmenus = item.submenus && item.submenus.length > 0;
   const isActive = item.path === pathname;
-  const isSubmenuActive = item.submenus?.some((sub) => sub.path === pathname) ?? false;
+  const isSubmenuActive =
+    item.submenus?.some((sub) => sub.path === pathname) ?? false;
   const isOpen = openMenu === item.label;
 
   useEffect(() => {
@@ -62,19 +77,28 @@ const SidebarMenuItem: React.FC<{ item: MenuItem; openMenu: string | null; setOp
           <div onClick={toggleSubmenu} className={parentItemClasses}>
             <div className="flex items-center gap-4">
               {item.icon && <span>{item.icon}</span>}
-              <span className="text-sm">{item.label}</span>
+              <span className="text-sm capitalize">{item.label}</span>
             </div>
             <div className="flex items-center space-x-2">
               {item.badge && (
-                <span className="inline-block text-xs bg-link-main text-white px-2 py-0.5 rounded-full">
+                <span className="inline-block bg-link-main px-2 p-1 rounded-full text-white text-xs">
                   {item.badge}
                 </span>
               )}
-              <FaChevronRight size={10} className={`transition-transform duration-300 ${isOpen ? "rotate-90" : "rotate-0"}`} />
+              <FaChevronRight
+                size={10}
+                className={`transition-transform duration-300 ${
+                  isOpen ? "rotate-90" : "rotate-0"
+                }`}
+              />
             </div>
           </div>
-          <div className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${isOpen ? "max-h-[500px]" : "max-h-0"}`}>
-            <ul className="mt-1 ml-4 space-y-1">
+          <div
+            className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${
+              isOpen ? "max-h-[500px]" : "max-h-0"
+            }`}
+          >
+            <ul className="space-y-1 mt-1 ml-4">
               {item.submenus!.map((sub, subIndex) => {
                 const isSubItemActive = sub.path === pathname;
                 const subItemClasses = `
@@ -88,10 +112,10 @@ const SidebarMenuItem: React.FC<{ item: MenuItem; openMenu: string | null; setOp
                 return (
                   <li key={subIndex}>
                     <Link href={sub.path || "#"} className={subItemClasses}>
-                      <span className="flex items-center mr-2 group-hover:text-link-main">
+                      <span className="group-hover:text-link-main flex items-center mr-2">
                         <GoDotFill className="inline-block text-xs" />
                       </span>
-                      {sub.label}
+                      <p className="capitalize">{sub.label}</p>
                     </Link>
                   </li>
                 );
@@ -116,7 +140,7 @@ const SidebarMenuItem: React.FC<{ item: MenuItem; openMenu: string | null; setOp
             <span>{item.label}</span>
           </div>
           {item.badge && (
-            <span className="inline-block text-xs bg-link-main text-white px-2 py-0.5 rounded-full">
+            <span className="inline-block bg-link-main px-2 py-0.5 rounded-full text-white text-xs">
               {item.badge}
             </span>
           )}

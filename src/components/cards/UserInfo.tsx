@@ -14,21 +14,23 @@ function UserInfo() {
         isExpanded ? "h-auto" : "h-fit"
       }`}
     >
-      <div className="flex items-center justify-between pb-2">
+      <div className="flex justify-between items-center">
         <img
-          className="h-12 w-12 rounded-full object-cover"
+          className="rounded-full w-12 h-12 object-cover"
           src="https://ableproadmin.com/assets/images/user/avatar-2.jpg"
           alt="User Profile Picture"
         />
         <div>
-          <h1 className="text-sm font-medium text-text-primary">Juan Perez</h1>
-          <p className="text-xs font-medium text-text-secondary">
+          <h1 className="font-medium text-sm text-text-primary">Juan Perez</h1>
+          <p className="font-medium text-text-secondary text-xs">
             Administrador
           </p>
         </div>
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="p-2 text-xl hover:bg-button-hover rounded-full border border-bg-card hover:border hover:border-border-primary transition-all duration-150"
+          className={`${
+            isExpanded && "bg-button-hover"
+          } hover:bg-button-hover p-2 border hover:border border-bg-card hover:border-border-primary rounded-full text-xl transition-all duration-150`}
         >
           <IoFilter />
         </button>
@@ -42,16 +44,25 @@ function UserInfo() {
         }`}
       >
         <div className="flex flex-col gap-4 mt-6">
-          <Link href={'#'} className="flex items-center gap-2 text-text-secondary hover:text-text-main transition-all duration-150">
-            <LuUser className="text-lg font-bold"/>
+          <Link
+            href={"#"}
+            className="flex items-center gap-2 text-text-secondary hover:text-text-main transition-all duration-150"
+          >
+            <LuUser className="font-bold text-lg" />
             <span className="font-medium text-sm">Mi cuenta</span>
           </Link>
-          <Link href={'#'} className="flex items-center gap-2 text-text-secondary hover:text-text-main transition-all duration-150">
-            <IoSettingsOutline className="text-lg font-bold"/>
+          <Link
+            href={"#"}
+            className="flex items-center gap-2 text-text-secondary hover:text-text-main transition-all duration-150"
+          >
+            <IoSettingsOutline className="font-bold text-lg" />
             <span className="font-medium text-sm">Configuraciones</span>
           </Link>
-          <Link href={'#'} className="flex items-center gap-2 text-text-secondary hover:text-text-main transition-all duration-150">
-            <TbLogout2 className="text-lg font-bold"/>
+          <Link
+            href={"#"}
+            className="flex items-center gap-2 text-text-secondary hover:text-text-main transition-all duration-150"
+          >
+            <TbLogout2 className="font-bold text-lg" />
             <span className="font-medium text-sm">Cerrar sesión</span>
           </Link>
         </div>
