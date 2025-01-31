@@ -2,6 +2,8 @@ import { useState } from "react";
 import UserInfo from "../cards/UserInfo";
 import SidebarMenuGroup from "../menus/SidebarMenuGroup";
 import { navigationItems } from "@/utils/navigation-items";
+import Link from "next/link";
+import { FaHome } from "react-icons/fa";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -13,7 +15,7 @@ export default function Sidebar({ isOpen, isMobile }: SidebarProps) {
   return (
     <>
       {isOpen && isMobile && (
-        <div className="absolute bg-black/30 backdrop-blur-sm top-0 left-0 w-full h-full z-40"></div>
+        <div className="top-0 left-0 z-40 absolute bg-black/30 backdrop-blur-sm w-full h-full"></div>
       )}
       <aside
         className={`
@@ -23,15 +25,19 @@ export default function Sidebar({ isOpen, isMobile }: SidebarProps) {
         w-72 bg-bg-primary text-text-primary transition-transform duration-300 ease-in-out h-full
       `}
       >
-        <div className="py-4 pl-4 gap-6 h-full flex flex-col w-full">
+        <div className="flex flex-col gap-6 py-4 pl-4 w-full h-full">
           <div className="relative mr-4">
-            <h1 className="text-xl font-bold text-text-primary">WorkTrace</h1>
-            <span className="absolute top-0 left-28 py-1 px-2 text-button-confirm bg-green-700/15 rounded-full text-xs font-medium">
+            <Link href={"/"} className="flex flex-row items-center gap-2">
+              <FaHome className="mx-2" />
+              <h1 className="font-bold text-text-primary text-xl">WorkTrace</h1>
+            </Link>
+
+            <span className="top-0 left-36 absolute bg-green-700/15 px-2 py-1 rounded-full font-medium text-button-confirm text-xs">
               v1.0.0
             </span>
           </div>
           <UserInfo />
-          <div className="overflow-y-auto h-full pr-2">
+          <div className="pr-2 h-full overflow-y-auto">
             {navigationItems.map((group, idx) => (
               <SidebarMenuGroup
                 key={idx}

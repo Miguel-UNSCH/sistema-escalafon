@@ -20,16 +20,16 @@ interface NavigationItems {
 
 export const navigationItems: NavigationItems[] = [
   {
-    title: "Inicio",
+    title: "inicio",
     menuItem: [
       {
-        label: "Dashboard",
+        label: "dashboard",
         icon: <FaTachometerAlt />,
         path: "/dashboard",
         badge: "2",
         submenus: [
-          { label: "Panel", path: "/dashboard/panel" },
-          { label: "Reportes", path: "/dashboard/reportes" },
+          { label: "panel", path: "/dashboard/panel" },
+          { label: "reportes", path: "/dashboard/reports" },
         ],
       },
     ],
@@ -60,39 +60,39 @@ export const navigationItems: NavigationItems[] = [
     title: "Ficha Personal",
     menuItem: [
       {
-        label: "informacion personal",
+        label: "información personal",
         icon: <FaIdCard />,
-        path: "/ficha/datos-personales",
-        badge: "4",
+        path: "/dashboard/personal-file/personal-information",
+        // badge: "0",
         submenus: [
           {
             label: "datos personales",
-            path: "/ficha/datos-personales/submenu1",
+            path: "/dashboard/personal-file/personal-information/personal-data",
           },
           {
-            label: "datos del conyugue",
-            path: "/ficha/datos-personales/submenu2",
+            label: "datos del cónyuge",
+            path: "/dashboard/personal-file/personal-information/spouse-data",
           },
           {
             label: "datos de los hijos",
-            path: "/ficha/datos-personales/submenu2",
+            path: "/dashboard/personal-file/personal-information/children-data",
           },
         ],
       },
       {
         label: "Estudios y Capacitación",
         icon: <FaBriefcase />,
-        path: "/ficha/estudios",
+        path: "/personal-file/estudios",
       },
       {
         label: "Experiencia Laboral",
         icon: <FaBriefcase />,
-        path: "/ficha/experiencia",
+        path: "/personal-file/experiencia",
       },
       {
         label: "Discapacidad",
         icon: <FaIdCard />,
-        path: "/ficha/discapacidad",
+        path: "/personal-file/discapacidad",
       },
     ],
   },

@@ -80,6 +80,11 @@ export default {
         "loading-bar": "var(--loading-bar)",
         "loading-spinner": "var(--loading-spinner)",
       },
+      fontFamily: {
+        montserrat: ['Montserrat', 'sans-serif'],
+        inter: ['Inter', 'sans-serif'],
+        poppins: ['Poppins', 'sans-serif'],
+      },
     },
   },
   plugins: [require("@tailwindcss/forms")],
