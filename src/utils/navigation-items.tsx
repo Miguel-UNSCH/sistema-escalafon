@@ -14,11 +14,6 @@ export const navigationItems: NavigationItems[] = [
         label: "Dashboard",
         icon: <FaTachometerAlt />,
         path: "/dashboard",
-        badge: "2",
-        submenus: [
-          { label: "Panel", path: "/dashboard/panel" },
-          { label: "Reportes", path: "/dashboard/reportes" },
-        ],
       },
     ],
   },

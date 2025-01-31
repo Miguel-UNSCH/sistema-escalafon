@@ -10,11 +10,11 @@ function UserInfo() {
 
   return (
     <div
-      className={`mr-4 p-4 bg-bg-card rounded-xl border border-border-primary overflow-hidden transition-all duration-400 ${
+      className={`mr-4 p-4 bg-bg-card rounded-xl border border-border-primary overflow-hidden transition-all duration-500 ${
         isExpanded ? "h-auto" : "h-fit"
       }`}
     >
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between pb-2">
         <img
           className="h-12 w-12 rounded-full object-cover"
           src="https://ableproadmin.com/assets/images/user/avatar-2.jpg"
@@ -37,7 +37,7 @@ function UserInfo() {
       <div
         className={`space-y-2 transition-all duration-400 ${
           isExpanded
-            ? "opacity-100 max-h-40"
+            ? "opacity-100 h-40"
             : "opacity-0 max-h-0 overflow-hidden"
         }`}
       >
