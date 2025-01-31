@@ -175,16 +175,16 @@ const FormTemplateb = () => {
           />
         )
       )}
-      <div className="flex flex-row">
+      <div className="flex flex-row justify-between w-full text-[#eff1f5]">
         <button
           type="button"
-          className="justify-center items-center bg-bg-button"
+          className="justify-center items-center bg-[#d20f39] px-4 py-2 rounded-lg"
         >
-          volver
+          Volver
         </button>
         <button
           type="submit"
-          className="justify-center items-center bg-bg-button"
+          className="justify-center items-center bg-[#40a02b] ml-auto px-4 py-2 rounded-lg"
         >
           Enviar
         </button>
