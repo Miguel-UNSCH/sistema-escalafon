@@ -1,19 +1,13 @@
-"use client";
-import React from "react";
+import { InputsPersonalData } from "@/types";
+import React, { useState } from "react";
 import { Control, Controller } from "react-hook-form";
-import { LuCheck, LuPenLine, LuUserRound, LuX } from "react-icons/lu";
-
-type Inputs = {
-  name: string;
-  lastName: string;
-  secondName: string;
-};
+import { LuUserRound, LuX } from "react-icons/lu";
 
 interface IInputTypeProps {
   label: string;
-  name: keyof Inputs;
+  name: keyof InputsPersonalData;
   type: "input" | "select";
-  control: Control<Inputs>;
+  control: Control<InputsPersonalData>;
   options: { placeholder: string };
 }
 
@@ -23,6 +17,16 @@ export const InputTypea: React.FC<IInputTypeProps> = ({
   control,
   options,
 }) => {
+  const [inputValue, setInputValue] = useState("");
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const clearInput = () => {
+    setInputValue("");
+  };
+
   return (
     <div className="flex flex-col">
       <label
@@ -40,17 +44,20 @@ export const InputTypea: React.FC<IInputTypeProps> = ({
             <input
               {...field}
               id={name}
-              className="bg-transparent p-2.5 border-transparent hover:border-transparent w-full text-sm outline-none"
+              value={inputValue}
+              onChange={handleInputChange}
+              className="bg-transparent p-2.5 border-transparent w-full text-sm outline-none"
               placeholder={options.placeholder}
               required
             />
           )}
         />
-        <div className="flex flex-row gap-2">
-          <LuPenLine className="text-lg hover:text-[#4c4f69]" />
-          <LuCheck className="text-lg hover:text-[#40a02b]" />
-          <LuX className="text-lg hover:text-[#d20f39]" />
-        </div>
+        {inputValue && (
+          <LuX
+            className="text-lg hover:text-[#d20f39] cursor-pointer"
+            onClick={clearInput} // Borra el valor del input cuando se hace clic
+          />
+        )}
       </div>
     </div>
   );
