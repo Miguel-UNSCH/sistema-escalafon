@@ -2,7 +2,7 @@ import React from "react";
 
 function page() {
   return (
-    <div className="h-full">
+    <div className="h-full space-y-10">
       <div className="relative bg-gradient-to-r from-blue-600 to-blue-400 p-6 rounded-lg overflow-hidden">
         <h2 className="relative z-10 font-bold text-lg text-white">
           Explore Redesigned Able Pro
