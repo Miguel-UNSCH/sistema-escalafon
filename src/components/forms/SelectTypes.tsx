@@ -40,7 +40,7 @@ export const SelectTypea: React.FC<ISelectTypeProps> = ({
       >
         {label}
       </label>
-      <div className="flex flex-row items-center border-2 mb-5 px-4 rounded-lg">
+      <div className="flex flex-row items-center border border-border-primary focus-within:border-border-focus mb-5 px-4 rounded-lg transition-colors">
         <Controller
           name={name}
           control={control}
@@ -53,11 +53,11 @@ export const SelectTypea: React.FC<ISelectTypeProps> = ({
                 handleSelectChange(e);
                 field.onChange(e); // actualiza el valor en react-hook-form
               }}
-              className="bg-transparent p-2.5 border-transparent w-full text-sm outline-none"
+              className="bg-transparent p-2.5 border-none focus:outline-none focus:ring-0 focus:border-transparent w-full text-sm outline-none"
               required
             >
               {options.items.map((item, index) => (
-                <option key={index} value={item}>
+                <option key={index} value={item} className="bg-bg-card">
                   {item}
                 </option>
               ))}
