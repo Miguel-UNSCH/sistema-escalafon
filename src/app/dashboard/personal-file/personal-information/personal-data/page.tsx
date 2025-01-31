@@ -1,5 +1,6 @@
 "use client";
 import { InputTypea } from "@/components/forms/InputTypes";
+import { SelectTypea } from "@/components/forms/SelectTypes";
 import { InputsPersonalData } from "@/types";
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -9,9 +10,16 @@ interface IFormData {
   name: keyof InputsPersonalData;
   size?: string;
   type: "input" | "select";
-  options: {
-    placeholder: string;
-  };
+  options: InputTypeForm | SelectTypeForm;
+}
+
+interface InputTypeForm {
+  placeholder: string;
+}
+
+interface SelectTypeForm {
+  items: string[];
+  defaultValue: string;
 }
 
 const FormTemplatea = () => {
@@ -45,15 +53,16 @@ const FormTemplatea = () => {
         placeholder: "Ingrese sus nombres",
       },
     },
-    // {
-    //   label: "Sexo",
-    //   name: "gender",
-    //   type: "select",
-    //   size: "medium",
-    //   options: {
-    //     placeholder: "Seleccione su sexo",
-    //   },
-    // },
+    {
+      label: "Sexo",
+      name: "gender",
+      type: "select",
+      size: "medium",
+      options: {
+        items: ["Masculino", "Femenino", "Otro", "Prefiero no decirlo"],
+        defaultValue: "Prefiero no decirlo",
+      },
+    },
     {
       label: "Edad",
       name: "age",
@@ -90,15 +99,16 @@ const FormTemplatea = () => {
         placeholder: "Ingrese su licencia de conducir",
       },
     },
-    // {
-    //   label: "Grupo sanguíneo",
-    //   name: "bloodGroup",
-    //   type: "select",
-    //   size: "small",
-    //   options: {
-    //     placeholder: "Seleccione su grupo sanguíneo",
-    //   },
-    // },
+    {
+      label: "Grupo sanguíneo",
+      name: "bloodGroup",
+      type: "select",
+      size: "medium",
+      options: {
+        items: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
+        defaultValue: "O+",
+      },
+    },
     {
       label: "Fecha de ingreso",
       name: "startDate",
@@ -216,6 +226,70 @@ const FormTemplatea = () => {
         placeholder: "Ingrese su correo electrónico",
       },
     },
+    {
+      label: "Personal con discapacidad",
+      name: "personalConDiscapacidad",
+      type: "select",
+      size: "medium",
+      options: {
+        items: ["Sí", "No"],
+        defaultValue: "No",
+      },
+    },
+    {
+      label: "Régimen pensionario",
+      name: "regimenPensionario",
+      type: "select",
+      size: "medium",
+      options: {
+        items: ["L. N° 29903", "D. L. ° 19990"],
+        defaultValue: "L. N° 29903",
+      },
+    },
+    {
+      label: "Nombre de AFP",
+      name: "nombreAFP",
+      type: "input",
+      size: "medium",
+      options: {
+        placeholder: "Ingrese el nombre de la AFP",
+      },
+    },
+    {
+      label: "Situación laboral",
+      name: "situacionLaboral",
+      type: "select",
+      size: "large",
+      options: {
+        items: [
+          "Nombrado-D-L. 276",
+          "Contratado plaza vacante",
+          "Contratado ley 30057",
+          "Contratado CAS-Indeterminado",
+          "Contratado en CAS-Temporal D.L. 1057",
+          "Contratado en proyecto de inversión",
+          "Practicantes preprofesionales-D.L. 1404",
+          "Practicante profesional-D.L. 1004",
+        ],
+        defaultValue: "Nombrado-D-L. 276",
+      },
+    },
+    {
+      label: "Estado civil",
+      name: "estadoCivil",
+      type: "select",
+      size: "medium",
+      options: {
+        items: [
+          "Soltero/a",
+          "Casado/a",
+          "Separado/a",
+          "Viudo/a",
+          "Conviviente",
+        ],
+        defaultValue: "Soltero/a",
+      },
+    },
   ];
 
   const onSubmit: SubmitHandler<InputsPersonalData> = (data) =>
@@ -223,16 +297,26 @@ const FormTemplatea = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {formData.map((field, index) => (
-        <InputTypea
-          key={index}
-          label={field.label}
-          name={field.name as keyof InputsPersonalData}
-          type={field.type}
-          control={control}
-          options={field.options}
-        />
-      ))}
+      {formData.map((field, index) =>
+        field.type === "input" ? (
+          <InputTypea
+            key={index}
+            label={field.label}
+            name={field.name as keyof InputsPersonalData}
+            type={field.type}
+            control={control}
+            options={field.options}
+          />
+        ) : (
+          <SelectTypea
+            key={index}
+            label={field.label}
+            name={field.name as keyof InputsPersonalData}
+            control={control}
+            options={field.options}
+          />
+        )
+      )}
       <button type="submit">Enviar</button>
     </form>
   );
@@ -243,7 +327,7 @@ const page = () => {
     <div className="flex flex-col justify-center items-center font-poppins">
       <div className="flex flex-col">
         <h3 className="font-bold font-montserrat text-xl uppercase">
-          Información personal
+          Datos personales
         </h3>
         <FormTemplatea />
       </div>

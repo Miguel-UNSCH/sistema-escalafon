@@ -1,13 +1,20 @@
-import { InputsPersonalData } from "@/types";
+import {
+  InputsChildrenData,
+  InputsPersonalData,
+  InputsSpouseData,
+} from "@/types";
 import React, { useState } from "react";
 import { Control, Controller } from "react-hook-form";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { LuUserRound, LuX } from "react-icons/lu";
+
+type AllInputsData = InputsPersonalData | InputsChildrenData | InputsSpouseData;
 
 interface IInputTypeProps {
   label: string;
-  name: keyof InputsPersonalData;
+  name: keyof AllInputsData;
   type: "input" | "select";
-  control: Control<InputsPersonalData>;
+  control: Control<AllInputsData>;
   options: { placeholder: string };
 }
 
@@ -35,8 +42,8 @@ export const InputTypea: React.FC<IInputTypeProps> = ({
       >
         {label}
       </label>
-      <div className="flex flex-row items-center border-2 px-4 rounded-lg">
-        <LuUserRound />
+      <div className="flex flex-row items-center border-2 mb-5 px-4 rounded-lg">
+        {/* <LuUserRound /> */}
         <Controller
           name={name}
           control={control}
@@ -47,7 +54,7 @@ export const InputTypea: React.FC<IInputTypeProps> = ({
               value={inputValue}
               onChange={handleInputChange}
               className="bg-transparent p-2.5 border-transparent w-full text-sm outline-none"
-              placeholder={options.placeholder}
+              placeholder={options?.placeholder}
               required
             />
           )}
@@ -55,7 +62,7 @@ export const InputTypea: React.FC<IInputTypeProps> = ({
         {inputValue && (
           <LuX
             className="text-lg hover:text-[#d20f39] cursor-pointer"
-            onClick={clearInput} // Borra el valor del input cuando se hace clic
+            onClick={clearInput}
           />
         )}
       </div>
