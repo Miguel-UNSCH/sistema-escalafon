@@ -42,7 +42,7 @@ export const InputTypea: React.FC<IInputTypeProps> = ({
       >
         {label}
       </label>
-      <div className="flex flex-row items-center border border-border-primary focus-within:border-border-focus mb-5 px-4 rounded-lg transition-colors">
+      <div className="flex flex-row items-center mb-5 px-4 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
         {/* <LuUserRound /> */}
         <Controller
           name={name}
@@ -53,7 +53,7 @@ export const InputTypea: React.FC<IInputTypeProps> = ({
               id={name}
               value={inputValue}
               onChange={handleInputChange}
-              className="bg-transparent p-2.5 border-none focus:outline-none focus:ring-0 focus:border-transparent w-full text-sm outline-none"
+              className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
               placeholder={options?.placeholder}
               required
             />

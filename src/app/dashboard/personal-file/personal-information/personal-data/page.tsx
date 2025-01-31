@@ -296,7 +296,10 @@ const FormTemplatea = () => {
     console.log(data);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="gap-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3"
+    >
       {formData.map((field, index) =>
         field.type === "input" ? (
           <InputTypea
@@ -338,7 +341,7 @@ const FormTemplatea = () => {
 const page = () => {
   return (
     <div className="flex flex-col justify-center items-center font-poppins">
-      <div className="flex flex-col">
+      <div className="flex flex-col w-full">
         <h3 className="font-bold font-montserrat text-xl uppercase">
           Datos personales
         </h3>
