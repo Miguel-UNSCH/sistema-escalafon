@@ -82,17 +82,17 @@ export const navigationItems: NavigationItems[] = [
       {
         label: "Estudios y Capacitación",
         icon: <FaBriefcase />,
-        path: "/personal-file/estudios",
+        path: "/dashboard/personal-file/studies-training",
       },
       {
         label: "Experiencia Laboral",
         icon: <FaBriefcase />,
-        path: "/personal-file/experiencia",
+        path: "/dashboard/personal-file/experiencia",
       },
       {
         label: "Discapacidad",
         icon: <FaIdCard />,
-        path: "/personal-file/discapacidad",
+        path: "/dashboard/personal-file/discapacidad",
       },
     ],
   },

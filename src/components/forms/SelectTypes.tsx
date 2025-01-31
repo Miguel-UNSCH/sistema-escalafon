@@ -51,7 +51,7 @@ export const SelectTypea: React.FC<ISelectTypeProps> = ({
               value={selectedValue}
               onChange={(e) => {
                 handleSelectChange(e);
-                field.onChange(e); // actualiza el valor en react-hook-form
+                field.onChange(e);
               }}
               className="bg-transparent p-2.5 border-transparent w-full text-sm outline-none"
               required

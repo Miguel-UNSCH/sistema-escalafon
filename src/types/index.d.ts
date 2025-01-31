@@ -10,7 +10,7 @@ export type InputsPersonalData = {
   driverLicense: string;
   bloodGroup: string;
   bloodGroup: string;
-  startDate: string; 
+  startDate: string;
   workUnit: string;
   position: string;
   birthDate: string;
@@ -32,73 +32,82 @@ export type InputsPersonalData = {
 
 export type InputsChildrenData = {
   fullName: string;
-  birthPlaceAndDate: string;  // Lugar y fecha de nacimiento
+  birthPlaceAndDate: string;
   age: number;
-  educationLevel: string;  // Grado de instrucción
+  educationLevel: string;
 };
 
 export type InputsSpouseData = {
-  fullName: string;  // Apellidos y nombres
-  birthPlaceAndDate: string;  // Lugar y fecha de nacimiento
-  region: string;  // Departamento/Región
-  province: string;  // Provincia
-  district: string;  // Distrito
-  educationLevel: string;  // Grado de instrucción
-  profession: string;  // Profesión
-  occupation: string;  // Ocupación
-  workplace: string;  // Centro de trabajo
-  postgraduate: string;  // Postgrado / Especialización (Título, Año, Universidad)
+  fullName: string;
+  birthPlaceAndDate: string;
+  region: string;
+  province: string;
+  district: string;
+  educationLevel: string;
+  profession: string;
+  occupation: string;
+  workplace: string;
+  postgraduate: string;
+};
+
+export type InputsStudiesData = {
+  fullName: string;
+  academicBackground: string;
+  academicYear: string;
+  institutionName: string;
+  otherCertifications: string;
+  trainingCenter: string;
+  subject: string;
+  professionOrSpecialty: string;
+  trainingPeriod: string;
+  lectiveHours: string;
+  issueDate: string;
+  certifiedPDF: string;
 };
 
 export type WorkSituation =
-  | 'Nombrado-D-L. 276'
-  | 'Contratado plaza vacante'
-  | 'Contratado ley 30057'
-  | 'Contratado CAS-Indeterminado'
-  | 'Contratado en CAS-Temporal D.L. 1057'
-  | 'Contratado en proyecto de inversión'
-  | 'Practicantes preprofesionales-D.L. 1404'
-  | 'Practicante profesional-D.L. 1004';
+  | "Nombrado-D-L. 276"
+  | "Contratado plaza vacante"
+  | "Contratado ley 30057"
+  | "Contratado CAS-Indeterminado"
+  | "Contratado en CAS-Temporal D.L. 1057"
+  | "Contratado en proyecto de inversión"
+  | "Practicantes preprofesionales-D.L. 1404"
+  | "Practicante profesional-D.L. 1004";
 
-export  type CivilStatus =
-  | 'Soltero/a'
-  | 'Casado/a'
-  | 'Separado/a'
-  | 'Viudo/a'
-  | 'Conviviente';
+export type CivilStatus =
+  | "Soltero/a"
+  | "Casado/a"
+  | "Separado/a"
+  | "Viudo/a"
+  | "Conviviente";
 
-export type PensionRegime =
-| 'L. N° 29903'
-| 'D. L. ° 19990';
+export type PensionRegime = "L. N° 29903" | "D. L. ° 19990";
 
 export type AcademicFormation =
-| 'Primaria Completa'
-| 'Primaria Incompleta'
-| 'Incompleta'
-| 'Universitario Secundaria Completa'
-| 'Secundaria Completa'
-| 'Universitario Incompleta'
-| 'Bachiller'
-| 'Titulado'
-| 'Postgrado'
-| 'Técnico Completo'
-| 'Técnico Incompleta'
-| 'Técnico Egresado'
-| 'Técnico Titulado';
+  | "Primaria Completa"
+  | "Primaria Incompleta"
+  | "Incompleta"
+  | "Universitario Secundaria Completa"
+  | "Secundaria Completa"
+  | "Universitario Incompleta"
+  | "Bachiller"
+  | "Titulado"
+  | "Postgrado"
+  | "Técnico Completo"
+  | "Técnico Incompleta"
+  | "Técnico Egresado"
+  | "Técnico Titulado";
 
 export type LaborCondition =
-| 'Nombrado'
-| 'Contratado o en plaza vacante'
-| 'Designado';
+  | "Nombrado"
+  | "Contratado o en plaza vacante"
+  | "Designado";
 
-export type LaborRegime =
-| '276'
-| 'FAG-CAS-FUN276';
+export type LaborRegime = "276" | "FAG-CAS-FUN276";
 
-export type EmploymentCondition =
-| 'Indeterminado'
-| 'Eventual';
+export type EmploymentCondition = "Indeterminado" | "Eventual";
 
 export type EmploymentConditionSpecial =
-| 'Contratado'
-| 'Reincorporado-Mandato Judicial';
+  | "Contratado"
+  | "Reincorporado-Mandato Judicial";
