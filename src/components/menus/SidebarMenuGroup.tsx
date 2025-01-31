@@ -81,7 +81,7 @@ const SidebarMenuItem: React.FC<{
             </div>
             <div className="flex items-center space-x-2">
               {item.badge && (
-                <span className="inline-block bg-link-main px-2 py-0.5 rounded-full text-white text-xs">
+                <span className="inline-block bg-link-main px-2 p-1 rounded-full text-white text-xs">
                   {item.badge}
                 </span>
               )}
