@@ -23,6 +23,7 @@ const FormTemplateb = () => {
           name: "fullName",
           placeholder: "Ingrese sus apellidos y nombres",
           icon: <LuUserRound />,
+          required: true,
         },
       ],
     },
@@ -33,7 +34,7 @@ const FormTemplateb = () => {
           label: "Nombres",
           name: "names",
           placeholder: "Ingrese sus  nombres",
-          icon: <LuUserRound />,
+          defaultValue: "Juan",
         },
         {
           label: "apellidos",
