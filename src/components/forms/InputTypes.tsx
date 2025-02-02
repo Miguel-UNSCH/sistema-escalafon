@@ -1,29 +1,66 @@
-import {
-  InputsChildrenData,
-  InputsPersonalData,
-  InputsSpouseData,
-} from "@/types";
+import { InputsChildrenData, InputsPersonalData, InputsSpouseData } from "@/types";
+import { IInputBasicFields } from "@/types/input";
 import React, { useState } from "react";
 import { Control, Controller } from "react-hook-form";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { LuUserRound, LuX } from "react-icons/lu";
+import { LuX } from "react-icons/lu";
 
 type AllInputsData = InputsPersonalData | InputsChildrenData | InputsSpouseData;
 
-interface IInputTypeProps {
-  label: string;
-  name: keyof AllInputsData;
-  type: "input" | "select";
-  control: Control<AllInputsData>;
-  options: { placeholder: string };
+interface IInputsData {
+  names: string;
+  lastName: string;
 }
 
-export const InputTypea: React.FC<IInputTypeProps> = ({
-  label,
-  name,
-  control,
-  options,
-}) => {
+interface IBasicInputProps {
+  control: Control<IInputsData>;
+  fields: IInputBasicFields[];
+}
+
+export const BasicInput: React.FC<IBasicInputProps> = ({ control, fields }) => {
+  const [inputValue, setInputValue] = useState("");
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const clearInput = () => {
+    setInputValue("");
+  };
+
+  return (
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      {fields.map((i) => (
+        <div key={i.name} className="flex flex-col">
+          <label htmlFor={i.name} className="block mb-2 font-medium text-text-primary">
+            {i.label}
+          </label>
+          <div className="flex flex-row items-center mb-5 px-4 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
+            <Controller
+              name={i.name as keyof IInputsData}
+              control={control}
+              render={({ field }) => (
+                <input
+                  {...field}
+                  id={i.name}
+                  value={inputValue}
+                  onChange={handleInputChange}
+                  className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
+                  placeholder={i.placeholder}
+                  required
+                />
+              )}
+            />
+            {inputValue && <LuX className="text-lg hover:text-[#d20f39] cursor-pointer" onClick={clearInput} />}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+/** ---------------------------------------------------------------------------------------------------------------------------------------------- */
+
+export const InputTypea: React.FC<IInputTypeProps> = ({ label, name, control, options }) => {
   const [inputValue, setInputValue] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,10 +73,7 @@ export const InputTypea: React.FC<IInputTypeProps> = ({
 
   return (
     <div className="flex flex-col">
-      <label
-        htmlFor={name}
-        className="block mb-2 font-medium text-text-primary"
-      >
+      <label htmlFor={name} className="block mb-2 font-medium text-text-primary">
         {label}
       </label>
       <div className="flex flex-row items-center mb-5 px-4 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
@@ -59,13 +93,16 @@ export const InputTypea: React.FC<IInputTypeProps> = ({
             />
           )}
         />
-        {inputValue && (
-          <LuX
-            className="text-lg hover:text-[#d20f39] cursor-pointer"
-            onClick={clearInput}
-          />
-        )}
+        {inputValue && <LuX className="text-lg hover:text-[#d20f39] cursor-pointer" onClick={clearInput} />}
       </div>
     </div>
   );
 };
+
+interface IInputTypeProps {
+  label: string;
+  name: keyof AllInputsData;
+  type: "input" | "select";
+  control: Control<AllInputsData>;
+  options: { placeholder: string };
+}

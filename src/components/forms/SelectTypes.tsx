@@ -1,8 +1,4 @@
-import {
-  InputsChildrenData,
-  InputsPersonalData,
-  InputsSpouseData,
-} from "@/types";
+import { InputsChildrenData, InputsPersonalData, InputsSpouseData } from "@/types";
 import React, { useState } from "react";
 import { Control, Controller } from "react-hook-form";
 import { LuX } from "react-icons/lu";
@@ -16,12 +12,7 @@ interface ISelectTypeProps {
   options: { items: string[]; defaultValue: string };
 }
 
-export const SelectTypea: React.FC<ISelectTypeProps> = ({
-  label,
-  name,
-  control,
-  options,
-}) => {
+export const SelectTypea: React.FC<ISelectTypeProps> = ({ label, name, control, options }) => {
   const [selectedValue, setSelectedValue] = useState(options.defaultValue);
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -34,10 +25,7 @@ export const SelectTypea: React.FC<ISelectTypeProps> = ({
 
   return (
     <div className="flex flex-col">
-      <label
-        htmlFor={name}
-        className="block mb-2 font-medium text-text-primary"
-      >
+      <label htmlFor={name} className="block mb-2 font-medium text-text-primary">
         {label}
       </label>
       <div className="flex flex-row items-center border border-border-primary focus-within:border-border-focus mb-5 px-4 rounded-lg transition-colors">
@@ -64,12 +52,7 @@ export const SelectTypea: React.FC<ISelectTypeProps> = ({
             </select>
           )}
         />
-        {selectedValue && (
-          <LuX
-            className="text-lg hover:text-[#d20f39] cursor-pointer"
-            onClick={clearSelect}
-          />
-        )}
+        {selectedValue && <LuX className="text-lg hover:text-[#d20f39] cursor-pointer" onClick={clearSelect} />}
       </div>
     </div>
   );
