@@ -2,9 +2,10 @@
 import React from "react";
 
 import { BasicInput } from "@/components/forms/InputTypes";
-import { IInputBasicData } from "@/types/input";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { LuUserRound } from "react-icons/lu";
+import { BasicSelect } from "@/components/forms/SelectTypes";
+
+import { studiesTraining as formData } from "@/utils/personal-file";
 
 interface IInputsData {
   names: string;
@@ -14,46 +15,16 @@ interface IInputsData {
 const FormTemplateb = () => {
   const { control, handleSubmit } = useForm<IInputsData>();
 
-  const inputBasicData: IInputBasicData[] = [
-    {
-      type: "BasicInput",
-      fields: [
-        {
-          label: "Apellidos y nombres",
-          name: "fullName",
-          placeholder: "Ingrese sus apellidos y nombres",
-          icon: <LuUserRound />,
-          required: true,
-        },
-      ],
-    },
-    {
-      type: "BasicInput",
-      fields: [
-        {
-          label: "Nombres",
-          name: "names",
-          placeholder: "Ingrese sus  nombres",
-          defaultValue: "Juan",
-        },
-        {
-          label: "apellidos",
-          name: "lastName",
-          placeholder: "Ingrese sus apellidos",
-          icon: <LuUserRound />,
-        },
-      ],
-    },
-  ];
-
   const onSubmit: SubmitHandler<IInputsData> = (data) => console.log(data);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {inputBasicData.map((inputData, index) => {
-        switch (inputData.type) {
+      {formData.map((i, index) => {
+        switch (i.type) {
           case "BasicInput":
-            return <BasicInput key={index} control={control} fields={inputData.fields} />;
+            return <BasicInput key={index} control={control} fields={i.fields} />;
+          case "BasicSelect":
+            return <BasicSelect key={index} control={control} fields={i.fields} />;
           default:
             return null;
         }

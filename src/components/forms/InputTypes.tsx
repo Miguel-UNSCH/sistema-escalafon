@@ -23,7 +23,8 @@ export const BasicInput: React.FC<IBasicInputProps> = ({ control, fields }) => (
         <label htmlFor={i.name} className="block mb-2 font-medium text-text-primary">
           {i.label}
         </label>
-        <div className="flex flex-row items-center mb-5 px-4 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
+        <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
+          {i?.icon}
           <Controller
             name={i.name as keyof IInputsData}
             control={control}

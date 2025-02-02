@@ -1,3 +1,8 @@
+export interface IFormData {
+  type: "BasicInput" | "BasicSelect";
+  fields: Array<IInputBasicFields | IBasicSelectFields>;
+}
+
 export type InputsPersonalData = {
   names: string;
   paternalLastName: string;
@@ -75,12 +80,7 @@ export type WorkSituation =
   | "Practicantes preprofesionales-D.L. 1404"
   | "Practicante profesional-D.L. 1004";
 
-export type CivilStatus =
-  | "Soltero/a"
-  | "Casado/a"
-  | "Separado/a"
-  | "Viudo/a"
-  | "Conviviente";
+export type CivilStatus = "Soltero/a" | "Casado/a" | "Separado/a" | "Viudo/a" | "Conviviente";
 
 export type PensionRegime = "L. N° 29903" | "D. L. ° 19990";
 
@@ -99,15 +99,10 @@ export type AcademicFormation =
   | "Técnico Egresado"
   | "Técnico Titulado";
 
-export type LaborCondition =
-  | "Nombrado"
-  | "Contratado o en plaza vacante"
-  | "Designado";
+export type LaborCondition = "Nombrado" | "Contratado o en plaza vacante" | "Designado";
 
 export type LaborRegime = "276" | "FAG-CAS-FUN276";
 
 export type EmploymentCondition = "Indeterminado" | "Eventual";
 
-export type EmploymentConditionSpecial =
-  | "Contratado"
-  | "Reincorporado-Mandato Judicial";
+export type EmploymentConditionSpecial = "Contratado" | "Reincorporado-Mandato Judicial";
