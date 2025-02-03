@@ -1,31 +1,51 @@
 import React from "react";
 
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Control, SubmitHandler, useForm } from "react-hook-form";
 import { BasicInput, InputDate, InputFile } from "./InputTypes";
 import { BasicSelect } from "./SelectTypes";
 import { IFormData } from "@/types";
-import { IStudies } from "@/utils/personal-file";
+import { IChildrenData, ISpouseData, IStudies, IStudiesTraining } from "@/utils/personal-file";
 
 export interface IBasicFormProps {
+  path: string;
   formData: IFormData[];
 }
 
-export const BasicForm: React.FC<IBasicFormProps> = ({ formData }) => {
-  const { control, handleSubmit } = useForm<IStudies>();
+type FormTypeMapping = {
+  studies: IStudies;
+  spouse: ISpouseData;
+  children: IChildrenData;
+  studiesTraining: IStudiesTraining;
+};
 
-  const onSubmit: SubmitHandler<IStudies> = (data) => console.log(data);
+export const BasicForm: React.FC<IBasicFormProps> = ({ path, formData }) => {
+  const typeMapping: { [key: string]: keyof FormTypeMapping } = {
+    studies: "studies",
+    spouse: "spouse",
+    children: "children",
+    studiesTraining: "studiesTraining",
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const formType = typeMapping[path] || "studies";
+
+  const { control, handleSubmit } = useForm<FormTypeMapping[typeof formType]>();
+
+  const onSubmit: SubmitHandler<FormTypeMapping[typeof formType]> = (data) => {
+    console.log(data);
+  };
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       {formData.map((i, index) => {
         switch (i.type) {
           case "BasicInput":
-            return <BasicInput key={index} control={control} fields={i.fields} />;
+            return <BasicInput key={index} control={control as Control<FormTypeMapping[typeof formType]>} fields={i.fields} path="studiesTraining" />;
           case "BasicSelect":
-            return <BasicSelect key={index} control={control} fields={i.fields} />;
+            return <BasicSelect key={index} control={control as Control<FormTypeMapping[typeof formType]>} fields={i.fields} />;
           case "InputDate":
-            return <InputDate key={index} control={control} fields={i.fields} />;
+            return <InputDate key={index} control={control as Control<FormTypeMapping[typeof formType]>} fields={i.fields} />;
           case "InputFile":
-            return <InputFile key={index} control={control} fields={i.fields} />;
+            return <InputFile key={index} control={control as Control<FormTypeMapping[typeof formType]>} fields={i.fields} />;
           default:
             return null;
         }

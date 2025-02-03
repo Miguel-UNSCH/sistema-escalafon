@@ -1,10 +1,16 @@
-import { IChildrenData, IPersonalData, ISpouseData, IStudies, ITraining } from "@/utils/personal-file";
-
-export type IPersonalInformation = IPersonalData | ISpouseData | IChildrenData;
-
-export type IPFStudiesTraining = IStudies | ITraining;
-
-export type IForm = IPersonalInformation | IPFStudiesTraining;
+export const mmltTypes = {
+  personalFile: {
+    personalInformation: {
+      personalData: "IPersonalData",
+      spouseData: "ISpouseData",
+      childrenData: "IChildrenData",
+    },
+    studiesTraining: {
+      studies: "IStudies",
+      training: "ITraining",
+    },
+  },
+};
 
 /** ---------------------------------------------------------------------------------------------------------------------------------------------- */
 
