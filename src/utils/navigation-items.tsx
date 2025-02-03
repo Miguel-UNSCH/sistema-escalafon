@@ -7,7 +7,6 @@ import {
   FaMoneyBill,
   FaTrophy,
   FaFileAlt,
-  FaCogs,
   FaChartBar,
   FaSignOutAlt,
   FaTachometerAlt,
@@ -186,26 +185,6 @@ export const navigationItems: NavigationItems[] = [
         label: "Reportes Personalizados",
         icon: <FaChartBar />,
         path: "/reportes/personalizados",
-      },
-    ],
-  },
-  {
-    title: "Configuración",
-    menuItem: [
-      {
-        label: "Perfil / Mi Cuenta",
-        icon: <FaCogs />,
-        path: "/configuracion/perfil",
-      },
-      {
-        label: "Cambiar Contraseña",
-        icon: <FaCogs />,
-        path: "/configuracion/cambiar-contraseña",
-      },
-      {
-        label: "Preferencias",
-        icon: <FaCogs />,
-        path: "/configuracion/preferencias",
       },
     ],
   },

@@ -419,12 +419,6 @@ REPORTES (solo admin)
    ├── Reportes Mensuales
    ├── Reportes Anuales
    └── Reportes Personalizados
-
-CONFIGURACIÓN
-   ├── Perfil / Mi Cuenta
-   ├── Cambiar Contraseña
-   └── Preferencias
-
 ```
 
 > **Notas:**

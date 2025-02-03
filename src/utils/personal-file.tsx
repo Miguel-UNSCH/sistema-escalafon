@@ -261,3 +261,10 @@ export const studiesTraining: IFormData[] = [
     ],
   },
 ];
+
+/** /dashboard/personal-file/disability */
+export interface IDisability {
+  disabilityType: string; // Tipo de discapacidad (física, sensorial, intelectual, etc.)
+  disabilityCertificate: string; // Certificado de discapacidad (Número de documento o código)
+  disabilityDegree: string; // Grado de discapacidad (Leve, Moderada, Severa)
+}

@@ -96,13 +96,12 @@ export const InputFile: React.FC<IInputFileProps> = ({ control, fields }) => {
 
 /** ---------------------------------------------------------------------------------------------------------------------------------------------- */
 
-interface IBasicInputProps<T> {
-  control: Control<T>;
+interface IBasicInputProps {
+  control: Control<IStudiesTraining>;
   fields: IInputBasicFields[];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-constraint
-export const BasicInput = <T extends unknown>({ control, fields }: IBasicInputProps<T>) => (
+export const BasicInput: React.FC<IBasicInputProps> = ({ control, fields }) => (
   <div className={`grid gap-4 md:grid-cols-${fields.length}`}>
     {fields.map((i) => (
       <div key={i.name} className="flex flex-col">
@@ -112,7 +111,7 @@ export const BasicInput = <T extends unknown>({ control, fields }: IBasicInputPr
         <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
           {i?.icon}
           <Controller
-            name={i.name as keyof T}
+            name={i.name as keyof IStudiesTraining}
             control={control}
             defaultValue={i.defaultValue || ""}
             render={({ field }) => (
