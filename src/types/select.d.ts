@@ -11,11 +11,3 @@ export interface IBasicSelectFields {
   defaultValue?: string;
   options: Array<ISelectOption>;
 }
-
-/** start-date to end-date */
-export interface ISelectDateFields {
-  label: string;
-  name: string;
-  required?: boolean;
-  defaultValue?: string;
-}

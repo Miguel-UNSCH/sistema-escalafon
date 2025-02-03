@@ -1,9 +1,9 @@
 "use client";
 import React from "react";
 
-import { BasicInput } from "@/components/forms/InputTypes";
+import { BasicInput, InputDate, InputFile } from "@/components/forms/InputTypes";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { BasicSelect, SelectDate } from "@/components/forms/SelectTypes";
+import { BasicSelect } from "@/components/forms/SelectTypes";
 
 import { studiesTraining as formData } from "@/utils/personal-file";
 
@@ -25,8 +25,10 @@ const FormTemplateb = () => {
             return <BasicInput key={index} control={control} fields={i.fields} />;
           case "BasicSelect":
             return <BasicSelect key={index} control={control} fields={i.fields} />;
-          case "SelectDate":
-            return <SelectDate key={index} control={control} fields={i.fields} />;
+          case "InputDate":
+            return <InputDate key={index} control={control} fields={i.fields} />;
+          case "InputFile":
+            return <InputFile key={index} control={control} fields={i.fields} />;
           default:
             return null;
         }

@@ -1,5 +1,5 @@
 import { IFormData } from "@/types";
-import { LuUserRound } from "react-icons/lu";
+import { LuFile, LuUserRound } from "react-icons/lu";
 
 /** /dashboard/personal-file/personal-information/personal-data */
 
@@ -70,10 +70,10 @@ export const studiesTraining: IFormData[] = [
     ],
   },
   {
-    type: "SelectDate",
+    type: "InputDate",
     fields: [
       {
-        label: "Periodo",
+        label: "periodo",
         name: "period",
       },
     ],
@@ -101,13 +101,13 @@ export const studiesTraining: IFormData[] = [
     ],
   },
   {
-    type: "BasicInput",
+    type: "InputFile",
     fields: [
       {
         label: "certificado PDF",
         name: "certificatePdf",
-        placeholder: "ingrese el certificado PDF [fix - create a BasicFile component]",
-        icon: <LuUserRound />,
+        inf: "ingrese el certificado PDF",
+        icon: <LuFile />,
       },
     ],
   },
