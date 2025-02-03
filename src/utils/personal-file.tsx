@@ -2,7 +2,7 @@ import { IFormData } from "@/types";
 import { LuCalendar, LuFile, LuGraduationCap, LuMap, LuUserRound } from "react-icons/lu";
 
 /** /dashboard/personal-file/personal-information/personal-data */
-export interface IPIPersonalData {
+export interface IPersonalData {
   paternalSurname: string; // Apellido Paterno
   maternalSurname: string; // Apellido Materno
   names: string; // Nombres
@@ -52,7 +52,7 @@ export enum MaritalStatus {
 }
 
 /** /dashboard/personal-file/personal-information/spouse-data */
-export interface IPISpouseData {
+export interface ISpouseData {
   names: string;
   lastName: string;
   placeBirth: string;
@@ -67,7 +67,7 @@ export interface IPISpouseData {
 }
 
 /** /dashboard/personal-file/personal-information/children-data */
-export interface IPIChildrenData {
+export interface IChildrenData {
   names: string;
   lastName: string;
   placeBirth: string;
@@ -136,7 +136,7 @@ export enum AcademicLevel {
   CertifiedTechnicalEducation = "Técnico Titulado",
 }
 
-export interface IPFStudies {
+export interface IStudies {
   fullName: string; // Apellidos y nombres
   academicFormation: AcademicLevel; // Formación Académica
   startYear: number; // Año (Del)
@@ -146,6 +146,19 @@ export interface IPFStudies {
 }
 
 // only data for training
+export interface ITraining {
+  names: string;
+  lastName: string;
+  trainingCenter: string;
+  subject: string;
+  professionOrSpecialty: string;
+  periodStart: string;
+  periodEnd: string;
+  hours: number;
+  issueDate: string;
+  certificatePdf: string;
+}
+
 export interface IStudiesTraining {
   names: string;
   lastName: string;
