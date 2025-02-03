@@ -3,7 +3,7 @@ import React from "react";
 
 import { BasicInput } from "@/components/forms/InputTypes";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { BasicSelect } from "@/components/forms/SelectTypes";
+import { BasicSelect, SelectDate } from "@/components/forms/SelectTypes";
 
 import { studiesTraining as formData } from "@/utils/personal-file";
 
@@ -25,6 +25,8 @@ const FormTemplateb = () => {
             return <BasicInput key={index} control={control} fields={i.fields} />;
           case "BasicSelect":
             return <BasicSelect key={index} control={control} fields={i.fields} />;
+          case "SelectDate":
+            return <SelectDate key={index} control={control} fields={i.fields} />;
           default:
             return null;
         }

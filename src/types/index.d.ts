@@ -1,6 +1,6 @@
 export interface IFormData {
-  type: "BasicInput" | "BasicSelect";
-  fields: Array<IInputBasicFields | IBasicSelectFields>;
+  type: "BasicInput" | "BasicSelect" | "SelectDate";
+  fields: Array<IInputBasicFields | IBasicSelectFields | ISelectDateFields>;
 }
 
 export type InputsPersonalData = {

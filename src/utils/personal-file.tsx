@@ -16,7 +16,8 @@ export interface IStudiesTraining {
   trainingCenter: string;
   subject: string;
   professionOrSpecialty: string;
-  period: string;
+  periodStart: string;
+  periodEnd: string;
   hours: number;
   issueDate: string;
   certificatePdf: string;
@@ -30,14 +31,12 @@ export const studiesTraining: IFormData[] = [
         name: "names",
         placeholder: "Ingrese sus nombres",
         icon: <LuUserRound />,
-        required: true,
       },
       {
         label: "apellidos",
         name: "lastName",
         placeholder: "ingrese sus apellidos",
         icon: <LuUserRound />,
-        required: true,
       },
     ],
   },
@@ -49,7 +48,6 @@ export const studiesTraining: IFormData[] = [
         name: "trainingCenter",
         placeholder: "ingrese el centro de formación profesional",
         icon: <LuUserRound />,
-        required: true,
       },
     ],
   },
@@ -61,7 +59,6 @@ export const studiesTraining: IFormData[] = [
         name: "subject",
         placeholder: "ingrese la asignatura",
         icon: <LuUserRound />,
-        required: true,
       },
 
       {
@@ -69,19 +66,15 @@ export const studiesTraining: IFormData[] = [
         name: "professionOrSpecialty",
         placeholder: "ingrese la profesión o especialidad",
         icon: <LuUserRound />,
-        required: true,
       },
     ],
   },
   {
-    type: "BasicInput",
+    type: "SelectDate",
     fields: [
       {
         label: "Periodo",
         name: "period",
-        placeholder: "Ingrese el periodo [fix - create a BasicDate component]",
-        icon: <LuUserRound />,
-        required: true,
       },
     ],
   },
@@ -93,7 +86,6 @@ export const studiesTraining: IFormData[] = [
         name: "hours",
         placeholder: "ingrese las horas lectivas",
         icon: <LuUserRound />,
-        required: true,
       },
     ],
   },
@@ -105,7 +97,6 @@ export const studiesTraining: IFormData[] = [
         name: "issueDate",
         placeholder: "ingrese la fecha de emisión",
         icon: <LuUserRound />,
-        required: true,
       },
     ],
   },
@@ -117,7 +108,6 @@ export const studiesTraining: IFormData[] = [
         name: "certificatePdf",
         placeholder: "ingrese el certificado PDF [fix - create a BasicFile component]",
         icon: <LuUserRound />,
-        required: true,
       },
     ],
   },

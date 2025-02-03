@@ -16,9 +16,6 @@ export interface IBasicSelectFields {
 export interface ISelectDateFields {
   label: string;
   name: string;
-  icon?: JSX.Element;
   required?: boolean;
   defaultValue?: string;
-  from: Date;
-  to: Date;
 }
