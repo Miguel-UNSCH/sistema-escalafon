@@ -268,3 +268,103 @@ export interface IDisability {
   disabilityCertificate: string; // Certificado de discapacidad (Número de documento o código)
   disabilityDegree: string; // Grado de discapacidad (Leve, Moderada, Severa)
 }
+
+/**
+ * FICHA PERSONAL
+   ├── Datos Personales
+   ├── Estudios y Capacitación
+   ├── Experiencia Laboral
+   └── Discapacidad
+ */
+
+/**
+ * -- Datos personales (+ trabajador)
+ * *** a. Datos personales
+ * Apellido Paterno
+ * Apellido Materno
+ * Nombres
+ * Sexo
+ * Edad
+ * DNI (Carnet de extranjería)
+ * N° de Autogenerado
+ * Licencia de conducir
+ * Grupo sanguíneo
+ * Fecha de ingreso
+ * Unidad estructurada donde trabaja
+ * Cargo
+ * Fecha de Nacimiento
+ * Distrito
+ * Provincia
+ * Departamento/Región
+ * Nacionalidad
+ * Domicilio Av/Jr. Calle
+ * Interior Urbanización
+ * Provincia
+ * Distrito
+ * Teléfono fijo
+ * Celular
+ * Correo electrónico
+ * Personal con discapacidad (si, no)
+ * Régimen pensionario (L. N° 29903, D. L. ° 19990)
+ * Nombre de AFP
+ * Situación laboral (Nombrado-D-L. 276, Contratado plaza vacante, Contratado ley 30057, Contratado CAS-Indeterminado, Contratado en CAS-Temporal D.L. 1057, Contratado en proyecto de inversión, Practicantes preprofesionales-D.L. 1404, Practicante profesional-D.L. 1004).
+ * Estado civil (Soltero/a, Casado/a, Separado/a, Viudo/a, Conviviente)
+ * *** b. Datos del Cónyuge
+ * Apellidos y nombres
+ * Lugar y fecha de nacimiento
+ * Departamento/Región
+ * Provincia
+ * Distrito
+ * Grado de instrucción
+ * Profesión
+ * Ocupación
+ * Centro de Trabajo
+ * Postgrado / Especialización (Título, Año, Universidad)
+ * *** c. Datos de los hijos
+ * Apellidos y nombres
+ * Lugar y fecha de nacimiento
+ * Edad
+ * Grado de instrucción
+ */
+
+/**
+ * -- Estudios y capacitación (+ trabajador)
+ * *** a. Estudios
+ * Apellidos y nombres
+ * Formación Académica(Primaria Completa, Primaria Incompleta, Incompleta, Universitario Secundaria Completa, Secundaria Completa, Universitario Incompleta, Bachiller, Titulado, Postgrado, Técnico Completo, Técnico Incompleta, Técnico Egresado, Técnico Titulado)
+ * Año(Del, Al)
+ * Nombre de la institución
+ * Otros estudios con certificación
+ * *** b. Capacitación
+ * Apellidos y nombres
+ * Centro de capacitación
+ * Materia
+ * Profesión o especialidad
+ * Periodo (Del, Al)
+ * Horas Lectivas
+ * Fecha de emisión
+ * Certificado escaneado en PDF
+ */
+
+/**
+ * -- Experiencia laboral (+ trabajador)
+ * Apellidos y nombres
+ * Documento de sustento (Certificado, Constancia, Resolución, CAS, Locación de servicio)
+ * Centro de labor
+ * Dependencia y/o oficina
+ * Cargo
+ * Periodo de labor (Del - Al)
+ * Fecha de emisión
+ */
+
+/**
+ * -- Personal con discapacidad (+ trabajador)
+ * Apellidos y nombres
+ * Sexo
+ * DNI
+ * Documento de sustento
+ * Tipo de discapacidad
+ * Cargo
+ * Órgano estructurado
+ * Condición laboral
+ */

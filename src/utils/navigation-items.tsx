@@ -34,29 +34,27 @@ export const navigationItems: NavigationItems[] = [
     ],
   },
   {
-    title: "Gestión de Usuarios",
+    title: "gestión de usuarios",
     menuItem: [
       {
-        label: "Crear Usuario",
+        label: "crear usuario",
         icon: <FaUserCog />,
         path: "/usuarios/crear",
-        submenus: [{ label: "Submenu 1", path: "/usuarios/crear/submenu1" }],
       },
       {
-        label: "Editar Usuario",
+        label: "editar usuario",
         icon: <FaUsers />,
         path: "/usuarios/editar",
-        submenus: [{ label: "Submenu 2", path: "/usuarios/editar/submenu2" }],
       },
       {
-        label: "Roles y Permisos",
+        label: "roles y permisos",
         icon: <FaIdCard />,
         path: "/usuarios/roles",
       },
     ],
   },
   {
-    title: "Ficha Personal",
+    title: "ficha personal",
     menuItem: [
       {
         label: "información personal",
@@ -79,110 +77,121 @@ export const navigationItems: NavigationItems[] = [
         ],
       },
       {
-        label: "Estudios y Capacitación",
+        label: "estudios y capacitación",
         icon: <FaBriefcase />,
         path: "/dashboard/personal-file/studies-training",
+        submenus: [
+          { label: "estudios", path: "/dashboard/personal-file/studies-training/studies" },
+          { label: "training", path: "/dashboard/personal-file/studies-training/training" },
+        ],
       },
       {
-        label: "Experiencia Laboral",
+        label: "experiencia laboral",
         icon: <FaBriefcase />,
-        path: "/dashboard/personal-file/experiencia",
+        path: "/dashboard/personal-file/experience",
       },
       {
-        label: "Discapacidad",
+        label: "discapacidad",
         icon: <FaIdCard />,
-        path: "/dashboard/personal-file/discapacidad",
+        path: "/dashboard/personal-file/disability",
       },
     ],
   },
   {
-    title: "Situación Laboral",
+    title: "situación laboral",
     menuItem: [
       {
-        label: "Contratos y Nombramiento",
+        label: "contratos y nombramiento",
         icon: <FaBriefcase />,
-        path: "/situacion/contratos",
+        path: "/dashboard/work-situation/contracts",
       },
       {
-        label: "Renuncia y Liquidación",
+        label: "renuncia y liquidación",
         icon: <FaSignOutAlt />,
-        path: "/situacion/renuncia",
+        path: "/dashboard/work-situation/renunciation",
       },
       {
-        label: "Desplazamiento",
+        label: "desplazamiento",
         icon: <FaBriefcase />,
-        path: "/situacion/desplazamiento",
+        path: "/dashboard/work-situation/displacement",
       },
       {
-        label: "Descanso Médico",
+        label: "descanso médico",
         icon: <FaFileAlt />,
-        path: "/situacion/descanso-medico",
+        path: "/dashboard/work-situation/medical-rest",
       },
       {
-        label: "Permisos / Licencias / Vacaciones",
+        label: "permisos / licencias / vacaciones",
         icon: <FaFileAlt />,
-        path: "/situacion/permisos",
+        path: "/dashboard/work-situation/permissions",
       },
-      { label: "Ascensos", icon: <FaTrophy />, path: "/situacion/ascensos" },
+      { label: "ascensos", icon: <FaTrophy />, path: "/dashboard/work-situation/promotions" },
     ],
   },
   {
-    title: "Bonificaciones y Evaluaciones",
+    title: "bonificaciones y evaluaciones",
     menuItem: [
       {
-        label: "Bonificación Personal",
+        label: "bonificaciones",
         icon: <FaMoneyBill />,
-        path: "/bonificaciones/personal",
+        path: "/dashboard/bonuses-evaluations",
+        submenus: [
+          {
+            label: "bonificación personal",
+            icon: <FaMoneyBill />,
+            path: "/dashboard/bonuses-evaluations/personal",
+          },
+          {
+            label: "bonificación familiar",
+            icon: <FaMoneyBill />,
+            path: "/dashboard/bonuses-evaluations/family",
+          },
+        ],
       },
       {
-        label: "Bonificación Familiar",
-        icon: <FaMoneyBill />,
-        path: "/bonificaciones/familiar",
-      },
-      {
-        label: "Ficha de Evaluación",
+        label: "ficha de evaluación",
         icon: <FaFileAlt />,
-        path: "/evaluaciones/ficha",
+        path: "/dashboard/bonuses-evaluations/evaluations",
       },
     ],
   },
   {
-    title: "Méritos y Deméritos",
+    title: "méritos y deméritos",
     menuItem: [
-      { label: "Méritos", icon: <FaTrophy />, path: "/meritos" },
-      { label: "Deméritos", icon: <FaTrophy />, path: "/demeritos" },
+      { label: "méritos", icon: <FaTrophy />, path: "/dashboard/merits-demerits/merits" },
+      { label: "deméritos", icon: <FaTrophy />, path: "/dashboard/merits-demerits/demerits" },
     ],
   },
   {
-    title: "Documentos / Otros",
+    title: "documentos / otros",
     menuItem: [
       {
-        label: "Acta de Entrega",
+        label: "acta de entrega",
         icon: <FaFileAlt />,
         path: "/documentos/acta-entrega",
       },
       {
-        label: "Constancia de Pagos",
+        label: "constancia de pagos",
         icon: <FaFileAlt />,
         path: "/documentos/constancia-pagos",
       },
     ],
   },
   {
-    title: "Reportes (Solo Admin)",
+    title: "reportes (Solo Admin)",
     menuItem: [
       {
-        label: "Reportes Mensuales",
+        label: "reportes mensuales",
         icon: <FaChartBar />,
         path: "/reportes/mensuales",
       },
       {
-        label: "Reportes Anuales",
+        label: "reportes anuales",
         icon: <FaChartBar />,
         path: "/reportes/anuales",
       },
       {
-        label: "Reportes Personalizados",
+        label: "reportes personalizados",
         icon: <FaChartBar />,
         path: "/reportes/personalizados",
       },
