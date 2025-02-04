@@ -327,6 +327,31 @@ export interface IDisability {
  * Grado de instrucción
  */
 
+export type SpouseFormValues = {
+  spouseFirstName: string;
+  spouseLastName: string;
+  spouseBirthPlace: string;
+  spouseBirthDate: string;
+  spouseAge: number;
+  spouseEducationLevel: string;
+  spouseProfession: string;
+  spouseOccupation: string;
+  spouseWorkplace: string;
+  spousePostgraduateTitle: string;
+  spousePostgraduateYear: string;
+  spousePostgraduateUniversity: string;
+};
+
+export type ChildrenFormValues = {
+  name: string;
+  lastName: string;
+  birthPlace: string;
+  birthDate: string;
+  age: number;
+  educationLevel: string;
+  email: string;
+};
+
 /**
  * -- Estudios y capacitación (+ trabajador)
  * *** a. Estudios

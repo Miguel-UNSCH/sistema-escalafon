@@ -1,23 +1,10 @@
 "use client";
+import { SpouseFormValues } from "@/utils/personal-file";
 import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { LuMapPin, LuSave, LuSchool, LuUserRoundPlus } from "react-icons/lu";
+import { LuMapPin, LuSave, LuSchool } from "react-icons/lu";
 
 /** ---------------------------------------------------------------------------------------------------------------------------------------------- */
-
-type FormValues = {
-  spouseFirstName: string;
-  spouseLastName: string;
-  spouseBirthPlace: string;
-  spouseBirthDate: string;
-  spouseEducationLevel: string;
-  spouseProfession: string;
-  spouseOccupation: string;
-  spouseWorkplace: string;
-  spousePostgraduateTitle: string;
-  spousePostgraduateYear: string;
-  spousePostgraduateUniversity: string;
-};
 
 const SpouseForm = () => {
   const {
@@ -27,7 +14,7 @@ const SpouseForm = () => {
     control,
     setValue,
     formState: { errors },
-  } = useForm<FormValues>();
+  } = useForm<SpouseFormValues>();
 
   const [age, setAge] = useState<number | null>(null);
 
@@ -49,10 +36,10 @@ const SpouseForm = () => {
   };
 
   useEffect(() => {
-    if (age !== null) setValue("age", age);
+    if (age !== null) setValue("spouseAge", age);
   }, [age, setValue]);
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<SpouseFormValues> = (data) => console.log(data);
 
   const today = new Date().toISOString().split("T")[0];
 
@@ -144,9 +131,9 @@ const SpouseForm = () => {
           </label>
           <div className="flex flex-row items-center bg-[#9ca0b0] mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg w-full transition-colors">
             <span className="bg-transparent p-2.5 w-full text-sm outline-none">{age !== null ? age : "-"}</span>
-            <input id="age" type="hidden" value={age || ""} {...register("age", { required: "Este campo es obligatorio" })} />
+            <input id="age" type="hidden" value={age || ""} {...register("spouseAge", { required: "Este campo es obligatorio" })} />
           </div>
-          {errors.age && <p className="text-red-500">{errors.age.message}</p>}
+          {errors.spouseAge && <p className="text-red-500">{errors.spouseAge.message}</p>}
         </div>
       </div>
 

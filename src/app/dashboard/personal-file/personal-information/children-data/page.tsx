@@ -1,19 +1,10 @@
 "use client";
+import { ChildrenFormValues } from "@/utils/personal-file";
 import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { LuMapPin, LuSave, LuSchool, LuUserRoundPlus } from "react-icons/lu";
 
 /** ---------------------------------------------------------------------------------------------------------------------------------------------- */
-
-type FormValues = {
-  name: string;
-  lastName: string;
-  birthPlace: string;
-  birthDate: string;
-  age: number;
-  educationLevel: string;
-  email: string;
-};
 
 const Form = () => {
   const {
@@ -23,7 +14,7 @@ const Form = () => {
     control,
     setValue,
     formState: { errors },
-  } = useForm<FormValues>();
+  } = useForm<ChildrenFormValues>();
 
   const [age, setAge] = useState<number | null>(null);
 
@@ -48,7 +39,7 @@ const Form = () => {
     if (age !== null) setValue("age", age);
   }, [age, setValue]);
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<ChildrenFormValues> = (data) => console.log(data);
 
   const today = new Date().toISOString().split("T")[0];
 
