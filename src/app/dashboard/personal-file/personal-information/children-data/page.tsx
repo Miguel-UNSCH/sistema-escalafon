@@ -48,7 +48,7 @@ const Form = () => {
       {/* Nombres y Apellidos */}
       <div className="flex flex-row items-center gap-2">
         <div className="flex flex-col font-poppins">
-          <label htmlFor="name" className="block mb-2 font-medium text-text-primary">
+          <label htmlFor="name" className="block mb-2 pl-1 font-medium text-text-primary">
             Nombres
           </label>
           <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
@@ -63,7 +63,7 @@ const Form = () => {
         </div>
 
         <div className="flex flex-col font-poppins">
-          <label htmlFor="lastName" className="block mb-2 font-medium text-text-primary">
+          <label htmlFor="lastName" className="block mb-2 pl-1 font-medium text-text-primary">
             Apellidos
           </label>
           <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
@@ -79,7 +79,7 @@ const Form = () => {
 
       {/* Lugar de Nacimiento */}
       <div className="flex flex-col font-poppins">
-        <label htmlFor="birthPlace" className="block mb-2 font-medium text-text-primary">
+        <label htmlFor="birthPlace" className="block mb-2 pl-1 font-medium text-text-primary">
           Lugar de Nacimiento
         </label>
         <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
@@ -96,7 +96,7 @@ const Form = () => {
       {/* Fecha de Nacimiento */}
       <div className="flex flex-row gap-2 w-full">
         <div className="flex flex-col w-3/4 font-poppins">
-          <label htmlFor="birthDate" className="block mb-2 font-medium text-text-primary">
+          <label htmlFor="birthDate" className="block mb-2 pl-1 font-medium text-text-primary">
             Fecha de Nacimiento
           </label>
           <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
@@ -126,11 +126,11 @@ const Form = () => {
 
         {/* Edad */}
         <div className="flex flex-col w-1/4 font-poppins">
-          <label htmlFor="age" className="block mb-2 font-medium text-text-primary">
+          <label htmlFor="age" className="block mb-2 pl-1 font-medium text-text-primary">
             Edad
           </label>
-          <div className="flex flex-row items-center bg-[#9ca0b0] mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg w-full transition-colors">
-            <span className="bg-transparent p-2.5 w-full text-sm outline-none">{age !== null ? age : "-"}</span>
+          <div className="flex flex-row items-center bg-transparent mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg w-full h-full transition-colors">
+            <span className="bg-transparent p-2.5 w-full text-sm outline-none">{age !== null ? age : ""}</span>
             <input id="age" type="hidden" value={age || ""} {...register("age", { required: "Este campo es obligatorio" })} />
           </div>
           {errors.age && <p className="text-red-500">{errors.age.message}</p>}
@@ -139,7 +139,7 @@ const Form = () => {
 
       {/* Grado de Instrucción */}
       <div className="flex flex-col mb-5 font-poppins">
-        <label htmlFor="educationLevel" className="block mb-2 font-medium text-text-primary">
+        <label htmlFor="educationLevel" className="block mb-2 pl-1 font-medium text-text-primary">
           Grado de Instrucción
         </label>
         <div className="flex flex-row items-center pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">

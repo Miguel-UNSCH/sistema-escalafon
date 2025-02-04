@@ -42,61 +42,78 @@ const Form = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="font-inter">
-      {/* Apellido Paterno */}
-      <div className="flex flex-col font-poppins">
-        <label htmlFor="fatherLastName" className="block mb-2 font-medium text-text-primary">
-          Apellido Paterno
-        </label>
-        <input
-          id="fatherLastName"
-          {...register("fatherLastName", { required: "Este campo es obligatorio" })}
-          className="bg-transparent mb-5 p-2.5 focus:outline-none border border-border-primary rounded-lg w-full text-sm"
-        />
-        {errors.fatherLastName && <p>{errors.fatherLastName.message}</p>}
+      <div className="flex flex-row items-center gap-2">
+        {/* Nombres */}
+        <div className="flex flex-col font-poppins">
+          <label htmlFor="firstName" className="block mb-2 pl-1 font-medium text-text-primary">
+            Nombres
+          </label>
+          <input
+            id="firstName"
+            {...register("firstName", { required: "Este campo es obligatorio" })}
+            className="bg-transparent mb-5 p-2.5 focus:outline-none border border-border-primary rounded-lg w-full text-sm"
+          />
+          {errors.firstName && <p>{errors.firstName.message}</p>}
+        </div>
+
+        {/* Apellido Paterno */}
+        <div className="flex flex-col font-poppins">
+          <label htmlFor="fatherLastName" className="block mb-2 pl-1 font-medium text-text-primary">
+            Apellido Paterno
+          </label>
+          <input
+            id="fatherLastName"
+            {...register("fatherLastName", { required: "Este campo es obligatorio" })}
+            className="bg-transparent mb-5 p-2.5 focus:outline-none border border-border-primary rounded-lg w-full text-sm"
+          />
+          {errors.fatherLastName && <p>{errors.fatherLastName.message}</p>}
+        </div>
+
+        {/* Apellido Materno */}
+        <div className="flex flex-col font-poppins">
+          <label htmlFor="motherLastName" className="block mb-2 pl-1 font-medium text-text-primary">
+            Apellido Materno
+          </label>
+          <input
+            id="motherLastName"
+            {...register("motherLastName", { required: "Este campo es obligatorio" })}
+            className="bg-transparent mb-5 p-2.5 focus:outline-none border border-border-primary rounded-lg w-full text-sm"
+          />
+          {errors.motherLastName && <p>{errors.motherLastName.message}</p>}
+        </div>
       </div>
 
-      {/* Apellido Materno */}
-      <div className="flex flex-col font-poppins">
-        <label htmlFor="motherLastName" className="block mb-2 font-medium text-text-primary">
-          Apellido Materno
-        </label>
-        <input
-          id="motherLastName"
-          {...register("motherLastName", { required: "Este campo es obligatorio" })}
-          className="bg-transparent mb-5 p-2.5 focus:outline-none border border-border-primary rounded-lg w-full text-sm"
-        />
-        {errors.motherLastName && <p>{errors.motherLastName.message}</p>}
-      </div>
+      <div className="flex flex-row items-center gap-2 w-full">
+        {/* Sexo */}
+        <div className="flex flex-col w-1/2 font-poppins">
+          <label htmlFor="sex" className="block mb-2 font-medium text-text-primary">
+            Sexo
+          </label>
+          <select
+            id="sex"
+            {...register("sex", { required: "Este campo es obligatorio" })}
+            className="bg-transparent mb-5 p-2.5 focus:outline-none border border-border-primary rounded-lg w-full text-sm"
+          >
+            <option value="">Seleccione el sexo</option>
+            <option value="Masculino">Masculino</option>
+            <option value="Femenino">Femenino</option>
+            <option value="Otro">Otro</option>
+          </select>
+          {errors.sex && <p>{errors.sex.message}</p>}
+        </div>
 
-      {/* Nombres */}
-      <div className="flex flex-col font-poppins">
-        <label htmlFor="firstName" className="block mb-2 font-medium text-text-primary">
-          Nombres
-        </label>
-        <input
-          id="firstName"
-          {...register("firstName", { required: "Este campo es obligatorio" })}
-          className="bg-transparent mb-5 p-2.5 focus:outline-none border border-border-primary rounded-lg w-full text-sm"
-        />
-        {errors.firstName && <p>{errors.firstName.message}</p>}
-      </div>
-
-      {/* Sexo */}
-      <div className="flex flex-col font-poppins">
-        <label htmlFor="sex" className="block mb-2 font-medium text-text-primary">
-          Sexo
-        </label>
-        <select
-          id="sex"
-          {...register("sex", { required: "Este campo es obligatorio" })}
-          className="bg-transparent mb-5 p-2.5 focus:outline-none border border-border-primary rounded-lg w-full text-sm"
-        >
-          <option value="">Seleccione el sexo</option>
-          <option value="Masculino">Masculino</option>
-          <option value="Femenino">Femenino</option>
-          <option value="Otro">Otro</option>
-        </select>
-        {errors.sex && <p>{errors.sex.message}</p>}
+        {/* Grupo sanguíneo */}
+        <div className="flex flex-col w-1/2 font-poppins">
+          <label htmlFor="bloodGroup" className="block mb-2 font-medium text-text-primary">
+            Grupo sanguíneo
+          </label>
+          <input
+            id="bloodGroup"
+            {...register("bloodGroup", { required: "Este campo es obligatorio" })}
+            className="bg-transparent mb-5 p-2.5 focus:outline-none border border-border-primary rounded-lg w-full text-sm"
+          />
+          {errors.bloodGroup && <p>{errors.bloodGroup.message}</p>}
+        </div>
       </div>
 
       {/* DNI */}
@@ -112,43 +129,32 @@ const Form = () => {
         {errors.dni && <p>{errors.dni.message}</p>}
       </div>
 
-      {/* N° de Autogenerado */}
-      <div className="flex flex-col font-poppins">
-        <label htmlFor="autoGeneratedNumber" className="block mb-2 font-medium text-text-primary">
-          N° de Autogenerado
-        </label>
-        <input
-          id="autoGeneratedNumber"
-          {...register("autoGeneratedNumber", { required: "Este campo es obligatorio" })}
-          className="bg-transparent mb-5 p-2.5 focus:outline-none border border-border-primary rounded-lg w-full text-sm"
-        />
-        {errors.autoGeneratedNumber && <p>{errors.autoGeneratedNumber.message}</p>}
-      </div>
+      <div className="flex flex-row items-center gap-2 w-full">
+        {/* N° de Autogenerado */}
+        <div className="flex flex-col w-1/2 font-poppins">
+          <label htmlFor="autoGeneratedNumber" className="block mb-2 font-medium text-text-primary">
+            N° de Autogenerado
+          </label>
+          <input
+            id="autoGeneratedNumber"
+            {...register("autoGeneratedNumber", { required: "Este campo es obligatorio" })}
+            className="bg-transparent mb-5 p-2.5 focus:outline-none border border-border-primary rounded-lg w-full text-sm"
+          />
+          {errors.autoGeneratedNumber && <p>{errors.autoGeneratedNumber.message}</p>}
+        </div>
 
-      {/* Licencia de conducir */}
-      <div className="flex flex-col font-poppins">
-        <label htmlFor="driverLicense" className="block mb-2 font-medium text-text-primary">
-          Licencia de conducir
-        </label>
-        <input
-          id="driverLicense"
-          {...register("driverLicense", { required: "Este campo es obligatorio" })}
-          className="bg-transparent mb-5 p-2.5 focus:outline-none border border-border-primary rounded-lg w-full text-sm"
-        />
-        {errors.driverLicense && <p>{errors.driverLicense.message}</p>}
-      </div>
-
-      {/* Grupo sanguíneo */}
-      <div className="flex flex-col font-poppins">
-        <label htmlFor="bloodGroup" className="block mb-2 font-medium text-text-primary">
-          Grupo sanguíneo
-        </label>
-        <input
-          id="bloodGroup"
-          {...register("bloodGroup", { required: "Este campo es obligatorio" })}
-          className="bg-transparent mb-5 p-2.5 focus:outline-none border border-border-primary rounded-lg w-full text-sm"
-        />
-        {errors.bloodGroup && <p>{errors.bloodGroup.message}</p>}
+        {/* Licencia de conducir */}
+        <div className="flex flex-col w-full font-poppins">
+          <label htmlFor="driverLicense" className="block mb-2 font-medium text-text-primary">
+            Licencia de conducir
+          </label>
+          <input
+            id="driverLicense"
+            {...register("driverLicense", { required: "Este campo es obligatorio" })}
+            className="bg-transparent mb-5 p-2.5 focus:outline-none border border-border-primary rounded-lg w-full text-sm"
+          />
+          {errors.driverLicense && <p>{errors.driverLicense.message}</p>}
+        </div>
       </div>
 
       {/* Fecha de ingreso */}

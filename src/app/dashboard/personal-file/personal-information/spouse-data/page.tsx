@@ -129,8 +129,8 @@ const SpouseForm = () => {
           <label htmlFor="age" className="block mb-2 font-medium text-text-primary">
             Edad
           </label>
-          <div className="flex flex-row items-center bg-[#9ca0b0] mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg w-full transition-colors">
-            <span className="bg-transparent p-2.5 w-full text-sm outline-none">{age !== null ? age : "-"}</span>
+          <div className="flex flex-row items-center bg-transparent mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg w-full h-full transition-colors">
+            <span className="bg-transparent p-2.5 w-full text-sm outline-none">{age !== null ? age : ""}</span>
             <input id="age" type="hidden" value={age || ""} {...register("spouseAge", { required: "Este campo es obligatorio" })} />
           </div>
           {errors.spouseAge && <p className="text-red-500">{errors.spouseAge.message}</p>}
