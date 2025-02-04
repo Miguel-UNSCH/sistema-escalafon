@@ -1,82 +1,17 @@
 "use client";
-import React from "react";
-import { SubmitHandler, useForm, useFormContext } from "react-hook-form";
+import React, { useEffect, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { LuCalendar, LuMapPin, LuSave, LuSchool, LuUserRoundPlus } from "react-icons/lu";
 
-/** ---------------------------------------------------------------------------------------------------------------------------------------------- */
-type InputTextProps = {
-  label: string;
-  name: string;
-  placeholder: string;
-  errorMessage: {
-    required: string;
-    minLength: { value: number; message: string };
-    maxLength: { value: number; message: string };
-  };
-};
-
-const InputText: React.FC<InputTextProps> = ({ label, name, placeholder, errorMessage }) => {
-  const {
-    register,
-    formState: { errors },
-  } = useFormContext();
-
-  return (
-    <div>
-      <label htmlFor={name}>{label}</label>
-      <input
-        id={name}
-        placeholder={placeholder}
-        {...register(name, {
-          required: errorMessage.required,
-          minLength: errorMessage.minLength,
-          maxLength: errorMessage.maxLength,
-        })}
-        className="bg-transparent border-none outline-none"
-      />
-      {errors[name] && <p>{errors[name]?.message}</p>}
-    </div>
-  );
-};
-/** ---------------------------------------------------------------------------------------------------------------------------------------------- */
-export const InputNumber = () => {
-  return <div>InputNumber</div>;
-};
-/** ---------------------------------------------------------------------------------------------------------------------------------------------- */
-export const InputDate = () => {
-  return <div>InputDate</div>;
-};
-/** ---------------------------------------------------------------------------------------------------------------------------------------------- */
-export const InputDates = () => {
-  return <div>InputDates</div>;
-};
-/** ---------------------------------------------------------------------------------------------------------------------------------------------- */
-export const InputCheckbox = () => {
-  return <div>InputCheckbox</div>;
-};
-/** ---------------------------------------------------------------------------------------------------------------------------------------------- */
-export const InputFullName = () => {
-  return <div>InputFullName</div>;
-};
-/** ---------------------------------------------------------------------------------------------------------------------------------------------- */
-export const InputLocation = () => {
-  return <div>InputLocation</div>;
-};
-/** ---------------------------------------------------------------------------------------------------------------------------------------------- */
-export const InputTextArea = () => {
-  return <div>InputTextArea</div>;
-};
-/** ---------------------------------------------------------------------------------------------------------------------------------------------- */
-export const InputDocument = () => {
-  return <div>InputDocument</div>;
-};
-/** ---------------------------------------------------------------------------------------------------------------------------------------------- */
-export const InputPeriod = () => {
-  return <div>InputPeriod</div>;
-};
 /** ---------------------------------------------------------------------------------------------------------------------------------------------- */
 
 type FormValues = {
   name: string;
+  lastName: string;
+  birthPlace: string;
+  birthDate: string;
+  age: number;
+  educationLevel: string;
   email: string;
 };
 
@@ -84,47 +19,204 @@ const Form = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<FormValues>();
+
+  const [age, setAge] = useState<number | null>(null);
+
+  const calculateAge = (birthDate: string) => {
+    const parts = birthDate.split("/");
+    if (parts.length !== 3) {
+      setAge(0);
+      return;
+    }
+    const day = parseInt(parts[0]);
+    const month = parseInt(parts[1]) - 1;
+    const year = 2000 + parseInt(parts[2]);
+
+    const birthDateObj = new Date(year, month, day);
+    const today = new Date();
+
+    if (birthDateObj > today) {
+      setAge(0);
+      return;
+    }
+
+    let calculatedAge = today.getFullYear() - birthDateObj.getFullYear();
+    const monthDiff = today.getMonth() - birthDateObj.getMonth();
+
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) {
+      calculatedAge -= 1;
+    }
+
+    setAge(calculatedAge < 0 ? 0 : calculatedAge);
+  };
+
+  useEffect(() => {
+    if (age !== null) {
+      setValue("age", age);
+    }
+  }, [age, setValue]);
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
     console.log(data);
   };
 
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <InputText
-        label="Nombre"
-        name="name"
-        placeholder="Ingrese su nombre"
-        errorMessage={{
-          required: "Este campo es obligatorio",
-          minLength: { value: 3, message: "Debe tener al menos 3 caracteres" },
-          maxLength: { value: 50, message: "Debe tener como máximo 50 caracteres" },
-        }}
-      />
+  // const today = new Date().toISOString().split("T")[0];
 
-      <div>
-        <label htmlFor="email">Correo Electrónico</label>
-        <input
-          id="email"
-          type="email"
-          {...register("email", {
-            required: "Este campo es obligatorio",
-            pattern: {
-              value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-              message: "El correo electrónico no es válido",
-            },
-          })}
-          className="bg-transparent border-none outline-none"
-        />
-        {errors.email && <p>{errors.email.message}</p>}
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="font-inter">
+      {/* Nombres y Apellidos */}
+      <div className="flex flex-row items-center gap-2">
+        <div className="flex flex-col font-poppins">
+          <label htmlFor="name" className="block mb-2 font-medium text-text-primary">
+            Nombres
+          </label>
+          <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
+            <input
+              id="name"
+              {...register("name", { required: "Este campo es obligatorio" })}
+              className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
+            />
+          </div>
+
+          {errors.name && <p>{errors.name.message}</p>}
+        </div>
+
+        <div className="flex flex-col font-poppins">
+          <label htmlFor="lastName" className="block mb-2 font-medium text-text-primary">
+            Apellidos
+          </label>
+          <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
+            <input
+              id="lastName"
+              {...register("lastName", { required: "Este campo es obligatorio" })}
+              className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
+            />
+          </div>
+          {errors.lastName && <p>{errors.lastName.message}</p>}
+        </div>
       </div>
 
-      <button type="submit">Enviar</button>
+      {/* Lugar de Nacimiento */}
+      <div className="flex flex-col font-poppins">
+        <label htmlFor="birthPlace" className="block mb-2 font-medium text-text-primary">
+          Lugar de Nacimiento
+        </label>
+        <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
+          <LuMapPin />
+          <input
+            id="birthPlace"
+            {...register("birthPlace", { required: "Este campo es obligatorio" })}
+            className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
+          />
+        </div>
+        {errors.birthPlace && <p className="text-red-500">{errors.birthPlace.message}</p>}
+      </div>
+
+      {/* Fecha de Nacimiento */}
+      <div className="flex flex-row gap-2 w-full">
+        <div className="flex flex-col w-3/4 font-poppins">
+          <label htmlFor="birthDate" className="block mb-2 font-medium text-text-primary">
+            Fecha de Nacimiento (DD/MM/YY)
+          </label>
+          <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
+            <LuCalendar />
+            <input
+              id="birthDate"
+              type="text"
+              {...register("birthDate", {
+                required: "Este campo es obligatorio",
+                pattern: {
+                  value: /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/([0-9]{2})$/,
+                  message: "Formato de fecha inválido. Use DD/MM/YY",
+                },
+                validate: {
+                  notFutureDate: (value) => {
+                    const parts = value.split("/");
+                    if (parts.length !== 3) return "Formato de fecha inválido";
+                    const day = parseInt(parts[0]);
+                    const month = parseInt(parts[1]) - 1;
+                    const year = 2000 + parseInt(parts[2]);
+
+                    const selectedDate = new Date(year, month, day);
+                    const today = new Date();
+                    if (selectedDate > today) {
+                      return "La fecha de nacimiento no puede ser en el futuro.";
+                    }
+                    return true;
+                  },
+                },
+              })}
+              onChange={(e) => calculateAge(e.target.value)}
+              className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
+            />
+          </div>
+          {errors.birthDate && <p className="text-red-500">{errors.birthDate.message}</p>}
+        </div>
+
+        {/* Edad */}
+        <div className="flex flex-col font-poppins">
+          <label htmlFor="age" className="block mb-2 font-medium text-text-primary">
+            Edad
+          </label>
+          <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
+            <input
+              id="age"
+              type="number"
+              value={age || ""}
+              {...register("age", { required: "Este campo es obligatorio" })}
+              readOnly
+              className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
+            />
+          </div>
+          {errors.age && <p className="text-red-500">{errors.age.message}</p>}
+        </div>
+      </div>
+
+      {/* Grado de Instrucción */}
+      <div className="flex flex-col mb-5 font-poppins">
+        <label htmlFor="educationLevel" className="block mb-2 font-medium text-text-primary">
+          Grado de Instrucción
+        </label>
+        <div className="flex flex-row items-center pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
+          <LuSchool />
+          <select
+            id="educationLevel"
+            {...register("educationLevel", { required: "Este campo es obligatorio" })}
+            className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
+          >
+            <option value="">Seleccione un grado</option>
+            <option value="Primaria Completa">Primaria Completa</option>
+            <option value="Secundaria Completa">Secundaria Completa</option>
+            <option value="Bachiller">Bachiller</option>
+            <option value="Titulado">Titulado</option>
+            <option value="Postgrado">Postgrado</option>
+            <option value="Técnico Completo">Técnico Completo</option>
+          </select>
+        </div>
+        {errors.educationLevel && <p className="font-montserrat text-red-500">{errors.educationLevel.message}</p>}
+      </div>
+
+      <div className="flex flex-row justify-end items-center gap-2">
+        <div className="flex flex-row items-center gap-2 bg-[#7287fd] p-2 rounded-lg">
+          <LuUserRoundPlus className="ml-2" />
+          <button type="button" className="pr-2">
+            Agregar
+          </button>
+        </div>
+        <div className="flex flex-row items-center gap-2 bg-[#179299] p-2 rounded-lg">
+          <LuSave className="ml-2" />
+          <button type="submit" className="pr-2">
+            Guardar
+          </button>
+        </div>
+      </div>
     </form>
   );
 };
+
 /** ---------------------------------------------------------------------------------------------------------------------------------------------- */
 
 const page = () => {
