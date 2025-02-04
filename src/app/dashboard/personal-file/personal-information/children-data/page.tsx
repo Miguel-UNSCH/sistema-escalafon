@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { LuCalendar, LuMapPin, LuSave, LuSchool, LuUserRoundPlus } from "react-icons/lu";
+import { LuMapPin, LuSave, LuSchool, LuUserRoundPlus } from "react-icons/lu";
 
 /** ---------------------------------------------------------------------------------------------------------------------------------------------- */
 
@@ -19,6 +19,8 @@ const Form = () => {
   const {
     register,
     handleSubmit,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    control,
     setValue,
     formState: { errors },
   } = useForm<FormValues>();
@@ -26,16 +28,7 @@ const Form = () => {
   const [age, setAge] = useState<number | null>(null);
 
   const calculateAge = (birthDate: string) => {
-    const parts = birthDate.split("/");
-    if (parts.length !== 3) {
-      setAge(0);
-      return;
-    }
-    const day = parseInt(parts[0]);
-    const month = parseInt(parts[1]) - 1;
-    const year = 2000 + parseInt(parts[2]);
-
-    const birthDateObj = new Date(year, month, day);
+    const birthDateObj = new Date(birthDate);
     const today = new Date();
 
     if (birthDateObj > today) {
@@ -43,27 +36,21 @@ const Form = () => {
       return;
     }
 
-    let calculatedAge = today.getFullYear() - birthDateObj.getFullYear();
-    const monthDiff = today.getMonth() - birthDateObj.getMonth();
+    let age = today.getFullYear() - birthDateObj.getFullYear();
+    const month = today.getMonth() - birthDateObj.getMonth();
 
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) {
-      calculatedAge -= 1;
-    }
+    if (month < 0 || (month === 0 && today.getDate() < birthDateObj.getDate())) age -= 1;
 
-    setAge(calculatedAge < 0 ? 0 : calculatedAge);
+    setAge(age < 0 ? 0 : age);
   };
 
   useEffect(() => {
-    if (age !== null) {
-      setValue("age", age);
-    }
+    if (age !== null) setValue("age", age);
   }, [age, setValue]);
 
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    console.log(data);
-  };
+  const onSubmit: SubmitHandler<FormValues> = (data) => console.log(data);
 
-  // const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split("T")[0];
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="font-inter">
@@ -119,28 +106,17 @@ const Form = () => {
       <div className="flex flex-row gap-2 w-full">
         <div className="flex flex-col w-3/4 font-poppins">
           <label htmlFor="birthDate" className="block mb-2 font-medium text-text-primary">
-            Fecha de Nacimiento (DD/MM/YY)
+            Fecha de Nacimiento
           </label>
           <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
-            <LuCalendar />
             <input
               id="birthDate"
-              type="text"
+              type="date"
               {...register("birthDate", {
                 required: "Este campo es obligatorio",
-                pattern: {
-                  value: /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/([0-9]{2})$/,
-                  message: "Formato de fecha inválido. Use DD/MM/YY",
-                },
                 validate: {
                   notFutureDate: (value) => {
-                    const parts = value.split("/");
-                    if (parts.length !== 3) return "Formato de fecha inválido";
-                    const day = parseInt(parts[0]);
-                    const month = parseInt(parts[1]) - 1;
-                    const year = 2000 + parseInt(parts[2]);
-
-                    const selectedDate = new Date(year, month, day);
+                    const selectedDate = new Date(value);
                     const today = new Date();
                     if (selectedDate > today) {
                       return "La fecha de nacimiento no puede ser en el futuro.";
@@ -150,6 +126,7 @@ const Form = () => {
                 },
               })}
               onChange={(e) => calculateAge(e.target.value)}
+              max={today}
               className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
             />
           </div>
@@ -157,19 +134,13 @@ const Form = () => {
         </div>
 
         {/* Edad */}
-        <div className="flex flex-col font-poppins">
+        <div className="flex flex-col w-1/4 font-poppins">
           <label htmlFor="age" className="block mb-2 font-medium text-text-primary">
             Edad
           </label>
-          <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
-            <input
-              id="age"
-              type="number"
-              value={age || ""}
-              {...register("age", { required: "Este campo es obligatorio" })}
-              readOnly
-              className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
-            />
+          <div className="flex flex-row items-center bg-[#9ca0b0] mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg w-full transition-colors">
+            <span className="bg-transparent p-2.5 w-full text-sm outline-none">{age !== null ? age : "-"}</span>
+            <input id="age" type="hidden" value={age || ""} {...register("age", { required: "Este campo es obligatorio" })} />
           </div>
           {errors.age && <p className="text-red-500">{errors.age.message}</p>}
         </div>
