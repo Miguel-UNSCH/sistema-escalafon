@@ -26,10 +26,7 @@ export const navigationItems: NavigationItems[] = [
         icon: <FaTachometerAlt />,
         path: "/dashboard",
         badge: "2",
-        submenus: [
-          { label: "panel", path: "/dashboard/panel" },
-          { label: "reportes", path: "/dashboard/reports" },
-        ],
+        submenus: [{ label: "panel", path: "/dashboard/panel" }],
       },
     ],
   },
@@ -183,17 +180,17 @@ export const navigationItems: NavigationItems[] = [
       {
         label: "reportes mensuales",
         icon: <FaChartBar />,
-        path: "/reportes/mensuales",
+        path: "/reports/mensuales",
       },
       {
         label: "reportes anuales",
         icon: <FaChartBar />,
-        path: "/reportes/anuales",
+        path: "/reports/anuales",
       },
       {
         label: "reportes personalizados",
         icon: <FaChartBar />,
-        path: "/reportes/personalizados",
+        path: "/reports/personalizados",
       },
     ],
   },
