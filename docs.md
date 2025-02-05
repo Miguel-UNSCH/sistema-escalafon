@@ -91,7 +91,7 @@
 
 #### a. Régimen de decreto legislativo 276
 
-- Apellidos y Nombres
+- Apellidos y Nombres -----------
 - Condición laboral (Nombrado, Contratado o en plaza vacante, Designado)
 - Dependencia y/o oficina
 - Resolución de nombramiento y/o contrato
@@ -102,12 +102,12 @@
 - CNP
 - Fecha de ingreso-GRA
 - Años de servicio
-- Fecha de nacimiento
-- Fecha de Cese
+- Fecha de nacimiento -----------
+- Fecha de Cese -----------------
 
 #### b. Contrato Administrativo de Servicio - CAS
 
-- Apellidos y nombres
+- Apellidos y nombres -----------
 - Condición laboral (Indeterminado, Eventual)
 - Dependencia y/o oficina
 - Contrato-CAS
@@ -117,7 +117,7 @@
 
 #### c. D.L. 276-Proyecto de inversión
 
-- Apellidos y nombres
+- Apellidos y nombres -----------
 - Condición laboral (Contratado, Reincorporado-Mandato Judicial)
 - Dependencia y/o oficina
 - Resolución de contrato
@@ -128,7 +128,7 @@
 
 #### d. Practicante-D.L. N° 1401-Régimen Especial Modalidades Formativas
 
-- Apellidos y nombres
+- Apellidos y nombres -----------
 - Condición laboral (Profesional - Preprofesional)
 - Dependencia y/o oficina
 - Convenio
@@ -136,7 +136,7 @@
 
 ### IV. Renuncia y liquidación
 
-- Apellidos y nombres
+- Apellidos y nombres -----------
 - Documento de renuncia (Carta, resolución)
 - Motivo de renuncia (Particular, salud, personal)
 - Fecha de Renuncia
