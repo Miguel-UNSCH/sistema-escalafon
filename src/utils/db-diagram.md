@@ -41,13 +41,18 @@ centro_trabajo varchar
 postgrado_especializacion varchar
 }
 
+Table hijo_grado_instruccion {
+id int [pk, increment]
+hijo_id int [ref: > hijo.id]
+grado_instruccion varchar
+}
+
 Table hijo {
 id int [pk, increment]
 trabajador_id int [ref: > trabajador.id]
 apellidos_nombres varchar
 lugar_fecha_nacimiento varchar
 edad int
-grado_instruccion varchar
 }
 
 Table estudios {
@@ -60,7 +65,7 @@ institucion varchar
 otros_estudios varchar
 }
 
-Table capacitacion {
+Table trabajador_capacitacion {
 id int [pk, increment]
 trabajador_id int [ref: > trabajador.id]
 centro_capacitacion varchar
@@ -85,24 +90,21 @@ periodo_fin date
 fecha_emision date
 }
 
-Table discapacidad {
+Table discapacidad_tipo {
 id int [pk, increment]
 trabajador_id int [ref: > trabajador.id]
 tipo_discapacidad varchar
-cargo varchar
-organo_estructurado varchar
-condicion_laboral varchar
 }
 
-Table oficina {
+Table contrato_tipo {
 id int [pk, increment]
-nombre varchar
+contrato_id int [ref: > contrato.id]
+tipo_contrato varchar
 }
 
 Table contrato {
 id int [pk, increment]
 trabajador_id int [ref: > trabajador.id]
-tipo_contrato varchar
 oficina_id int [ref: > oficina.id]
 cargo_estructural varchar
 regimen_laboral varchar
@@ -110,6 +112,11 @@ nivel_remuneracion varchar
 pap_cnp varchar
 fecha_ingreso date
 fecha_cese date
+}
+
+Table oficina {
+id int [pk, increment]
+nombre varchar
 }
 
 Table renuncia {
