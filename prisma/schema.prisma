@@ -77,28 +77,28 @@ model Hijo {
 }
 
 model EstudiosYCaptacion {
-  id                   Int      @id @default(autoincrement())
-  datosPersonalesId     Int
-  apellidosYNombres     String
-  tipoEstudio           String  // Ejemplo: Primaria Completa, Universitario Titulado, etc.
-  anioInicio            Int
-  anioFin               Int
-  institucion           String
-  otrosEstudios         String
-  centroCapacitacion    String
-  materiaCapacitacion   String
-  profesionEspecialidad String
-  periodoInicio         DateTime
-  periodoFin            DateTime
-  horasLectivas         Int
+  id                      Int      @id @default(autoincrement())
+  datosPersonalesId       Int
+  apellidosYNombres       String
+  tipoEstudio             String  // Ejemplo: Primaria Completa, Universitario Titulado, etc.
+  anioInicio              Int
+  anioFin                 Int
+  institucion             String
+  otrosEstudios           String
+  centroCapacitacion      String
+  materiaCapacitacion     String
+  profesionEspecialidad   String
+  periodoInicio           DateTime
+  periodoFin              DateTime
+  horasLectivas           Int
   fechaEmisionCertificado DateTime
-  certificadoEscaneado  String  // URL al PDF
+  certificadoEscaneado    String  // URL al PDF
   // datosPersonales       DatosPersonales @relation(fields: [datosPersonalesId], references: [id])
 }
 
 model ExperienciaLaboral {
-  id                   Int      @id @default(autoincrement())
-  datosPersonalesId    Int
+  id                    Int      @id @default(autoincrement())
+  datosPersonalesId     Int
   apellidosYNombres     String
   documentoSustento     String
   centroLaboral         String
@@ -123,7 +123,6 @@ model PersonalConDiscapacidad {
 }
 
 /** ---------------------------------------------------------------------------------------------------------------------------- */
-
 // ------------------------------------- CONTRATOS Y NOMBRAMIENTO -------------------------------------
 model ContratoYNombramiento {
   id                        Int      @id @default(autoincrement())
@@ -185,7 +184,7 @@ model PracticaDL1401 {
 
 // ------------------------------------ RENUNCIA Y LIQUIDACIÓN ------------------------------------
 model RenunciaYLiquidacion {
-  id                   Int      @id @default(autoincrement())
+  id                    Int      @id @default(autoincrement())
   apellidosYNombres     String
   documentoRenuncia     String  // Ejemplo: Carta, Resolución
   motivoRenuncia        String  // Ejemplo: Particular, Salud, Personal
@@ -196,7 +195,7 @@ model RenunciaYLiquidacion {
 
 // ------------------------------------ DESPLAZAMIENTO --------------------------------------
 model Desplazamiento {
-  id                   Int      @id @default(autoincrement())
+  id                    Int      @id @default(autoincrement())
   apellidosYNombres     String
   tipoDesplazamiento    String  // Ejemplo: Rotación interna, Reasignación, Designación
   documentoRotacion     String  // Ejemplo: Memorando, Resolución
@@ -208,7 +207,7 @@ model Desplazamiento {
 
 // ------------------------------------ DESCANSO MÉDICO ------------------------------------
 model DescansoMedico {
-  id                   Int      @id @default(autoincrement())
+  id                    Int      @id @default(autoincrement())
   apellidosYNombres     String
   tipoDescanso          String  // Ejemplo: Médico, Particular, Pre/Postnatal
   documentoSustento     String  // Ejemplo: Memorando, Resolución, Certificado de Salud
@@ -220,7 +219,7 @@ model DescansoMedico {
 
 // ---------------------------- PERMISOS / LICENCIAS / VACACIONES -------------------------------
 model PermisosLicenciasVacaciones {
-  id                   Int      @id @default(autoincrement())
+  id                    Int      @id @default(autoincrement())
   apellidosYNombres     String
   tipoPermiso           String  // Ejemplo: Particular, Por cuenta de Vacaciones, Permiso por Familiar
   documentoSustento     String  // Ejemplo: Solicitud, Resolución
@@ -232,18 +231,18 @@ model PermisosLicenciasVacaciones {
 
 // ----------------------------------------- ASCENSOS --------------------------------------------
 model Ascenso {
-  id                   Int      @id @default(autoincrement())
-  apellidosYNombres     String
-  resolucionAscenso     String
-  cargoAnterior         String
-  cargoNuevo            String
+  id                        Int    @id @default(autoincrement())
+  apellidosYNombres         String
+  resolucionAscenso         String
+  cargoAnterior             String
+  cargoNuevo                String
   nivelRemunerativoAnterior String
-  nivelRemunerativoNuevo String
-  papAnterior           String
-  papNuevo              String
-  cnpAnterior           String
-  cnpNuevo              String
-  dependenciaOficina    String
+  nivelRemunerativoNuevo    String
+  papAnterior               String
+  papNuevo                  String
+  cnpAnterior               String
+  cnpNuevo                  String
+  dependenciaOficina        String
 }
 
 /** ---------------------------------------------------------------------------------------------------------------------------- */
