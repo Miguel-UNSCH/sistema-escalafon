@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { studiesTrainingSchema } from "@/validations/studiesTrainingSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-export type FormData = {
-  nombres: string;
-  apellidos: string;
+export type IForm = {
   centroCapacitacion: string;
   materiaCapacitacion: string;
   profesionEspecialidad: string;
@@ -20,8 +20,10 @@ const Form: React.FC = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>();
-  const onSubmit: SubmitHandler<FormData> = (data) => console.log(data);
+  } = useForm<IForm>({
+    resolver: zodResolver(studiesTrainingSchema),
+  });
+  const onSubmit: SubmitHandler<IForm> = (data) => console.log(data);
   console.log(errors);
 
   return (
@@ -29,16 +31,9 @@ const Form: React.FC = () => {
       crear un formulario
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <div className="flex flex-col gap-2 mb-4">
-          <label htmlFor="nombres">nombres</label>
-          <input type="text" placeholder="First name" {...register("nombres", { required: true, maxLength: 80 })} />
-        </div>
-        <div className="flex flex-col gap-2 mb-4">
-          <label htmlFor="apellidos">apellidos</label>
-          <input type="text" placeholder="Last name" {...register("apellidos", { required: true, maxLength: 100 })} />
-        </div>
-        <div className="flex flex-col gap-2 mb-4">
           <label htmlFor="centroCapacitacion">centro de capacitación</label>
           <input type="text" placeholder="Centro de capacitación" {...register("centroCapacitacion", { required: true })} />
+          <span className="text-[#d20f39]">{errors.centroCapacitacion?.message}</span>
         </div>
         <div className="flex flex-col gap-2 mb-4">
           <label htmlFor="materiaCapacitacion">materia de capacitación</label>
