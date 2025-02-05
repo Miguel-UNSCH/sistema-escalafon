@@ -10,319 +10,313 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/** ---------------------------------------------------------------------------------------------------------------------------- */
-model DatosPersonales {
-  id                   Int      @id @default(autoincrement())
-  apellidoPaterno      String
-  apellidoMaterno      String
-  nombres              String
-  sexo                 String
-  edad                 Int
-  dni                  String  @unique
-  numeroAutogenerado   String
-  licenciaConducir     String
-  grupoSanguineo       String
-  fechaIngreso         DateTime
-  unidadEstructurada   String
-  cargo                String
-  fechaNacimiento      DateTime
-  distrito             String
-  provincia            String
-  departamento         String
-  nacionalidad         String
-  domicilioAv          String
-  interiorUrbanizacion String
-  provinciaDomicilio   String
-  distritoDomicilio    String
-  telefonoFijo         String
-  celular              String
-  correoElectronico    String
-  personalDiscapacidad Boolean
-  regimenPensionario   String
-  nombreAFP            String
-  situacionLaboral     String
-  estadoCivil          String
-  conyuge              Conyuge[]
-  hijos                Hijo[]
+model Trabajador {
+  id                      Int                  @id @default(autoincrement())
+  apellidoPaterno          String
+  apellidoMaterno          String
+  nombres                  String
+  sexo                     String
+  edad                     Int
+  dni                      String
+  nroAutogenerado          String
+  licenciaConducir         String
+  grupoSanguineo           String
+  fechaIngreso             DateTime
+  unidadEstructurada       String
+  cargo                    String
+  fechaNacimiento          DateTime
+  distrito                 String
+  provincia                String
+  departamentoRegion       String
+  nacionalidad             String
+  domicilio                String
+  interiorUrbanizacion     String
+  telefonoFijo             String
+  celular                  String
+  correoElectronico        String
+  personalDiscapacidad     Boolean
+  regimenPensionario       String
+  nombreAFP                String
+  situacionLaboral         String
+  estadoCivil              String
+
+  // Relaciones
+  conyuge                  Conyuge?
+  hijos                    Hijo[]
+  estudios                 Estudio[]
+  capacitaciones           Capacitacion[]
+  experienciasLaborales    ExperienciaLaboral[]
+  discapacidades           Discapacidad[]
+  contratos                Contrato[]
+  renuncias                Renuncia[]
+  desplazamientos          Desplazamiento[]
+  descansosMedicos         DescansoMedico[]
+  permisosLicenciasVacaciones PermisoLicenciaVacaciones[]
+  ascensos                 Ascenso[]
+  bonificacionesPersonales BonificacionPersonal[]
+  bonificacionesFamiliares BonificacionFamiliar[]
+  fichasEvaluacion         FichaEvaluacion[]
+  meritos                  Merito[]
+  deméritos                Demerito[]
+  actasEntrega             ActaEntrega[]
+  constanciasPago          ConstanciaPago[]
 }
 
 model Conyuge {
-  id                    Int      @id @default(autoincrement())
-  datosPersonalesId     Int
-  apellidosYNombres     String
-  lugarNacimiento       String
-  fechaNacimiento       DateTime
-  departamento          String
-  provincia             String
-  distrito              String
-  gradoInstruccion      String
-  profesion             String
-  ocupacion             String
-  centroTrabajo         String
-  postgrado             String
-  anoPostgrado          Int
-  universidadPostgrado  String
-  datosPersonales       DatosPersonales @relation(fields: [datosPersonalesId], references: [id])
+  id                     Int      @id @default(autoincrement())
+  trabajadorId           Int      @unique
+  apellidosYNombres      String
+  lugarFechaNacimiento   String
+  gradoInstruccion       String
+  profesion              String
+  ocupacion              String
+  centroTrabajo          String
+  postgradoEspecializacion String
+
+  trabajador             Trabajador @relation(fields: [trabajadorId], references: [id])
 }
 
 model Hijo {
-  id                    Int      @id @default(autoincrement())
-  datosPersonalesId     Int
-  apellidosYNombres     String
-  lugarNacimiento       String
-  fechaNacimiento       DateTime
-  edad                  Int
-  gradoInstruccion      String
-  datosPersonales       DatosPersonales @relation(fields: [datosPersonalesId], references: [id])
+  id                      Int      @id @default(autoincrement())
+  trabajadorId            Int
+  apellidosYNombres       String
+  lugarFechaNacimiento    String
+  edad                    Int
+
+  trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
+  gradosInstruccion      GradoInstruccion[]
 }
 
-model EstudiosYCaptacion {
+model GradoInstruccion {
+  id                     Int      @id @default(autoincrement())
+  hijoId                 Int
+  gradoInstruccion       String
+
+  hijo                   Hijo     @relation(fields: [hijoId], references: [id])
+}
+
+model Estudio {
   id                      Int      @id @default(autoincrement())
-  datosPersonalesId       Int
-  apellidosYNombres       String
-  tipoEstudio             String  // Ejemplo: Primaria Completa, Universitario Titulado, etc.
-  anioInicio              Int
-  anioFin                 Int
+  trabajadorId            Int
+  formacionAcademica      String
+  anoInicio               Int
+  anoFin                  Int
   institucion             String
   otrosEstudios           String
+
+  trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
+}
+
+model Capacitacion {
+  id                      Int      @id @default(autoincrement())
+  trabajadorId            Int
   centroCapacitacion      String
-  materiaCapacitacion     String
+  materia                 String
   profesionEspecialidad   String
   periodoInicio           DateTime
   periodoFin              DateTime
   horasLectivas           Int
-  fechaEmisionCertificado DateTime
-  certificadoEscaneado    String  // URL al PDF
-  // datosPersonales       DatosPersonales @relation(fields: [datosPersonalesId], references: [id])
+  fechaEmision            DateTime
+  certificadoPdf          String
+
+  trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
 }
 
 model ExperienciaLaboral {
-  id                    Int      @id @default(autoincrement())
-  datosPersonalesId     Int
-  apellidosYNombres     String
-  documentoSustento     String
-  centroLaboral         String
-  dependenciaOficina    String
-  cargoLaboral          String
-  periodoLaboralInicio  DateTime
-  periodoLaboralFin     DateTime
-  fechaEmision          DateTime
-  // datosPersonales       DatosPersonales @relation(fields: [datosPersonalesId], references: [id])
-}
-
-model PersonalConDiscapacidad {
-  id                    Int      @id @default(autoincrement())
-  apellidosYNombres     String
-  sexo                  String
-  dni                   String  @unique
-  documentoSustento     String
-  tipoDiscapacidad      String
-  cargo                 String
-  organoEstructurado    String
-  condicionLaboral      String
-}
-
-/** ---------------------------------------------------------------------------------------------------------------------------- */
-// ------------------------------------- CONTRATOS Y NOMBRAMIENTO -------------------------------------
-model ContratoYNombramiento {
-  id                        Int      @id @default(autoincrement())
-  apellidosYNombres         String
-  condicionLaboral          String  // Ejemplo: Nombrado, Contratado, Designado
-  dependenciaOficina        String
-  resolucionNombramiento    String
-  cargoEstructural          String
-  regimenLaboral            String  // Ejemplo: 276, FAG-CAS, etc.
-  nivelRemuneracion         String
-  pap                       String
-  cnp                       String
-  fechaIngreso              DateTime
-  anosServicio              Int
-  fechaNacimiento           DateTime
-  fechaCese                 DateTime
-  tipoContratoCAS           TipoContratoCAS[]
-  contratoProyectoInversion ContratoProyectoInversion[]
-  practicasDL1401           PracticaDL1401[]
-}
-
-model TipoContratoCAS {
   id                      Int      @id @default(autoincrement())
-  contratoYNombramientoId Int
-  condicionLaboral        String  // Ejemplo: Indeterminado, Eventual
+  trabajadorId            Int
+  documentoSustento       String
+  centroLaboral           String
   dependenciaOficina      String
-  contratoCAS             String
   cargo                   String
+  periodoInicio           DateTime
+  periodoFin              DateTime
+  fechaEmision            DateTime
+
+  trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
+}
+
+model Discapacidad {
+  id                      Int      @id @default(autoincrement())
+  trabajadorId            Int
+  tipoDiscapacidad        String
+  documentoSustento       String
+  cargo                   String
+  organoEstructurado      String
+  condicionLaboral        String
+
+  trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
+}
+
+model Oficina {
+  id                      Int      @id @default(autoincrement())
+  nombre                  String
+  
+  contratos               Contrato[]
+}
+
+model Contrato {
+  id                      Int      @id @default(autoincrement())
+  trabajadorId            Int
+  oficinaId              Int
+  cargoEstructural        String
   regimenLaboral          String
+  nivelRemuneracion       String
+  papCnp                  String
   fechaIngreso            DateTime
   fechaCese               DateTime
-  contratoYNombramiento   ContratoYNombramiento @relation(fields: [contratoYNombramientoId], references: [id])
+
+  trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
+  oficina                 Oficina   @relation(fields: [oficinaId], references: [id])
 }
 
-model ContratoProyectoInversion {
-  id                        Int      @id @default(autoincrement())
-  contratoYNombramientoId   Int
-  condicionLaboral          String  // Ejemplo: Contratado, Reincorporado-Mandato Judicial
-  dependenciaOficina        String
-  resolucionContrato        String
-  cargo                     String
-  meta                      String
-  regimenLaboral            String
-  fechaIngreso              DateTime
-  fechaCese                 DateTime
-  contratoYNombramiento     ContratoYNombramiento @relation(fields: [contratoYNombramientoId], references: [id])
+
+
+
+model Renuncia {
+  id                      Int      @id @default(autoincrement())
+  trabajadorId            Int
+  documentoRenuncia       String
+  motivoRenuncia          String
+  fechaRenuncia           DateTime
+  dependenciaOficina      String
+  cargo                   String
+
+  trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
 }
 
-model PracticaDL1401 {
-  id                        Int      @id @default(autoincrement())
-  contratoYNombramientoId   Int
-  condicionLaboral          String  // Ejemplo: Profesional, Preprofesional
-  dependenciaOficina        String
-  convenio                  String
-  fechaIngreso              DateTime
-  fechaCese                 DateTime
-  contratoYNombramiento     ContratoYNombramiento @relation(fields: [contratoYNombramientoId], references: [id])
-}
-
-// ------------------------------------ RENUNCIA Y LIQUIDACIÓN ------------------------------------
-model RenunciaYLiquidacion {
-  id                    Int      @id @default(autoincrement())
-  apellidosYNombres     String
-  documentoRenuncia     String  // Ejemplo: Carta, Resolución
-  motivoRenuncia        String  // Ejemplo: Particular, Salud, Personal
-  fechaRenuncia         DateTime
-  dependenciaOficina    String
-  cargo                 String
-}
-
-// ------------------------------------ DESPLAZAMIENTO --------------------------------------
 model Desplazamiento {
-  id                    Int      @id @default(autoincrement())
-  apellidosYNombres     String
-  tipoDesplazamiento    String  // Ejemplo: Rotación interna, Reasignación, Designación
-  documentoRotacion     String  // Ejemplo: Memorando, Resolución
-  fechaDesplazamiento   DateTime
-  oficinaDe             String
-  oficinaA              String
-  cargo                 String
+  id                      Int      @id @default(autoincrement())
+  trabajadorId            Int
+  tipoDesplazamiento      String
+  documentoRotacion       String
+  fechaDesplazamiento     DateTime
+  oficinaOrigen           String
+  oficinaDestino          String
+  cargo                   String
+
+  trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
 }
 
-// ------------------------------------ DESCANSO MÉDICO ------------------------------------
 model DescansoMedico {
-  id                    Int      @id @default(autoincrement())
-  apellidosYNombres     String
-  tipoDescanso          String  // Ejemplo: Médico, Particular, Pre/Postnatal
-  documentoSustento     String  // Ejemplo: Memorando, Resolución, Certificado de Salud
-  fechaDescansoDesde    DateTime
-  fechaDescansoHasta    DateTime
-  dependenciaOficina    String
-  cargo                 String
+  id                      Int      @id @default(autoincrement())
+  trabajadorId            Int
+  tipoDescanso            String
+  documentoSustento       String
+  fechaInicio             DateTime
+  fechaFin                DateTime
+  dependenciaOficina      String
+  cargo                   String
+
+  trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
 }
 
-// ---------------------------- PERMISOS / LICENCIAS / VACACIONES -------------------------------
-model PermisosLicenciasVacaciones {
-  id                    Int      @id @default(autoincrement())
-  apellidosYNombres     String
-  tipoPermiso           String  // Ejemplo: Particular, Por cuenta de Vacaciones, Permiso por Familiar
-  documentoSustento     String  // Ejemplo: Solicitud, Resolución
-  fechaPermisoDesde     DateTime
-  fechaPermisoHasta     DateTime
-  dependenciaOficina    String
-  cargo                 String
+model PermisoLicenciaVacaciones {
+  id                      Int      @id @default(autoincrement())
+  trabajadorId            Int
+  tipoPermiso             String
+  documentoSustento       String
+  fechaInicio             DateTime
+  fechaFin                DateTime
+  dependenciaOficina      String
+  cargo                   String
+
+  trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
 }
 
-// ----------------------------------------- ASCENSOS --------------------------------------------
 model Ascenso {
-  id                        Int    @id @default(autoincrement())
-  apellidosYNombres         String
-  resolucionAscenso         String
-  cargoAnterior             String
-  cargoNuevo                String
-  nivelRemunerativoAnterior String
-  nivelRemunerativoNuevo    String
-  papAnterior               String
-  papNuevo                  String
-  cnpAnterior               String
-  cnpNuevo                  String
-  dependenciaOficina        String
+  id                      Int      @id @default(autoincrement())
+  trabajadorId            Int
+  documentoAscenso        String
+  cargoAnterior           String
+  cargoActual             String
+  nivelRemunerativo       String
+  papCnp                  String
+  fechaAscenso            DateTime
+
+  trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
 }
 
-/** ---------------------------------------------------------------------------------------------------------------------------- */
-// ---------------------------------- BONIFICACIÓN PERSONAL -----------------------------------
 model BonificacionPersonal {
-  id                    Int      @id @default(autoincrement())
-  apellidosYNombres      String
-  tipoBonificacion       String  // Ejemplo: Bonificación por desempeño, Bonificación por puntualidad, etc.
-  resolucionBonificacion String  // Resolución que respalda la bonificación
-  dependenciaOficina     String
-  cargo                  String
+  id                      Int      @id @default(autoincrement())
+  trabajadorId            Int
+  tipoBonificacion        String
+  documentoBonificacion   String
+  dependenciaOficina      String
+  cargo                   String
+
+  trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
 }
 
-// ---------------------------------- BONIFICACIÓN FAMILIAR -----------------------------------
 model BonificacionFamiliar {
-  id                    Int      @id @default(autoincrement())
-  apellidosYNombres      String
-  tipoBonificacion       String  // Ejemplo: Bonificación por familiar a cargo, etc.
-  resolucionBonificacion String  // Resolución que respalda la bonificación
-  dependenciaOficina     String
-  cargo                  String
+  id                      Int      @id @default(autoincrement())
+  trabajadorId            Int
+  tipoBonificacion        String
+  documentoBonificacion   String
+  dependenciaOficina      String
+  cargo                   String
+
+  trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
 }
 
-// ----------------------------- FICHA DE EVALUACIÓN ------------------------------------------
 model FichaEvaluacion {
-  id                    Int      @id @default(autoincrement())
-  apellidosYNombres      String
-  documentoSustento      String  // Ejemplo: Resolución de evaluación, informe de evaluación, etc.
-  dependenciaOficina     String
-  cargo                  String
-  fechaEvaluacion        DateTime
+  id                      Int      @id @default(autoincrement())
+  trabajadorId            Int
+  documentoSustento       String
+  dependenciaOficina      String
+  cargo                   String
+  fechaEvaluacion         DateTime
+
+  trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
 }
 
-
-/** ---------------------------------------------------------------------------------------------------------------------------- */
-// ------------------------------------- MÉRITOS -------------------------------------
 model Merito {
-  id               Int      @id @default(autoincrement())
-  apellidosYNombres String
-  documentoSustento String  // Ejemplo: Resoluciones, Cartas
-  dependenciaOficina String
-  cargo            String
-  fecha            DateTime
+  id                      Int      @id @default(autoincrement())
+  trabajadorId            Int
+  documentoSustento       String
+  dependenciaOficina      String
+  cargo                   String
+  fechaMerito             DateTime
+
+  trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
 }
 
-// ------------------------------------- DEMÉRITOS -------------------------------------
 model Demerito {
-  id                  Int      @id @default(autoincrement())
-  apellidosYNombres   String
-  documentoSustento   String  // Ejemplo: Resoluciones, Memorando
-  tipoSancion         String  // Ejemplo: Suspensión de labor, Amonestación, Papeleta de abandono
-  fechaSancionDesde   DateTime
-  fechaSancionHasta   DateTime
-  dependenciaOficina  String
-  cargo               String
+  id                      Int      @id @default(autoincrement())
+  trabajadorId            Int
+  documentoSustento       String
+  tipoSancion             String
+  fechaInicio             DateTime
+  fechaFin                DateTime
+  dependenciaOficina      String
+  cargo                   String
+
+  trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
 }
 
-/** ---------------------------------------------------------------------------------------------------------------------------- */
-// ------------------------------------- ACTA DE ENTREGA -------------------------------------
 model ActaEntrega {
-  id                   Int      @id @default(autoincrement())
-  apellidosYNombres     String
-  quienRecibe           String  // Quién recibe el acta de entrega
-  documentoSustento     String  // Ejemplo: Acta
-  dependenciaOficina    String
-  cargo                 String
-  fechaDesde            DateTime
-  fechaHasta            DateTime
+  id                      Int      @id @default(autoincrement())
+  trabajadorId            Int
+  personaRecibeActa      String
+  documentoActa           String
+  dependenciaOficina      String
+  cargo                   String
+  fechaInicio             DateTime
+  fechaFin                DateTime
+
+  trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
 }
 
-// ----------------------------------- CONSTANCIA DE PAGOS -----------------------------------
 model ConstanciaPago {
-  id                   Int      @id @default(autoincrement())
-  apellidosYNombres     String
-  documentoSustento     String  // Ejemplo: Constancia de pago, Boleta de pago
-  dependenciaOficina    String
-  cargo                 String
-  nivelRemunerativo     String  // Ejemplo: SPC, P-4
-  pap                   String
-  cnp                   String
-  diasLaboradosDesde    DateTime
-  diasLaboradosHasta    DateTime
+  id                      Int      @id @default(autoincrement())
+  trabajadorId            Int
+  documentoPago           String
+  dependenciaOficina      String
+  cargo                   String
+  nivelRemunerativo       String
+  papCnp                  String
+  diasLaboradosInicio     DateTime
+  diasLaboradosFin        DateTime
+
+  trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
 }
