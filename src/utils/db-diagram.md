@@ -1,7 +1,5 @@
-// Definición de entidades
-
 Table trabajador {
-id int [pk, increment] // ID del trabajador
+id int [pk, increment]
 apellido_paterno varchar
 apellido_materno varchar
 nombres varchar
