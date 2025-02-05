@@ -94,11 +94,16 @@ organo_estructurado varchar
 condicion_laboral varchar
 }
 
+Table oficina {
+id int [pk, increment]
+nombre varchar
+}
+
 Table contrato {
 id int [pk, increment]
 trabajador_id int [ref: > trabajador.id]
 tipo_contrato varchar
-dependencia_oficina varchar
+oficina_id int [ref: > oficina.id]
 cargo_estructural varchar
 regimen_laboral varchar
 nivel_remuneracion varchar
