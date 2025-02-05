@@ -34,7 +34,7 @@ export const navigationItems: NavigationItems[] = [
     ],
   },
   {
-    title: "gestión de usuarios",
+    title: "gestión de usuarios (only admin)",
     menuItem: [
       {
         label: "crear usuario",
