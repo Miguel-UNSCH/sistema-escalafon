@@ -10,7 +10,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Trabajador {
+model Personal {
   id                   Int      @id @default(autoincrement())
   apellidoPaterno      String
   apellidoMaterno      String
@@ -34,10 +34,12 @@ model Trabajador {
   ubigeoId             Int // tabla, 1 - 1
   regimenPensionarioId Int // tabla, 1 - M
   situacionLaboral     String // tabla, 1 - M 
+  idJerarquia          Int
 
   cargo                       Cargo                       @relation(fields: [cargoId], references: [id])
   ubigeo                      Ubigeo                      @relation(fields: [ubigeoId], references: [id])
   regimenPensionario          RegimenPensionario          @relation(fields: [regimenPensionarioId], references: [id])
+  jerarquia                   Jerarquia                   @relation(fields: [idJerarquia], references: [id])
   conyuge                     Conyuge?
   hijos                       Hijo[]
   formacionesAcademicas       FormacionAcademica[]
@@ -64,12 +66,21 @@ model Cargo {
   id     Int    @id @default(autoincrement())
   nombre String @unique
 
-  trabajadores          Trabajador[]
+  personales            Personal[]
   ExperienciaLaboral    ExperienciaLaboral[]
   BonificacionPersonal  BonificacionPersonal[]
   FichaEvaluacion       FichaEvaluacion[]
   ascensosCargoAnterior Ascenso[]              @relation("AscensoCargoAnterior")
   ascensosCargoActual   Ascenso[]              @relation("AscensoCargoActual")
+}
+
+model Jerarquia {
+  id           Int    @id @default(autoincrement())
+  nombre       String
+  tipo         String // "Gerencia", "Subgerencia", "Direccion", "Oficina"
+  idReferencia Int
+
+  personal Personal[]
 }
 
 model Ubigeo {
@@ -79,9 +90,9 @@ model Ubigeo {
   departamentoRegion String // lima, callao?
   nacionalidad       String
 
-  trabajadores Trabajador[]
-  conyuges     Conyuge[]
-  hijos        Hijo[]
+  personales Personal[]
+  conyuges   Conyuge[]
+  hijos      Hijo[]
 }
 
 /**
@@ -91,12 +102,12 @@ model RegimenPensionario {
   id     Int    @id @default(autoincrement())
   nombre String
 
-  trabajadores Trabajador[]
+  personales Personal[]
 }
 
 model Conyuge {
   id                       Int      @id @default(autoincrement())
-  trabajadorId             Int      @unique
+  personalId               Int      @unique
   apellidosYNombres        String
   ubigeoId                 Int // tabla, 1 - 1
   fechaNacimiento          DateTime
@@ -106,20 +117,20 @@ model Conyuge {
   centroTrabajo            String
   postgradoEspecializacion String
 
-  trabajador Trabajador @relation(fields: [trabajadorId], references: [id])
-  ubigeo     Ubigeo     @relation(fields: [ubigeoId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
+  ubigeo   Ubigeo   @relation(fields: [ubigeoId], references: [id])
 }
 
 model Hijo {
   id                Int      @id @default(autoincrement())
-  trabajadorId      Int
+  personalId        Int
   apellidosYNombres String
   ubigeoId          Int // tabla, 1 - 1
   fechaNacimiento   DateTime
   edad              Int
 
-  trabajador Trabajador @relation(fields: [trabajadorId], references: [id])
-  ubigeo     Ubigeo     @relation(fields: [ubigeoId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
+  ubigeo   Ubigeo   @relation(fields: [ubigeoId], references: [id])
 }
 
 model GradoInstruccion {
@@ -129,31 +140,31 @@ model GradoInstruccion {
 
 model FormacionAcademica {
   id           Int      @id @default(autoincrement())
-  trabajadorId Int
+  personalId   Int
   gradoId      Int // tabla, 1 - 1
   campoEstudio String
   institucion  String
   fechaInicio  DateTime
   fechaFin     DateTime
 
-  trabajador Trabajador @relation(fields: [trabajadorId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
 }
 
 model Estudio {
   id                 Int    @id @default(autoincrement())
-  trabajadorId       Int
+  personalId         Int
   formacionAcademica String // tabla, 1 - M
   anoInicio          Int
   anoFin             Int
   institucion        String
   otrosEstudios      String // array, pero como?
 
-  trabajador Trabajador @relation(fields: [trabajadorId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
 }
 
 model Capacitacion {
   id                    Int      @id @default(autoincrement())
-  trabajadorId          Int
+  personalId            Int
   centroCapacitacion    String
   materia               String
   profesionEspecialidad String
@@ -163,12 +174,13 @@ model Capacitacion {
   fechaEmision          DateTime
   certificadoPdf        String // --- string[]
 
-  trabajador Trabajador @relation(fields: [trabajadorId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
 }
 
+// sector publico | sector privado | otro
 model ExperienciaLaboral {
   id                 Int      @id @default(autoincrement())
-  trabajadorId       Int
+  personalId         Int
   cargoId            Int // ---, tabla M - 1
   documentoSustento  String
   centroLaboral      String
@@ -177,25 +189,18 @@ model ExperienciaLaboral {
   periodoFin         DateTime
   fechaEmision       DateTime
 
-  trabajador Trabajador @relation(fields: [trabajadorId], references: [id])
-  cargo      Cargo      @relation(fields: [cargoId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
+  cargo    Cargo    @relation(fields: [cargoId], references: [id])
 }
 
 model Discapacidad {
   id                Int    @id @default(autoincrement())
-  trabajadorId      Int
+  personalId        Int
   tipoDiscapacidad  String
   documentoSustento String
   condicionLaboral  String
 
-  trabajador Trabajador @relation(fields: [trabajadorId], references: [id])
-}
-
-model Oficina {
-  id     Int    @id @default(autoincrement())
-  nombre String
-
-  contratos Contrato[]
+  personal Personal @relation(fields: [personalId], references: [id])
 }
 
 /**
@@ -203,7 +208,7 @@ model Oficina {
  */
 model Contrato {
   id                Int      @id @default(autoincrement())
-  trabajadorId      Int
+  personalId        Int
   oficinaId         Int
   cargoEstructural  String
   regimenLaboral    String
@@ -212,25 +217,25 @@ model Contrato {
   fechaIngreso      DateTime
   fechaCese         DateTime
 
-  trabajador Trabajador @relation(fields: [trabajadorId], references: [id])
-  oficina    Oficina    @relation(fields: [oficinaId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
+  oficina  Oficina  @relation(fields: [oficinaId], references: [id])
 }
 
 model Renuncia {
   id                 Int      @id @default(autoincrement())
-  trabajadorId       Int
+  personalId         Int
   documentoRenuncia  String
   motivoRenuncia     String
   fechaRenuncia      DateTime
   dependenciaOficina String // tabla, 1 - M | trabajdor ------
   cargo              String // trabajdor cargo actual, editar: remover, ver: mantener
 
-  trabajador Trabajador @relation(fields: [trabajadorId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
 }
 
 model Desplazamiento {
   id                  Int      @id @default(autoincrement())
-  trabajadorId        Int
+  personalId          Int
   tipoDesplazamiento  String
   documentoRotacion   String
   fechaDesplazamiento DateTime
@@ -239,12 +244,12 @@ model Desplazamiento {
   cargoActual         String // trabajdor cargo actual
   cargoNuevo          String // modificar al cargo actual del trabajador
 
-  trabajador Trabajador @relation(fields: [trabajadorId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
 }
 
 model DescansoMedico {
   id                 Int      @id @default(autoincrement())
-  trabajadorId       Int
+  personalId         Int
   tipoDescanso       String
   documentoSustento  String
   fechaInicio        DateTime
@@ -252,12 +257,12 @@ model DescansoMedico {
   dependenciaOficina String // tabla, 1 - M | trabajdor ------
   cargo              String // trabajador cargo actual
 
-  trabajador Trabajador @relation(fields: [trabajadorId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
 }
 
 model PermisoLicenciaVacaciones {
   id                 Int      @id @default(autoincrement())
-  trabajadorId       Int
+  personalId         Int
   tipoPermiso        String
   documentoSustento  String
   fechaInicio        DateTime
@@ -265,7 +270,7 @@ model PermisoLicenciaVacaciones {
   dependenciaOficina String // tabla, 1 - M | trabajdor ------
   cargo              String // trabajador cargo actual
 
-  trabajador Trabajador @relation(fields: [trabajadorId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
 }
 
 // PAP (Puesto de Asignación Personal)
@@ -273,68 +278,69 @@ model PermisoLicenciaVacaciones {
 // el ascenso cambia de oficina?
 model Ascenso {
   id                Int      @id @default(autoincrement())
-  trabajadorId      Int
+  personalId        Int
   cargoAnteriorId   Int // tabla
-  cargoActualId     Int // tabla  modificar el acrgo actual
+  cargoActualId     Int // tabla  modificar el cargo actual
   nivelRemunerativo String
   pap               String // cambian al ascender
   cnp               String // cambian al ascender
   fechaAscenso      DateTime
 
-  trabajador    Trabajador @relation(fields: [trabajadorId], references: [id])
-  cargoAnterior Cargo      @relation("AscensoCargoAnterior", fields: [cargoAnteriorId], references: [id])
-  cargoActual   Cargo      @relation("AscensoCargoActual", fields: [cargoActualId], references: [id])
+  personal      Personal @relation(fields: [personalId], references: [id])
+  cargoAnterior Cargo    @relation("AscensoCargoAnterior", fields: [cargoAnteriorId], references: [id])
+  cargoActual   Cargo    @relation("AscensoCargoActual", fields: [cargoActualId], references: [id])
 }
 
+// documentoBonificacion, ahi se encuentra todos los detalles?
 model BonificacionPersonal {
   id                    Int    @id @default(autoincrement())
-  trabajadorId          Int
+  personalId            Int
   cargoId               Int // cargo actual del trabajador
   tipoBonificacion      String
   documentoBonificacion String
   dependenciaOficina    String // tabla, 1 - M | trabajdor ------
 
-  trabajador Trabajador @relation(fields: [trabajadorId], references: [id])
-  cargo      Cargo      @relation(fields: [cargoId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
+  cargo    Cargo    @relation(fields: [cargoId], references: [id])
 }
 
 model BonificacionFamiliar {
   id                    Int    @id @default(autoincrement())
-  trabajadorId          Int
+  personalId            Int
   tipoBonificacion      String
   documentoBonificacion String
   dependenciaOficina    String // tabla, 1 - M | trabajdor ------
   cargo                 String // cargo actual del trabajador
 
-  trabajador Trabajador @relation(fields: [trabajadorId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
 }
 
 model FichaEvaluacion {
   id                 Int      @id @default(autoincrement())
-  trabajadorId       Int
+  personalId         Int
   cargoId            Int // cargo actual del trabajador
   documentoSustento  String
   dependenciaOficina String // tabla, 1 - M | trabajdor ------
   fechaEvaluacion    DateTime
 
-  trabajador Trabajador @relation(fields: [trabajadorId], references: [id])
-  cargo      Cargo      @relation(fields: [cargoId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
+  cargo    Cargo    @relation(fields: [cargoId], references: [id])
 }
 
 model Merito {
   id                 Int      @id @default(autoincrement())
-  trabajadorId       Int
+  personalId         Int
   documentoSustento  String
   dependenciaOficina String // tabla, 1 - M | trabajdor ------
   cargo              String // cargo actual del trabajador
   fechaMerito        DateTime
 
-  trabajador Trabajador @relation(fields: [trabajadorId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
 }
 
 model Demerito {
   id                 Int      @id @default(autoincrement())
-  trabajadorId       Int
+  personalId         Int
   documentoSustento  String
   tipoSancion        String
   fechaInicio        DateTime
@@ -342,12 +348,12 @@ model Demerito {
   dependenciaOficina String // tabla, 1 - M | trabajdor ------
   cargo              String // cargo actual del trabajador
 
-  trabajador Trabajador @relation(fields: [trabajadorId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
 }
 
 model ActaEntrega {
   id                 Int      @id @default(autoincrement())
-  trabajadorId       Int
+  personalId         Int
   personaRecibeActa  String
   documentoActa      String
   dependenciaOficina String // tabla, 1 - M | trabajdor ------
@@ -355,12 +361,12 @@ model ActaEntrega {
   fechaInicio        DateTime
   fechaFin           DateTime
 
-  trabajador Trabajador @relation(fields: [trabajadorId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
 }
 
 model ConstanciaPago {
   id                  Int      @id @default(autoincrement())
-  trabajadorId        Int
+  personalId          Int
   documentoPago       String
   dependenciaOficina  String // tabla, 1 - M | trabajdor ------
   cargo               String // cargo actual del trabajador
@@ -369,5 +375,94 @@ model ConstanciaPago {
   diasLaboradosInicio DateTime
   diasLaboradosFin    DateTime
 
-  trabajador Trabajador @relation(fields: [trabajadorId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
+}
+
+model GobiernoRegional {
+  id           Int     @id @default(autoincrement())
+  nombre       String
+  sede         String?
+  codigoRegion String  @unique
+
+  gerencias       GerenciaRegional[]
+  consejos        ConsejoRegional[]
+  vicegobernacion Vicegobernacion?
+  procuraduria    Procuraduria?
+  control         OrganoDeControl?
+}
+
+model GerenciaRegional {
+  id         Int    @id @default(autoincrement())
+  nombre     String
+  idGobierno Int
+
+  gobierno     GobiernoRegional    @relation(fields: [idGobierno], references: [id])
+  subgerencias Subgerencia[]
+  direcciones  DireccionRegional[]
+  programas    ProgramaRegional[]
+}
+
+model Subgerencia {
+  id         Int    @id @default(autoincrement())
+  nombre     String
+  idGerencia Int
+
+  gerencia GerenciaRegional @relation(fields: [idGerencia], references: [id])
+}
+
+model DireccionRegional {
+  id         Int    @id @default(autoincrement())
+  nombre     String
+  idGerencia Int
+
+  gerencia GerenciaRegional @relation(fields: [idGerencia], references: [id])
+  oficinas Oficina[]
+}
+
+model Oficina {
+  id          Int    @id @default(autoincrement())
+  nombre      String
+  idDireccion Int
+
+  direccion DireccionRegional @relation(fields: [idDireccion], references: [id])
+  Contrato  Contrato[]
+}
+
+model ProgramaRegional {
+  id         Int    @id @default(autoincrement())
+  nombre     String
+  idGerencia Int
+
+  gerencia GerenciaRegional @relation(fields: [idGerencia], references: [id])
+}
+
+model ConsejoRegional {
+  id         Int    @id @default(autoincrement())
+  nombre     String
+  idGobierno Int
+
+  gobierno GobiernoRegional @relation(fields: [idGobierno], references: [id])
+}
+
+model Vicegobernacion {
+  id         Int              @id @default(autoincrement())
+  nombre     String
+  idGobierno Int              @unique
+  gobierno   GobiernoRegional @relation(fields: [idGobierno], references: [id])
+}
+
+model Procuraduria {
+  id         Int    @id @default(autoincrement())
+  nombre     String
+  idGobierno Int    @unique
+
+  gobierno GobiernoRegional @relation(fields: [idGobierno], references: [id])
+}
+
+model OrganoDeControl {
+  id         Int    @id @default(autoincrement())
+  nombre     String
+  idGobierno Int    @unique
+
+  gobierno GobiernoRegional @relation(fields: [idGobierno], references: [id])
 }
