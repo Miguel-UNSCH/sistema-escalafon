@@ -10,63 +10,108 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
+
 model Trabajador {
-  id                      Int                  @id @default(autoincrement())
-  apellidoPaterno          String
-  apellidoMaterno          String
-  nombres                  String
-  sexo                     String
-  edad                     Int
-  dni                      String
-  nroAutogenerado          String
-  licenciaConducir         String
-  grupoSanguineo           String  
-  fechaIngreso             DateTime
-  unidadEstructurada       String // cosejo regional - gonbernacion - gerencia general - subsegrencias - direccion [jerarquia]
-  cargo                    String
-  fechaNacimiento          DateTime
-  distrito                 String // ubigeo: distritto, provincia, departamento
-  provincia                String
-  departamentoRegion       String
-  nacionalidad             String
-  domicilio                String
-  interiorUrbanizacion     String
-  telefonoFijo             String
-  celular                  String
-  correoElectronico        String
-  personalDiscapacidad     Boolean
-  regimenPensionario       String
-  nombreAFP                String
-  situacionLaboral         String
-  estadoCivil              String
+  id                      Int      @id @default(autoincrement())
+  apellidoPaterno         String
+  apellidoMaterno         String
+  nombres                 String
+  sexo                    String
+  edad                    Int
+  dni                     String
+  nroAutogenerado         String
+  licenciaConducir        String
+  grupoSanguineo          String  
+  fechaIngreso            DateTime
+  cargoId                 Int
+  fechaNacimiento         DateTime
+  ubigeoId                Int
+  domicilio               String
+  interiorUrbanizacion    String
+  telefonoFijo            String
+  celular                 String
+  correoElectronico       String
+  personalDiscapacidad    Boolean
+  regimenPensionarioId    Int
+  situacionLaboral        String
+  estadoCivil             String  
 
   // Relaciones
-  conyuge                  Conyuge?
-  hijos                    Hijo[]
-  estudios                 Estudio[]
-  capacitaciones           Capacitacion[]
-  experienciasLaborales    ExperienciaLaboral[]
-  discapacidades           Discapacidad[]
-  contratos                Contrato[]
-  renuncias                Renuncia[]
-  desplazamientos          Desplazamiento[]
-  descansosMedicos         DescansoMedico[]
+  cargo                   Cargo @relation(fields: [cargoId], references: [id])
+  ubigeo                  Ubigeo @relation(fields: [ubigeoId], references: [id])
+  regimenPensionario      RegimenPensionario @relation(fields: [regimenPensionarioId], references: [id])
+  conyuge                 Conyuge?
+  hijos                   Hijo[]
+  estudios                Estudio[]
+  capacitaciones          Capacitacion[]
+  experienciasLaborales   ExperienciaLaboral[]
+  discapacidades          Discapacidad[]
+  contratos               Contrato[]
+  renuncias               Renuncia[]
+  desplazamientos         Desplazamiento[]
+  descansosMedicos        DescansoMedico[]
   permisosLicenciasVacaciones PermisoLicenciaVacaciones[]
-  ascensos                 Ascenso[]
+  ascensos                Ascenso[]
   bonificacionesPersonales BonificacionPersonal[]
   bonificacionesFamiliares BonificacionFamiliar[]
-  fichasEvaluacion         FichaEvaluacion[]
-  meritos                  Merito[]
-  deméritos                Demerito[]
-  actasEntrega             ActaEntrega[]
-  constanciasPago          ConstanciaPago[]
+  fichasEvaluacion        FichaEvaluacion[]
+  meritos                 Merito[]
+  deméritos               Demerito[]
+  actasEntrega            ActaEntrega[]
+  constanciasPago         ConstanciaPago[]
+}
+
+model GradoInstruccion {
+  id          Int                @id @default(autoincrement())
+  nombre      String
+
+  formaciones FormacionAcademica[]  
+}
+
+model FormacionAcademica {
+  id            Int       @id @default(autoincrement())
+  trabajadorId  Int       
+  gradoId       Int       
+  campoEstudio  String    
+  institucion   String    
+  fechaInicio   DateTime  
+  fechaFin      DateTime  
+  
+  trabajador     Trabajador @relation(fields: [trabajadorId], references: [id])  
+  grado          GradoInstruccion @relation(fields: [gradoId], references: [id]) 
+}
+
+
+model Cargo {
+  id    Int    @id @default(autoincrement())
+  nombre String @unique
+  trabajadores Trabajador[]
+}
+
+model Ubigeo {
+  id                    Int    @id @default(autoincrement())
+  distrito              String
+  provincia             String
+  departamentoRegion    String
+  nacionalidad          String
+  trabajadores          Trabajador[]
+  conyuges              Conyuge[]
+  hijos                 Hijo[]
+}
+
+model RegimenPensionario {
+  id          Int    @id @default(autoincrement())
+  nombre      String
+  trabajadores Trabajador[]
 }
 
 model Conyuge {
-  id                     Int      @id @default(autoincrement())
-  trabajadorId           Int      @unique
+  id                     Int    @id @default(autoincrement())
+  trabajadorId           Int    @unique
   apellidosYNombres      String
-  lugarFechaNacimiento   String
+  ubigeoId               Int
+  fechaNacimiento        DateTime
   gradoInstruccion       String
   profesion              String
   ocupacion              String
@@ -74,18 +119,24 @@ model Conyuge {
   postgradoEspecializacion String
 
   trabajador             Trabajador @relation(fields: [trabajadorId], references: [id])
+  ubigeo                 Ubigeo @relation(fields: [ubigeoId], references: [id])
 }
 
 model Hijo {
-  id                      Int      @id @default(autoincrement())
-  trabajadorId            Int
-  apellidosYNombres       String
-  lugarFechaNacimiento    String
-  edad                    Int
+  id                     Int    @id @default(autoincrement())
+  trabajadorId           Int
+  apellidosYNombres      String
+  ubigeoId               Int
+  fechaNacimiento        DateTime
+  edad                   Int
 
-  trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
+  trabajador             Trabajador @relation(fields: [trabajadorId], references: [id])
+  ubigeo                 Ubigeo @relation(fields: [ubigeoId], references: [id])
   gradosInstruccion      GradoInstruccion[]
 }
+
+
+
 
 model GradoInstruccion {
   id                     Int      @id @default(autoincrement())
@@ -117,7 +168,7 @@ model Capacitacion {
   periodoFin              DateTime
   horasLectivas           Int
   fechaEmision            DateTime
-  certificadoPdf          String
+  certificadoPdf          String // arreglo de string
 
   trabajador              Trabajador @relation(fields: [trabajadorId], references: [id])
 }
