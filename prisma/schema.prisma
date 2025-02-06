@@ -20,12 +20,12 @@ model Trabajador {
   dni                      String
   nroAutogenerado          String
   licenciaConducir         String
-  grupoSanguineo           String
+  grupoSanguineo           String  
   fechaIngreso             DateTime
-  unidadEstructurada       String
+  unidadEstructurada       String // cosejo regional - gonbernacion - gerencia general - subsegrencias - direccion [jerarquia]
   cargo                    String
   fechaNacimiento          DateTime
-  distrito                 String
+  distrito                 String // ubigeo: distritto, provincia, departamento
   provincia                String
   departamentoRegion       String
   nacionalidad             String
