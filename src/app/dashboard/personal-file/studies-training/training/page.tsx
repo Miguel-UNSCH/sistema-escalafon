@@ -148,7 +148,7 @@ const Form: React.FC = () => {
 
 const page = () => {
   return (
-    <div className="flex flex-col justify-center items-center shadow-sm font-poppins text-[#11111b]">
+    <div className="flex flex-col justify-center items-center font-poppins text-[#11111b]">
       <div className="flex flex-col justify-center items-center gap-4 bg-white p-8 rounded-lg">
         <h3 className="font-bold font-montserrat text-2xl text-center uppercase">capacitación</h3>
         <div className="flex-row justify-evenly items-center gap-2 hidden">
