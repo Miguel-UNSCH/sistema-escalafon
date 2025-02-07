@@ -193,12 +193,9 @@ model Ubigeo {
   hijos      Hijo[]
 }
 
-/**
- * L. N° 29903, D. L. ° 19990
- */
 model RegimenPensionario {
   id     Int    @id @default(autoincrement())
-  nombre String
+  nombre String // L. N° 29903, D. L. ° 19990
 
   personales Personal[]
 }

@@ -79,7 +79,7 @@ export const navigationItems: NavigationItems[] = [
         path: "/dashboard/personal-file/studies-training",
         submenus: [
           { label: "estudios", path: "/dashboard/personal-file/studies-training/studies" },
-          { label: "training", path: "/dashboard/personal-file/studies-training/training" },
+          { label: "capacitación", path: "/dashboard/personal-file/studies-training/training" },
         ],
       },
       {

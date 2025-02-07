@@ -14,6 +14,14 @@ export type EstudiosFormValues = {
   certifications: string;
 };
 
+export type IForm = {
+  formacionAcademica: string;
+  anoInicio: string;
+  anoFin: string;
+  institucion: string;
+  otrosEstudios: string;
+};
+
 const Form = () => {
   const {
     register,
