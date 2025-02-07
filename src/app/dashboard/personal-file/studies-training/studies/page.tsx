@@ -1,25 +1,13 @@
 "use client";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { LuSave, LuSchool, LuUserRoundPlus } from "react-icons/lu";
-
-/** ---------------------------------------------------------------------------------------------------------------------------------------------- */
-export type EstudiosFormValues = {
-  name: string;
-  lastName: string;
-  academicFormation: string;
-  trainingCenter: string;
-  period: string;
-  institution: string;
-  certifications: string;
-};
+import { LuArrowLeft, LuArrowRight, LuAsterisk, LuCirclePlus, LuSchool } from "react-icons/lu";
 
 export type IForm = {
   formacionAcademica: string;
   anoInicio: string;
   anoFin: string;
   institucion: string;
-  otrosEstudios: string;
 };
 
 const Form = () => {
@@ -31,85 +19,87 @@ const Form = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setValue,
     formState: { errors },
-  } = useForm<EstudiosFormValues>();
+  } = useForm<IForm>();
 
-  const onSubmit: SubmitHandler<EstudiosFormValues> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<IForm> = (data) => console.log(data);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="font-inter">
-      {/* Nombres y Apellidos */}
-      <div className="flex flex-row items-center gap-2">
-        <div className="flex flex-col font-poppins">
-          <label htmlFor="name" className="block mb-2 pl-1 font-medium text-text-primary">
-            Nombres
-          </label>
-          <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
-            <input
-              id="name"
-              {...register("name", { required: "Este campo es obligatorio" })}
-              className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
-            />
-          </div>
-
-          {errors.name && <p>{errors.name.message}</p>}
-        </div>
-
-        <div className="flex flex-col font-poppins">
-          <label htmlFor="lastName" className="block mb-2 pl-1 font-medium text-text-primary">
-            Apellidos
-          </label>
-          <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
-            <input
-              id="lastName"
-              {...register("lastName", { required: "Este campo es obligatorio" })}
-              className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
-            />
-          </div>
-          {errors.lastName && <p>{errors.lastName.message}</p>}
-        </div>
-      </div>
-
-      {/* Formación Académica */}
-      <div className="flex flex-col mb-5 font-poppins">
-        <label htmlFor="academicFormation" className="block mb-2 pl-1 font-medium text-text-primary">
-          Formación Académica
+      <div className="flex flex-col gap-2 mb-4 font-poppins">
+        <label htmlFor="formacionAcademica" className="flex flex-row font-inter font-semibold capitalize">
+          formación académica
+          <LuAsterisk />
         </label>
         <div className="flex flex-row items-center pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
           <LuSchool />
           <select
-            id="academicFormation"
-            {...register("academicFormation", { required: "Este campo es obligatorio" })}
+            id="formacionAcademica"
+            {...register("formacionAcademica", { required: "este campo es obligatorio" })}
             className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
           >
-            <option value="">Seleccione un grado</option>
-            <option value="Primaria Completa">Primaria Completa</option>
-            <option value="Secundaria Completa">Secundaria Completa</option>
-            <option value="Bachiller">Bachiller</option>
-            <option value="Titulado">Titulado</option>
-            <option value="Postgrado">Postgrado</option>
-            <option value="Técnico Completo">Técnico Completo</option>
+            <option value="">seleccione un grado</option>
+            <option value="Primaria Completa">primaria completa</option>
+            <option value="Secundaria Completa">secundaria completa</option>
+            <option value="Bachiller">bachiller</option>
+            <option value="Titulado">titulado</option>
+            <option value="Postgrado">postgrado</option>
+            <option value="Técnico Completo">técnico completo</option>
           </select>
         </div>
-        {errors.academicFormation && <p className="font-montserrat text-red-500">{errors.academicFormation.message}</p>}
+        {errors.formacionAcademica && <p className="font-montserrat text-red-500">{errors.formacionAcademica.message}</p>}
       </div>
 
-      <p>Año(Del, Al)</p>
-      <p>Nombre de la institución</p>
-      <p>Otros estudios con certificación</p>
+      <div className="flex flex-row gap-5 w-full">
+        <div className="flex flex-col gap-2 mb-4 w-1/2">
+          <label htmlFor="anoInicio" className="flex flex-row font-inter font-semibold capitalize">
+            año inicio
+            <LuAsterisk />
+          </label>
+          <input type="date" {...register("anoInicio", { required: true })} className="rounded-xl font-poppins" />
+        </div>
 
-      <div className="flex flex-row justify-end items-center gap-2">
-        <div className="flex flex-row items-center gap-2 bg-[#7287fd] p-2 rounded-lg">
-          <LuUserRoundPlus className="ml-2" />
-          <button type="button" className="pr-2">
-            Agregar
-          </button>
+        <div className="flex flex-col gap-2 mb-4 w-1/2">
+          <label htmlFor="anoFin" className="flex flex-row font-inter font-semibold capitalize">
+            año fin
+            <LuAsterisk />
+          </label>
+          <input type="date" {...register("anoFin", { required: true })} className="rounded-xl font-poppins" />
         </div>
-        <div className="flex flex-row items-center gap-2 bg-[#179299] p-2 rounded-lg">
-          <LuSave className="ml-2" />
-          <button type="submit" className="pr-2">
-            Guardar
-          </button>
-        </div>
+      </div>
+
+      <div className="flex flex-col gap-2 mb-4">
+        <label htmlFor="institucion" className="flex flex-row font-inter font-semibold capitalize">
+          centro de capacitación
+          <LuAsterisk />
+        </label>
+        <input
+          type="text"
+          placeholder="ingrese el centro de capacitación"
+          {...register("institucion", { required: true })}
+          className="rounded-xl font-poppins"
+        />
+        <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.institucion?.message}</span>
+      </div>
+
+      <div className="flex flex-row justify-end items-end mb-5 p-2 text-[#eff1f5]">
+        <button
+          type="button"
+          className="text-right flex flex-row items-center gap-2 bg-[#04a5e5] px-4 p-2 rounded-xl font-montserrat font-semibold text-sm uppercase"
+        >
+          <LuCirclePlus />
+          agregar estudios
+        </button>
+      </div>
+
+      <div className="flex flex-row justify-center items-center gap-4 font-montserrat text-[#eff1f5] text-center">
+        <button type="button" className="flex flex-row items-center gap-2 bg-[#e64553] hover:bg-[#fe640b] px-4 p-2 rounded-lg text-lg uppercase">
+          <LuArrowLeft />
+          regresar
+        </button>
+        <button type="submit" className="flex flex-row items-center gap-2 bg-[#179299] hover:bg-[#40a02b] px-4 p-2 rounded-lg text-lg uppercase">
+          siguiente
+          <LuArrowRight />
+        </button>
       </div>
     </form>
   );
@@ -119,10 +109,18 @@ const Form = () => {
 
 const page = () => {
   return (
-    <div className="flex flex-col justify-center items-center font-poppins">
-      <div className="flex flex-col">
-        <h3 className="font-bold font-montserrat text-xl uppercase">Estudios</h3>
-        <Form />
+    <div className="flex flex-col justify-center items-center shadow-sm font-poppins text-[#11111b]">
+      <div className="flex flex-col justify-center items-center gap-4 bg-white p-8 rounded-lg">
+        <h3 className="font-bold font-montserrat text-2xl text-center uppercase">estudios</h3>
+        <div className="flex-row justify-evenly items-center gap-2 hidden">
+          <span className="flex justify-center items-center bg-[#ccd0da] rounded-full w-8 h-8">1</span>
+          <div className="flex-grow bg-[#ccd0da] h-1"></div>
+          <span className="flex justify-center items-center bg-[#ccd0da] rounded-full w-8 h-8">2</span>
+        </div>
+
+        <div className="flex justify-center items-center">
+          <Form />
+        </div>
       </div>
     </div>
   );

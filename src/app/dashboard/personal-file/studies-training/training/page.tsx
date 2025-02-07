@@ -25,7 +25,6 @@ const Form: React.FC = () => {
     resolver: zodResolver(studiesTrainingSchema),
   });
   const onSubmit: SubmitHandler<IForm> = (data) => console.log(data);
-  console.log(errors);
 
   return (
     <div className="flex flex-col gap-4 mt-4 w-auto">
