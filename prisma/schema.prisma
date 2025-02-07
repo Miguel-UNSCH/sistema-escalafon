@@ -10,56 +10,154 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Personal {
-  id                   Int      @id @default(autoincrement())
-  apellidoPaterno      String
-  apellidoMaterno      String
-  nombres              String
-  sexo                 String
-  edad                 Int
-  dni                  String
-  nroAutogenerado      String
-  licenciaConducir     String
-  grupoSanguineo       String
-  fechaIngreso         DateTime
-  fechaNacimiento      DateTime
-  domicilio            String
-  interiorUrbanizacion String
-  telefonoFijo         String
-  celular              String
-  correoElectronico    String
-  personalDiscapacidad Boolean
-  estadoCivil          String
-  cargoId              Int // tabla, 1 - M
-  ubigeoId             Int // tabla, 1 - 1
-  regimenPensionarioId Int // tabla, 1 - M
-  situacionLaboral     String // tabla, 1 - M 
-  idJerarquia          Int
+/**
+ * FICHA PERSONAL
+ * ├── Datos Personales
+ * ├── Estudios y Capacitación
+ * ├── Experiencia Laboral
+ * └── Discapacidad
+ */
 
-  cargo                       Cargo                       @relation(fields: [cargoId], references: [id])
-  ubigeo                      Ubigeo                      @relation(fields: [ubigeoId], references: [id])
-  regimenPensionario          RegimenPensionario          @relation(fields: [regimenPensionarioId], references: [id])
-  jerarquia                   Jerarquia                   @relation(fields: [idJerarquia], references: [id])
-  conyuge                     Conyuge?
-  hijos                       Hijo[]
-  formacionesAcademicas       FormacionAcademica[]
-  capacitaciones              Capacitacion[]
-  experienciasLaborales       ExperienciaLaboral[]
-  discapacidades              Discapacidad[]
-  contratos                   Contrato[]
-  renuncias                   Renuncia[]
-  desplazamientos             Desplazamiento[]
-  descansosMedicos            DescansoMedico[]
-  permisosLicenciasVacaciones PermisoLicenciaVacaciones[]
-  ascensos                    Ascenso[]
-  bonificacionesPersonales    BonificacionPersonal[]
-  bonificacionesFamiliares    BonificacionFamiliar[]
-  fichasEvaluacion            FichaEvaluacion[]
-  meritos                     Merito[]
-  deméritos                  Demerito[]
-  actasEntrega                ActaEntrega[]
-  constanciasPago             ConstanciaPago[]
-  Estudio                     Estudio[]
+/**
+ * -- Datos personales (+ trabajador)
+ * *** a. Datos personales
+ * Apellido Paterno
+ * Apellido Materno
+ * Nombres
+ * Sexo
+ * Edad
+ * DNI (Carnet de extranjería)
+ * N° de Autogenerado
+ * Licencia de conducir
+ * Grupo sanguíneo
+ * Fecha de ingreso
+ * Unidad estructurada donde trabaja
+ * Cargo
+ * Fecha de Nacimiento
+ * Distrito
+ * Provincia
+ * Departamento/Región
+ * Nacionalidad
+ * Domicilio Av/Jr. Calle
+ * Interior Urbanización
+ * Provincia
+ * Distrito
+ * Teléfono fijo
+ * Celular
+ * Correo electrónico
+ * Personal con discapacidad (si, no)
+ * Régimen pensionario (L. N° 29903, D. L. ° 19990)
+ * Nombre de AFP
+ * Situación laboral (Nombrado-D-L. 276, Contratado plaza vacante, Contratado ley 30057, Contratado CAS-Indeterminado, Contratado en CAS-Temporal D.L. 1057, Contratado en proyecto de inversión, Practicantes preprofesionales-D.L. 1404, Practicante profesional-D.L. 1004).
+ * Estado civil (Soltero/a, Casado/a, Separado/a, Viudo/a, Conviviente)
+ * *** b. Datos del Cónyuge
+ * Apellidos y nombres
+ * Lugar y fecha de nacimiento
+ * Departamento/Región
+ * Provincia
+ * Distrito
+ * Grado de instrucción
+ * Profesión
+ * Ocupación
+ * Centro de Trabajo
+ * Postgrado / Especialización (Título, Año, Universidad)
+ * *** c. Datos de los hijos
+ * Apellidos y nombres
+ * Lugar y fecha de nacimiento
+ * Edad
+ * Grado de instrucción
+ */
+
+/**
+ * -- Estudios y capacitación (+ trabajador)
+ * *** a. Estudios
+ * Apellidos y nombres
+ * Formación Académica(Primaria Completa, Primaria Incompleta, Incompleta, Universitario Secundaria Completa, Secundaria Completa, Universitario Incompleta, Bachiller, Titulado, Postgrado, Técnico Completo, Técnico Incompleta, Técnico Egresado, Técnico Titulado)
+ * Año(Del, Al)
+ * Nombre de la institución
+ * Otros estudios con certificación
+ * *** b. Capacitación
+ * Apellidos y nombres
+ * Centro de capacitación
+ * Materia
+ * Profesión o especialidad
+ * Periodo (Del, Al)
+ * Horas Lectivas
+ * Fecha de emisión
+ * Certificado escaneado en PDF
+ */
+
+/**
+ * -- Experiencia laboral (+ trabajador)
+ * Apellidos y nombres
+ * Documento de sustento (Certificado, Constancia, Resolución, CAS, Locación de servicio)
+ * Centro de labor
+ * Dependencia y/o oficina
+ * Cargo
+ * Periodo de labor (Del - Al)
+ * Fecha de emisión
+ */
+
+/**
+ * -- Personal con discapacidad (+ trabajador)
+ * Apellidos y nombres
+ * Sexo
+ * DNI
+ * Documento de sustento
+ * Tipo de discapacidad
+ * Cargo
+ * Órgano estructurado
+ * Condición laboral
+ */
+model Personal {
+  id                        Int                         @id @default(autoincrement())
+  nombres                   String
+  apellidos                 String
+  sexo                      String
+  edad                      Int
+  dni                       String
+  nroAutogenerado           String
+  licenciaConducir          String
+  grupoSanguineo            String
+  fechaIngreso              DateTime
+  fechaNacimiento           DateTime
+  domicilio                 String
+  interiorUrbanizacion      String
+  telefonoFijo              String
+  celular                   String
+  correoElectronico         String
+  personalDiscapacidad      Boolean
+  estadoCivil               String
+  cargoId                   Int // tabla, 1 - M
+  ubigeoId                  Int // tabla, 1 - 1
+  regimenPensionarioId      Int // tabla, 1 - M
+  situacionLaboral          String // tabla, 1 - M 
+  idJerarquia               Int
+  Cargo                     Cargo                       @relation(fields: [cargoId], references: [id])
+  Jerarquia                 Jerarquia?                  @relation(fields: [jerarquiaId], references: [id])
+  jerarquiaId               Int?
+  Ubigeo                    Ubigeo                      @relation(fields: [ubigeoId], references: [id])
+  RegimenPensionario        RegimenPensionario          @relation(fields: [regimenPensionarioId], references: [id])
+  Conyuge                   Conyuge?
+  Hijo                      Hijo[]
+  FormacionAcademica        FormacionAcademica[]
+  Estudio                   Estudio[]
+  Capacitacion              Capacitacion[]
+  ExperienciaLaboral        ExperienciaLaboral[]
+  Discapacidad              Discapacidad[]
+  Contrato                  Contrato[]
+  Renuncia                  Renuncia[]
+  Desplazamiento            Desplazamiento[]
+  DescansoMedico            DescansoMedico[]
+  PermisoLicenciaVacaciones PermisoLicenciaVacaciones[]
+  Ascenso                   Ascenso[]
+  BonificacionPersonal      BonificacionPersonal[]
+  BonificacionFamiliar      BonificacionFamiliar[]
+  FichaEvaluacion           FichaEvaluacion[]
+  Merito                    Merito[]
+  Demerito                  Demerito[]
+  ActaEntrega               ActaEntrega[]
+  ConstanciaPago            ConstanciaPago[]
 }
 
 model Cargo {
@@ -204,6 +302,108 @@ model Discapacidad {
 }
 
 /**
+ * SITUACIÓN LABORAL
+ * ├── Contratos y Nombramiento
+ * ├── Renuncia y Liquidación
+ * ├── Desplazamiento
+ * ├── Descanso Médico
+ * ├── Permisos / Licencias / Vacaciones
+ * └── Ascensos
+ */
+
+/**
+ * -- Contratos y nombramiento
+ * ** a. Régimen de decreto legislativo 276
+ * Apellidos y Nombres
+ * Condición laboral (Nombrado, Contratado o en plaza vacante, Designado)
+ * Dependencia y/o oficina
+ * Resolución de nombramiento y/o contrato
+ * Cargo estructural
+ * Régimen laboral (276, 276, FAG-CAS-FUN276)
+ * Nivel remuneración
+ * PAP
+ * CNP
+ * Fecha de ingreso-GRA
+ * Años de servicio
+ * Fecha de nacimiento
+ * Fecha de Cese
+ * ** b. Contrato Administrativo de Servicio - CAS
+ * Apellidos y nombres
+ * Condición laboral (Indeterminado, Eventual)
+ * Dependencia y/o oficina
+ * Contrato-CAS
+ * Cargo
+ * Régimen laboral
+ * Fecha de Ingreso-GRA (Desde - Hasta)
+ * ** c. D.L. 276-Proyecto de inversión
+ * Apellidos y nombres
+ * Condición laboral (Contratado, Reincorporado-Mandato Judicial)
+ * Dependencia y/o oficina
+ * Resolución de contrato
+ * Cargo
+ * Meta
+ * Régimen laboral
+ * Fecha de Ingreso-GRA (Desde - Hasta)
+ * ** d. Practicante-D.L. N° 1401-Régimen Especial Modalidades Formativas
+ * Apellidos y nombres
+ * Condición laboral (Profesional - Preprofesional)
+ * Dependencia y/o oficina
+ * Convenio
+ * Fecha de Ingreso-GRA (Desde - Hasta)
+ */
+
+/**
+ * -- Renuncia y liquidación
+ * Apellidos y nombres
+ * Documento de renuncia (Carta, resolución)
+ * Motivo de renuncia (Particular, salud, personal)
+ * Fecha de Renuncia
+ * Dependencia y/o oficina
+ * Cargo
+ */
+
+/**
+ * -- Desplazamiento
+ * Apellidos y nombres
+ * Tipo (Rotación interna, Rotación voluntaria, Reasignación, Designación, Destaque, Permuta, Encargar)
+ * Documento de rotación (Memorando, resolución)
+ * Fecha de Desplazamiento
+ * De la oficina
+ * A la oficina
+ * Cargo
+ */
+
+/**
+ * -- Descanso médico
+ * Apellidos y nombres
+ * Tipo de descanso (Descanso médico según enfermedad, Particular, Pre y Postnatal)
+ * Documento de sustento (Memorando, resolución, certificado de salud)
+ * Fecha de descanso (Del - Al)
+ * Dependencia y/o oficina
+ * Cargo
+ */
+
+/**
+ * -- Permisos licencias vacaciones
+ * Apellidos y nombres
+ * Tipo de permisos licencias vacaciones (Particular, Por cuenta de Vacaciones, Permiso por familiar)
+ * Documento de sustento (Solicitud, resolución)
+ * Fecha de permiso (Del - Al)
+ * Dependencia y/o oficina
+ * Cargo
+ */
+
+/**
+ * -- Ascensos
+ * Apellidos y nombres
+ * Resolución de ascenso
+ * Cargo (Del cargo, Al cargo)
+ * Nivel Remunerativo (Del - Al)
+ * PAP-CNP (Del - Al)
+ * Dependencia y/o oficina
+ */
+
+/**
  * volver a ver los contratos ( Régimen de decreto legislativo 276 | Contrato Administrativo de Servicio - CAS | D.L. 276-Proyecto de inversión)
  */
 model Contrato {
@@ -276,6 +476,7 @@ model PermisoLicenciaVacaciones {
 // PAP (Puesto de Asignación Personal)
 // CNP (Código Nacional del Personal)
 // el ascenso cambia de oficina?
+// ascenso como tal no hay en el GORE, lo que hay es cargo de confianza
 model Ascenso {
   id                Int      @id @default(autoincrement())
   personalId        Int
@@ -290,6 +491,40 @@ model Ascenso {
   cargoAnterior Cargo    @relation("AscensoCargoAnterior", fields: [cargoAnteriorId], references: [id])
   cargoActual   Cargo    @relation("AscensoCargoActual", fields: [cargoActualId], references: [id])
 }
+
+/**
+ * BONIFICACIONES Y EVALUACIONES
+ * ├── Bonificación Personal
+ * ├── Bonificación Familiar
+ * └── Ficha de Evaluación
+ */
+
+/**
+ * -- Bonificación personal (+ trabajador)
+ * Apellidos y nombres
+ * Tipo de bonificación personal
+ * Resolución de bonificación personal
+ * Dependencia y/o oficina  -- selec
+ * Cargo
+ */
+
+/**
+ * -- Bonificación familiar (+ trabajador)
+ * Apellidos y nombres
+ * Tipo de Bonificación familiar
+ * Resolución de bonificación familiar
+ * Dependencia y/o oficina -- selec
+ * Cargo
+ */
+
+/**
+ * -- Ficha de evaluación (+ trabajador)
+ * Apellidos y nombres
+ * Documento de sustento
+ * Dependencia y/o oficina -- selec
+ * Cargo
+ * Fecha de evaluación
+ */
 
 // documentoBonificacion, ahi se encuentra todos los detalles?
 model BonificacionPersonal {
@@ -327,6 +562,30 @@ model FichaEvaluacion {
   cargo    Cargo    @relation(fields: [cargoId], references: [id])
 }
 
+/**
+ * MÉRITOS Y DEMÉRITOS
+ * ├── Méritos
+ * └── Deméritos
+ */
+
+/**
+ * -- Méritos (+ trabajador)
+ * Apellidos y nombres
+ * Documento de sustento (Resoluciones, Cartas)
+ * Dependencia y/o oficina
+ * Cargo
+ * Fecha
+ */
+
+/**
+ * -- Deméritos
+ * Apellidos y nombres
+ * Documento de sustento (Resoluciones, Memorando)
+ * Tipo de sanción (suspensión de labor sin goce de haberes, Amonestación, Papeleta de abandono)
+ * Fecha de Sanción (Del - Al)
+ * Dependencia y/o oficina
+ * Cargo
+ */
 model Merito {
   id                 Int      @id @default(autoincrement())
   personalId         Int
@@ -351,6 +610,34 @@ model Demerito {
   personal Personal @relation(fields: [personalId], references: [id])
 }
 
+/**
+ * DOCUMENTOS / OTROS
+ * ├── Acta de Entrega
+ * └── Constancia de Pagos
+ */
+
+/**
+ * -- Acta de entrega (+ trabajador)
+ * Apellidos y nombres
+ * Quien recibe la acta de entrega
+ * Documento de sustento (acta)
+ * Dependencia y/o oficina
+ * Cargo
+ * Fecha (Del - Al)
+ */
+
+/**
+ * -- Constancia de pagos de haberes y descuentos (+ trabajador)
+ * Apellidos y nombres
+ * Documento de sustento (Constancia de pago, Boleta de pago)
+ * Dependencia y/o oficina
+ * Cargo
+ * Nivel Remunerativo (SPC, P-4)
+ * PAP
+ * CNP
+ * Dias Laborados (Del - Al)
+ */
+
 model ActaEntrega {
   id                 Int      @id @default(autoincrement())
   personalId         Int
@@ -371,7 +658,8 @@ model ConstanciaPago {
   dependenciaOficina  String // tabla, 1 - M | trabajdor ------
   cargo               String // cargo actual del trabajador
   nivelRemunerativo   String // SPC, P-4??
-  papCnp              String
+  pap                 String
+  cnp                 String
   diasLaboradosInicio DateTime
   diasLaboradosFin    DateTime
 
