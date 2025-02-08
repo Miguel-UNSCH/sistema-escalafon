@@ -14,8 +14,8 @@ datasource db {
  * FICHA PERSONAL
  * ├── Datos Personales
  * ├── Estudios y Capacitación
- * ├── Experiencia Laboral
- * └── Discapacidad
+ * ├── Discapacidad
+ * └── Experiencia Laboral
  */
 
 /**
@@ -50,64 +50,6 @@ datasource db {
  * Nombre de AFP
  * Situación laboral (Nombrado-D-L. 276, Contratado plaza vacante, Contratado ley 30057, Contratado CAS-Indeterminado, Contratado en CAS-Temporal D.L. 1057, Contratado en proyecto de inversión, Practicantes preprofesionales-D.L. 1404, Practicante profesional-D.L. 1004).
  * Estado civil (Soltero/a, Casado/a, Separado/a, Viudo/a, Conviviente)
- * *** b. Datos del Cónyuge
- * Apellidos y nombres
- * Lugar y fecha de nacimiento
- * Departamento/Región
- * Provincia
- * Distrito
- * Grado de instrucción
- * Profesión
- * Ocupación
- * Centro de Trabajo
- * Postgrado / Especialización (Título, Año, Universidad)
- * *** c. Datos de los hijos
- * Apellidos y nombres
- * Lugar y fecha de nacimiento
- * Edad
- * Grado de instrucción
- */
-
-/**
- * -- Estudios y capacitación (+ trabajador)
- * *** a. Estudios
- * Apellidos y nombres
- * Formación Académica(Primaria Completa, Primaria Incompleta, Incompleta, Universitario Secundaria Completa, Secundaria Completa, Universitario Incompleta, Bachiller, Titulado, Postgrado, Técnico Completo, Técnico Incompleta, Técnico Egresado, Técnico Titulado)
- * Año(Del, Al)
- * Nombre de la institución
- * Otros estudios con certificación
- * *** b. Capacitación
- * Apellidos y nombres
- * Centro de capacitación
- * Materia
- * Profesión o especialidad
- * Periodo (Del, Al)
- * Horas Lectivas
- * Fecha de emisión
- * Certificado escaneado en PDF
- */
-
-/**
- * -- Experiencia laboral (+ trabajador)
- * Apellidos y nombres
- * Documento de sustento (Certificado, Constancia, Resolución, CAS, Locación de servicio)
- * Centro de labor
- * Dependencia y/o oficina
- * Cargo
- * Periodo de labor (Del - Al)
- * Fecha de emisión
- */
-
-/**
- * -- Personal con discapacidad (+ trabajador)
- * Apellidos y nombres
- * Sexo
- * DNI
- * Documento de sustento
- * Tipo de discapacidad
- * Cargo
- * Órgano estructurado
- * Condición laboral
  */
 model Ubigeo {
   id           Int    @id @default(autoincrement())
@@ -134,15 +76,20 @@ model Personal {
   sexo               String
   edad               Int
   dni                String   @unique
-  fechaNacimiento    DateTime
+  nAutogenerado      String
+  licnciaConducir    String?
+  grupoSanguineo     String
   fechaIngreso       DateTime
+  // unidadEstructurada ------ ???
+  fechaNacimiento    DateTime
+  nacionalidad       String
   telefono           String?
-  celular            String?
-  email              String?
-  regimenPensionario String?
-  nombreAfp          String?
-  situacionLaboral   String?
-  estadoCivil        String?
+  celular            String
+  email              String
+  regimenPensionario String // L. N° 29903, D. L. ° 19990
+  nombreAfp          String? // idk
+  situacionLaboral   String // Nombrado-D-L. 276, Contratado plaza vacante, Contratado ley 30057, Contratado CAS-Indeterminado, Contratado en CAS-Temporal D.L. 1057, Contratado en proyecto de inversión, Practicantes preprofesionales-D.L. 1404, Practicante profesional-D.L. 1004
+  estadoCivil        String
 
   ubigeoId     Int
   ubigeo       Ubigeo        @relation(fields: [ubigeoId], references: [id])
@@ -157,85 +104,144 @@ model Personal {
   experiencias   ExperienciaLaboral[]
 }
 
+/**
+ * *** b. Datos del Cónyuge
+ * Apellidos y nombres
+ * Lugar y fecha de nacimiento
+ * Departamento/Región
+ * Provincia
+ * Distrito
+ * Grado de instrucción
+ * Profesión
+ * Ocupación
+ * Centro de Trabajo
+ * Postgrado / Especialización (Título, Año, Universidad)
+ */
 model Conyuge {
   id               Int      @id @default(autoincrement())
   personalId       Int      @unique
-  personal         Personal @relation(fields: [personalId], references: [id])
   nombres          String
+  ubigeoId         Int
   fechaNacimiento  DateTime
-  gradoInstruccion String?
+  gradoInstruccion String
   profesion        String?
   ocupacion        String?
-  centroTrabajo    String?
-  postgrado        String?
+  centroTrabajo    String? // idk
+  postgrado        String? // if grado de instruccion
 
-  ubigeoId Int
-  ubigeo   Ubigeo @relation(fields: [ubigeoId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
+  ubigeo   Ubigeo   @relation(fields: [ubigeoId], references: [id])
 }
 
+/**
+ * *** c. Datos de los hijos
+ * Apellidos y nombres
+ * Lugar y fecha de nacimiento
+ * Edad
+ * Grado de instrucción
+ */
 model Hijo {
   id               Int      @id @default(autoincrement())
   personalId       Int
-  personal         Personal @relation(fields: [personalId], references: [id])
   nombres          String
   fechaNacimiento  DateTime
-  edad             Int?
-  gradoInstruccion String?
+  edad             Int
+  ubigeoId         Int
+  gradoInstruccion String
 
-  ubigeoId Int
-  ubigeo   Ubigeo @relation(fields: [ubigeoId], references: [id])
+  personal Personal @relation(fields: [personalId], references: [id])
+  ubigeo   Ubigeo   @relation(fields: [ubigeoId], references: [id])
 }
 
+/**
+ * -- Personal con discapacidad (+ trabajador)
+ * Apellidos y nombres
+ * Sexo
+ * DNI
+ * Documento de sustento
+ * Tipo de discapacidad
+ * Cargo
+ * Órgano estructurado
+ * Condición laboral
+ */
 model Discapacidad {
-  id                 Int      @id @default(autoincrement())
-  personalId         Int      @unique
-  personal           Personal @relation(fields: [personalId], references: [id])
+  id                 Int    @id @default(autoincrement())
+  personalId         Int    @unique
   tipo               String
-  documentoSustento  String?
-  organoEstructurado String?
-  condicionLaboral   String?
+  documentoSustento  String
+  organoEstructurado String // idk
+  condicionLaboral   String // how? Personal > situacionLaboral
+
+  personal Personal @relation(fields: [personalId], references: [id])
 }
 
+/**
+ * -- Estudios y capacitación (+ trabajador)
+ * *** a. Estudios
+ * Apellidos y nombres
+ * Formación Académica(Primaria Completa, Primaria Incompleta, Incompleta, Universitario Secundaria Completa, Secundaria Completa, Universitario Incompleta, Bachiller, Titulado, Postgrado, Técnico Completo, Técnico Incompleta, Técnico Egresado, Técnico Titulado)
+ * Año(Del, Al)
+ * Nombre de la institución
+ * Otros estudios con certificación
+ * *** b. Capacitación
+ * Apellidos y nombres
+ * Centro de capacitación
+ * Materia
+ * Profesión o especialidad
+ * Periodo (Del, Al)
+ * Horas Lectivas
+ * Fecha de emisión
+ * Certificado escaneado en PDF
+ */
 model Estudios {
-  id            Int      @id @default(autoincrement())
+  id            Int     @id @default(autoincrement())
   personalId    Int
-  personal      Personal @relation(fields: [personalId], references: [id])
-  nivel         String // Primaria, Secundaria, Universitario, Técnico, Postgrado, etc.
-  anioInicio    Int
-  anioFin       Int?
+  nivel         String // formacion académica |Primaria Completa, Primaria Incompleta, Incompleta, Universitario Secundaria Completa, Secundaria Completa, Universitario Incompleta, Bachiller, Titulado, Postgrado, Técnico Completo, Técnico Incompleta, Técnico Egresado, Técnico Titulado
+  periodo       String // "dd/mm/yyyy - dd/mm/yyyy" -- solo estudios culminados o en proceso tambien?
   institucion   String
-  otrosEstudios String? // Estudios adicionales con certificación opcional
+  otrosEstudios String? // Estudios adicionales con certificación opcional ??
+
+  personal Personal @relation(fields: [personalId], references: [id])
 }
 
 model Capacitacion {
-  id                 Int       @id @default(autoincrement())
+  id                 Int      @id @default(autoincrement())
   personalId         Int
-  personal           Personal  @relation(fields: [personalId], references: [id])
   centroCapacitacion String
   materia            String
-  especialidad       String
-  fechaInicio        DateTime
-  fechaFin           DateTime?
-  horasLectivas      Int?
-  fechaEmision       DateTime?
-  certificadoPdf     String? // Almacenar URL o ruta del PDF escaneado
+  especialidad       String // profesión o especialidad
+  periodo            String // "dd/mm/yyyy - dd/mm/yyyy" -- solo capacitaciones culminadas o en proceso tambien?
+  horasLectivas      Int
+  fechaEmision       DateTime
+  certificadoPdf     String
+
+  personal Personal @relation(fields: [personalId], references: [id])
 }
 
+/**
+ * -- Experiencia laboral (+ trabajador)
+ * Apellidos y nombres
+ * Documento de sustento (Certificado, Constancia, Resolución, CAS, Locación de servicio)
+ * Centro de labor
+ * Dependencia y/o oficina
+ * Cargo
+ * Periodo de labor (Del - Al)
+ * Fecha de emisión
+ */
 model ExperienciaLaboral {
-  id                Int       @id @default(autoincrement())
-  personalId        Int
-  personal          Personal  @relation(fields: [personalId], references: [id])
-  documentoSustento String // Certificado, Constancia, Resolución, CAS, etc.
-  centroLabor       String
-  dependencia       String?
-  cargo             String
-  fechaInicio       DateTime
-  fechaFin          DateTime?
-  fechaEmision      DateTime?
+  id                 Int      @id @default(autoincrement())
+  personalId         Int
+  documentoSustento  String // Certificado, Constancia, Resolución, CAS, Locación de servicio
+  centroLabor        String
+  dependenciaOficina String // crear una nnueva entidad
+  cargo              String
+  periodo            String // "dd/mm/yyyy - dd/mm/yyyy"
+  fechaEmision       DateTime
+
+  personal Personal @relation(fields: [personalId], references: [id])
 }
 
 // sector publico | sector privado | otro
-
 /**
  * SITUACIÓN LABORAL
  * ├── Contratos y Nombramiento
