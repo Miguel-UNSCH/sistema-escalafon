@@ -18,39 +18,6 @@ datasource db {
  * └── Experiencia Laboral
  */
 
-/**
- * -- Datos personales (+ trabajador)
- * *** a. Datos personales
- * Apellido Paterno
- * Apellido Materno
- * Nombres
- * Sexo
- * Edad
- * DNI (Carnet de extranjería)
- * N° de Autogenerado
- * Licencia de conducir
- * Grupo sanguíneo
- * Fecha de ingreso
- * Unidad estructurada donde trabaja
- * Cargo
- * Fecha de Nacimiento
- * Distrito
- * Provincia
- * Departamento/Región
- * Nacionalidad
- * Domicilio Av/Jr. Calle
- * Interior Urbanización
- * Provincia
- * Distrito
- * Teléfono fijo
- * Celular
- * Correo electrónico
- * Personal con discapacidad (si, no)
- * Régimen pensionario (L. N° 29903, D. L. ° 19990)
- * Nombre de AFP
- * Situación laboral (Nombrado-D-L. 276, Contratado plaza vacante, Contratado ley 30057, Contratado CAS-Indeterminado, Contratado en CAS-Temporal D.L. 1057, Contratado en proyecto de inversión, Practicantes preprofesionales-D.L. 1404, Practicante profesional-D.L. 1004).
- * Estado civil (Soltero/a, Casado/a, Separado/a, Viudo/a, Conviviente)
- */
 model Ubigeo {
   id           Int    @id @default(autoincrement())
   departamento String
@@ -63,60 +30,66 @@ model Ubigeo {
 }
 
 model Cargo {
-  id       Int        @id @default(autoincrement())
-  nombre   String
-  Personal Personal[]
+  id     Int    @id @default(autoincrement())
+  nombre String
+
+  Personal           Personal[] // Relación uno a muchos (un cargo puede ser ocupado por varios empleados)
+  ExperienciaLaboral ExperienciaLaboral[]
+}
+
+model DependenciaOficina {
+  id        Int     @id @default(autoincrement())
+  nombre    String  @unique
+  direccion String? // idk??
+  codigo    String? @unique // Código identificador opcional
+
+  personal           Personal[]
+  ExperienciaLaboral ExperienciaLaboral[]
 }
 
 model Personal {
-  id                 Int      @id @default(autoincrement())
-  apellidoPaterno    String
-  apellidoMaterno    String
-  nombres            String
-  sexo               String
-  edad               Int
-  dni                String   @unique
-  nAutogenerado      String
-  licnciaConducir    String?
-  grupoSanguineo     String
-  fechaIngreso       DateTime
-  // unidadEstructurada ------ ???
-  fechaNacimiento    DateTime
-  nacionalidad       String
-  telefono           String?
-  celular            String
-  email              String
-  regimenPensionario String // L. N° 29903, D. L. ° 19990
-  nombreAfp          String? // idk
-  situacionLaboral   String // Nombrado-D-L. 276, Contratado plaza vacante, Contratado ley 30057, Contratado CAS-Indeterminado, Contratado en CAS-Temporal D.L. 1057, Contratado en proyecto de inversión, Practicantes preprofesionales-D.L. 1404, Practicante profesional-D.L. 1004
-  estadoCivil        String
+  id                   Int      @id @default(autoincrement())
+  apellidoPaterno      String
+  apellidoMaterno      String
+  nombres              String
+  sexo                 String
+  edad                 Int
+  dni                  String   @unique
+  nAutogenerado        String
+  licenciaConducir     String?
+  grupoSanguineo       String
+  fechaIngreso         DateTime
+  unidadEstructurada   String // idk???
+  fechaNacimiento      DateTime
+  nacionalidad         String
+  ubigeoId             Int // Relación con Ubigeo
+  domicilio            String
+  interiorUrbanizacion String?
+  telefono             String?
+  celular              String
+  email                String
+  regimenPensionario   String // L. N° 29903, D. L. ° 19990
+  nombreAfp            String? // idk
+  situacionLaboral     String // Nombrado-D-L. 276, Contratado plaza vacante, Contratado ley 30057, Contratado CAS-Indeterminado, Contratado en CAS-Temporal D.L. 1057, Contratado en proyecto de inversión, Practicantes preprofesionales-D.L. 1404, Practicante profesional-D.L. 1004
+  estadoCivil          String
+  discapacidad         Boolean
 
-  ubigeoId     Int
-  ubigeo       Ubigeo        @relation(fields: [ubigeoId], references: [id])
-  cargoId      Int
-  cargo        Cargo         @relation(fields: [cargoId], references: [id])
-  discapacidad Discapacidad?
+  conyuge            Conyuge?             @relation(fields: [conyugeId], references: [id]) // Relación uno a uno con Conyuge
+  ubigeo             Ubigeo               @relation(fields: [ubigeoId], references: [id])
+  DependenciaOficina DependenciaOficina?  @relation(fields: [dependenciaOficinaId], references: [id])
+  Cargo              Cargo                @relation(fields: [cargoId], references: [id]) // Relación uno a uno con Cargo
+  hijos              Hijo[] // Relación muchos a muchos con Hijo (un hijo puede tener varios padres)
+  estudios           Estudios[]
+  capacitaciones     Capacitacion[]
+  experiencias       ExperienciaLaboral[]
 
-  conyuge        Conyuge?
-  hijos          Hijo[]
-  estudios       Estudios[]
-  capacitaciones Capacitacion[]
-  experiencias   ExperienciaLaboral[]
+  cargoId              Int
+  dependenciaOficinaId Int?
+  conyugeId            Int?
+  discapacidadId       Int?
+  Discapacidad         Discapacidad?
 }
 
-/**
- * *** b. Datos del Cónyuge
- * Apellidos y nombres
- * Lugar y fecha de nacimiento
- * Departamento/Región
- * Provincia
- * Distrito
- * Grado de instrucción
- * Profesión
- * Ocupación
- * Centro de Trabajo
- * Postgrado / Especialización (Título, Año, Universidad)
- */
 model Conyuge {
   id               Int      @id @default(autoincrement())
   personalId       Int      @unique
@@ -127,19 +100,12 @@ model Conyuge {
   profesion        String?
   ocupacion        String?
   centroTrabajo    String? // idk
-  postgrado        String? // if grado de instruccion
+  postgrado        String? // segun grado de instruccion
 
-  personal Personal @relation(fields: [personalId], references: [id])
-  ubigeo   Ubigeo   @relation(fields: [ubigeoId], references: [id])
+  ubigeo   Ubigeo     @relation(fields: [ubigeoId], references: [id])
+  Personal Personal[]
 }
 
-/**
- * *** c. Datos de los hijos
- * Apellidos y nombres
- * Lugar y fecha de nacimiento
- * Edad
- * Grado de instrucción
- */
 model Hijo {
   id               Int      @id @default(autoincrement())
   personalId       Int
@@ -149,50 +115,21 @@ model Hijo {
   ubigeoId         Int
   gradoInstruccion String
 
-  personal Personal @relation(fields: [personalId], references: [id])
-  ubigeo   Ubigeo   @relation(fields: [ubigeoId], references: [id])
+  personales Personal[] // Relación muchos a muchos con Personal (padre/madre pueden ser múltiples)
+  ubigeo     Ubigeo     @relation(fields: [ubigeoId], references: [id])
 }
 
-/**
- * -- Personal con discapacidad (+ trabajador)
- * Apellidos y nombres
- * Sexo
- * DNI
- * Documento de sustento
- * Tipo de discapacidad
- * Cargo
- * Órgano estructurado
- * Condición laboral
- */
 model Discapacidad {
   id                 Int    @id @default(autoincrement())
   personalId         Int    @unique
   tipo               String
   documentoSustento  String
-  organoEstructurado String // idk
-  condicionLaboral   String // how? Personal > situacionLaboral
+  organoEstructurado String // idk ???
+  condicionLaboral   String // como? Personal > situacionLaboral
 
   personal Personal @relation(fields: [personalId], references: [id])
 }
 
-/**
- * -- Estudios y capacitación (+ trabajador)
- * *** a. Estudios
- * Apellidos y nombres
- * Formación Académica(Primaria Completa, Primaria Incompleta, Incompleta, Universitario Secundaria Completa, Secundaria Completa, Universitario Incompleta, Bachiller, Titulado, Postgrado, Técnico Completo, Técnico Incompleta, Técnico Egresado, Técnico Titulado)
- * Año(Del, Al)
- * Nombre de la institución
- * Otros estudios con certificación
- * *** b. Capacitación
- * Apellidos y nombres
- * Centro de capacitación
- * Materia
- * Profesión o especialidad
- * Periodo (Del, Al)
- * Horas Lectivas
- * Fecha de emisión
- * Certificado escaneado en PDF
- */
 model Estudios {
   id            Int     @id @default(autoincrement())
   personalId    Int
@@ -218,29 +155,24 @@ model Capacitacion {
   personal Personal @relation(fields: [personalId], references: [id])
 }
 
-/**
- * -- Experiencia laboral (+ trabajador)
- * Apellidos y nombres
- * Documento de sustento (Certificado, Constancia, Resolución, CAS, Locación de servicio)
- * Centro de labor
- * Dependencia y/o oficina
- * Cargo
- * Periodo de labor (Del - Al)
- * Fecha de emisión
- */
 model ExperienciaLaboral {
-  id                 Int      @id @default(autoincrement())
-  personalId         Int
-  documentoSustento  String // Certificado, Constancia, Resolución, CAS, Locación de servicio
-  centroLabor        String
-  dependenciaOficina String // crear una nnueva entidad
-  cargo              String
-  periodo            String // "dd/mm/yyyy - dd/mm/yyyy"
-  fechaEmision       DateTime
+  id                   Int      @id @default(autoincrement())
+  personalId           Int
+  documentoSustento    String // Certificado, Constancia, Resolución, CAS, Locación de servicio
+  centroLabor          String
+  dependenciaOficinaId Int
+  cargoId              Int
+  periodo              String // "dd/mm/yyyy - dd/mm/yyyy"
+  fechaEmision         DateTime
 
-  personal Personal @relation(fields: [personalId], references: [id])
+  personal           Personal           @relation(fields: [personalId], references: [id])
+  dependenciaOficina DependenciaOficina @relation(fields: [dependenciaOficinaId], references: [id])
+  cargo              Cargo              @relation(fields: [cargoId], references: [id])
 }
 
+/**
+ * --------------------------------------------------------------------------------------------------------------------
+ */
 // sector publico | sector privado | otro
 /**
  * SITUACIÓN LABORAL
@@ -350,8 +282,7 @@ model ExperienciaLaboral {
 
 // PAP (Puesto de Asignación Personal)
 // CNP (Código Nacional del Personal)
-// el ascenso cambia de oficina?
-// ascenso como tal no hay en el GORE, lo que hay es cargo de confianza
+// el ascenso cambia de oficina? : actual oficina - nueva oficina
 
 /**
  * BONIFICACIONES Y EVALUACIONES
