@@ -1,11 +1,99 @@
 "use client";
 
+import { SubmitHandler, useForm } from "react-hook-form";
+import { LuArrowLeft, LuArrowRight, LuAsterisk, LuFileUp } from "react-icons/lu";
+
 export type IForm = {
-  name: string;
+  tipoPermiso: string;
+  documentoSustento: string;
+  fechaInicio: string;
+  fechaFin: string;
+  dependenciaOficina: string;
 };
 
 const Form = () => {
-  return <div>form</div>;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IForm>();
+
+  const onSubmit: SubmitHandler<IForm> = (data) => console.log(data);
+  return (
+    <form onSubmit={handleSubmit(onSubmit)} className="font-inter">
+      <div className="flex flex-col gap-2 mb-4">
+        <label htmlFor="tipoPermiso" className="flex flex-row font-inter font-semibold capitalize">
+          tipo de permiso
+          <LuAsterisk />
+        </label>
+        <input
+          type="text"
+          placeholder="ingrese el tipo de permiso"
+          {...register("tipoPermiso", { required: true })}
+          className="rounded-xl font-poppins"
+        />
+        <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.tipoPermiso?.message}</span>
+      </div>
+
+      <div className="flex flex-col gap-2 mb-4">
+        <label htmlFor="documentoSustento" className="flex flex-row font-inter font-semibold text-nowrap capitalize">
+          documento de sustento
+          <LuAsterisk />
+        </label>
+        <div className="flex flex-row items-center gap-2 p-2 border rounded-xl">
+          <LuFileUp />
+          <input
+            className="flex rounded-xl w-full cursor-pointer focus:outline-none"
+            type="file"
+            {...register("documentoSustento", { required: true })}
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-row gap-5 w-full">
+        <div className="flex flex-col gap-2 mb-4 w-1/2">
+          <label htmlFor="fechaInicio" className="flex flex-row font-inter font-semibold capitalize">
+            fecha inicio
+            <LuAsterisk />
+          </label>
+          <input type="date" {...register("fechaInicio", { required: true })} className="rounded-xl font-poppins" />
+        </div>
+
+        <div className="flex flex-col gap-2 mb-4 w-1/2">
+          <label htmlFor="fechaFin" className="flex flex-row font-inter font-semibold capitalize">
+            fecha fin
+            <LuAsterisk />
+          </label>
+          <input type="date" {...register("fechaFin", { required: true })} className="rounded-xl font-poppins" />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2 mb-4">
+        <label htmlFor="dependenciaOficina" className="flex flex-row font-inter font-semibold capitalize">
+          dependencia o la oficina
+          <LuAsterisk />
+        </label>
+        <input
+          type="text"
+          placeholder="ingrese la dependencia o la oficina"
+          {...register("dependenciaOficina", { required: true })}
+          className="rounded-xl font-poppins"
+        />
+        <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.dependenciaOficina?.message}</span>
+      </div>
+
+      <div className="flex flex-row justify-center items-center gap-4 font-montserrat text-[#eff1f5] text-center">
+        <button type="button" className="flex flex-row items-center gap-2 bg-[#e64553] hover:bg-[#fe640b] px-4 p-2 rounded-lg text-lg uppercase">
+          <LuArrowLeft />
+          regresar
+        </button>
+        <button type="submit" className="flex flex-row items-center gap-2 bg-[#179299] hover:bg-[#40a02b] px-4 p-2 rounded-lg text-lg uppercase">
+          siguiente
+          <LuArrowRight />
+        </button>
+      </div>
+    </form>
+  );
 };
 
 const Page = () => {
