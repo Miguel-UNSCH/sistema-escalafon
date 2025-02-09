@@ -14,6 +14,9 @@ datasource db {
 }
 
 /**
+ * --------------------------------------------------------------------------------------------------------------------
+ */
+/**
  * FICHA PERSONAL
  * ├── Datos Personales
  * ├── Estudios y Capacitación
@@ -38,8 +41,15 @@ model Cargo {
   id     Int    @id @default(autoincrement())
   nombre String
 
-  Personal           Personal[] // Relación uno a muchos (un cargo puede ser ocupado por varios empleados)
-  ExperienciaLaboral ExperienciaLaboral[]
+  Personal                Personal[] // Relación uno a muchos (un cargo puede ser ocupado por varios empleados)
+  ExperienciaLaboral      ExperienciaLaboral[]
+  Contrato                Contrato[]
+  RenunciaLiquidacion     RenunciaLiquidacion[]
+  Desplazamiento          Desplazamiento[]
+  DescansoMedico          DescansoMedico[]
+  PermisoLicenciaVacacion PermisoLicenciaVacacion[]
+  ascensosDel             Ascenso[]                 @relation("CargoDel")
+  ascensosAl              Ascenso[]                 @relation("CargoAl")
 }
 
 model DependenciaOficina {
@@ -48,8 +58,16 @@ model DependenciaOficina {
   direccion String? // idk??
   codigo    String? @unique // Código identificador opcional
 
-  personal           Personal[]
-  ExperienciaLaboral ExperienciaLaboral[]
+  personal                Personal[]
+  ExperienciaLaboral      ExperienciaLaboral[]
+  Contrato                Contrato[]
+  RenunciaLiquidacion     RenunciaLiquidacion[]
+  desplazamientosDe       Desplazamiento[]          @relation("OficinaDe")
+  desplazamientosA        Desplazamiento[]          @relation("OficinaA")
+  DescansoMedico          DescansoMedico[]
+  PermisoLicenciaVacacion PermisoLicenciaVacacion[]
+
+  ascensos Ascenso[]
 }
 
 enum EstadoCivil {
@@ -108,16 +126,22 @@ model Personal {
   ubigeo             Ubigeo               @relation(fields: [ubigeoId], references: [id])
   DependenciaOficina DependenciaOficina?  @relation(fields: [dependenciaOficinaId], references: [id])
   Cargo              Cargo                @relation(fields: [cargoId], references: [id]) // Relación uno a uno con Cargo
+  Discapacidad       Discapacidad?
   hijos              Hijo[] // Relación muchos a muchos con Hijo (madre y padre | madre o padre)
   estudios           Estudios[]
   capacitaciones     Capacitacion[]
   experiencias       ExperienciaLaboral[]
+  contratos          Contrato[]
 
-  cargoId              Int
-  dependenciaOficinaId Int?
-  conyugeId            Int?
-  discapacidadId       Int?
-  Discapacidad         Discapacidad?
+  cargoId                 Int
+  dependenciaOficinaId    Int?
+  conyugeId               Int?
+  discapacidadId          Int?
+  RenunciaLiquidacion     RenunciaLiquidacion[]
+  Desplazamiento          Desplazamiento[]
+  DescansoMedico          DescansoMedico[]
+  PermisoLicenciaVacacion PermisoLicenciaVacacion[]
+  Ascenso                 Ascenso[]
 }
 
 model Conyuge {
@@ -185,6 +209,7 @@ model Capacitacion {
   personal Personal @relation(fields: [personalId], references: [id])
 }
 
+// sector publico | sector privado | otro
 model ExperienciaLaboral {
   id                   Int      @id @default(autoincrement())
   personalId           Int
@@ -203,7 +228,6 @@ model ExperienciaLaboral {
 /**
  * --------------------------------------------------------------------------------------------------------------------
  */
-// sector publico | sector privado | otro
 /**
  * SITUACIÓN LABORAL
  * ├── Contratos y Nombramiento
@@ -214,106 +238,144 @@ model ExperienciaLaboral {
  * └── Ascensos
  */
 
-/**
- * -- Contratos y nombramiento
- * ** a. Régimen de decreto legislativo 276
- * Apellidos y Nombres
- * Condición laboral (Nombrado, Contratado o en plaza vacante, Designado)
- * Dependencia y/o oficina
- * Resolución de nombramiento y/o contrato
- * Cargo estructural
- * Régimen laboral (276, 276, FAG-CAS-FUN276)
- * Nivel remuneración
- * PAP
- * CNP
- * Fecha de ingreso-GRA
- * Años de servicio
- * Fecha de nacimiento
- * Fecha de Cese
- * ** b. Contrato Administrativo de Servicio - CAS
- * Apellidos y nombres
- * Condición laboral (Indeterminado, Eventual)
- * Dependencia y/o oficina
- * Contrato-CAS
- * Cargo
- * Régimen laboral
- * Fecha de Ingreso-GRA (Desde - Hasta)
- * ** c. D.L. 276-Proyecto de inversión
- * Apellidos y nombres
- * Condición laboral (Contratado, Reincorporado-Mandato Judicial)
- * Dependencia y/o oficina
- * Resolución de contrato
- * Cargo
- * Meta
- * Régimen laboral
- * Fecha de Ingreso-GRA (Desde - Hasta)
- * ** d. Practicante-D.L. N° 1401-Régimen Especial Modalidades Formativas
- * Apellidos y nombres
- * Condición laboral (Profesional - Preprofesional)
- * Dependencia y/o oficina
- * Convenio
- * Fecha de Ingreso-GRA (Desde - Hasta)
- */
+enum TipoContrato {
+  DECRETO_LEGISLATIVO_276
+  CAS
+  PROYECTO_INVERSION
+  PRACTICANTE
+}
+
+model Contrato {
+  id                     Int          @id @default(autoincrement())
+  tipoContrato           TipoContrato
+  condicionLaboral       String
+  resolucionNombramiento String?
+  regimenLaboral         String
+  nivelRemuneracion      String?
+  pap                    String?
+  cnp                    String?
+  fechaIngreso           DateTime
+  fechaCese              DateTime?
+  aniosServicio          Int?
+  // fechaNacimiento        DateTime -- no es necesario
+  personalId             Int
+  dependenciaOficinaId   Int
+  cargoId                Int
+
+  personal           Personal           @relation(fields: [personalId], references: [id])
+  dependenciaOficina DependenciaOficina @relation(fields: [dependenciaOficinaId], references: [id])
+  cargo              Cargo              @relation(fields: [cargoId], references: [id])
+}
+
+model RenunciaLiquidacion {
+  id                   Int      @id @default(autoincrement())
+  documentoRenuncia    String // Carta, resolución de renuncia
+  motivoRenuncia       String // Motivo de renuncia (Particular, salud, personal)
+  fechaRenuncia        DateTime // Fecha de la renuncia
+  personalId           Int // Relación con el personal
+  dependenciaOficinaId Int // Relación con la dependencia/oficina
+  cargoId              Int // Relación con el cargo
+
+  personal           Personal           @relation(fields: [personalId], references: [id])
+  dependenciaOficina DependenciaOficina @relation(fields: [dependenciaOficinaId], references: [id])
+  cargo              Cargo              @relation(fields: [cargoId], references: [id])
+}
+
+enum TipoDesplazamiento {
+  ROTACION_INTERNA
+  ROTACION_VOLUNTARIA
+  REASIGNACION
+  DESIGNACION
+  DESTACADO
+  PERMUTA
+  ENCARGAR
+}
+
+model Desplazamiento {
+  id                     Int                @id @default(autoincrement())
+  tipoDesplazamiento     TipoDesplazamiento // Tipo de desplazamiento
+  documentoRotacion      String // Memorando, resolución
+  fechaDesplazamiento    DateTime // Fecha de desplazamiento
+  dependenciaOficinaDeId Int // Relación con la oficina de origen
+  dependenciaOficinaAId  Int // Relación con la oficina de destino
+  cargoId                Int // Relación con el cargo
+  personalId             Int // Relación con el personal
+
+  personal             Personal           @relation(fields: [personalId], references: [id])
+  dependenciaOficinaDe DependenciaOficina @relation("OficinaDe", fields: [dependenciaOficinaDeId], references: [id])
+  dependenciaOficinaA  DependenciaOficina @relation("OficinaA", fields: [dependenciaOficinaAId], references: [id])
+  cargo                Cargo              @relation(fields: [cargoId], references: [id])
+}
+
+enum TipoDescanso {
+  MEDICO
+  PARTICULAR
+  PRE_POSTNATAL
+}
+
+model DescansoMedico {
+  id                   Int          @id @default(autoincrement())
+  tipoDescanso         TipoDescanso // Tipo de descanso (Médico, Particular, Pre/Postnatal)
+  documentoSustento    String // Documento que respalda el descanso (Memorando, resolución, certificado)
+  fechaInicioDescanso  DateTime // Fecha de inicio del descanso
+  fechaFinDescanso     DateTime // Fecha de fin del descanso
+  dependenciaOficinaId Int // Relación con la dependencia/oficina
+  cargoId              Int // Relación con el cargo
+  personalId           Int // Relación con el personal
+
+  personal           Personal           @relation(fields: [personalId], references: [id])
+  dependenciaOficina DependenciaOficina @relation(fields: [dependenciaOficinaId], references: [id])
+  cargo              Cargo              @relation(fields: [cargoId], references: [id])
+}
+
+enum TipoPermisoLicenciaVacacion {
+  PARTICULAR
+  VACACIONES
+  PERMISO_FAMILIAR
+}
+
+model PermisoLicenciaVacacion {
+  id                          Int                         @id @default(autoincrement())
+  tipoPermisoLicenciaVacacion TipoPermisoLicenciaVacacion // Tipo de permiso, licencia o vacaciones
+  documentoSustento           String // Documento que respalda el permiso, licencia o vacaciones (Solicitud, resolución)
+  fechaInicioPermiso          DateTime // Fecha de inicio del permiso
+  fechaFinPermiso             DateTime // Fecha de fin del permiso
+  dependenciaOficinaId        Int // Relación con la dependencia u oficina
+  cargoId                     Int // Relación con el cargo
+  personalId                  Int // Relación con el personal
+
+  personal           Personal           @relation(fields: [personalId], references: [id])
+  dependenciaOficina DependenciaOficina @relation(fields: [dependenciaOficinaId], references: [id])
+  cargo              Cargo              @relation(fields: [cargoId], references: [id])
+}
+
+model Ascenso {
+  id                   Int    @id @default(autoincrement())
+  apellidosYNombres    String
+  resolucionAscenso    String
+  cargoDel             String
+  cargoAl              String
+  nivelRemunerativoDel String
+  nivelRemunerativoAl  String
+  papDel               String
+  papAl                String
+  cnp                  String
+  dependenciaId        Int
+  oficinaId            Int
+  personalId           Int
+
+  cargoDelId           Int
+  cargoAlId            Int
+  dependenciaOficinaId Int
+  personal             Personal            @relation(fields: [personalId], references: [id])
+  cargoDelModel        Cargo               @relation("CargoDel", fields: [cargoDelId], references: [id])
+  cargoAlModel         Cargo               @relation("CargoAl", fields: [cargoAlId], references: [id])
+  DependenciaOficina   DependenciaOficina? @relation(fields: [dependenciaOficinaId], references: [id])
+}
 
 /**
- * -- Renuncia y liquidación
- * Apellidos y nombres
- * Documento de renuncia (Carta, resolución)
- * Motivo de renuncia (Particular, salud, personal)
- * Fecha de Renuncia
- * Dependencia y/o oficina
- * Cargo
+ * --------------------------------------------------------------------------------------------------------------------
  */
-
-/**
- * -- Desplazamiento
- * Apellidos y nombres
- * Tipo (Rotación interna, Rotación voluntaria, Reasignación, Designación, Destaque, Permuta, Encargar)
- * Documento de rotación (Memorando, resolución)
- * Fecha de Desplazamiento
- * De la oficina
- * A la oficina
- * Cargo
- */
-
-/**
- * -- Descanso médico
- * Apellidos y nombres
- * Tipo de descanso (Descanso médico según enfermedad, Particular, Pre y Postnatal)
- * Documento de sustento (Memorando, resolución, certificado de salud)
- * Fecha de descanso (Del - Al)
- * Dependencia y/o oficina
- * Cargo
- */
-
-/**
- * -- Permisos licencias vacaciones
- * Apellidos y nombres
- * Tipo de permisos licencias vacaciones (Particular, Por cuenta de Vacaciones, Permiso por familiar)
- * Documento de sustento (Solicitud, resolución)
- * Fecha de permiso (Del - Al)
- * Dependencia y/o oficina
- * Cargo
- */
-
-/**
- * -- Ascensos
- * Apellidos y nombres
- * Resolución de ascenso
- * Cargo (Del cargo, Al cargo)
- * Nivel Remunerativo (Del - Al)
- * PAP-CNP (Del - Al)
- * Dependencia y/o oficina
- */
-
-/**
- * volver a ver los contratos ( Régimen de decreto legislativo 276 | Contrato Administrativo de Servicio - CAS | D.L. 276-Proyecto de inversión)
- */
-
-// PAP (Puesto de Asignación Personal)
-// CNP (Código Nacional del Personal)
-// el ascenso cambia de oficina? : actual oficina - nueva oficina
-
 /**
  * BONIFICACIONES Y EVALUACIONES
  * ├── Bonificación Personal
@@ -351,6 +413,9 @@ model ExperienciaLaboral {
 // documentoBonificacion, ahi se encuentra todos los detalles?
 
 /**
+ * --------------------------------------------------------------------------------------------------------------------
+ */
+/**
  * MÉRITOS Y DEMÉRITOS
  * ├── Méritos
  * └── Deméritos
@@ -375,6 +440,9 @@ model ExperienciaLaboral {
  * Cargo
  */
 
+/**
+ * --------------------------------------------------------------------------------------------------------------------
+ */
 /**
  * DOCUMENTOS / OTROS
  * ├── Acta de Entrega
