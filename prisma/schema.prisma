@@ -23,8 +23,8 @@ datasource db {
 
 model Ubigeo {
   id           Int    @id @default(autoincrement())
-  inei         String
-  reniec       String
+  inei         String @unique
+  reniec       String @unique
   departamento String
   provincia    String
   distrito     String
@@ -52,17 +52,42 @@ model DependenciaOficina {
   ExperienciaLaboral ExperienciaLaboral[]
 }
 
+enum EstadoCivil {
+  SOLTERO
+  CASADO
+  SEPARADO
+  DIVORCIADO
+  VIUDO
+  CONVIVIENTE
+}
+
+enum GrupoSanguineo {
+  A_POSITIVO
+  A_NEGATIVO
+  B_POSITIVO
+  B_NEGATIVO
+  AB_POSITIVO
+  AB_NEGATIVO
+  O_POSITIVO
+  O_NEGATIVO
+}
+
+enum Sexo {
+  MASCULINO
+  FEMENINO
+}
+
 model Personal {
-  id                   Int      @id @default(autoincrement())
+  id                   Int            @id @default(autoincrement())
   apellidoPaterno      String
   apellidoMaterno      String
   nombres              String
-  sexo                 String
+  sexo                 Sexo
   edad                 Int
-  dni                  String   @unique
+  dni                  String         @unique
   nAutogenerado        String
   licenciaConducir     String?
-  grupoSanguineo       String
+  grupoSanguineo       GrupoSanguineo
   fechaIngreso         DateTime
   unidadEstructurada   String // idk???
   fechaNacimiento      DateTime
@@ -76,7 +101,7 @@ model Personal {
   regimenPensionario   String // L. N° 29903, D. L. ° 19990
   nombreAfp            String? // idk
   situacionLaboral     String // Nombrado-D-L. 276, Contratado plaza vacante, Contratado ley 30057, Contratado CAS-Indeterminado, Contratado en CAS-Temporal D.L. 1057, Contratado en proyecto de inversión, Practicantes preprofesionales-D.L. 1404, Practicante profesional-D.L. 1004
-  estadoCivil          String
+  estadoCivil          EstadoCivil
   discapacidad         Boolean
 
   conyuge            Conyuge?             @relation(fields: [conyugeId], references: [id]) // Relación uno a uno con Conyuge

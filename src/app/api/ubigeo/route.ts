@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { prisma } from "@/libs/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/libs/prisma";
 
 export const GET = async () => {
   try {
@@ -14,15 +14,15 @@ export const GET = async () => {
 
 export const POST = async (req: NextRequest) => {
   try {
-    const { departamento, provincia, distrito } = await req.json();
+    const ubigeos: Array<{ inei: string; reniec: string; departamento: string; provincia: string; distrito: string }> = await req.json();
 
-    const newUbigeo = await prisma.ubigeo.create({
-      data: { departamento, provincia, distrito },
+    const newUbigeos = await prisma.ubigeo.createMany({
+      data: ubigeos,
     });
 
-    return NextResponse.json(newUbigeo, { status: 201 });
+    return NextResponse.json(newUbigeos, { status: 201 });
   } catch (error: any) {
     console.log(error);
-    return NextResponse.json({ error: "Error al crear Ubigeo" }, { status: 500 });
+    return NextResponse.json({ error: "Error al crear Ubigeos" }, { status: 500 });
   }
 };
