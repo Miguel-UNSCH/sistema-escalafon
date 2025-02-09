@@ -7,8 +7,6 @@ export const GET = async (req: NextRequest) => {
   try {
     const { searchParams } = req.nextUrl;
 
-    console.log(searchParams.toString());
-
     const inei = searchParams.get("inei");
     const reniec = searchParams.get("reniec");
     const departamento = searchParams.get("departamento");
