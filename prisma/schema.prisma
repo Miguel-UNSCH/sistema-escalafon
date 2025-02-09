@@ -1,12 +1,15 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -20,6 +23,8 @@ datasource db {
 
 model Ubigeo {
   id           Int    @id @default(autoincrement())
+  inei         String
+  reniec       String
   departamento String
   provincia    String
   distrito     String
@@ -78,7 +83,7 @@ model Personal {
   ubigeo             Ubigeo               @relation(fields: [ubigeoId], references: [id])
   DependenciaOficina DependenciaOficina?  @relation(fields: [dependenciaOficinaId], references: [id])
   Cargo              Cargo                @relation(fields: [cargoId], references: [id]) // Relación uno a uno con Cargo
-  hijos              Hijo[] // Relación muchos a muchos con Hijo (un hijo puede tener varios padres)
+  hijos              Hijo[] // Relación muchos a muchos con Hijo (madre y padre | madre o padre)
   estudios           Estudios[]
   capacitaciones     Capacitacion[]
   experiencias       ExperienciaLaboral[]
