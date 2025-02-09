@@ -16,7 +16,7 @@ readFile("ubigeo_provincia.json", "utf8", (err, data) => {
     reniec: item.reniec,
     departamento: item.departamento,
     provincia: item.provincia,
-    region: item.region,
+    distrito: item.distrito,
   }));
 
   // Guardar el nuevo archivo 'ubigeo.json'
