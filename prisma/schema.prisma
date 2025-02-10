@@ -58,7 +58,7 @@ model Cargo {
   Merito                  Merito[]
   Demerito                Demerito[]
   ActaEntrega             ActaEntrega[]
-  ConstanciaPago          ConstanciaPago[]
+  // ConstanciaPago          ConstanciaPago[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -85,19 +85,17 @@ model DependenciaOficina {
   Merito                  Merito[]
   Demerito                Demerito[]
   ActaEntrega             ActaEntrega[]
-  ConstanciaPago          ConstanciaPago[]
+  // ConstanciaPago          ConstanciaPago[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 enum EstadoCivil {
-  SOLTERO
-  CASADO
-  SEPARADO
-  DIVORCIADO
-  VIUDO
-  CONVIVIENTE
+  S
+  C
+  D
+  V
 }
 
 enum GrupoSanguineo {
@@ -112,8 +110,8 @@ enum GrupoSanguineo {
 }
 
 enum Sexo {
-  MASCULINO
-  FEMENINO
+  M
+  F
 }
 
 model Personal {
@@ -168,7 +166,7 @@ model Personal {
   FichaEvaluacion         FichaEvaluacion[]
   Merito                  Merito[]
   Demerito                Demerito[]
-  ConstanciaPago          ConstanciaPago[]
+  // ConstanciaPago          ConstanciaPago[]
   actasEntregadas         ActaEntrega[]             @relation("EntregaPor")
   actasRecibidas          ActaEntrega[]             @relation("RecibidoPor")
 
@@ -397,13 +395,13 @@ enum TipoPermisoLicenciaVacacion {
 
 model PermisoLicenciaVacacion {
   id                          Int                         @id @default(autoincrement())
-  tipoPermisoLicenciaVacacion TipoPermisoLicenciaVacacion // Tipo de permiso, licencia o vacaciones
-  documentoSustento           String // Documento que respalda el permiso, licencia o vacaciones (Solicitud, resolución)
-  fechaInicioPermiso          DateTime // Fecha de inicio del permiso
-  fechaFinPermiso             DateTime // Fecha de fin del permiso
-  dependenciaOficinaId        Int // Relación con la dependencia u oficina
-  cargoId                     Int // Relación con el cargo
-  personalId                  Int // Relación con el personal
+  tipoPermisoLicenciaVacacion TipoPermisoLicenciaVacacion
+  documentoSustento           String
+  fechaInicioPermiso          DateTime
+  fechaFinPermiso             DateTime
+  dependenciaOficinaId        Int
+  cargoId                     Int
+  personalId                  Int
 
   personal           Personal           @relation(fields: [personalId], references: [id])
   dependenciaOficina DependenciaOficina @relation(fields: [dependenciaOficinaId], references: [id])
@@ -558,25 +556,6 @@ model ActaEntrega {
   cargo              Cargo              @relation(fields: [cargoId], references: [id])
   actaEntregadoPor   Personal           @relation("EntregaPor", fields: [actaEentregadoPorId], references: [id])
   actaRecibidoPor    Personal           @relation("RecibidoPor", fields: [actaRecibidoPorId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ConstanciaPago {
-  id                   Int    @id @default(autoincrement())
-  personalId           Int
-  dependenciaOficinaId Int
-  cargoId              Int
-  documentoSustento    String // Constancia de pago, Boleta de pago
-  nivelRemunerativo    String // SPC, P-4, etc.
-  pap                  String // PAP (Planilla de Asignación de Personal)
-  cnp                  String // CNP (Código de Nominación de Personal)
-  diasLaborados        String // "dd/mm/yyyy - dd/mm/yyyy"
-
-  personal           Personal           @relation(fields: [personalId], references: [id])
-  dependenciaOficina DependenciaOficina @relation(fields: [dependenciaOficinaId], references: [id])
-  cargo              Cargo              @relation(fields: [cargoId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

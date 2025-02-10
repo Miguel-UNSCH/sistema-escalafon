@@ -167,11 +167,6 @@ export const navigationItems: NavigationItems[] = [
         icon: <FaFileAlt />,
         path: "/documentos/acta-entrega",
       },
-      {
-        label: "constancia de pagos",
-        icon: <FaFileAlt />,
-        path: "/documentos/constancia-pagos",
-      },
     ],
   },
   {
