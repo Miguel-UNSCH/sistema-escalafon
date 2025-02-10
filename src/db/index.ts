@@ -230,7 +230,7 @@ export const personales = [
   {
     id: 4,
     apellidoPaterno: "López",
-    apellidoMaterno: "Torres",
+    apellidoMaterno: "Palomino",
     nombres: "Pedro Antonio",
     sexo: "M",
     edad: 40,
@@ -262,7 +262,7 @@ export const personales = [
   },
   {
     id: 5,
-    apellidoPaterno: "López",
+    apellidoPaterno: "Mendoza",
     apellidoMaterno: "Torres",
     nombres: "Ana María",
     sexo: "F",
