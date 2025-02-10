@@ -2,6 +2,8 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import React, { useState, useEffect } from "react";
 import { LuSave } from "react-icons/lu";
+import { personalDataSchema } from "@/validations/personalFileSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 /** ---------------------------------------------------------------------------------------------------------------------------------------------- */
 export type IForm = {
@@ -41,7 +43,9 @@ const Form = () => {
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<IForm>();
+  } = useForm<IForm>({
+    resolver: zodResolver(personalDataSchema),
+  });
 
   const [edad, setEdad] = useState<number | null>(null);
 
@@ -80,9 +84,10 @@ const Form = () => {
           <input
             id="nombres"
             {...register("nombres", { required: "Este campo es obligatorio" })}
+            placeholder="Ingrese sus nombres"
             className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
           />
-          {errors.nombres && <p>{errors.nombres.message}</p>}
+          <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.nombres?.message}</span>
         </div>
 
         <div className="flex flex-col font-poppins">
@@ -94,7 +99,7 @@ const Form = () => {
             {...register("apellidoPaterno", { required: "Este campo es obligatorio" })}
             className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
           />
-          {errors.apellidoPaterno && <p>{errors.apellidoPaterno.message}</p>}
+          <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.apellidoPaterno?.message}</span>
         </div>
 
         <div className="flex flex-col font-poppins">
@@ -106,7 +111,7 @@ const Form = () => {
             {...register("apellidoMaterno", { required: "Este campo es obligatorio" })}
             className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
           />
-          {errors.apellidoMaterno && <p>{errors.apellidoMaterno.message}</p>}
+          <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.apellidoMaterno?.message}</span>
         </div>
       </div>
 
@@ -121,10 +126,10 @@ const Form = () => {
             className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
           >
             <option value="">Seleccione el sexo</option>
-            <option value="Masculino">Masculino</option>
-            <option value="Femenino">Femenino</option>
+            <option value="M">Masculino</option>
+            <option value="F">Femenino</option>
           </select>
-          {errors.sexo && <p>{errors.sexo.message}</p>}
+          <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.sexo?.message}</span>
         </div>
 
         <div className="flex flex-col w-1/2 font-poppins">
@@ -217,7 +222,6 @@ const Form = () => {
         {errors.unidadEstructurada && <p>{errors.unidadEstructurada.message}</p>}
       </div>
 
-      {/* Cargo */}
       <div className="flex flex-row items-center gap-2 w-full">
         <div className="flex flex-col w-1/2 font-poppins">
           <label htmlFor="dependenciaOficina" className="block mb-2 font-medium text-text-primary capitalize">

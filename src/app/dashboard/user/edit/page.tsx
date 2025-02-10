@@ -16,30 +16,30 @@ const TableUsers = () => {
       </div>
       <table className="w-full table-auto">
         <thead className="border">
-          <tr>
-            <th className="px-4 py-2 font-medium text-gray-700 text-sm text-left"></th>
-            <th className="px-4 py-2 font-medium text-gray-700 text-sm text-left">nombres</th>
-            <th className="px-4 py-2 font-medium text-gray-700 text-sm text-left">apellidos</th>
-            <th className="px-4 py-2 font-medium text-gray-700 text-sm text-left">dni</th>
-            <th className="px-4 py-2 font-medium text-gray-700 text-sm text-left">sexo</th>
-            <th className="px-4 py-2 font-medium text-gray-700 text-sm text-left">situacion laboral</th>
-            <th className="px-4 py-2 font-medium text-gray-700 text-sm text-left">celular</th>
-            <th className="px-4 py-2 font-medium text-gray-700 text-sm text-left">unidad estructurada</th>
+          <tr className="font-medium text-[#4c4f69] text-sm text-left uppercase">
+            <th className="px-4 py-2"></th>
+            <th className="px-4 py-2">nombres</th>
+            <th className="px-4 py-2">apellidos</th>
+            <th className="px-4 py-2">dni</th>
+            <th className="px-4 py-2">sexo</th>
+            <th className="px-4 py-2">situacion laboral</th>
+            <th className="px-4 py-2">celular</th>
+            <th className="px-4 py-2">unidad estructurada</th>
           </tr>
         </thead>
         <tbody className="border">
           {personales.map((personal) => (
-            <tr key={personal.id}>
-              <td className="px-4 py-2 text-sm text-left">{personal.id}</td>
-              <td className="px-4 py-2 text-sm text-left">{personal.nombres} </td>
-              <td className="px-4 py-2 text-sm text-left">
+            <tr key={personal.id} className="text-sm text-left">
+              <td className="px-4 py-2">{personal.id}</td>
+              <td className="px-4 py-2">{personal.nombres} </td>
+              <td className="px-4 py-2">
                 {personal.apellidoPaterno} {personal.apellidoMaterno}
               </td>
-              <td className="px-4 py-2 text-sm text-left">{personal.dni}</td>
-              <td className="px-4 py-2 text-sm text-left">{personal.sexo}</td>
-              <td className="px-4 py-2 text-sm text-left">{personal.situacionLaboral}</td>
-              <td className="px-4 py-2 text-sm text-left">{personal.celular}</td>
-              <td className="px-4 py-2 text-sm text-left">{personal.unidadEstructurada}</td>
+              <td className="px-4 py-2">{personal.dni}</td>
+              <td className="px-4 py-2">{personal.sexo}</td>
+              <td className="px-4 py-2">{personal.situacionLaboral}</td>
+              <td className="px-4 py-2">{personal.celular}</td>
+              <td className="px-4 py-2">{personal.unidadEstructurada}</td>
             </tr>
           ))}
         </tbody>

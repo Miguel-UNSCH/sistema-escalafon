@@ -1,8 +1,34 @@
+"use client";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+const schema = z.object({
+  name: z.string().min(1, { message: "Required" }),
+  age: z.number().min(10),
+});
+type IForm = {
+  name: string;
+  age: number;
+};
+
 const Page = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IForm>({
+    resolver: zodResolver(schema),
+  });
+
   return (
-    <div>
-      <h1>Demerits</h1>
-    </div>
+    <form onSubmit={handleSubmit((d) => console.log(d))}>
+      <input {...register("name")} />
+      {errors.name?.message && <p>{errors.name?.message}</p>}
+      <input type="number" {...register("age", { valueAsNumber: true })} />
+      {errors.age?.message && <p>{errors.age?.message}</p>}
+      <input type="submit" />
+    </form>
   );
 };
 

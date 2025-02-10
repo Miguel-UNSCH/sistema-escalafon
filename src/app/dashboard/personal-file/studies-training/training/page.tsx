@@ -1,18 +1,19 @@
 "use client";
+
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { studiesTrainingSchema } from "@/validations/studiesTrainingSchema";
+import { capacitacionSchema } from "@/validations/personalFileSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LuArrowLeft, LuArrowRight, LuAsterisk, LuCirclePlus, LuFileUp } from "react-icons/lu";
 
 export type IForm = {
   centroCapacitacion: string;
-  materiaCapacitacion: string;
-  profesionEspecialidad: string;
-  periodoInicio: Date;
-  periodoFin: Date;
-  horasLectivas: number;
-  fechaEmisionCertificado: Date;
+  materia: string;
+  especialidad: string;
+  periodoInicio: string;
+  periodoFin: string;
+  horasLectivas: string;
+  fechaEmision: string;
   certificadoEscaneado: string; // URL al PDF
 };
 
@@ -20,12 +21,15 @@ const Form: React.FC = () => {
   const {
     register,
     handleSubmit,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    watch,
     formState: { errors },
   } = useForm<IForm>({
-    resolver: zodResolver(studiesTrainingSchema),
+    resolver: zodResolver(capacitacionSchema),
   });
-  const onSubmit: SubmitHandler<IForm> = (data) => console.log(data);
 
+  const onSubmit: SubmitHandler<IForm> = (data) => console.log(data);
+  // console.log(watch("centroCapacitacion"));
   return (
     <div className="flex flex-col gap-4 mt-4 w-auto">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -35,39 +39,40 @@ const Form: React.FC = () => {
             <LuAsterisk />
           </label>
           <input
+            {...register("centroCapacitacion", { required: true })}
             type="text"
             placeholder="ingrese el centro de capacitación"
-            {...register("centroCapacitacion", { required: true })}
             className="rounded-xl font-poppins"
           />
           <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.centroCapacitacion?.message}</span>
         </div>
 
         <div className="flex flex-col gap-2 mb-4">
-          <label htmlFor="materiaCapacitacion" className="flex flex-row font-inter font-semibold capitalize">
+          <label htmlFor="materia" className="flex flex-row font-inter font-semibold capitalize">
             materia de capacitación
             <LuAsterisk />
           </label>
           <input
             type="text"
             placeholder="ingrese la materia de capacitación"
-            {...register("materiaCapacitacion", { required: true })}
+            {...register("materia", { required: true })}
             className="rounded-xl font-poppins"
           />
-          <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.materiaCapacitacion?.message}</span>
+          <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.materia?.message}</span>
         </div>
 
         <div className="flex flex-col gap-2 mb-4">
-          <label htmlFor="profesionEspecialidad" className="flex flex-row font-inter font-semibold capitalize">
+          <label htmlFor="especialidad" className="flex flex-row font-inter font-semibold capitalize">
             profesión/especialidad
             <LuAsterisk />
           </label>
           <input
             type="text"
             placeholder="ingrese su profesión o la especialidad"
-            {...register("profesionEspecialidad", { required: true })}
+            {...register("especialidad", { required: true })}
             className="rounded-xl font-poppins"
           />
+          <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.materia?.message}</span>
         </div>
 
         <div className="flex flex-row gap-5 w-full">
@@ -77,6 +82,7 @@ const Form: React.FC = () => {
               <LuAsterisk />
             </label>
             <input type="date" {...register("periodoInicio", { required: true })} className="rounded-xl font-poppins" />
+            <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.periodoInicio?.message}</span>
           </div>
 
           <div className="flex flex-col gap-2 mb-4 w-1/2">
@@ -85,6 +91,7 @@ const Form: React.FC = () => {
               <LuAsterisk />
             </label>
             <input type="date" {...register("periodoFin", { required: true })} className="rounded-xl font-poppins" />
+            <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.periodoFin?.message}</span>
           </div>
 
           <div className="flex flex-col gap-2 mb-4">
@@ -93,16 +100,18 @@ const Form: React.FC = () => {
               <LuAsterisk />
             </label>
             <input type="number" {...register("horasLectivas", { required: true, min: 1 })} className="rounded-xl text-center" />
+            <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.horasLectivas?.message}</span>
           </div>
         </div>
 
         <div className="flex flex-row items-center gap-2 w-full">
           <div className="flex flex-col gap-2 mb-4 w-2/3">
-            <label htmlFor="fechaEmisionCertificado" className="flex flex-row font-inter font-semibold capitalize">
+            <label htmlFor="fechaEmision" className="flex flex-row font-inter font-semibold capitalize">
               fecha de emisión del certificado
               <LuAsterisk />
             </label>
-            <input type="date" {...register("fechaEmisionCertificado", { required: true })} className="rounded-xl" />
+            <input type="date" {...register("fechaEmision", { required: true })} className="rounded-xl" />
+            <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.fechaEmision?.message}</span>
           </div>
 
           <div className="flex flex-col gap-2 mb-4 w-1/3">
@@ -113,10 +122,11 @@ const Form: React.FC = () => {
             <div className="flex flex-row items-center gap-2 p-2 border rounded-xl">
               <LuFileUp />
               <input
-                className="flex rounded-xl w-full cursor-pointer focus:outline-none"
+                className="flex rounded-xl focus:outline-none w-full cursor-pointer"
                 type="file"
                 {...register("certificadoEscaneado", { required: true })}
               />
+              <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.certificadoEscaneado?.message}</span>
             </div>
           </div>
         </div>
@@ -124,7 +134,7 @@ const Form: React.FC = () => {
         <div className="flex flex-row justify-end items-end mb-5 p-2 text-[#eff1f5]">
           <button
             type="button"
-            className="text-right flex flex-row items-center gap-2 bg-[#04a5e5] px-4 p-2 rounded-xl font-montserrat font-semibold text-sm uppercase"
+            className="flex flex-row items-center gap-2 bg-[#04a5e5] p-2 px-4 rounded-xl font-montserrat font-semibold text-sm text-right uppercase"
           >
             <LuCirclePlus />
             agregar otra capacitación
@@ -132,15 +142,20 @@ const Form: React.FC = () => {
         </div>
 
         <div className="flex flex-row justify-center items-center gap-4 font-montserrat text-[#eff1f5] text-center">
-          <button type="button" className="flex flex-row items-center gap-2 bg-[#e64553] hover:bg-[#fe640b] px-4 p-2 rounded-lg text-lg uppercase">
+          <button type="button" className="flex flex-row items-center gap-2 bg-[#e64553] hover:bg-[#fe640b] p-2 px-4 rounded-lg text-lg uppercase">
             <LuArrowLeft />
             regresar
           </button>
-          <button type="submit" className="flex flex-row items-center gap-2 bg-[#179299] hover:bg-[#40a02b] px-4 p-2 rounded-lg text-lg uppercase">
+          <button
+            type="button"
+            onClick={() => handleSubmit(onSubmit)()}
+            className="flex flex-row items-center gap-2 bg-[#179299] hover:bg-[#40a02b] p-2 px-4 rounded-lg text-lg uppercase"
+          >
             siguiente
             <LuArrowRight />
           </button>
         </div>
+        <input type="submit" className="bg-red-300 cursor-pointer" />
       </form>
     </div>
   );
@@ -150,8 +165,8 @@ const page = () => {
   return (
     <div className="flex flex-col justify-center items-center font-poppins text-[#11111b]">
       <div className="flex flex-col justify-center items-center gap-4 bg-white p-8 rounded-lg">
-        <h3 className="font-bold font-montserrat text-2xl text-center uppercase">capacitación</h3>
-        <div className="flex-row justify-evenly items-center gap-2 hidden">
+        <h3 className="font-montserrat font-bold text-2xl text-center uppercase">capacitación</h3>
+        <div className="hidden flex-row justify-evenly items-center gap-2">
           <span className="flex justify-center items-center bg-[#ccd0da] rounded-full w-8 h-8">1</span>
           <div className="flex-grow bg-[#ccd0da] h-1"></div>
           <span className="flex justify-center items-center bg-[#ccd0da] rounded-full w-8 h-8">2</span>

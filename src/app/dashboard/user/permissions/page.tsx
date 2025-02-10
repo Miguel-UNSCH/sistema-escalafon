@@ -1,6 +1,6 @@
 const Page = () => {
   return (
-    <div>
+    <div className="flex flex-col gap-5 bg-white w-full">
       <h1>Permissions</h1>
     </div>
   );
