@@ -415,7 +415,6 @@ model PermisoLicenciaVacacion {
 
 model Ascenso {
   id                   Int    @id @default(autoincrement())
-  apellidosYNombres    String
   resolucionAscenso    String
   cargoDel             String
   cargoAl              String
@@ -451,7 +450,6 @@ model Ascenso {
  */
 model BonificacionPersonal {
   id                     Int    @id @default(autoincrement())
-  apellidosYNombres      String
   tipoBonificacion       String
   resolucionBonificacion String
   dependenciaOficinaId   Int
@@ -468,7 +466,6 @@ model BonificacionPersonal {
 
 model BonificacionFamiliar {
   id                     Int    @id @default(autoincrement())
-  apellidosYNombres      String
   tipoBonificacion       String
   resolucionBonificacion String
   dependenciaOficinaId   Int
@@ -485,7 +482,6 @@ model BonificacionFamiliar {
 
 model FichaEvaluacion {
   id                Int      @id @default(autoincrement())
-  apellidosYnombres String
   documentoSustento String
   fechaEvaluacion   DateTime
   personalId        Int

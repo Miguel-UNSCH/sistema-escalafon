@@ -36,17 +36,17 @@ export const navigationItems: NavigationItems[] = [
       {
         label: "crear usuario",
         icon: <FaUserCog />,
-        path: "/usuarios/crear",
+        path: "/dashboard/user/create",
       },
       {
         label: "editar usuario",
         icon: <FaUsers />,
-        path: "/usuarios/editar",
+        path: "/dashboard/user/edit",
       },
       {
         label: "roles y permisos",
         icon: <FaIdCard />,
-        path: "/usuarios/roles",
+        path: "/dashboard/user/permissions",
       },
     ],
   },
