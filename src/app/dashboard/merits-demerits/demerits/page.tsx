@@ -78,12 +78,6 @@ const Page = () => {
         {errors.fechaSancion && <p>{errors.fechaSancion.message}</p>}
       </div>
 
-      <div className="flex flex-col gap-4">
-        <label htmlFor="status">Status</label>
-        <input type="text" {...register("status")} />
-        {errors.status && <p>{errors.status.message}</p>}
-      </div>
-
       <button type="submit" className="bg-[#e64553] p-2 rounded text-white">
         Enviar
       </button>
