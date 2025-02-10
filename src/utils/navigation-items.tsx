@@ -165,7 +165,7 @@ export const navigationItems: NavigationItems[] = [
       {
         label: "acta de entrega",
         icon: <FaFileAlt />,
-        path: "/documentos/acta-entrega",
+        path: "/dashboard/documents",
       },
     ],
   },
@@ -175,17 +175,17 @@ export const navigationItems: NavigationItems[] = [
       {
         label: "reportes mensuales",
         icon: <FaChartBar />,
-        path: "/reports/mensuales",
+        path: "/dashboard/reports/monthly",
       },
       {
         label: "reportes anuales",
         icon: <FaChartBar />,
-        path: "/reports/anuales",
+        path: "/dashboard/reports/annual",
       },
       {
         label: "reportes personalizados",
         icon: <FaChartBar />,
-        path: "/reports/personalizados",
+        path: "/dashboard/reports/defaults",
       },
     ],
   },

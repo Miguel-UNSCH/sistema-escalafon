@@ -26,11 +26,11 @@ export default function Sidebar({ isOpen, isMobile }: SidebarProps) {
       >
         <div className="flex flex-col gap-6 py-4 pl-4 w-full h-full">
           <div className="relative mr-4">
-            <Link href={"/"} className="flex flex-row items-center gap-2 bg-red-600 px-2 rounded-md">
+            <Link href={"/"} className="flex flex-row items-center gap-2 bg-[#d20f39] px-2 rounded-md">
               <Image
                 src={logo}
                 alt="Logo Gobierno Regional"
-                className="bg-red-600"
+                className=""
                 width={200} // Ancho de la imagen
                 height={100} // Alto de la imagen
               />
