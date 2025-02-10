@@ -142,7 +142,7 @@ model Personal {
   discapacidad         Boolean
 
   cargoId              Int
-  dependenciaOficinaId Int?
+  dependenciaOficinaId Int
   discapacidadId       Int?
   conyugeId            Int?
 
@@ -322,9 +322,9 @@ model RenunciaLiquidacion {
   documentoRenuncia    String // Carta, resolución de renuncia
   motivoRenuncia       String // Motivo de renuncia (Particular, salud, personal)
   fechaRenuncia        DateTime // Fecha de la renuncia
-  personalId           Int // Relación con el personal
-  dependenciaOficinaId Int // Relación con la dependencia/oficina
-  cargoId              Int // Relación con el cargo
+  personalId           Int
+  dependenciaOficinaId Int
+  cargoId              Int
 
   personal           Personal           @relation(fields: [personalId], references: [id])
   dependenciaOficina DependenciaOficina @relation(fields: [dependenciaOficinaId], references: [id])
@@ -349,10 +349,10 @@ model Desplazamiento {
   tipoDesplazamiento     TipoDesplazamiento // Tipo de desplazamiento
   documentoRotacion      String // Memorando, resolución
   fechaDesplazamiento    DateTime // Fecha de desplazamiento
-  dependenciaOficinaDeId Int // Relación con la oficina de origen
-  dependenciaOficinaAId  Int // Relación con la oficina de destino
-  cargoId                Int // Relación con el cargo
-  personalId             Int // Relación con el personal
+  dependenciaOficinaDeId Int
+  dependenciaOficinaAId  Int
+  cargoId                Int
+  personalId             Int
 
   personal             Personal           @relation(fields: [personalId], references: [id])
   dependenciaOficinaDe DependenciaOficina @relation("OficinaDe", fields: [dependenciaOficinaDeId], references: [id])

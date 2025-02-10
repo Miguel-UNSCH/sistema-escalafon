@@ -1,11 +1,20 @@
 "use client";
-import { ChildrenFormValues } from "@/utils/personal-file";
+
 import React, { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { LuMapPin, LuSave, LuSchool, LuUserRoundPlus } from "react-icons/lu";
+import { LuSave, LuSchool, LuUserRoundPlus } from "react-icons/lu";
 
 /** ---------------------------------------------------------------------------------------------------------------------------------------------- */
-
+export type IForm = {
+  nombres: string;
+  apellidos: string;
+  fechaNacimiento: string;
+  edad: number;
+  departamento: string;
+  provincia: string;
+  distrito: string;
+  gradoInstruccion: string;
+};
 const Form = () => {
   const {
     register,
@@ -14,96 +23,122 @@ const Form = () => {
     control,
     setValue,
     formState: { errors },
-  } = useForm<ChildrenFormValues>();
+  } = useForm<IForm>();
 
-  const [age, setAge] = useState<number | null>(null);
+  const [edad, setEdad] = useState<number | null>(null);
 
   const calculateAge = (birthDate: string) => {
     const birthDateObj = new Date(birthDate);
     const today = new Date();
 
     if (birthDateObj > today) {
-      setAge(0);
+      setEdad(0);
       return;
     }
 
-    let age = today.getFullYear() - birthDateObj.getFullYear();
+    let edad = today.getFullYear() - birthDateObj.getFullYear();
     const month = today.getMonth() - birthDateObj.getMonth();
 
-    if (month < 0 || (month === 0 && today.getDate() < birthDateObj.getDate())) age -= 1;
+    if (month < 0 || (month === 0 && today.getDate() < birthDateObj.getDate())) edad -= 1;
 
-    setAge(age < 0 ? 0 : age);
+    setEdad(edad < 0 ? 0 : edad);
   };
 
   useEffect(() => {
-    if (age !== null) setValue("age", age);
-  }, [age, setValue]);
+    if (edad !== null) setValue("edad", edad);
+  }, [edad, setValue]);
 
-  const onSubmit: SubmitHandler<ChildrenFormValues> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<IForm> = (data) => console.log(data);
 
   const today = new Date().toISOString().split("T")[0];
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="font-inter">
       {/* Nombres y Apellidos */}
-      <div className="flex flex-row items-center gap-2">
-        <div className="flex flex-col font-poppins">
-          <label htmlFor="name" className="block mb-2 pl-1 font-medium text-text-primary">
+      <div className="flex flex-row items-center gap-2 w-full">
+        <div className="flex flex-col w-1/2 font-poppins">
+          <label htmlFor="nombres" className="block mb-2 pl-1 font-medium text-text-primary">
             Nombres
           </label>
           <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
             <input
-              id="name"
-              {...register("name", { required: "Este campo es obligatorio" })}
-              className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
+              id="nombres"
+              {...register("nombres", { required: "Este campo es obligatorio" })}
+              className="bg-transparent p-2.5 focus:border-transparent border-none outline-none focus:outline-none focus:ring-0 w-full text-sm"
             />
           </div>
-
-          {errors.name && <p>{errors.name.message}</p>}
+          {errors.nombres && <p>{errors.nombres.message}</p>}
         </div>
 
-        <div className="flex flex-col font-poppins">
-          <label htmlFor="lastName" className="block mb-2 pl-1 font-medium text-text-primary">
+        <div className="flex flex-col w-1/2 font-poppins">
+          <label htmlFor="apellidos" className="block mb-2 pl-1 font-medium text-text-primary">
             Apellidos
           </label>
           <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
             <input
-              id="lastName"
-              {...register("lastName", { required: "Este campo es obligatorio" })}
-              className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
+              id="apellidos"
+              {...register("apellidos", { required: "Este campo es obligatorio" })}
+              className="bg-transparent p-2.5 focus:border-transparent border-none outline-none focus:outline-none focus:ring-0 w-full text-sm"
             />
           </div>
-          {errors.lastName && <p>{errors.lastName.message}</p>}
+          {errors.apellidos && <p>{errors.apellidos.message}</p>}
         </div>
       </div>
 
       {/* Lugar de Nacimiento */}
-      <div className="flex flex-col font-poppins">
-        <label htmlFor="birthPlace" className="block mb-2 pl-1 font-medium text-text-primary">
-          Lugar de Nacimiento
-        </label>
-        <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
-          <LuMapPin />
-          <input
-            id="birthPlace"
-            {...register("birthPlace", { required: "Este campo es obligatorio" })}
-            className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
-          />
+      <div className="flex flex-row items-center gap-2 w-full">
+        <div className="flex flex-col w-1/3 font-poppins">
+          <label htmlFor="departamento" className="block mb-2 pl-1 font-medium text-text-primary">
+            departamento
+          </label>
+          <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
+            <input
+              id="departamento"
+              {...register("departamento", { required: "Este campo es obligatorio" })}
+              className="bg-transparent p-2.5 focus:border-transparent border-none outline-none focus:outline-none focus:ring-0 w-full text-sm"
+            />
+          </div>
+          {errors.departamento && <p className="text-red-500">{errors.departamento.message}</p>}
         </div>
-        {errors.birthPlace && <p className="text-red-500">{errors.birthPlace.message}</p>}
+        <div className="flex flex-col w-1/3 font-poppins">
+          <label htmlFor="provincia" className="block mb-2 pl-1 font-medium text-text-primary">
+            provincia
+          </label>
+          <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
+            <input
+              id="provincia"
+              {...register("provincia", { required: "Este campo es obligatorio" })}
+              className="bg-transparent p-2.5 focus:border-transparent border-none outline-none focus:outline-none focus:ring-0 w-full text-sm"
+            />
+          </div>
+          {errors.provincia && <p className="text-red-500">{errors.provincia.message}</p>}
+        </div>
+        <div className="flex flex-col w-1/3 font-poppins">
+          <label htmlFor="distrito" className="block mb-2 pl-1 font-medium text-text-primary">
+            distrito
+          </label>
+          <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
+            <input
+              id="distrito"
+              {...register("distrito", { required: "Este campo es obligatorio" })}
+              className="bg-transparent p-2.5 focus:border-transparent border-none outline-none focus:outline-none focus:ring-0 w-full text-sm"
+            />
+          </div>
+          {errors.distrito && <p className="text-red-500">{errors.distrito.message}</p>}
+        </div>
       </div>
 
       {/* Fecha de Nacimiento */}
       <div className="flex flex-row gap-2 w-full">
         <div className="flex flex-col w-3/4 font-poppins">
-          <label htmlFor="birthDate" className="block mb-2 pl-1 font-medium text-text-primary">
+          <label htmlFor="fechaNacimiento" className="block mb-2 pl-1 font-medium text-text-primary">
             Fecha de Nacimiento
           </label>
           <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
             <input
-              id="birthDate"
+              id="fechaNacimiento"
               type="date"
-              {...register("birthDate", {
+              {...register("fechaNacimiento", {
                 required: "Este campo es obligatorio",
                 validate: {
                   notFutureDate: (value) => {
@@ -118,36 +153,36 @@ const Form = () => {
               })}
               onChange={(e) => calculateAge(e.target.value)}
               max={today}
-              className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
+              className="bg-transparent p-2.5 focus:border-transparent border-none outline-none focus:outline-none focus:ring-0 w-full text-sm"
             />
           </div>
-          {errors.birthDate && <p className="text-red-500">{errors.birthDate.message}</p>}
+          {errors.fechaNacimiento && <p className="text-red-500">{errors.fechaNacimiento.message}</p>}
         </div>
 
         {/* Edad */}
         <div className="flex flex-col w-1/4 font-poppins">
-          <label htmlFor="age" className="block mb-2 pl-1 font-medium text-text-primary">
+          <label htmlFor="edad" className="block mb-2 pl-1 font-medium text-text-primary">
             Edad
           </label>
           <div className="flex flex-row items-center bg-transparent mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg w-full h-full transition-colors">
-            <span className="bg-transparent p-2.5 w-full text-sm outline-none">{age !== null ? age : ""}</span>
-            <input id="age" type="hidden" value={age || ""} {...register("age", { required: "Este campo es obligatorio" })} />
+            <span className="bg-transparent p-2.5 outline-none w-full text-sm">{edad !== null ? edad : ""}</span>
+            <input id="edad" type="hidden" value={edad || ""} {...register("edad", { required: "Este campo es obligatorio" })} />
           </div>
-          {errors.age && <p className="text-red-500">{errors.age.message}</p>}
+          {errors.edad && <p className="text-red-500">{errors.edad.message}</p>}
         </div>
       </div>
 
       {/* Grado de Instrucción */}
       <div className="flex flex-col mb-5 font-poppins">
-        <label htmlFor="educationLevel" className="block mb-2 pl-1 font-medium text-text-primary">
+        <label htmlFor="gradoInstruccion" className="block mb-2 pl-1 font-medium text-text-primary">
           Grado de Instrucción
         </label>
         <div className="flex flex-row items-center pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
           <LuSchool />
           <select
-            id="educationLevel"
-            {...register("educationLevel", { required: "Este campo es obligatorio" })}
-            className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
+            id="gradoInstruccion"
+            {...register("gradoInstruccion", { required: "Este campo es obligatorio" })}
+            className="bg-transparent p-2.5 focus:border-transparent border-none outline-none focus:outline-none focus:ring-0 w-full text-sm"
           >
             <option value="">Seleccione un grado</option>
             <option value="Primaria Completa">Primaria Completa</option>
@@ -158,7 +193,7 @@ const Form = () => {
             <option value="Técnico Completo">Técnico Completo</option>
           </select>
         </div>
-        {errors.educationLevel && <p className="font-montserrat text-red-500">{errors.educationLevel.message}</p>}
+        {errors.gradoInstruccion && <p className="font-montserrat text-red-500">{errors.gradoInstruccion.message}</p>}
       </div>
 
       <div className="flex flex-row justify-end items-center gap-2">
@@ -183,10 +218,18 @@ const Form = () => {
 
 const page = () => {
   return (
-    <div className="flex flex-col justify-center items-center font-poppins">
-      <div className="flex flex-col">
-        <h3 className="font-bold font-montserrat text-xl uppercase">Datos de los hijos</h3>
-        <Form />
+    <div className="flex flex-col justify-center items-center w-full font-poppins text-[#11111b]">
+      <div className="flex flex-col items-center gap-4 bg-white p-8 rounded-lg w-auto">
+        <h3 className="font-montserrat font-bold text-2xl text-center uppercase">datos de los hijos</h3>
+        <div className="hidden flex-row justify-evenly items-center gap-2">
+          <span className="flex justify-center items-center bg-[#ccd0da] rounded-full w-8 h-8">1</span>
+          <div className="flex-grow bg-[#ccd0da] h-1"></div>
+          <span className="flex justify-center items-center bg-[#ccd0da] rounded-full w-8 h-8">2</span>
+        </div>
+
+        <div className="flex justify-center items-center">
+          <Form />
+        </div>
       </div>
     </div>
   );
