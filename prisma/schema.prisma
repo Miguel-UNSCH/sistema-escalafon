@@ -121,6 +121,7 @@ model User {
   id          Int     @id @default(autoincrement())
   nombres     String
   apellidos   String
+  rol         String  @default("PERSONAL") // "PERSONAL" | "ADMIN"
   email       String? @unique
   contrasenia String?
   ubigeoId    Int?
