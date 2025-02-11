@@ -13,11 +13,8 @@ export default function Dashboard({ children }: { children: ReactNode }) {
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth < 768) {
-        setIsSidebarOpen(false);
-      } else {
-        setIsSidebarOpen(true);
-      }
+      if (window.innerWidth < 768) setIsSidebarOpen(false);
+      else setIsSidebarOpen(true);
     };
 
     checkMobile();
@@ -29,33 +26,16 @@ export default function Dashboard({ children }: { children: ReactNode }) {
 
   return (
     <div className="relative flex h-screen overflow-hidden">
-      <Sidebar
-        isOpen={isSidebarOpen}
-        isMobile={isMobile}
-        onClose={toggleSidebar}
-      />
+      <Sidebar isOpen={isSidebarOpen} isMobile={isMobile} onClose={toggleSidebar} />
       <div
         className={`relative flex flex-col flex-1 overflow-hidden transition-all duration-300 ease-in-out ${
           isSidebarOpen && !isMobile ? "md:ml-72" : ""
         }`}
       >
-        <Navbar
-          onMenuClick={toggleSidebar}
-          isSidebarOpen={isSidebarOpen}
-          isMobile={isMobile}
-        />
-        <main
-          className={`flex-1 overflow-x-hidden overflow-y-auto py-4 px-8 transition-all duration-300 ease-in-out pt-20`}
-        >
-          {children}
-        </main>
+        <Navbar onMenuClick={toggleSidebar} isSidebarOpen={isSidebarOpen} isMobile={isMobile} />
+        <main className={`flex-1 overflow-x-hidden overflow-y-auto py-4 px-8 transition-all duration-300 ease-in-out pt-20`}>{children}</main>
       </div>
-      {isMobile && isSidebarOpen && (
-        <div
-          className="z-40 fixed inset-0 bg-ctp-base bg-opacity-50"
-          onClick={toggleSidebar}
-        ></div>
-      )}
+      {isMobile && isSidebarOpen && <div className="z-40 fixed inset-0 bg-ctp-base bg-opacity-50" onClick={toggleSidebar}></div>}
     </div>
   );
 }

@@ -26,30 +26,27 @@ export const navigationItems: NavigationItems[] = [
         icon: <FaTachometerAlt />,
         path: "/dashboard",
         badge: "2",
-        submenus: [
-          { label: "panel", path: "/dashboard/panel" },
-          { label: "reportes", path: "/dashboard/reports" },
-        ],
+        submenus: [{ label: "panel", path: "/dashboard/panel" }],
       },
     ],
   },
   {
-    title: "gestión de usuarios",
+    title: "gestión de usuarios (only admin)",
     menuItem: [
       {
         label: "crear usuario",
         icon: <FaUserCog />,
-        path: "/usuarios/crear",
+        path: "/dashboard/user/create",
       },
       {
         label: "editar usuario",
         icon: <FaUsers />,
-        path: "/usuarios/editar",
+        path: "/dashboard/user/edit",
       },
       {
         label: "roles y permisos",
         icon: <FaIdCard />,
-        path: "/usuarios/roles",
+        path: "/dashboard/user/permissions",
       },
     ],
   },
@@ -82,7 +79,7 @@ export const navigationItems: NavigationItems[] = [
         path: "/dashboard/personal-file/studies-training",
         submenus: [
           { label: "estudios", path: "/dashboard/personal-file/studies-training/studies" },
-          { label: "training", path: "/dashboard/personal-file/studies-training/training" },
+          { label: "capacitación", path: "/dashboard/personal-file/studies-training/training" },
         ],
       },
       {
@@ -168,12 +165,7 @@ export const navigationItems: NavigationItems[] = [
       {
         label: "acta de entrega",
         icon: <FaFileAlt />,
-        path: "/documentos/acta-entrega",
-      },
-      {
-        label: "constancia de pagos",
-        icon: <FaFileAlt />,
-        path: "/documentos/constancia-pagos",
+        path: "/dashboard/documents",
       },
     ],
   },
@@ -183,17 +175,17 @@ export const navigationItems: NavigationItems[] = [
       {
         label: "reportes mensuales",
         icon: <FaChartBar />,
-        path: "/reportes/mensuales",
+        path: "/dashboard/reports/monthly",
       },
       {
         label: "reportes anuales",
         icon: <FaChartBar />,
-        path: "/reportes/anuales",
+        path: "/dashboard/reports/annual",
       },
       {
         label: "reportes personalizados",
         icon: <FaChartBar />,
-        path: "/reportes/personalizados",
+        path: "/dashboard/reports/defaults",
       },
     ],
   },

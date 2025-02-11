@@ -91,7 +91,7 @@
 
 #### a. Régimen de decreto legislativo 276
 
-- Apellidos y Nombres
+- Apellidos y Nombres -----------
 - Condición laboral (Nombrado, Contratado o en plaza vacante, Designado)
 - Dependencia y/o oficina
 - Resolución de nombramiento y/o contrato
@@ -102,12 +102,12 @@
 - CNP
 - Fecha de ingreso-GRA
 - Años de servicio
-- Fecha de nacimiento
-- Fecha de Cese
+- Fecha de nacimiento -----------
+- Fecha de Cese -----------------
 
 #### b. Contrato Administrativo de Servicio - CAS
 
-- Apellidos y nombres
+- Apellidos y nombres -----------
 - Condición laboral (Indeterminado, Eventual)
 - Dependencia y/o oficina
 - Contrato-CAS
@@ -117,7 +117,7 @@
 
 #### c. D.L. 276-Proyecto de inversión
 
-- Apellidos y nombres
+- Apellidos y nombres -----------
 - Condición laboral (Contratado, Reincorporado-Mandato Judicial)
 - Dependencia y/o oficina
 - Resolución de contrato
@@ -128,7 +128,7 @@
 
 #### d. Practicante-D.L. N° 1401-Régimen Especial Modalidades Formativas
 
-- Apellidos y nombres
+- Apellidos y nombres -----------
 - Condición laboral (Profesional - Preprofesional)
 - Dependencia y/o oficina
 - Convenio
@@ -136,7 +136,7 @@
 
 ### IV. Renuncia y liquidación
 
-- Apellidos y nombres
+- Apellidos y nombres -----------
 - Documento de renuncia (Carta, resolución)
 - Motivo de renuncia (Particular, salud, personal)
 - Fecha de Renuncia
@@ -262,7 +262,8 @@
 - CNP
 - Dias Laborados (Del - Al)
 
-A continuación tienes una **propuesta de menú** (en español) que agrupa lógicamente los diecisiete apartados que se solicitan en el requerimiento, inspirada en el estilo de navegación lateral (sidebar) que se muestra en la imagen. La idea es que el **Administrador** tenga acceso a todos los módulos (gestión de usuarios, reportes, validación de datos, etc.) y el **Trabajador** únicamente vea o pueda ingresar datos en las secciones que le correspondan.
+PAP (Puesto de Asignación Personal)
+CNP (Código Nacional del Personal)
 
 ## 2. Menú principal (básico)
 
@@ -277,107 +278,6 @@ A continuación tienes una **propuesta de menú** (en español) que agrupa lógi
 - **Crear usuario** (trabajador)
 - **Editar usuario**
 - **Roles y Permisos** (p.ej. admin, trabajador)
-
-**Reportes** (solo administrador)
-
-- Reportes por mes, año, etc.
-- Reporte personalizado (filtros por dependencia/oficina, por situación laboral, por tipo de contrato, etc.).
-
-**Configuración / Perfil**
-
-- Perfil del usuario (cambiar contraseña, actualizar correo, etc.).
-- Opciones de idioma o personalización de la interfaz (opcional).
-
-## 3. Módulos del sistema según las secciones requeridas
-
-La mayor parte de la información gira en torno a los datos del trabajador y sus incidencias (ascensos, contratos, licencias, etc.). Para que no queden **17** ítems sueltos, conviene agruparlos por **módulos** o **grandes categorías**:
-
-### A. **Datos Personales y Familiares**
-
-1. **Datos Personales**
-
-   - (Apellido Paterno, Materno, Nombres, DNI, etc.)
-   - Estado civil, datos del cónyuge, hijos, etc.
-
-2. **Estudios y Capacitación**
-
-   - Formación académica, cursos, certificados.
-
-3. **Experiencia Laboral**
-
-   - Empleos previos, cargos, periodo de labor, documentos de sustento.
-
-4. **Personal con Discapacidad**
-   - Tipo de discapacidad, documentos de sustento.
-
-Este bloque puede estar en el menú como un grupo llamado, por ejemplo, **“Ficha Personal”** o **“Datos del Trabajador”**, y dentro se encuentran los submenús:
-
-- **Datos Personales**
-- **Estudios y Capacitación**
-- **Experiencia Laboral**
-- **Discapacidad** (si corresponde)
-
-### B. **Contratación y Situación Laboral**
-
-5. **Contratos y Nombramiento**
-
-   - Régimen DL 276, Contrato Administrativo de Servicio (CAS), Proyecto de inversión, etc.
-
-6. **Renuncia y Liquidación**
-
-7. **Desplazamiento**
-
-   - Rotaciones, reasignaciones, designaciones, etc.
-
-8. **Descanso Médico**
-
-   - Tipos de descanso, certificado, fechas.
-
-9. **Permisos / Licencias / Vacaciones**
-
-10. **Ascensos**
-
-En el menú, podrías agruparlos en un ítem tipo **“Gestión Laboral”** o **“Situación Laboral”**, y cada uno como submenú:
-
-- **Contratos y Nombramiento**
-- **Renuncia y Liquidación**
-- **Desplazamiento**
-- **Descanso Médico**
-- **Permisos / Licencias / Vacaciones**
-- **Ascensos**
-
-### C. **Bonificaciones y Evaluaciones**
-
-11. **Bonificación Personal**
-12. **Bonificación Familiar**
-13. **Ficha de Evaluación**
-
-Aquí se podría tener un grupo **“Bonificaciones y Evaluaciones”** con submenús:
-
-- **Bonificación Personal**
-- **Bonificación Familiar**
-- **Ficha de Evaluación**
-
-### D. **Méritos y Deméritos**
-
-14. **Méritos**
-15. **Deméritos**
-
-Podría ir como un único módulo **“Méritos y Deméritos”** con las dos opciones como submenús.
-
-### E. **Documentos y Otros Registros**
-
-16. **Acta de Entrega**
-17. **Constancia de Pagos de Haberes y Descuentos**
-
-Podría llamarse **“Documentos / Constancias”**, con submenús:
-
-- **Acta de Entrega**
-- **Constancia de Pagos**
-
-## 4. Ejemplo de Estructura de Menú Lateral
-
-Para que se visualice cómo quedaría en el **sidebar**, podríamos hacer algo así (en español):
 
 ```
 NAVEGACIÓN
@@ -421,12 +321,6 @@ REPORTES (solo admin)
    └── Reportes Personalizados
 ```
 
-> **Notas:**
->
-> - El **Trabajador** vería un menú reducido, por ejemplo: `Dashboard`, `Ficha Personal`, `Situación Laboral`, `Bonificaciones y Evaluaciones`, `Méritos y Deméritos`, `Documentos / Otros`, y su propio perfil en `Configuración`. No vería “Gestión de Usuarios” ni “Reportes”.
-> - El **Administrador** vería todo el menú completo.
-> - En cada uno de los módulos, el **Trabajador** solo podría **cargar datos** (y no modificar en caso de error, según tu requerimiento), mientras que el **Administrador** puede tanto **cargar** como **editar** y **validar**.
-
 ## 5. Resumen
 
 1. **Menú principal** con un **Dashboard** (estadísticas/resumen).
@@ -440,4 +334,4 @@ REPORTES (solo admin)
 4. **Reportes** (sección exclusiva para administrador).
 5. **Configuración** (perfil de usuario, contraseñas, preferencias).
 
-Con esta organización se cumple el objetivo de tener todo lo exigido en el requerimiento y, al mismo tiempo, presentar un **menú limpio** y jerárquico que distinga claramente las funciones del **administrador** y las del **trabajador**.
+---
