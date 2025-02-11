@@ -1,8 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { BadRequestError, CustomError } from "@/utils/customErrors";
+import { handleError } from "@/middleware/errorHandler";
 
+interface Filters {
+  inei?: string;
+  reniec?: string;
+  departamento?: string;
+  provincia?: string;
+  distrito?: string;
+}
 export const GET = async (req: NextRequest) => {
   try {
     const { searchParams } = req.nextUrl;
@@ -13,7 +20,7 @@ export const GET = async (req: NextRequest) => {
     const provincia = searchParams.get("provincia");
     const distrito = searchParams.get("distrito");
 
-    const filters: any = {};
+    const filters: Filters = {};
 
     if (inei) filters.inei = inei;
     if (reniec) filters.reniec = reniec;
@@ -27,8 +34,14 @@ export const GET = async (req: NextRequest) => {
     }
 
     const ubigeos = await prisma.ubigeo.findMany({ where: filters });
+    if (ubigeos.length === 0) throw BadRequestError("ubigeo(s) no encontrado(s)");
     return NextResponse.json(ubigeos, { status: 200 });
-  } catch (error: any) {
-    return NextResponse.json({ error: "Error al obtener Ubigeos" }, { status: 500 });
+  } catch (error: unknown) {
+    if ((error as CustomError).statusCode) return handleError(error as CustomError);
+
+    return handleError({
+      statusCode: 500,
+      message: "Error interno del servidor",
+    });
   }
 };

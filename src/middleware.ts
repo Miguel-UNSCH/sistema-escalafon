@@ -4,15 +4,17 @@ import { NextResponse } from "next/server";
 
 const { auth: middleware } = NextAuth(authConfig);
 
-const publicRoutes = ["/", "/login", "/register", "/api/auth/verify-email"];
+const publicRoutes = ["/", "/login", "/register"];
 
 export default middleware((r) => {
   const { nextUrl, auth } = r;
   const isLoggedIn = !!auth?.user;
-  console.log(isLoggedIn);
-  if (!publicRoutes.includes(nextUrl.pathname) && !isLoggedIn) {
+  if (
+    !publicRoutes.includes(nextUrl.pathname) &&
+    !nextUrl.pathname.startsWith("/api/") && // Permite cualquier ruta bajo "/api", implementar mediante token
+    !isLoggedIn
+  )
     return NextResponse.redirect(new URL("/login", nextUrl));
-  }
 
   return NextResponse.next();
 });
