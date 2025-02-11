@@ -1,8 +1,3 @@
-export interface CustomError {
-  statusCode: number;
-  message: string;
-}
-
 export const BadRequestError = (message: string) => ({
   statusCode: 400,
   message: message,

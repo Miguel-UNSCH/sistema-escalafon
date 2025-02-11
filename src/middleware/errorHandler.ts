@@ -1,7 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 
-export const handleError = (error: any) => {
+export interface CustomError extends Error {
+  statusCode: number;
+  message: string;
+}
+
+export const handleError = (error: CustomError) => {
   // Si el error tiene código de estado y mensaje, retornamos ese error
   if (error.statusCode && error.message) return NextResponse.json({ error: error.message }, { status: error.statusCode });
 

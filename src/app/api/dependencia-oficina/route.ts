@@ -1,7 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { prisma } from "@/lib/prisma";
+import { CustomError, handleError } from "@/middleware/errorHandler";
+import { NotFoundError } from "@/utils/customErrors";
 import { NextRequest, NextResponse } from "next/server";
+
+interface IFilters {
+  nombre?: string;
+  direccion?: string;
+  codigo?: string;
+}
 
 export const GET = async (req: NextRequest) => {
   try {
@@ -11,7 +17,7 @@ export const GET = async (req: NextRequest) => {
     const direccion = searchParams.get("direccion");
     const codigo = searchParams.get("codigo");
 
-    const filters: any = {};
+    const filters: IFilters = {};
 
     if (nombre) filters.nombre = nombre;
     if (direccion) filters.direccion = direccion;
@@ -19,15 +25,15 @@ export const GET = async (req: NextRequest) => {
 
     if (Object.keys(filters).length === 0) {
       const dependenciaOficinas = await prisma.dependenciaOficina.findMany();
-      if (dependenciaOficinas.length === 0) return NextResponse.json({ error: "DependenciaOficinas no encontradas" }, { status: 404 });
+      if (dependenciaOficinas.length === 0) throw NotFoundError("DependenciaOficinas no encontradas");
       return NextResponse.json(dependenciaOficinas, { status: 200 });
     }
 
     const dependenciaOficinas = await prisma.dependenciaOficina.findMany({ where: filters });
-    if (dependenciaOficinas.length === 0) return NextResponse.json({ error: "DependenciaOficinas no encontradas" }, { status: 404 });
+    if (dependenciaOficinas.length === 0) throw NotFoundError("DependenciaOficinas no encontradas");
     return NextResponse.json(dependenciaOficinas, { status: 200 });
-  } catch (error: any) {
-    return NextResponse.json({ error: "Error al obtener los datos" }, { status: 500 });
+  } catch (error: unknown) {
+    return handleError(error as CustomError);
   }
 };
 
@@ -36,7 +42,7 @@ export const POST = async (req: NextRequest) => {
     const dependenciaOficina = await req.json();
     const newDependenciaOficina = await prisma.dependenciaOficina.create({ data: dependenciaOficina });
     return NextResponse.json(newDependenciaOficina, { status: 201 });
-  } catch (error: any) {
-    return NextResponse.json({ error: "Error al crear DependenciaOficina" }, { status: 500 });
+  } catch (error: unknown) {
+    return handleError(error as CustomError);
   }
 };

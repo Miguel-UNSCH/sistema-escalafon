@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { BadRequestError, CustomError } from "@/utils/customErrors";
-import { handleError } from "@/middleware/errorHandler";
+import { BadRequestError } from "@/utils/customErrors";
+import { CustomError, handleError } from "@/middleware/errorHandler";
 
 interface Filters {
   inei?: string;
@@ -37,11 +37,6 @@ export const GET = async (req: NextRequest) => {
     if (ubigeos.length === 0) throw BadRequestError("ubigeo(s) no encontrado(s)");
     return NextResponse.json(ubigeos, { status: 200 });
   } catch (error: unknown) {
-    if ((error as CustomError).statusCode) return handleError(error as CustomError);
-
-    return handleError({
-      statusCode: 500,
-      message: "Error interno del servidor",
-    });
+    return handleError(error as CustomError);
   }
 };

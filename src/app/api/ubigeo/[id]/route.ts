@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { handleError } from "@/middleware/errorHandler";
-import { BadRequestError, CustomError } from "@/utils/customErrors";
+import { CustomError, handleError } from "@/middleware/errorHandler";
+import { BadRequestError } from "@/utils/customErrors";
 
 interface Params {
   params: Promise<{ id: string }>;
@@ -19,13 +19,6 @@ export const GET = async (req: NextRequest, { params }: Params) => {
 
     return NextResponse.json(ubigeo, { status: 200 });
   } catch (error: unknown) {
-    // Aseguramos que el error sea de tipo CustomError
-    if ((error as CustomError).statusCode) return handleError(error as CustomError); // Usamos la función handleError con el tipo CustomError
-
-    // Si el error no es un CustomError, lo manejamos como un error genérico
-    return handleError({
-      statusCode: 500,
-      message: "Error interno del servidor",
-    });
+    return handleError(error as CustomError);
   }
 };
