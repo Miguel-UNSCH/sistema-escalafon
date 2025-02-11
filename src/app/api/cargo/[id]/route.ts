@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { prisma } from "@/libs/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { BadRequestError, NotFoundError } from "@/utils/customErrors";
+import { handleError } from "@/middleware/errorHandler";
 
 interface Params {
   params: Promise<{ id: string }>;
@@ -9,11 +11,18 @@ export const GET = async (req: NextRequest, { params }: Params) => {
   try {
     const { id } = await params;
 
-    const cargo = await prisma.cargo.findUnique({ where: { id: parseInt(id) } });
+    if (!id) throw BadRequestError("Falta el id del cargo");
+    if (isNaN(parseInt(id))) throw BadRequestError("El id del cargo debe ser un número");
+
+    const cargo = await prisma.cargo.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!cargo) throw NotFoundError("Cargo no encontrado");
 
     return NextResponse.json(cargo, { status: 200 });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return handleError(error);
   }
 };
 
