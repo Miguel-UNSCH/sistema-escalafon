@@ -9346,6 +9346,7 @@
   },
   {
     "inei": "150144",
+    "reniec": "140133",
     "departamento": "LIMA",
     "provincia": "LIMA",
     "distrito": "SANTA MARIA DE HUACHIPA"
@@ -13243,6 +13244,7 @@
     "distrito": "PURUS"
   },
   {
+    "inei": "250402",
     "reniec": "170107",
     "departamento": "MOQUEGUA",
     "provincia": "MARISCAL NIETO",
