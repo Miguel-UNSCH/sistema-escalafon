@@ -13,6 +13,56 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  PERSONAL
+}
+
+model User {
+  id            String    @id @default(cuid())
+  nombres       String
+  apellidos     String
+  role          Role      @default(PERSONAL)
+  email         String?   @unique
+  emailVerified DateTime?
+  password      String?
+  ubigeoId      Int?
+  status        Status    @default(ENABLED)
+  accounts      Account[]
+
+  ubigeo   Ubigeo?   @relation(fields: [ubigeoId], references: [id])
+  personal Personal? @relation(fields: [personalId], references: [id])
+  conyuge  Conyuge?  @relation(fields: [conyugeId], references: [id])
+  hijo     Hijo?     @relation(fields: [hijoId], references: [id])
+
+  personalId Int?
+  conyugeId  Int?
+  hijoId     Int?
+  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
 /**
  * FICHA PERSONAL
  * ├── Datos Personales
@@ -117,29 +167,9 @@ enum Sexo {
   F
 }
 
-model User {
-  id          Int     @id @default(autoincrement())
-  nombres     String
-  apellidos   String
-  rol         String  @default("PERSONAL") // "PERSONAL" | "ADMIN"
-  email       String? @unique
-  contrasenia String?
-  ubigeoId    Int?
-  status      Status  @default(ENABLED)
-
-  ubigeo   Ubigeo?   @relation(fields: [ubigeoId], references: [id])
-  personal Personal?
-  conyuge  Conyuge?
-  hijo     Hijo?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Personal {
-  id     Int  @id @default(autoincrement())
-  userId Int  @unique
-  user   User @relation(fields: [userId], references: [id])
+  id     Int @id @default(autoincrement())
+  userId Int @unique
 
   sexo                 Sexo
   edad                 Int
@@ -192,12 +222,12 @@ model Personal {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   Conyuge   Conyuge?
+  User      User[]
 }
 
 model Conyuge {
-  id     Int  @id @default(autoincrement())
-  userId Int  @unique
-  user   User @relation(fields: [userId], references: [id])
+  id     Int @id @default(autoincrement())
+  userId Int @unique
 
   personal   Personal @relation(fields: [personalId], references: [id])
   personalId Int      @unique // Cada conyuge pertenece a un solo Personal
@@ -212,12 +242,12 @@ model Conyuge {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  User      User[]
 }
 
 model Hijo {
-  id     Int  @id @default(autoincrement())
-  userId Int  @unique
-  user   User @relation(fields: [userId], references: [id])
+  id     Int @id @default(autoincrement())
+  userId Int @unique
 
   personalId       Int
   fechaNacimiento  DateTime
@@ -229,6 +259,7 @@ model Hijo {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  User      User[]
 }
 
 model Discapacidad {
@@ -449,8 +480,6 @@ model Ascenso {
   papDel               String
   papAl                String
   cnp                  String
-  dependenciaId        Int
-  oficinaId            Int
   personalId           Int
   status               Status @default(ENABLED)
 
@@ -507,16 +536,16 @@ model BonificacionFamiliar {
 }
 
 model FichaEvaluacion {
-  id                Int      @id @default(autoincrement())
-  documentoSustento String
-  fechaEvaluacion   DateTime
-  personalId        Int
-  dependenciaId     Int
-  cargoId           Int
-  status            Status   @default(ENABLED)
+  id                   Int      @id @default(autoincrement())
+  documentoSustento    String
+  fechaEvaluacion      DateTime
+  personalId           Int
+  dependenciaOficinaId Int
+  cargoId              Int
+  status               Status   @default(ENABLED)
 
   personal           Personal           @relation(fields: [personalId], references: [id])
-  dependenciaOficina DependenciaOficina @relation(fields: [dependenciaId], references: [id])
+  dependenciaOficina DependenciaOficina @relation(fields: [dependenciaOficinaId], references: [id])
   cargo              Cargo              @relation(fields: [cargoId], references: [id])
 
   createdAt DateTime @default(now())

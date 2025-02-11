@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { prisma } from "@/libs/prisma";
+import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { BadRequestError, NotFoundError } from "@/utils/customErrors";
 import { handleError } from "@/middleware/errorHandler";

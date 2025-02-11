@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/libs/prisma";
+import { prisma } from "@/lib/prisma";
 
 interface Params {
   params: Promise<{ id: string }>;
