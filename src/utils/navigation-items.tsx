@@ -25,17 +25,17 @@ export const navigationItems: NavigationItems[] = [
     menuItem: [
       {
         label: "crear usuario",
-        icon: <UserRoundPlus />,
+        icon: <UserRoundPlus size={16} />,
         path: "/dashboard/user/create",
       },
       {
         label: "editar usuario",
-        icon: <UsersRound />,
+        icon: <UsersRound size={16} />,
         path: "/dashboard/user/edit",
       },
       {
         label: "roles y permisos",
-        icon: <IdCard />,
+        icon: <IdCard size={16} />,
         path: "/dashboard/user/permissions",
       },
     ],
@@ -45,7 +45,7 @@ export const navigationItems: NavigationItems[] = [
     menuItem: [
       {
         label: "información personal",
-        icon: <UserRoundCog />,
+        icon: <UserRoundCog size={16} />,
         path: "/dashboard/personal-file/personal-information",
         // badge: "0",
         submenus: [

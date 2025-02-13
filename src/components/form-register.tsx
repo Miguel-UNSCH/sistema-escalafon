@@ -1,6 +1,8 @@
 "use client";
 
+import { useState, useTransition } from "react";
 import { z } from "zod";
+import { useRouter } from "next/navigation";
 import { registerSchema } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -9,8 +11,6 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { registerAction } from "@/actions/auth-action";
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 
 const FormRegister = () => {
   const router = useRouter();
@@ -31,11 +31,9 @@ const FormRegister = () => {
   const onSubmit = async (values: z.infer<typeof registerSchema>) => {
     startTransition(async () => {
       const response = await registerAction(values);
-      if (response.error) {
-        setError(response.error);
-      } else {
-        router.push("/dashboard");
-      }
+      if (response.error) setError(response.error);
+      else router.push("/dashboard");
+
       console.log(response);
     });
   };

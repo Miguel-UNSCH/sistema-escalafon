@@ -31,13 +31,3 @@ export const GET = async (r: NextRequest) => {
     return handleError(error as CustomError);
   }
 };
-
-export const POST = async (req: NextRequest) => {
-  try {
-    const user = await req.json();
-    const newUser = await prisma.user.create({ data: user });
-    return NextResponse.json(newUser, { status: 201 });
-  } catch (error: unknown) {
-    return handleError(error as CustomError);
-  }
-};

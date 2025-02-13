@@ -32,7 +32,7 @@ export const registerAction = async (values: z.infer<typeof registerSchema>) => 
 
     await prisma.user.create({ data: { nombres: data.nombres, apellidos: data.apellidos, email: data.email, password } });
 
-    await signIn("credentials", { email: data.email, password: data.password, redirect: false });
+    // await signIn("credentials", { email: data.email, password: data.password, redirect: false }); no se pueden registrar, en las especificaciones no
 
     return { success: true };
   } catch (error) {
