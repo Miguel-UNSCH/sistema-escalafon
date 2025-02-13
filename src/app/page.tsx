@@ -17,7 +17,7 @@ export default function Home() {
         </div>
       </div>
 
-      <Link href={"/dashboard"} className="flex flex-row items-center gap-2 bg-bg-card p-2 px-4 rounded-lg text-xl">
+      <Link href={"/login"} className="flex flex-row items-center gap-2 bg-bg-card p-2 px-4 rounded-lg text-xl">
         <p className="font-bold">iniciar sesión</p>
         <LuArrowRight className="text-lg" />
       </Link>

@@ -34,7 +34,7 @@ const FormRegister = () => {
       if (response.error) {
         setError(response.error);
       } else {
-        router.push("/test");
+        router.push("/dashboard");
       }
       console.log(response);
     });

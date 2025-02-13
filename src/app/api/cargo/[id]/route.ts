@@ -12,9 +12,7 @@ export const GET = async (_: NextRequest, { params }: Params) => {
     if (!id) throw BadRequestError("Falta el id del cargo");
     if (isNaN(parseInt(id))) throw BadRequestError("El id del cargo debe ser un número");
 
-    const cargo = await prisma.cargo.findUnique({
-      where: { id: parseInt(id) },
-    });
+    const cargo = await prisma.cargo.findUnique({ where: { id: parseInt(id) } });
     if (!cargo) throw NotFoundError("Cargo no encontrado");
 
     return NextResponse.json(cargo, { status: 200 });
@@ -32,10 +30,7 @@ export const PUT = async (req: NextRequest, { params }: Params) => {
     const { nombre } = await req.json();
     if (!nombre) throw BadRequestError("Falta el nombre del cargo");
 
-    const updatedCargo = await prisma.cargo.update({
-      where: { id: parseInt(id) },
-      data: { nombre },
-    });
+    const updatedCargo = await prisma.cargo.update({ where: { id: parseInt(id) }, data: { nombre } });
 
     return NextResponse.json(updatedCargo, { status: 200 });
   } catch (error: unknown) {

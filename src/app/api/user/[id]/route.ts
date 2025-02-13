@@ -30,10 +30,7 @@ export const PATCH = async (r: NextRequest, { params }: IParams) => {
     const { role } = await r.json();
     if (!role) throw ForbiddenError("Falta el role del usuario");
 
-    await prisma.user.update({
-      where: { id },
-      data: { role },
-    });
+    await prisma.user.update({ where: { id }, data: { role } });
     return NextResponse.json(user, { status: 200 });
   } catch (error: unknown) {
     return handleError(error as CustomError);

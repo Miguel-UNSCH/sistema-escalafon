@@ -22,9 +22,7 @@ export const GET = async (r: NextRequest) => {
 
     if (email) where.email = email;
 
-    const users = await prisma.user.findMany({
-      where: where,
-    });
+    const users = await prisma.user.findMany({ where: where });
 
     if (!users || users.length === 0) throw NotFoundError("Usuarios no encontrados");
 

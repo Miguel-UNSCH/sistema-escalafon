@@ -39,6 +39,7 @@ export default function Sidebar({ isOpen, isMobile }: SidebarProps) {
             {/* <span className="top-0 left-36 absolute bg-green-700/15 px-2 py-1 rounded-full font-medium text-button-confirm text-xs">v1.0.0</span> */}
           </div>
           <UserInfo />
+
           <div className="pr-2 h-full overflow-y-auto">
             {navigationItems.map((group, idx) => (
               <SidebarMenuGroup key={idx} title={group.title} items={group.menuItem} openMenu={openMenu} setOpenMenu={setOpenMenu} />
