@@ -14,6 +14,7 @@ export const registerSchema = object({
     .min(1, "Password is required")
     .min(6, "Password must be more than 8 characters")
     .max(32, "Password must be less than 32 characters"),
+  repeatPassword: string({ required_error: "Repeat password is required" }),
   nombres: string({ required_error: "Nombres is required" }).min(1, "Nombres is required"),
   apellidos: string({ required_error: "Apellidos is required" }).min(1, "Apellidos is required"),
 });

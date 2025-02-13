@@ -2,6 +2,8 @@ import { auth } from "@/auth";
 import { ThemeToggle } from "@/components/theme-toogle";
 import { LogIn } from "lucide-react";
 import Link from "next/link";
+import img from "@/assets/images/landing-page.webp";
+import Image from "next/image";
 
 export default async function Home() {
   const session = await auth();
@@ -19,7 +21,7 @@ export default async function Home() {
       </div>
 
       <div className="flex flex-row gap-5 h-full">
-        <div className="flex flex-col justify-center gap-5 w-1/2 h-full">
+        <div className="flex flex-col justify-center gap-5 pl-24 w-1/2 h-full">
           <div className="flex flex-col p-4">
             <p className="py-2 font-bold text-2xl uppercase">escalafón</p>
             <p className="font-montserrat text-lg">
@@ -37,7 +39,9 @@ export default async function Home() {
             </Link>
           </div>
         </div>
-        <div className="w-1/2">imagen</div>
+        <div className="flex justify-center items-center w-1/2">
+          <Image src={img} alt="Picture of the author" className="rounded-lg w-3/4" />
+        </div>
       </div>
 
       <div className="flex flex-row justify-center items-center gap-2 bg-[#ccd0da] p-5 rounded-lg w-full font-semibold">
