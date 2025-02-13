@@ -69,7 +69,7 @@ model Ubigeo {
 
 model Cargo {
   id     Int    @id @default(autoincrement())
-  nombre String
+  nombre String @unique
   status Status @default(ENABLED)
 
   Personal                Personal[] // Relación uno a muchos (un cargo puede ser ocupado por varios empleados)

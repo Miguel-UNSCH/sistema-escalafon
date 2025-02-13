@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { prisma } from "@/lib/prisma";
 import { CustomError, handleError } from "@/middleware/errorHandler";
+import { prisma } from "@/lib/prisma";
 import { BadRequestError } from "@/utils/customErrors";
 
 interface IFilters {
@@ -16,11 +16,11 @@ export const GET = async (req: NextRequest) => {
   try {
     const { searchParams } = req.nextUrl;
 
-    const inei = searchParams.get("inei");
-    const reniec = searchParams.get("reniec");
-    const departamento = searchParams.get("departamento");
-    const provincia = searchParams.get("provincia");
-    const distrito = searchParams.get("distrito");
+    const inei: string | null = searchParams.get("inei");
+    const reniec: string | null = searchParams.get("reniec");
+    const departamento: string | null = searchParams.get("departamento");
+    const provincia: string | null = searchParams.get("provincia");
+    const distrito: string | null = searchParams.get("distrito");
 
     const filters: IFilters = {};
 

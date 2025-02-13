@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { prisma } from "@/lib/prisma";
 import { CustomError, handleError } from "@/middleware/errorHandler";
+import { prisma } from "@/lib/prisma";
 import { BadRequestError } from "@/utils/customErrors";
 
 interface Params {
