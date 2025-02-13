@@ -1,15 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { BadRequestError } from "@/utils/customErrors";
-import { CustomError, handleError } from "@/middleware/errorHandler";
 
-interface Filters {
+import { prisma } from "@/lib/prisma";
+import { CustomError, handleError } from "@/middleware/errorHandler";
+import { BadRequestError } from "@/utils/customErrors";
+
+interface IFilters {
   inei?: string;
   reniec?: string;
   departamento?: string;
   provincia?: string;
   distrito?: string;
 }
+
 export const GET = async (req: NextRequest) => {
   try {
     const { searchParams } = req.nextUrl;
@@ -20,7 +22,7 @@ export const GET = async (req: NextRequest) => {
     const provincia = searchParams.get("provincia");
     const distrito = searchParams.get("distrito");
 
-    const filters: Filters = {};
+    const filters: IFilters = {};
 
     if (inei) filters.inei = inei;
     if (reniec) filters.reniec = reniec;
@@ -28,8 +30,9 @@ export const GET = async (req: NextRequest) => {
     if (provincia) filters.provincia = provincia;
     if (distrito) filters.distrito = distrito;
 
-    if (Object.keys(filters).length === 0) {
+    if (!Object.keys(filters).length) {
       const ubigeos = await prisma.ubigeo.findMany();
+      if (!ubigeos.length) throw BadRequestError("ubigeo(s) no encontrados");
       return NextResponse.json(ubigeos, { status: 200 });
     }
 
