@@ -145,8 +145,8 @@ enum Sexo {
 }
 
 model Personal {
-  id     Int @id @default(autoincrement())
-  userId Int @unique
+  id     Int    @id @default(autoincrement())
+  userId String @unique
 
   sexo                 Sexo
   edad                 Int
@@ -329,13 +329,12 @@ model Contrato {
   condicionLaboral       String
   resolucionNombramiento String?
   regimenLaboral         String
-  nivelRemuneracion      String?
+  nivelRemuneracion      String? // min - max, ejemplo: 1000 - 1500
   pap                    String?
   cnp                    String?
   fechaIngreso           DateTime
   fechaCese              DateTime?
   aniosServicio          Int?
-  // fechaNacimiento        DateTime -- no es necesario
   personalId             Int
   dependenciaOficinaId   Int
   cargoId                Int
@@ -450,23 +449,21 @@ model PermisoLicenciaVacacion {
 model Ascenso {
   id                   Int    @id @default(autoincrement())
   resolucionAscenso    String
-  cargoDel             String
-  cargoAl              String
-  nivelRemunerativoDel String
-  nivelRemunerativoAl  String
+  nivelRemunerativoDel Int
+  nivelRemunerativoAl  Int
   papDel               String
   papAl                String
   cnp                  String
   personalId           Int
   status               Status @default(ENABLED)
-
   cargoDelId           Int
   cargoAlId            Int
   dependenciaOficinaId Int
-  personal             Personal            @relation(fields: [personalId], references: [id])
-  cargoDelModel        Cargo               @relation("CargoDel", fields: [cargoDelId], references: [id])
-  cargoAlModel         Cargo               @relation("CargoAl", fields: [cargoAlId], references: [id])
-  DependenciaOficina   DependenciaOficina? @relation(fields: [dependenciaOficinaId], references: [id])
+
+  personal           Personal            @relation(fields: [personalId], references: [id])
+  cargoDelModel      Cargo               @relation("CargoDel", fields: [cargoDelId], references: [id])
+  cargoAlModel       Cargo               @relation("CargoAl", fields: [cargoAlId], references: [id])
+  DependenciaOficina DependenciaOficina? @relation(fields: [dependenciaOficinaId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
