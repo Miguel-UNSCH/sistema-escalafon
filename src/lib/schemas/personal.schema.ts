@@ -1,11 +1,10 @@
 import { object, string, number, date, boolean, z } from "zod";
 
-// Enum para EstadoCivil, GrupoSanguineo, Sexo y Status
 enum EstadoCivil {
-  S = "S", // Soltero
-  C = "C", // Casado
-  D = "D", // Divorciado
-  V = "V", // Viudo
+  S = "S",
+  C = "C",
+  D = "D",
+  V = "V",
 }
 
 enum GrupoSanguineo {
@@ -20,8 +19,8 @@ enum GrupoSanguineo {
 }
 
 enum Sexo {
-  M = "M", // Masculino
-  F = "F", // Femenino
+  M = "M",
+  F = "F",
 }
 
 enum Status {
@@ -29,7 +28,6 @@ enum Status {
   DISABLED = "DISABLED",
 }
 
-// Esquema de validación para el modelo Personal
 export const personalSchema = object({
   userId: string().min(1, "El ID de usuario es obligatorio"),
   sexo: z.enum([Sexo.M, Sexo.F]),
