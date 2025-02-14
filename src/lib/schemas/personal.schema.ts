@@ -29,7 +29,7 @@ enum Status {
 }
 
 export const personalSchema = object({
-  userId: string().min(1, "El ID de usuario es obligatorio"),
+  nombres: string().optional(),
   sexo: z.enum([Sexo.M, Sexo.F]),
   edad: number().int().positive("La edad debe ser un número positivo"),
   dni: string().min(1, "El DNI es obligatorio").max(20, "El DNI debe tener un máximo de 20 caracteres"),
@@ -45,9 +45,9 @@ export const personalSchema = object({
     GrupoSanguineo.O_POSITIVO,
     GrupoSanguineo.O_NEGATIVO,
   ]),
-  fechaIngreso: date().refine((date) => !isNaN(date.getTime()), "La fecha de ingreso es inválida"),
+  fechaIngreso: string(),
   unidadEstructurada: string().min(1, "La unidad estructurada es obligatoria"),
-  fechaNacimiento: date().refine((date) => !isNaN(date.getTime()), "La fecha de nacimiento es inválida"),
+  fechaNacimiento: string(),
   nacionalidad: string().min(1, "La nacionalidad es obligatoria"),
   domicilio: string().min(1, "El domicilio es obligatorio"),
   interiorUrbanizacion: string().optional(),
@@ -59,10 +59,15 @@ export const personalSchema = object({
   estadoCivil: z.enum([EstadoCivil.S, EstadoCivil.C, EstadoCivil.D, EstadoCivil.V]),
   discapacidad: boolean(),
   status: z.enum([Status.ENABLED, Status.DISABLED]).default(Status.ENABLED), // Valor por defecto 'ENABLED'
-  cargoId: number().int().positive("El ID del cargo debe ser un número positivo"),
-  dependenciaOficinaId: number().int().positive("El ID de la dependencia de oficina debe ser un número positivo"),
-  discapacidadId: number().optional(),
-  conyugeId: number().optional(), // Relación opcional con Conyuge
+  cargo: string().optional(), // Se recibe el nombre del cargo
+  dependencia: string().optional(), // Se recibe el nombre de la dependencia
+  inei: string().optional(), // Campo opcional para INEI
+  reniec: string().optional(), // Campo opcional para RENIEC
+  departamento: string().optional(), // Campo opcional para Departamento
+  provincia: string().optional(), // Campo opcional para Provincia
+  distrito: string().optional(), // Campo opcional para Distrito
+  discapacidadId: string().optional(),
+  conyugeId: string().optional(), // Relación opcional con Conyuge
   createdAt: date().optional(),
   updatedAt: date().optional(),
 });
