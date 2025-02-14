@@ -25,7 +25,6 @@ export const registerAction = async (values: z.infer<typeof registerSchema>) => 
     if (!success) return { error: "invalid data" };
 
     const user = await prisma.user.findUnique({ where: { email: data.email } });
-
     if (user) return { error: "email already registered" };
 
     const password = await bcrypt.hash(data.password, 10);
