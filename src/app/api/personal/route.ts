@@ -14,6 +14,8 @@ export const GET = async (r: NextRequest) => {
     const gSang = searchParams.get("grupoSanguineo");
     const regPen = searchParams.get("regimenPensionario");
     const sCivil = searchParams.get("estadoCivil");
+    const nombres = searchParams.get("nombres");
+    const apellidos = searchParams.get("apellidos");
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = {};
@@ -22,10 +24,40 @@ export const GET = async (r: NextRequest) => {
     if (edad) where.edad = parseInt(edad, 10);
     if (dni) where.dni = dni;
     if (gSang) where.grupoSanguineo = gSang;
-    if (regPen) where.regimenPensionario = { constains: regPen };
+    if (regPen) where.regimenPensionario = { contains: regPen };
     if (sCivil) where.estadoCivil = sCivil;
 
-    const personals = await prisma.personal.findMany({ where });
+    if (nombres) where.User = { nombres: { contains: nombres, mode: "insensitive" } };
+
+    if (apellidos) where.User = { ...where.User, apellidos: { contains: apellidos, mode: "insensitive" } };
+
+    const personals = await prisma.personal.findMany({
+      where,
+      include: {
+        User: true,
+        DependenciaOficina: true,
+        Cargo: true,
+        Discapacidad: true,
+        hijos: true,
+        estudios: true,
+        capacitaciones: true,
+        experiencias: true,
+        contratos: true,
+        RenunciaLiquidacion: true,
+        Desplazamiento: true,
+        DescansoMedico: true,
+        PermisoLicenciaVacacion: true,
+        Ascenso: true,
+        BonificacionPersonal: true,
+        BonificacionFamiliar: true,
+        FichaEvaluacion: true,
+        Merito: true,
+        Demerito: true,
+        actasEntregadas: true,
+        actasRecibidas: true,
+      },
+    });
+
     if (!personals.length) throw NotFoundError("Personal(es) no encontrado(s)");
 
     return NextResponse.json(personals, { status: 200 });
