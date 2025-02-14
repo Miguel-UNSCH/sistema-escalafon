@@ -478,6 +478,7 @@ model Ascenso {
  * ├── Bonificación Familiar
  * └── Ficha de Evaluación
  */
+// crear otro modelo para las dos bonificaciones, se manejara por el filtrado desde el cliente
 model BonificacionPersonal {
   id                     Int    @id @default(autoincrement())
   tipoBonificacion       String
