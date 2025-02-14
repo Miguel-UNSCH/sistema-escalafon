@@ -28,16 +28,15 @@ model User {
   ubigeoId  Int?
   status    Status  @default(ENABLED)
 
-  ubigeo   Ubigeo?   @relation(fields: [ubigeoId], references: [id])
-  personal Personal? @relation(fields: [personalId], references: [id])
-  conyuge  Conyuge?  @relation(fields: [conyugeId], references: [id])
-  hijo     Hijo?     @relation(fields: [hijoId], references: [id])
-
+  ubigeo     Ubigeo?   @relation(fields: [ubigeoId], references: [id])
+  personal   Personal? @relation(fields: [personalId], references: [id])
+  conyuge    Conyuge?  @relation(fields: [conyugeId], references: [id])
+  hijoId     Int?
   personalId Int?
   conyugeId  Int?
-  hijoId     Int?
-  updatedAt  DateTime @updatedAt
-  createdAt  DateTime @default(now())
+  updatedAt  DateTime  @updatedAt
+  createdAt  DateTime  @default(now())
+  Hijo       Hijo?
 }
 
 /**
@@ -223,20 +222,20 @@ model Conyuge {
 }
 
 model Hijo {
-  id     Int @id @default(autoincrement())
-  userId Int @unique
+  id     Int    @id @default(autoincrement())
+  userId String @unique
 
   personalId       Int
-  fechaNacimiento  DateTime
+  fechaNacimiento  String
   edad             Int
   gradoInstruccion String
-  status           Status   @default(ENABLED)
+  status           Status @default(ENABLED)
 
   personales Personal[] @relation("PersonalHijos")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  User      User[]
+  User      User     @relation(fields: [userId], references: [id])
 }
 
 model Discapacidad {

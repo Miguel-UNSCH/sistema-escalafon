@@ -1,9 +1,39 @@
 "use client";
 import { personales } from "@/db";
+import { useEffect, useState } from "react";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 
 const TableUsers = () => {
-  console.log(personales);
+  const [users, setusers] = useState([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  console.log(users);
+
+  useEffect(() => {
+    const fetchPersonales = async () => {
+      try {
+        const response = await fetch("/api/user");
+        if (!response.ok) throw new Error("Error al obtener los datos");
+
+        const data = await response.json();
+        setusers(data);
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPersonales();
+  }, []);
+
+  if (loading) {
+    return <p>Cargando datos...</p>;
+  }
+
+  if (users.length === 0) {
+    return <p>No se encontraron datos.</p>;
+  }
+
   return (
     <div className="flex flex-col items-center gap-5 bg-white p-2 rounded-md w-full">
       <div className="flex flex-row justify-end items-center p-2 w-full">
@@ -20,26 +50,18 @@ const TableUsers = () => {
             <th className="px-4 py-2"></th>
             <th className="px-4 py-2">nombres</th>
             <th className="px-4 py-2">apellidos</th>
-            <th className="px-4 py-2">dni</th>
-            <th className="px-4 py-2">sexo</th>
-            <th className="px-4 py-2">situacion laboral</th>
-            <th className="px-4 py-2">celular</th>
-            <th className="px-4 py-2">unidad estructurada</th>
+            <th className="px-4 py-2">role</th>
+            <th className="px-4 py-2">email</th>
           </tr>
         </thead>
         <tbody className="border">
-          {personales.map((personal) => (
-            <tr key={personal.id} className="text-sm text-left">
-              <td className="px-4 py-2">{personal.id}</td>
-              <td className="px-4 py-2">{personal.nombres} </td>
-              <td className="px-4 py-2">
-                {personal.apellidoPaterno} {personal.apellidoMaterno}
-              </td>
-              <td className="px-4 py-2">{personal.dni}</td>
-              <td className="px-4 py-2">{personal.sexo}</td>
-              <td className="px-4 py-2">{personal.situacionLaboral}</td>
-              <td className="px-4 py-2">{personal.celular}</td>
-              <td className="px-4 py-2">{personal.unidadEstructurada}</td>
+          {users.map(({ id, nombres, apellidos, role, email }) => (
+            <tr key={id} className="text-sm text-left">
+              <td className="px-4 py-2">{id}</td>
+              <td className="px-4 py-2">{nombres} </td>
+              <td className="px-4 py-2">{apellidos}</td>
+              <td className="px-4 py-2">{role}</td>
+              <td className="px-4 py-2">{email || "---"}</td>
             </tr>
           ))}
         </tbody>
