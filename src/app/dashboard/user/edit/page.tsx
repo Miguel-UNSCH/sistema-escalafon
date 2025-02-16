@@ -1,5 +1,4 @@
 "use client";
-import { personales } from "@/db";
 import { useEffect, useState } from "react";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
 
