@@ -3,14 +3,15 @@ import Link from "next/link";
 import { useState } from "react";
 import { IoFilter, IoSettingsOutline } from "react-icons/io5";
 import { LuUser } from "react-icons/lu";
-import { TbLogout2 } from "react-icons/tb";
+import { LogOut } from "lucide-react";
+import logout from "@/helpers/logout";
 
 function UserInfo() {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <div
-      className={`mr-4 p-4 bg-bg-card rounded-xl border border-border-primary overflow-hidden transition-all duration-500 ${
+      className={`mr-4 p-4 bg-bg-card rounded-xl border border-border-primary overflow-hidden transition-all duration-500 font-montserrat capitalize ${
         isExpanded ? "h-auto" : "h-fit"
       }`}
     >
@@ -21,10 +22,8 @@ function UserInfo() {
           alt="User Profile Picture"
         />
         <div>
-          <h1 className="font-medium text-sm text-text-primary">Juan Perez</h1>
-          <p className="font-medium text-text-secondary text-xs">
-            Administrador
-          </p>
+          <h1 className="font-medium text-text-primary text-sm">Juan Perez</h1>
+          <p className="font-medium text-text-secondary text-xs">Administrador</p>
         </div>
         <button
           onClick={() => setIsExpanded(!isExpanded)}
@@ -36,34 +35,19 @@ function UserInfo() {
         </button>
       </div>
 
-      <div
-        className={`space-y-2 transition-all duration-400 ${
-          isExpanded
-            ? "opacity-100 h-40"
-            : "opacity-0 max-h-0 overflow-hidden"
-        }`}
-      >
+      <div className={`space-y-2 transition-all duration-400 ${isExpanded ? "opacity-100 h-40" : "opacity-0 max-h-0 overflow-hidden"}`}>
         <div className="flex flex-col gap-4 mt-6">
-          <Link
-            href={"#"}
-            className="flex items-center gap-2 text-text-secondary hover:text-text-main transition-all duration-150"
-          >
+          <Link href={"#"} className="flex items-center gap-2 text-text-secondary hover:text-text-main transition-all duration-150">
             <LuUser className="font-bold text-lg" />
             <span className="font-medium text-sm">Mi cuenta</span>
           </Link>
-          <Link
-            href={"#"}
-            className="flex items-center gap-2 text-text-secondary hover:text-text-main transition-all duration-150"
-          >
+          <Link href={"#"} className="flex items-center gap-2 text-text-secondary hover:text-text-main transition-all duration-150">
             <IoSettingsOutline className="font-bold text-lg" />
             <span className="font-medium text-sm">Configuraciones</span>
           </Link>
-          <Link
-            href={"#"}
-            className="flex items-center gap-2 text-text-secondary hover:text-text-main transition-all duration-150"
-          >
-            <TbLogout2 className="font-bold text-lg" />
-            <span className="font-medium text-sm">Cerrar sesión</span>
+          <Link href={"#"} onClick={logout} className="flex items-center gap-2 text-text-secondary hover:text-text-main transition-all duration-150">
+            <LogOut className="font-bold text-lg" />
+            <span className="font-medium text-sm">cerrar sesión</span>
           </Link>
         </div>
       </div>

@@ -1,18 +1,9 @@
 import { auth } from "@/auth";
-import LogoutButtom from "@/components/logout-buttom";
 
 export default async function Page() {
   const session = await auth();
+  if (!session) return <div>Not authenticated</div>;
+  if (session?.user?.role !== "PERSONAL") return <div>admin only show</div>;
 
-  if (!session) {
-    return <div>Not authenticated</div>;
-  }
-
-  return (
-    <div className="container">
-      <pre>{JSON.stringify(session, null, 2)}</pre>
-      <LogoutButtom />
-    </div>
-  );
+  return <pre>{JSON.stringify(session, null, 2)}</pre>;
 }
-/** this file only for protected routes */

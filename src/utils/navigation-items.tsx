@@ -1,16 +1,6 @@
 import { MenuItem } from "@/interfaces/MenuItem";
-import {
-  FaUserCog,
-  FaUsers,
-  FaIdCard,
-  FaBriefcase,
-  FaMoneyBill,
-  FaTrophy,
-  FaFileAlt,
-  FaChartBar,
-  FaSignOutAlt,
-  FaTachometerAlt,
-} from "react-icons/fa";
+import { ChartColumn, IdCard, UserRound, UserRoundCog, UserRoundPlus, UsersRound } from "lucide-react";
+import { FaIdCard, FaBriefcase, FaMoneyBill, FaTrophy, FaFileAlt, FaSignOutAlt, FaTachometerAlt } from "react-icons/fa";
 
 interface NavigationItems {
   title: string;
@@ -35,17 +25,17 @@ export const navigationItems: NavigationItems[] = [
     menuItem: [
       {
         label: "crear usuario",
-        icon: <FaUserCog />,
+        icon: <UserRoundPlus size={16} />,
         path: "/dashboard/user/create",
       },
       {
         label: "editar usuario",
-        icon: <FaUsers />,
+        icon: <UsersRound size={16} />,
         path: "/dashboard/user/edit",
       },
       {
         label: "roles y permisos",
-        icon: <FaIdCard />,
+        icon: <IdCard size={16} />,
         path: "/dashboard/user/permissions",
       },
     ],
@@ -55,7 +45,7 @@ export const navigationItems: NavigationItems[] = [
     menuItem: [
       {
         label: "información personal",
-        icon: <FaIdCard />,
+        icon: <UserRoundCog size={16} />,
         path: "/dashboard/personal-file/personal-information",
         // badge: "0",
         submenus: [
@@ -174,19 +164,23 @@ export const navigationItems: NavigationItems[] = [
     menuItem: [
       {
         label: "reportes mensuales",
-        icon: <FaChartBar />,
+        icon: <ChartColumn />,
         path: "/dashboard/reports/monthly",
       },
       {
         label: "reportes anuales",
-        icon: <FaChartBar />,
+        icon: <ChartColumn />,
         path: "/dashboard/reports/annual",
       },
       {
         label: "reportes personalizados",
-        icon: <FaChartBar />,
+        icon: <ChartColumn />,
         path: "/dashboard/reports/defaults",
       },
     ],
+  },
+  {
+    title: "mi cuenta",
+    menuItem: [{ label: "configuracion", icon: <UserRound />, path: "/dashboard/settings" }],
   },
 ];

@@ -1,26 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { BadRequestError, CustomError } from "@/utils/customErrors";
-import { handleError } from "@/middleware/errorHandler";
 
-interface Filters {
+import { CustomError, handleError } from "@/middleware/errorHandler";
+import { prisma } from "@/lib/prisma";
+import { BadRequestError } from "@/utils/customErrors";
+
+interface IFilters {
   inei?: string;
   reniec?: string;
   departamento?: string;
   provincia?: string;
   distrito?: string;
 }
+
 export const GET = async (req: NextRequest) => {
   try {
     const { searchParams } = req.nextUrl;
 
-    const inei = searchParams.get("inei");
-    const reniec = searchParams.get("reniec");
-    const departamento = searchParams.get("departamento");
-    const provincia = searchParams.get("provincia");
-    const distrito = searchParams.get("distrito");
+    const inei: string | null = searchParams.get("inei");
+    const reniec: string | null = searchParams.get("reniec");
+    const departamento: string | null = searchParams.get("departamento");
+    const provincia: string | null = searchParams.get("provincia");
+    const distrito: string | null = searchParams.get("distrito");
 
-    const filters: Filters = {};
+    const filters: IFilters = {};
 
     if (inei) filters.inei = inei;
     if (reniec) filters.reniec = reniec;
@@ -28,8 +30,9 @@ export const GET = async (req: NextRequest) => {
     if (provincia) filters.provincia = provincia;
     if (distrito) filters.distrito = distrito;
 
-    if (Object.keys(filters).length === 0) {
+    if (!Object.keys(filters).length) {
       const ubigeos = await prisma.ubigeo.findMany();
+      if (!ubigeos.length) throw BadRequestError("ubigeo(s) no encontrados");
       return NextResponse.json(ubigeos, { status: 200 });
     }
 
@@ -37,11 +40,6 @@ export const GET = async (req: NextRequest) => {
     if (ubigeos.length === 0) throw BadRequestError("ubigeo(s) no encontrado(s)");
     return NextResponse.json(ubigeos, { status: 200 });
   } catch (error: unknown) {
-    if ((error as CustomError).statusCode) return handleError(error as CustomError);
-
-    return handleError({
-      statusCode: 500,
-      message: "Error interno del servidor",
-    });
+    return handleError(error as CustomError);
   }
 };

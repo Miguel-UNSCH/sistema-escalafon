@@ -1,37 +1,47 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-/** modificar para que la busqueda por query no sea exclusiva, si no inclusiva */
+import { CustomError, handleError } from "@/middleware/errorHandler";
+import { prisma } from "@/lib/prisma";
+import { BadRequestError, ConflictError, NotFoundError } from "@/utils/customErrors";
+import { Cargo, cargoSchema } from "@/lib/schemas/cargo.schema";
+import { errMessages } from "@/helpers";
+
 export const GET = async (req: NextRequest) => {
   try {
     const { searchParams } = req.nextUrl;
 
-    const nombre = searchParams.get("nombre");
+    const nombre: string | null = searchParams.get("nombre");
 
-    const filters: any = {};
-
-    if (nombre) filters.nombre = nombre;
-
-    if (Object.keys(filters).length === 0) {
-      const cargos = await prisma.cargo.findMany();
+    if (nombre) {
+      const cargos = await prisma.cargo.findMany({ where: { nombre: { contains: nombre, mode: "insensitive" } } });
+      if (!cargos.length) throw NotFoundError("Cargos no encontrados con ese nombre");
       return NextResponse.json(cargos, { status: 200 });
     }
 
-    const cargos = await prisma.cargo.findMany({ where: filters });
+    const cargos = await prisma.cargo.findMany();
+    if (!cargos.length) throw NotFoundError("Cargos no encontrados");
+
     return NextResponse.json(cargos, { status: 200 });
-  } catch (error: any) {
-    return NextResponse.json({ error: "Error al obtener Ubigeos" }, { status: 500 });
+  } catch (error: unknown) {
+    return handleError(error as CustomError);
   }
 };
 
 export const POST = async (req: NextRequest) => {
   try {
-    const cargo = await req.json();
-    const newCargo = await prisma.cargo.create({ data: cargo });
+    const values: Cargo = await req.json();
+
+    const { data, success, error } = cargoSchema.safeParse(values);
+    if (!success) throw BadRequestError(errMessages(error));
+
+    if (data?.nombre) {
+      const cargoExiste = await prisma.cargo.findFirst({ where: { nombre: data?.nombre } });
+      if (cargoExiste) throw ConflictError("El cargo ya existe");
+    }
+
+    const newCargo = await prisma.cargo.create({ data });
     return NextResponse.json(newCargo, { status: 201 });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    return handleError(error as CustomError);
   }
 };
