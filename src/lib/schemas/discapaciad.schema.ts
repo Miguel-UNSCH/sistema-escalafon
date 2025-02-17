@@ -1,18 +1,13 @@
 import { object, string, z } from "zod";
-
-// Enum para Status (según el modelo proporcionado, debería estar en tu código también)
-enum Status {
-  ENABLED = "ENABLED",
-  DISABLED = "DISABLED",
-}
+import { Status } from "../zod";
 
 export const discapacidadSchema = object({
-  personalId: string().min(1, "El ID del personal es obligatorio"),
+  personalId: z.number().int().positive("El ID del personal debe ser un número positivo"),
   tipo: string().min(1, "El tipo de discapacidad es obligatorio"),
   documentoSustento: string().min(1, "El documento sustento es obligatorio"),
   organoEstructurado: string().min(1, "El órgano estructurado es obligatorio"),
   condicionLaboral: string().min(1, "La condición laboral es obligatoria"),
-  status: z.enum([Status.ENABLED, Status.DISABLED]).optional(),
+  status: Status.optional(),
 });
 
 export type Discapacidad = z.infer<typeof discapacidadSchema>;
