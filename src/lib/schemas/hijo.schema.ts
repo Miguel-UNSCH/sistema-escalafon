@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { UbigeoSchema } from "./ubigeo.schema";
 
 // Enum para Status (según el modelo proporcionado, debería estar en tu código también)
 enum Status {
@@ -21,6 +22,7 @@ export const hijoSchema = z.object({
   status: z.enum([Status.ENABLED, Status.DISABLED]).default(Status.ENABLED), // Asumimos que el valor por defecto es 'ENABLED'
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
+  ubigeo: UbigeoSchema,
 });
 
 export type Hijo = z.infer<typeof hijoSchema>;

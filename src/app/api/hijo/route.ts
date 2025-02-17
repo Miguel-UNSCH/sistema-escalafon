@@ -1,8 +1,7 @@
-import { errMessages } from "@/helpers";
 import { prisma } from "@/lib/prisma";
 import { hijoSchema } from "@/lib/schemas/hijo.schema";
 import { CustomError, handleError } from "@/middleware/errorHandler";
-import { BadRequestError, ConflictError, NotFoundError } from "@/utils/customErrors";
+import { BadRequestError, NotFoundError } from "@/utils/customErrors";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (r: NextRequest) => {
@@ -19,7 +18,7 @@ export const GET = async (r: NextRequest) => {
     if (nombres) where.User = { nombres: { contains: nombres, mode: "insensitive" } };
     if (apellidos) where.User = { ...where.User, apellidos: { contains: apellidos, mode: "insensitive" } };
 
-    const hijos = await prisma.hijo.findMany({ where, include: { User: true } });
+    const hijos = await prisma.hijo.findMany({ where, include: { user: true } });
     if (!hijos.length) throw NotFoundError("Hijo(s) no encontrado(s)");
 
     return NextResponse.json(hijos, { status: 200 });
@@ -28,41 +27,56 @@ export const GET = async (r: NextRequest) => {
   }
 };
 
-export const POST = async (req: NextRequest) => {
+export const POST = async (request: NextRequest) => {
   try {
-    const values = await req.json();
+    const values = await request.json();
 
-    const { data, success, error } = hijoSchema.safeParse(values);
-    if (!success) throw BadRequestError(errMessages(error));
-
-    let ubigeoId = null;
-    if (data.departamento && data.provincia && data.distrito) {
-      const ubigeo = await prisma.ubigeo.findFirst({
-        where: { departamento: data.departamento, provincia: data.provincia, distrito: data.distrito },
-      });
-      if (!ubigeo) throw BadRequestError("Ubigeo no encontrado");
-      ubigeoId = ubigeo.id;
-    } else if (data.inei || data.reniec) {
-      const ubigeo = await prisma.ubigeo.findFirst({ where: { inei: data.inei || undefined, reniec: data.reniec || undefined } });
-      if (!ubigeo) throw BadRequestError("Ubigeo no encontrado por INEI/RENIEC");
-      ubigeoId = ubigeo.id;
+    const result = hijoSchema.safeParse(values);
+    if (!result.success) {
+      const errorMessages = result.error.errors.map((err) => err.message).join(", ");
+      throw BadRequestError(errorMessages);
     }
 
-    let user = await prisma.user.findFirst({ where: { nombres: data.nombres, apellidos: data.apellidos } });
-    if (!user) user = await prisma.user.create({ data: { nombres: data.nombres, apellidos: data.apellidos, ubigeoId } });
-    else await prisma.user.update({ where: { id: user.id }, data: { ubigeoId } });
+    const validatedHijo = result.data;
 
-    const hijoData = {
-      userId: user.id,
-      personalId: data.personalId,
-      fechaNacimiento: data.fechaNacimiento,
-      edad: data.edad,
-      gradoInstruccion: data.gradoInstruccion,
-    };
+    const personal = await prisma.personal.findUnique({ where: { id: validatedHijo.personalId } });
+    if (!personal) throw NotFoundError("El personal proporcionado no existe.");
 
-    const newHijo = await prisma.hijo.create({ data: hijoData });
-    if (!newHijo) throw ConflictError("Hijo no creado");
-    await prisma.user.update({ where: { id: user.id }, data: { hijoId: newHijo.id } });
+    const ubigeo = await prisma.ubigeo.findFirst({
+      where: {
+        departamento: { equals: validatedHijo.ubigeo.departamento, mode: "insensitive" },
+        provincia: { equals: validatedHijo.ubigeo.provincia, mode: "insensitive" },
+        distrito: { equals: validatedHijo.ubigeo.distrito, mode: "insensitive" },
+      },
+    });
+    if (!ubigeo) throw BadRequestError("El ubigeo proporcionado no existe.");
+
+    const newUser = await prisma.user.create({
+      data: {
+        nombres: validatedHijo.nombres,
+        apellidos: validatedHijo.apellidos,
+        ubigeoId: ubigeo.id,
+      },
+    });
+
+    const newHijo = await prisma.hijo.create({
+      data: {
+        userId: newUser.id,
+        personalId: validatedHijo.personalId,
+        fechaNacimiento: validatedHijo.fechaNacimiento,
+        edad: validatedHijo.edad,
+        gradoInstruccion: validatedHijo.gradoInstruccion,
+      },
+    });
+
+    await prisma.personal.update({
+      where: { id: validatedHijo.personalId },
+      data: {
+        hijos: {
+          connect: { id: newHijo.id },
+        },
+      },
+    });
 
     return NextResponse.json(newHijo, { status: 201 });
   } catch (error: unknown) {

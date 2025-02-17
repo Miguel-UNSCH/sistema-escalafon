@@ -167,9 +167,9 @@ model Personal {
   nAutogenerado        String
   licenciaConducir     String?
   grupoSanguineo       GrupoSanguineo
-  fechaIngreso         DateTime
+  fechaIngreso         String
   unidadEstructurada   String
-  fechaNacimiento      DateTime
+  fechaNacimiento      String
   nacionalidad         String
   domicilio            String
   interiorUrbanizacion String?
@@ -234,17 +234,16 @@ model Conyuge {
 }
 
 model Hijo {
-  id     Int    @id @default(autoincrement())
-  userId String @unique
-
-  personal   Personal @relation(fields: [personalId], references: [id], onDelete: Cascade) // Relación 1:N con Personal
+  id         Int    @id @default(autoincrement())
+  userId     String @unique
   personalId Int
 
   fechaNacimiento  String
   edad             Int
   gradoInstruccion String
-  status           Status @default(ENABLED)
-  user             User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status           Status   @default(ENABLED)
+  personal         Personal @relation(fields: [personalId], references: [id], onDelete: Cascade) // Relación 1:N con Personal
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

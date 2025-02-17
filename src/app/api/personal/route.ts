@@ -70,7 +70,6 @@ export const POST = async (request: NextRequest) => {
     const values = await request.json();
 
     const result = personalSchema.safeParse(values);
-
     if (!result.success) {
       const errorMessages = result.error.errors.map((err) => err.message).join(", ");
       throw BadRequestError(errorMessages);
@@ -85,23 +84,16 @@ export const POST = async (request: NextRequest) => {
         distrito: { equals: validatedPersonal.ubigeo.distrito, mode: "insensitive" },
       },
     });
-
     if (!ubigeo) throw BadRequestError("El ubigeo proporcionado no existe.");
 
     const user = await prisma.user.findUnique({ where: { id: validatedPersonal.userId } });
-
     if (!user) throw BadRequestError("El usuario especificado no existe.");
-
     await prisma.user.update({ where: { id: user.id }, data: { ubigeoId: ubigeo.id } });
 
     let cargo = await prisma.cargo.findUnique({ where: { nombre: validatedPersonal.cargo.nombre } });
-
-    if (!cargo) {
-      cargo = await prisma.cargo.create({ data: { nombre: validatedPersonal.cargo.nombre } });
-    }
+    if (!cargo) cargo = await prisma.cargo.create({ data: { nombre: validatedPersonal.cargo.nombre } });
 
     let dependencia = await prisma.dependencia.findUnique({ where: { nombre: validatedPersonal.dependencia.nombre } });
-
     if (!dependencia) {
       dependencia = await prisma.dependencia.create({
         data: {
@@ -112,7 +104,6 @@ export const POST = async (request: NextRequest) => {
       });
     }
 
-    // Crear el registro de Personal y asociar con el usuario existente, cargo y dependencia
     const personal = await prisma.personal.create({
       data: {
         sexo: validatedPersonal.sexo,
@@ -134,16 +125,14 @@ export const POST = async (request: NextRequest) => {
         situacionLaboral: validatedPersonal.situacionLaboral,
         estadoCivil: validatedPersonal.estadoCivil,
         discapacidad: validatedPersonal.discapacidad,
-        status: validatedPersonal.status,
-        cargoId: cargo.id, // ID del cargo (creado o encontrado)
-        dependenciaId: dependencia.id, // ID de la dependencia (creada o encontrada)
-        userId: user.id, // Relación con el usuario existente
+        cargoId: cargo.id,
+        dependenciaId: dependencia.id,
+        userId: user.id,
       },
     });
 
     return NextResponse.json(personal, { status: 201 });
   } catch (error: unknown) {
-    console.error("Error en el endpoint POST /api/personal:", error);
     return handleError(error as CustomError);
   }
 };
