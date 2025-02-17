@@ -1,16 +1,18 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
+
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const TableUsers = () => {
   const [users, setusers] = useState([]);
   const [loading, setLoading] = useState<boolean>(true);
-  console.log(users);
 
   useEffect(() => {
     const fetchPersonales = async () => {
       try {
-        const response = await fetch("/api/user");
+        const response = await fetch("/api/personal");
         if (!response.ok) throw new Error("Error al obtener los datos");
 
         const data = await response.json();
@@ -43,28 +45,37 @@ const TableUsers = () => {
           <LuChevronRight />
         </div>
       </div>
-      <table className="w-full table-auto">
-        <thead className="border">
-          <tr className="font-medium text-[#4c4f69] text-sm text-left uppercase">
-            <th className="px-4 py-2"></th>
-            <th className="px-4 py-2">nombres</th>
-            <th className="px-4 py-2">apellidos</th>
-            <th className="px-4 py-2">role</th>
-            <th className="px-4 py-2">email</th>
-          </tr>
-        </thead>
-        <tbody className="border">
-          {users.map(({ id, nombres, apellidos, role, email }) => (
-            <tr key={id} className="text-sm text-left">
-              <td className="px-4 py-2">{id}</td>
-              <td className="px-4 py-2">{nombres} </td>
-              <td className="px-4 py-2">{apellidos}</td>
-              <td className="px-4 py-2">{role}</td>
-              <td className="px-4 py-2">{email || "---"}</td>
-            </tr>
+
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="px-4 py-2"></TableHead>
+            <TableHead className="px-4 py-2">Nombres</TableHead>
+            <TableHead className="px-4 py-2">Apellidos</TableHead>
+            <TableHead className="px-4 py-2">Role</TableHead>
+            <TableHead className="px-4 py-2">Email</TableHead>
+            <TableHead className="px-4 py-2">Discapacidad</TableHead>
+            <TableHead className="px-4 py-2">DNI</TableHead>
+            <TableHead className="px-4 py-2">Sexo</TableHead>
+            <TableHead className="px-4 py-2">Edad</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {users.map(({ id, user, discapacidad, dni, sexo, edad }) => (
+            <TableRow key={id} className="text-sm text-left">
+              <TableCell className="px-4 py-2">{id}</TableCell>
+              <TableCell className="px-4 py-2">{user.nombres}</TableCell>
+              <TableCell className="px-4 py-2">{user.apellidos}</TableCell>
+              <TableCell className="px-4 py-2">{user.role}</TableCell>
+              <TableCell className="px-4 py-2">{user.email || `${user.nombres}@regionayacucho.edu`}</TableCell>
+              <TableCell className="px-4 py-2">{discapacidad ? "SI" : "NO"}</TableCell>
+              <TableCell className="px-4 py-2">{dni}</TableCell>
+              <TableCell className="px-4 py-2">{sexo === "M" ? "Masculino" : "Femenino"}</TableCell>
+              <TableCell className="px-4 py-2">{edad}</TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 };
