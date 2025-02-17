@@ -1,55 +1,44 @@
 import { auth } from "@/auth";
 import { ThemeToggle } from "@/components/theme-toogle";
 import { LogIn } from "lucide-react";
-import Link from "next/link";
-import img from "@/assets/images/landing-page.webp";
 import Image from "next/image";
+import Link from "next/link";
+import logoLight from "@/assets/logos/inicio_claro.png";
+import { Button } from "@/components/ui/button";
 
 export default async function Home() {
   const session = await auth();
   return (
-    <main className="flex flex-col justify-between items-center gap-8 row-start-2 bg-[#eff1f5] p-5 w-full h-full font-poppins text-[#4c4f69]">
-      <div className="flex flex-row justify-around items-center bg-[#ccd0da] p-5 rounded-lg w-full">
-        <div>
-          <p className="font-inter font-black text-lg uppercase">goierno regional ayacucho</p>
-        </div>
-        <div className="flex flex-row items-center gap-2 font-semibold">
-          <p className="hover:bg-[#e6e9ef] p-1 px-2 rounded-md hover:text-[#e64553]">Tutoriales</p>
-          <p className="hover:bg-[#e6e9ef] p-1 px-2 rounded-md hover:text-[#e64553]">Documentación</p>
-          <ThemeToggle />
-        </div>
+    <main className="flex flex-col justify-between items-center gap-8 row-start-2 bg-[#eff1f5] py-5 w-full h-full font-poppins text-[#4c4f69]">
+      <div className="flex flex-row justify-between items-center p-5 w-4/5">
+        <Image src={logoLight} alt="Logo" width={200} height={100} />
+        <ThemeToggle />
       </div>
 
-      <div className="flex flex-row gap-5 h-full">
-        <div className="flex flex-col justify-center gap-5 pl-24 w-1/2 h-full">
-          <div className="flex flex-col p-4">
-            <p className="py-2 font-bold text-2xl uppercase">escalafón</p>
+      <div className="flex flex-row gap-5 w-2/3 h-full">
+        <div className="flex flex-col justify-center gap-5 h-full">
+          <div className="flex flex-col gap-2 p-4">
+            <p className="font-bold text-5xl">Bienvenido a</p>
+            <p className="font-bold text-[#d20f39] text-4xl">Escalafón</p>
             <p className="font-montserrat text-lg">
-              Una plataforma para gestionar y actualizar información laboral, permitiendo a empleados y administradores registrar, revisar y generar
-              reportes fácilmente.
+              Registra tus datos y avanza en tu <span className="font-bold">desarrollo profesional</span>
             </p>
           </div>
-          <div className="flex p-4">
-            <Link
-              href={`${!session ? "/login" : "/dashboard"}`}
-              className="flex flex-row items-center gap-2 bg-[#e64553] hover:bg-[#d20f39] p-2 px-4 rounded-lg text-[#eff1f5]"
-            >
-              <LogIn />
-              <p className="pr-4 font-semibold text-base uppercase">ingresar</p>
+          <div className="flex flex-row justify-start gap-5 p-4">
+            <Link href={`${!session ? "/login" : "/dashboard"}`}>
+              <Button className="flex flex-row gap-5 bg-[#e64553] hover:bg-[#d20f39] rounded-xl">
+                <LogIn />
+                Ingresar
+              </Button>
+            </Link>
+            <Link href={`${!session ? "#" : "#"}`}>
+              <Button className="flex flex-row gap-5 bg-[#e64553] hover:bg-[#d20f39] rounded-xl">
+                <LogIn />
+                Ver tutorial
+              </Button>
             </Link>
           </div>
         </div>
-        <div className="flex justify-center items-center w-1/2">
-          <Image src={img} alt="Picture of the author" className="rounded-lg w-3/4" />
-        </div>
-      </div>
-
-      <div className="flex flex-row justify-center items-center gap-2 bg-[#ccd0da] p-5 rounded-lg w-full font-semibold">
-        <p className="text-[#4c4f69]">
-          © Copyright 2025
-          <span className="px-2 hover:underline">Gobierno Regional de Ayacucho.</span>
-          Oficina de Tecnologias de Información y Comunicaciones.
-        </p>
       </div>
     </main>
   );

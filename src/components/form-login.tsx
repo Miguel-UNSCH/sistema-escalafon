@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { loginAction } from "@/actions/auth-action";
 import { useState, useTransition } from "react";
@@ -39,8 +39,7 @@ const FormLogin = () => {
   };
 
   return (
-    <div className="mx-auto max-w-md">
-      <h2 className="font-inter font-bold text-2xl text-center uppercase">iniciar sesion</h2>
+    <div className="mx-auto w-full max-w-md">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
@@ -48,11 +47,10 @@ const FormLogin = () => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>email</FormLabel>
+                <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="email" {...field} type="email" />
+                  <Input placeholder="jdoe@regionayacucho.edu" {...field} type="email" />
                 </FormControl>
-                <FormDescription>This is your public display name.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -62,17 +60,17 @@ const FormLogin = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>password</FormLabel>
+                <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="password" {...field} type="password" />
+                  <Input placeholder="**********" {...field} type="password" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           {error && <div className="font-inter text-red-500 text-sm">{error}</div>}
-          <Button type="submit" disabled={isPending}>
-            Submit
+          <Button type="submit" disabled={isPending} className="bg-[#e64553] w-full">
+            Iniciar Sesión
           </Button>
         </form>
       </Form>
