@@ -25,7 +25,7 @@ export default function Dashboard({ children }: { children: ReactNode }) {
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   return (
-    <div className="relative flex h-screen overflow-hidden">
+    <div className="relative flex bg-[#eff1f5] h-screen overflow-hidden font-poppins">
       <Sidebar isOpen={isSidebarOpen} isMobile={isMobile} onClose={toggleSidebar} />
       <div
         className={`relative flex flex-col flex-1 overflow-hidden transition-all duration-300 ease-in-out ${
@@ -35,7 +35,7 @@ export default function Dashboard({ children }: { children: ReactNode }) {
         <Navbar onMenuClick={toggleSidebar} isSidebarOpen={isSidebarOpen} isMobile={isMobile} />
         <main className={`flex-1 overflow-x-hidden overflow-y-auto py-4 px-8 transition-all duration-300 ease-in-out pt-20`}>{children}</main>
       </div>
-      {isMobile && isSidebarOpen && <div className="z-40 fixed inset-0 bg-ctp-base bg-opacity-50" onClick={toggleSidebar}></div>}
+      {isMobile && isSidebarOpen && <div className="z-40 fixed inset-0 bg-[#e6e9ef] bg-opacity-50" onClick={toggleSidebar}></div>}
     </div>
   );
 }

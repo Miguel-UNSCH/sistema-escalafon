@@ -16,8 +16,7 @@ export const GET = async (request: NextRequest) => {
 
     const discapacidades = await prisma.discapacidad.findMany({ where: { personalId: parsedPersonalId } });
 
-    if (!discapacidades.length)
-      return NextResponse.json({ message: `No se encontraron discapacidades para el personal con ID ${personalId}.` }, { status: 404 });
+    if (!discapacidades.length) throw BadRequestError("El personal con el ID proporcionado no tiene discapacidades registradas.");
 
     return NextResponse.json(discapacidades, { status: 200 });
   } catch (error: unknown) {

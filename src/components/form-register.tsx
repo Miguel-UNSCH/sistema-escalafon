@@ -39,6 +39,8 @@ const FormRegister = () => {
     });
   };
 
+  console.log(error);
+
   return (
     <div className="mx-auto max-w-md">
       <h2 className="font-inter font-bold text-2xl text-center uppercase">registrar</h2>
@@ -49,11 +51,10 @@ const FormRegister = () => {
             name="nombres"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>nombres</FormLabel>
+                <FormLabel>Nombres</FormLabel>
                 <FormControl>
                   <Input placeholder="nombres" {...field} type="text" />
                 </FormControl>
-                <FormDescription>ingrese su nombre personales, ejemplo: John Doe</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -63,7 +64,7 @@ const FormRegister = () => {
             name="apellidos"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>apellidos</FormLabel>
+                <FormLabel>Apellidos</FormLabel>
                 <FormControl>
                   <Input placeholder="apellidos" {...field} type="text" />
                 </FormControl>
@@ -76,7 +77,7 @@ const FormRegister = () => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>email</FormLabel>
+                <FormLabel>Email</FormLabel>
                 <FormControl>
                   <Input placeholder="email" {...field} type="email" />
                 </FormControl>
@@ -89,10 +90,13 @@ const FormRegister = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>contraseña</FormLabel>
+                <FormLabel>Contraseña</FormLabel>
                 <FormControl>
                   <Input placeholder="contraseña" {...field} type="password" />
                 </FormControl>
+                <FormDescription>
+                  La contraseña debe tener al menos 8 caracteres, incluir una mayúscula, una minúscula, un número y un carácter especial.
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -102,7 +106,7 @@ const FormRegister = () => {
             name="repeatPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>repertir contraseña</FormLabel>
+                <FormLabel>Repertir Contraseña</FormLabel>
                 <FormControl>
                   <Input placeholder="repetir contraseña" {...field} type="password" />
                 </FormControl>

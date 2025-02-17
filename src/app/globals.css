@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -19,16 +19,16 @@
     --bg-button: #;
     --bg-dropdown: #ffffff;
 
-    --text-primary: #1D2630;
-    --text-main: #4680FF;
-    --text-secondary: #5B6B79;
+    --text-primary: #1d2630;
+    --text-main: #4680ff;
+    --text-secondary: #5b6b79;
     --text-muted: #;
     --text-title: #;
     --text-headline: #;
     --text-subtitle: #;
     --text-section: #;
-    --text-section-title: #3E4853;
-    --text-link: #5B6B79;
+    --text-section-title: #3e4853;
+    --text-link: #5b6b79;
     --text-link-hover: #;
     --text-button: #;
     --text-warning: #;
@@ -36,27 +36,27 @@
 
     --header-primary: #;
     --title-main: #;
-    --header-secondary: #; 
+    --header-secondary: #;
     --title-sub: #;
     --section-header: #;
     --subsection-header: #;
 
-    --button-primary: #4680FF;
+    --button-primary: #4680ff;
     --button-secondary: #;
     --button-confirm: #4ab491;
     --button-cancel: #e04545;
     --button-danger: #e89a25;
-    --button-hover: #F3F5F7;
+    --button-hover: #f3f5f7;
     --button-disabled: #;
 
-    --link-main: #4680FF;
-    --link-hover: #E8EBED;
-    --link-active: #E6EDFB;
+    --link-main: #4680ff;
+    --link-hover: #e8ebed;
+    --link-active: #e6edfb;
     --link-disabled: #;
 
     --box-shadow: #;
     --border-primary: #d3d6db;
-    --border-focus: #4680FF;
+    --border-focus: #4680ff;
     --border-disabled: #;
     --text-shadow: #;
 
@@ -65,8 +65,8 @@
     --alert-error: #;
     --alert-info: #;
 
-    --icon-main: #5B6B79;
-    --icon-hover: #F3F5F7;
+    --icon-main: #5b6b79;
+    --icon-hover: #f3f5f7;
     --icon-action: #;
     --icon-disabled: #;
 
@@ -101,6 +101,12 @@
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
+
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
   }
 
   .dark {
@@ -110,21 +116,21 @@
     --bg-block: #;
     --bg-alt: #;
     --bg-secondary: #;
-    --bg-card: #1B232D;
+    --bg-card: #1b232d;
     --bg-elevated: #;
     --bg-button: #;
     --bg-dropdown: #263240;
 
-    --text-primary: #D1D3D5;
-    --text-main: #4680FF;
-    --text-secondary: #898C90;
+    --text-primary: #d1d3d5;
+    --text-main: #4680ff;
+    --text-secondary: #898c90;
     --text-muted: #;
     --text-title: #;
     --text-headline: #;
     --text-subtitle: #;
     --text-section: #;
-    --text-section-title: #D0D1D2;
-    --text-link: #898C90;
+    --text-section-title: #d0d1d2;
+    --text-link: #898c90;
     --text-link-hover: #;
     --text-button: #;
     --text-warning: #;
@@ -132,27 +138,27 @@
 
     --header-primary: #;
     --title-main: #;
-    --header-secondary: #; 
+    --header-secondary: #;
     --title-sub: #;
     --section-header: #;
     --subsection-header: #;
 
-    --button-primary: #4680FF;
+    --button-primary: #4680ff;
     --button-secondary: #;
     --button-confirm: #289371;
     --button-cancel: #be2425;
     --button-danger: #c67905;
-    --button-hover: #19212A;
+    --button-hover: #19212a;
     --button-disabled: #;
 
-    --link-main: #4680FF;
-    --link-hover: #1F252B;
+    --link-main: #4680ff;
+    --link-hover: #1f252b;
     --link-active: #182337;
     --link-disabled: #;
 
     --box-shadow: #;
     --border-primary: #2e3c4c;
-    --border-focus: #4680FF;
+    --border-focus: #4680ff;
     --border-disabled: #;
     --text-shadow: #;
 
@@ -161,8 +167,8 @@
     --alert-error: #;
     --alert-info: #;
 
-    --icon-main: #6F747F;
-    --icon-hover: #19212A;
+    --icon-main: #6f747f;
+    --icon-hover: #19212a;
     --icon-action: #;
     --icon-disabled: #;
 
@@ -196,9 +202,14 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
   }
 }
-
 
 *::-webkit-scrollbar {
   width: 8px;
@@ -242,4 +253,3 @@
     @apply bg-background text-foreground;
   }
 }
-

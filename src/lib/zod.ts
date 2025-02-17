@@ -23,26 +23,29 @@ export const loginSchema = object({
 });
 
 export const registerSchema = object({
-  email: string({ required_error: "Email is required" }).min(1, "Email is required").email("Invalid email"),
-  password: string({ required_error: "Password is required" })
-    .min(1, "Password is required")
-    .min(6, "Password must be more than 8 characters")
-    .max(32, "Password must be less than 32 characters"),
-  repeatPassword: string({ required_error: "Repeat password is required" }),
-  nombres: string({ required_error: "Nombres is required" }).min(1, "Nombres is required"),
-  apellidos: string({ required_error: "Apellidos is required" }).min(1, "Apellidos is required"),
+  email: string({ required_error: "El correo electrónico es obligatorio" })
+    .min(1, "El correo electrónico es obligatorio")
+    .email("Correo electrónico no válido"),
+  password: string({ required_error: "La contraseña es obligatoria" })
+    .min(8, "La contraseña debe tener al menos 8 caracteres")
+    .max(32, "La contraseña debe tener menos de 32 caracteres")
+    .regex(/[A-Z]/, "La contraseña debe tener al menos una letra mayúscula")
+    .regex(/[a-z]/, "La contraseña debe tener al menos una letra minúscula")
+    .regex(/[0-9]/, "La contraseña debe tener al menos un número")
+    .regex(/[@$!%*?&]/, "La contraseña debe tener al menos un carácter especial (@$!%*?&)"),
+  repeatPassword: string({ required_error: "Repetir la contraseña es obligatorio" }),
+  nombres: string({ required_error: "Los nombres son obligatorios" }).min(1, "Debe ingresar sus nombres"),
+  apellidos: string({ required_error: "Los apellidos son obligatorios" }).min(1, "Debe ingresar sus apellidos"),
+}).superRefine(({ password, repeatPassword }, ctx) => {
+  if (password !== repeatPassword) {
+    ctx.addIssue({ code: "custom", path: ["repeatPassword"], message: "Las contraseñas deben coincidir" });
+  }
 });
-
-enum Role {
-  PERSONAL = "PERSONAL",
-  ADMIN = "ADMIN",
-}
 
 export const userSchema = object({
   id: string().min(1, "El ID es obligatorio"),
   nombres: string().min(1, "El nombre es obligatorio"),
   apellidos: string().min(1, "El apellido es obligatorio"),
-  role: z.enum([Role.PERSONAL, Role.ADMIN]).default(Role.PERSONAL),
   email: optional(string().email("El correo electrónico debe ser válido").max(255, "El correo electrónico es demasiado largo")),
   password: optional(string().min(8, "La contraseña debe tener al menos 8 caracteres")),
   ubigeoId: optional(number().int().positive("El ID del ubigeo debe ser un número positivo")),
