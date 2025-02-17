@@ -1,7 +1,8 @@
+import { NextRequest, NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
 import { CustomError, handleError } from "@/middleware/errorHandler";
 import { BadRequestError, NotFoundError } from "@/utils/customErrors";
-import { NextRequest, NextResponse } from "next/server";
 
 interface Params {
   params: Promise<{ id: string }>;
@@ -10,13 +11,13 @@ interface Params {
 export const GET = async (_: NextRequest, { params }: Params) => {
   try {
     const { id } = await params;
-    if (!id) throw BadRequestError("Falta el id de la dependenciaOficina");
-    if (isNaN(parseInt(id))) throw BadRequestError("El id de la dependenciaOficina debe ser un número");
+    if (!id) throw BadRequestError("Falta el id de la dependencia");
+    if (isNaN(parseInt(id))) throw BadRequestError("El id de la dependencia debe ser un número");
 
-    const dependenciaOficina = await prisma.dependenciaOficina.findUnique({ where: { id: parseInt(id) } });
-    if (!dependenciaOficina) throw NotFoundError("DependenciaOficina no encontrada");
+    const dependencia = await prisma.dependencia.findUnique({ where: { id: parseInt(id) } });
+    if (!dependencia) throw NotFoundError("dependencia no encontrada");
 
-    return NextResponse.json(dependenciaOficina, { status: 200 });
+    return NextResponse.json(dependencia, { status: 200 });
   } catch (error: unknown) {
     return handleError(error as CustomError);
   }
@@ -25,21 +26,21 @@ export const GET = async (_: NextRequest, { params }: Params) => {
 export const PUT = async (req: NextRequest, { params }: Params) => {
   try {
     const { id } = await params;
-    if (!id) throw BadRequestError("Falta el id de la dependenciaOficina");
+    if (!id) throw BadRequestError("Falta el id de la dependencia");
     if (isNaN(parseInt(id))) throw BadRequestError("El id de la dependencia debe ser un número");
 
-    const dependenciaOficina = await prisma.dependenciaOficina.findUnique({ where: { id: parseInt(id) } });
-    if (!dependenciaOficina) throw NotFoundError("Dependencia no encontrada");
+    const dependencia = await prisma.dependencia.findUnique({ where: { id: parseInt(id) } });
+    if (!dependencia) throw NotFoundError("Dependencia no encontrada");
 
     const { nombre, direccion, codigo } = await req.json();
     if (!nombre && !direccion && !codigo) throw BadRequestError("Falta el nombre, direccion o codigo de la dependencia");
 
-    const updatedDependenciaOficina = await prisma.dependenciaOficina.update({
+    const updatedDependencia = await prisma.dependencia.update({
       where: { id: parseInt(id) },
       data: { nombre, direccion, codigo },
     });
 
-    return NextResponse.json(updatedDependenciaOficina, { status: 200 });
+    return NextResponse.json(updatedDependencia, { status: 200 });
   } catch (error: unknown) {
     return handleError(error as CustomError);
   }
@@ -48,10 +49,10 @@ export const PUT = async (req: NextRequest, { params }: Params) => {
 export const DELETE = async (_: NextRequest, { params }: Params) => {
   try {
     const { id } = await params;
-    if (!id) throw BadRequestError("Falta el id de la dependenciaOficina");
-    if (isNaN(parseInt(id))) throw BadRequestError("El id de la dependenciaOficina debe ser un número");
+    if (!id) throw BadRequestError("Falta el id de la dependencia");
+    if (isNaN(parseInt(id))) throw BadRequestError("El id de la dependencia debe ser un número");
 
-    await prisma.dependenciaOficina.delete({ where: { id: parseInt(id) } });
+    await prisma.dependencia.delete({ where: { id: parseInt(id) } });
     return NextResponse.json({ message: "Dependencia eliminada correctamente" }, { status: 200 });
   } catch (error: unknown) {
     return handleError(error as CustomError);

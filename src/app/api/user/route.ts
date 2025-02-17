@@ -1,7 +1,8 @@
-import { prisma } from "@/lib/prisma";
-import { CustomError, handleError } from "@/middleware/errorHandler";
-import { NotFoundError } from "@/utils/customErrors";
 import { NextRequest, NextResponse } from "next/server";
+
+import { prisma } from "@/lib/prisma";
+import { NotFoundError } from "@/utils/customErrors";
+import { CustomError, handleError } from "@/middleware/errorHandler";
 
 export const GET = async (r: NextRequest) => {
   try {

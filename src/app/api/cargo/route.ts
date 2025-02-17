@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { CustomError, handleError } from "@/middleware/errorHandler";
 import { prisma } from "@/lib/prisma";
+import { CustomError, handleError } from "@/middleware/errorHandler";
 import { BadRequestError, ConflictError, NotFoundError } from "@/utils/customErrors";
 import { Cargo, cargoSchema } from "@/lib/schemas/cargo.schema";
 import { errMessages } from "@/helpers";
