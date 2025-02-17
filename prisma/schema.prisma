@@ -167,9 +167,9 @@ model Personal {
   nAutogenerado        String
   licenciaConducir     String?
   grupoSanguineo       GrupoSanguineo
-  fechaIngreso         String // change later
+  fechaIngreso         DateTime
   unidadEstructurada   String
-  fechaNacimiento      String // change later
+  fechaNacimiento      DateTime
   nacionalidad         String
   domicilio            String
   interiorUrbanizacion String?
@@ -183,14 +183,14 @@ model Personal {
   status               Status         @default(ENABLED)
 
   cargoId       Int
-  dependenciaId Int?
+  dependenciaId Int
   conyugeId     Int?   @unique
   userId        String @unique
 
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  conyuge     Conyuge?     @relation(fields: [conyugeId], references: [id])
-  cargo       Cargo        @relation(fields: [cargoId], references: [id], onDelete: Restrict)
-  dependencia Dependencia? @relation(fields: [dependenciaId], references: [id], onDelete: Restrict)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conyuge     Conyuge?    @relation(fields: [conyugeId], references: [id])
+  cargo       Cargo       @relation(fields: [cargoId], references: [id], onDelete: Restrict)
+  dependencia Dependencia @relation(fields: [dependenciaId], references: [id], onDelete: Restrict)
 
   hijos                    Hijo[]
   discapacidades           Discapacidad[] // Relación 1:N con Discapacidad

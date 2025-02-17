@@ -3,12 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { CustomError, handleError } from "@/middleware/errorHandler";
 import { prisma } from "@/lib/prisma";
 import { BadRequestError } from "@/utils/customErrors";
+import { IParams } from "@/interfaces";
 
-interface Params {
-  params: Promise<{ id: string }>;
-}
-
-export const GET = async (_: NextRequest, { params }: Params) => {
+export const GET = async (_: NextRequest, { params }: IParams) => {
   try {
     const { id } = await params;
     if (!id) throw BadRequestError("id no proporcionado");

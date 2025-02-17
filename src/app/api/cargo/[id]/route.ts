@@ -5,11 +5,9 @@ import { CustomError, handleError } from "@/middleware/errorHandler";
 import { BadRequestError, ConflictError, NotFoundError } from "@/utils/customErrors";
 import { cargoSchema } from "@/lib/schemas/cargo.schema";
 import { errMessages } from "@/helpers";
+import { IParams } from "@/interfaces";
 
-interface Params {
-  params: Promise<{ id: string }>;
-}
-export const GET = async (_: NextRequest, { params }: Params) => {
+export const GET = async (_: NextRequest, { params }: IParams) => {
   try {
     const { id } = await params;
     if (!id) throw BadRequestError("Falta el id del cargo");
@@ -24,7 +22,7 @@ export const GET = async (_: NextRequest, { params }: Params) => {
   }
 };
 
-export const PUT = async (req: NextRequest, { params }: Params) => {
+export const PUT = async (req: NextRequest, { params }: IParams) => {
   try {
     const { id } = await params;
     if (!id) throw BadRequestError("Falta el id del cargo");
@@ -47,7 +45,7 @@ export const PUT = async (req: NextRequest, { params }: Params) => {
   }
 };
 
-export const DELETE = async (req: NextRequest, { params }: Params) => {
+export const DELETE = async (req: NextRequest, { params }: IParams) => {
   try {
     const { id } = await params;
     if (!id) throw BadRequestError("Falta el id del cargo");

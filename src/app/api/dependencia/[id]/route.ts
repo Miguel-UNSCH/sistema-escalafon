@@ -3,12 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { CustomError, handleError } from "@/middleware/errorHandler";
 import { BadRequestError, NotFoundError } from "@/utils/customErrors";
+import { IParams } from "@/interfaces";
 
-interface Params {
-  params: Promise<{ id: string }>;
-}
-
-export const GET = async (_: NextRequest, { params }: Params) => {
+export const GET = async (_: NextRequest, { params }: IParams) => {
   try {
     const { id } = await params;
     if (!id) throw BadRequestError("Falta el id de la dependencia");
@@ -23,7 +20,7 @@ export const GET = async (_: NextRequest, { params }: Params) => {
   }
 };
 
-export const PUT = async (req: NextRequest, { params }: Params) => {
+export const PUT = async (req: NextRequest, { params }: IParams) => {
   try {
     const { id } = await params;
     if (!id) throw BadRequestError("Falta el id de la dependencia");
@@ -46,7 +43,7 @@ export const PUT = async (req: NextRequest, { params }: Params) => {
   }
 };
 
-export const DELETE = async (_: NextRequest, { params }: Params) => {
+export const DELETE = async (_: NextRequest, { params }: IParams) => {
   try {
     const { id } = await params;
     if (!id) throw BadRequestError("Falta el id de la dependencia");

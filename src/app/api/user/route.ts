@@ -16,15 +16,11 @@ export const GET = async (r: NextRequest) => {
     const where: any = {};
 
     if (nombres) where.nombres = { contains: nombres };
-
     if (apellidos) where.apellidos = { contains: apellidos };
-
     if (role) where.role = role as "Role";
-
     if (email) where.email = email;
 
     const users = await prisma.user.findMany({ where: where });
-
     if (!users || users.length === 0) throw NotFoundError("Usuarios no encontrados");
 
     return NextResponse.json(users, { status: 200 });
