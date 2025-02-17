@@ -1,4 +1,3 @@
-import { errMessages } from "@/helpers";
 import { prisma } from "@/lib/prisma";
 import { personalSchema } from "@/lib/schemas/personal.schema";
 import { CustomError, handleError } from "@/middleware/errorHandler";
@@ -34,26 +33,26 @@ export const GET = async (r: NextRequest) => {
     const personals = await prisma.personal.findMany({
       where,
       include: {
-        User: true,
-        DependenciaOficina: true,
-        Cargo: true,
-        Discapacidad: true,
+        user: true,
+        dependencia: true,
+        cargo: true,
+        discapacidades: true,
         hijos: true,
         estudios: true,
         capacitaciones: true,
         experiencias: true,
         contratos: true,
-        RenunciaLiquidacion: true,
-        Desplazamiento: true,
-        DescansoMedico: true,
-        PermisoLicenciaVacacion: true,
-        Ascenso: true,
-        BonificacionPersonal: true,
-        BonificacionFamiliar: true,
-        FichaEvaluacion: true,
-        Merito: true,
-        Demerito: true,
-        actasEntregadas: true,
+        renuncias: true,
+        desplazamientos: true,
+        descansos: true,
+        permisos: true,
+        ascensos: true,
+        bonificacionesPersonales: true,
+        bonificacionesFamiliares: true,
+        evaluaciones: true,
+        meritos: true,
+        demeritos: true,
+        actasCreadas: true,
         actasRecibidas: true,
       },
     });
@@ -66,69 +65,85 @@ export const GET = async (r: NextRequest) => {
   }
 };
 
-export const POST = async (r: NextRequest) => {
+export const POST = async (request: NextRequest) => {
   try {
-    const values = await r.json();
+    const values = await request.json();
 
-    const { data, success, error } = personalSchema.safeParse(values);
-    if (!success) throw BadRequestError(errMessages(error));
+    const result = personalSchema.safeParse(values);
 
-    const currentUser = await prisma.user.findFirst({ where: { nombres: data.nombres } });
-    if (!currentUser) throw BadRequestError("El usuario no existe");
-
-    let ubigeoId = null;
-    if (data.departamento && data.provincia && data.distrito) {
-      const ubigeo = await prisma.ubigeo.findFirst({
-        where: { departamento: data.departamento, provincia: data.provincia, distrito: data.distrito },
-      });
-      if (!ubigeo) throw BadRequestError("Ubigeo no encontrado");
-      ubigeoId = ubigeo.id;
-    } else if (data.inei || data.reniec) {
-      const ubigeo = await prisma.ubigeo.findFirst({ where: { inei: data.inei || undefined, reniec: data.reniec || undefined } });
-      if (!ubigeo) throw BadRequestError("Ubigeo no encontrado por INEI/RENIEC");
-      ubigeoId = ubigeo.id;
+    if (!result.success) {
+      const errorMessages = result.error.errors.map((err) => err.message).join(", ");
+      throw BadRequestError(errorMessages);
     }
 
-    await prisma.user.update({ where: { id: currentUser.id }, data: { ubigeoId } });
+    const validatedPersonal = result.data;
 
-    const dependenciaOficina = await prisma.dependenciaOficina.findFirst({ where: { nombre: data.dependencia } });
-    if (!dependenciaOficina) throw BadRequestError("Dependencia no encontrada");
+    const ubigeo = await prisma.ubigeo.findFirst({
+      where: {
+        departamento: { equals: validatedPersonal.ubigeo.departamento, mode: "insensitive" },
+        provincia: { equals: validatedPersonal.ubigeo.provincia, mode: "insensitive" },
+        distrito: { equals: validatedPersonal.ubigeo.distrito, mode: "insensitive" },
+      },
+    });
 
-    const cargo = await prisma.cargo.findFirst({ where: { nombre: data.cargo } });
-    if (!cargo) throw BadRequestError("Cargo no encontrado");
+    if (!ubigeo) throw BadRequestError("El ubigeo proporcionado no existe.");
 
-    const personalData = {
-      userId: currentUser.id,
-      cargoId: cargo.id,
-      dependenciaOficinaId: dependenciaOficina.id,
-      sexo: data.sexo,
-      edad: data.edad,
-      dni: data.dni,
-      nAutogenerado: data.nAutogenerado,
-      licenciaConducir: data.licenciaConducir,
-      grupoSanguineo: data.grupoSanguineo,
-      fechaIngreso: data.fechaIngreso,
-      unidadEstructurada: data.unidadEstructurada,
-      fechaNacimiento: data.fechaNacimiento,
-      nacionalidad: data.nacionalidad,
-      domicilio: data.domicilio,
-      interiorUrbanizacion: data.interiorUrbanizacion,
-      telefono: data.telefono,
-      celular: data.celular,
-      regimenPensionario: data.regimenPensionario,
-      nombreAfp: data.nombreAfp,
-      situacionLaboral: data.situacionLaboral,
-      estadoCivil: data.estadoCivil,
-      discapacidad: data.discapacidad,
-    };
+    const user = await prisma.user.findUnique({ where: { id: validatedPersonal.userId } });
 
-    const personal = await prisma.personal.create({ data: personalData });
+    if (!user) throw BadRequestError("El usuario especificado no existe.");
 
-    await prisma.user.update({ where: { id: currentUser.id }, data: { personalId: personal.id } });
+    await prisma.user.update({ where: { id: user.id }, data: { ubigeoId: ubigeo.id } });
+
+    let cargo = await prisma.cargo.findUnique({ where: { nombre: validatedPersonal.cargo.nombre } });
+
+    if (!cargo) {
+      cargo = await prisma.cargo.create({ data: { nombre: validatedPersonal.cargo.nombre } });
+    }
+
+    let dependencia = await prisma.dependencia.findUnique({ where: { nombre: validatedPersonal.dependencia.nombre } });
+
+    if (!dependencia) {
+      dependencia = await prisma.dependencia.create({
+        data: {
+          nombre: validatedPersonal.dependencia.nombre,
+          direccion: validatedPersonal.dependencia.direccion,
+          codigo: validatedPersonal.dependencia.codigo,
+        },
+      });
+    }
+
+    // Crear el registro de Personal y asociar con el usuario existente, cargo y dependencia
+    const personal = await prisma.personal.create({
+      data: {
+        sexo: validatedPersonal.sexo,
+        edad: validatedPersonal.edad,
+        dni: validatedPersonal.dni,
+        nAutogenerado: validatedPersonal.nAutogenerado,
+        licenciaConducir: validatedPersonal.licenciaConducir,
+        grupoSanguineo: validatedPersonal.grupoSanguineo,
+        fechaIngreso: validatedPersonal.fechaIngreso,
+        unidadEstructurada: validatedPersonal.unidadEstructurada,
+        fechaNacimiento: validatedPersonal.fechaNacimiento,
+        nacionalidad: validatedPersonal.nacionalidad,
+        domicilio: validatedPersonal.domicilio,
+        interiorUrbanizacion: validatedPersonal.interiorUrbanizacion,
+        telefono: validatedPersonal.telefono,
+        celular: validatedPersonal.celular,
+        regimenPensionario: validatedPersonal.regimenPensionario,
+        nombreAfp: validatedPersonal.nombreAfp,
+        situacionLaboral: validatedPersonal.situacionLaboral,
+        estadoCivil: validatedPersonal.estadoCivil,
+        discapacidad: validatedPersonal.discapacidad,
+        status: validatedPersonal.status,
+        cargoId: cargo.id, // ID del cargo (creado o encontrado)
+        dependenciaId: dependencia.id, // ID de la dependencia (creada o encontrada)
+        userId: user.id, // Relación con el usuario existente
+      },
+    });
 
     return NextResponse.json(personal, { status: 201 });
   } catch (error: unknown) {
-    console.error("Error:", error);
+    console.error("Error en el endpoint POST /api/personal:", error);
     return handleError(error as CustomError);
   }
 };

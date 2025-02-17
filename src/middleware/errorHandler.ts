@@ -1,15 +1,13 @@
 import { NextResponse } from "next/server";
 
-export interface CustomError extends Error {
+export class CustomError extends Error {
   statusCode: number;
-  message: string;
+
+  constructor(message: string, statusCode = 500) {
+    super(message);
+    this.statusCode = statusCode;
+  }
 }
 
-export const handleError = (error: CustomError) => {
-  // Si el error tiene código de estado y mensaje, retornamos ese error
-  if (error.statusCode && error.message) return NextResponse.json({ error: error.message }, { status: error.statusCode });
-
-  // Si el error no tiene una estructura estándar, lo tratamos como un error interno
-  console.error(error); // Log para depuración
-  return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
-};
+export const handleError = (error: CustomError) =>
+  NextResponse.json({ error: error.message || "Internal Server Error" }, { status: error.statusCode || 500 });

@@ -1,75 +1,42 @@
-import { object, string, number, date, boolean, z } from "zod";
+import { object, string, number, boolean, z } from "zod";
 
-enum EstadoCivil {
-  S = "S",
-  C = "C",
-  D = "D",
-  V = "V",
-}
-
-enum GrupoSanguineo {
-  A_POSITIVO = "A_POSITIVO",
-  A_NEGATIVO = "A_NEGATIVO",
-  B_POSITIVO = "B_POSITIVO",
-  B_NEGATIVO = "B_NEGATIVO",
-  AB_POSITIVO = "AB_POSITIVO",
-  AB_NEGATIVO = "AB_NEGATIVO",
-  O_POSITIVO = "O_POSITIVO",
-  O_NEGATIVO = "O_NEGATIVO",
-}
-
-enum Sexo {
-  M = "M",
-  F = "F",
-}
-
-enum Status {
-  ENABLED = "ENABLED",
-  DISABLED = "DISABLED",
-}
+import { UbigeoSchema } from "./ubigeo.schema";
+import { dependenciaSchema } from "./dependencia.schema";
+import { cargoSchema } from "./cargo.schema";
+import { EstadoCivil, GrupoSanguineo, Sexo, Status } from "../zod";
 
 export const personalSchema = object({
-  nombres: string().optional(),
-  sexo: z.enum([Sexo.M, Sexo.F]),
-  edad: number().int().positive("La edad debe ser un número positivo"),
-  dni: string().min(1, "El DNI es obligatorio").max(20, "El DNI debe tener un máximo de 20 caracteres"),
-  nAutogenerado: string().min(1, "El número autogenerado es obligatorio"),
+  userId: string({ required_error: "Usuario es requerido" }),
+  sexo: Sexo,
+  edad: number({ required_error: "Edad es requerida" }).min(18, "La edad mínima es 18 años").max(100, "La edad máxima es 100 años"),
+  dni: string({ required_error: "DNI es requerido" }).length(8, "El DNI debe tener 8 caracteres"),
+  nAutogenerado: string({ required_error: "Número autogenerado es requerido" }),
   licenciaConducir: string().optional(),
-  grupoSanguineo: z.enum([
-    GrupoSanguineo.A_POSITIVO,
-    GrupoSanguineo.A_NEGATIVO,
-    GrupoSanguineo.B_POSITIVO,
-    GrupoSanguineo.B_NEGATIVO,
-    GrupoSanguineo.AB_POSITIVO,
-    GrupoSanguineo.AB_NEGATIVO,
-    GrupoSanguineo.O_POSITIVO,
-    GrupoSanguineo.O_NEGATIVO,
-  ]),
-  fechaIngreso: string(),
-  unidadEstructurada: string().min(1, "La unidad estructurada es obligatoria"),
-  fechaNacimiento: string(),
-  nacionalidad: string().min(1, "La nacionalidad es obligatoria"),
-  domicilio: string().min(1, "El domicilio es obligatorio"),
+  grupoSanguineo: GrupoSanguineo,
+  fechaIngreso: string({ required_error: "Fecha de ingreso es requerida" }).refine(
+    (val) => !isNaN(Date.parse(val)),
+    "La fecha de ingreso debe ser válida (formato ISO 8601)"
+  ),
+  unidadEstructurada: string({ required_error: "Unidad estructurada es requerida" }),
+  fechaNacimiento: string({ required_error: "Fecha de nacimiento es requerida" }).refine(
+    (val) => !isNaN(Date.parse(val)),
+    "La fecha de nacimiento debe ser válida (formato ISO 8601)"
+  ),
+  nacionalidad: string({ required_error: "Nacionalidad es requerida" }),
+  domicilio: string({ required_error: "Domicilio es requerido" }),
   interiorUrbanizacion: string().optional(),
   telefono: string().optional(),
-  celular: string().min(1, "El celular es obligatorio"),
-  regimenPensionario: string().min(1, "El régimen pensionario es obligatorio"),
+  celular: string({ required_error: "Celular es requerido" }),
+  regimenPensionario: string({ required_error: "Régimen pensionario es requerido" }),
   nombreAfp: string().optional(),
-  situacionLaboral: string().min(1, "La situación laboral es obligatoria"),
-  estadoCivil: z.enum([EstadoCivil.S, EstadoCivil.C, EstadoCivil.D, EstadoCivil.V]),
-  discapacidad: boolean(),
-  status: z.enum([Status.ENABLED, Status.DISABLED]).default(Status.ENABLED), // Valor por defecto 'ENABLED'
-  cargo: string().optional(), // Se recibe el nombre del cargo
-  dependencia: string().optional(), // Se recibe el nombre de la dependencia
-  inei: string().optional(), // Campo opcional para INEI
-  reniec: string().optional(), // Campo opcional para RENIEC
-  departamento: string().optional(), // Campo opcional para Departamento
-  provincia: string().optional(), // Campo opcional para Provincia
-  distrito: string().optional(), // Campo opcional para Distrito
-  discapacidadId: string().optional(),
-  conyugeId: string().optional(), // Relación opcional con Conyuge
-  createdAt: date().optional(),
-  updatedAt: date().optional(),
+  situacionLaboral: string({ required_error: "Situación laboral es requerida" }),
+  estadoCivil: EstadoCivil,
+  discapacidad: boolean({ required_error: "Discapacidad es requerida" }),
+  status: Status.optional(),
+
+  ubigeo: UbigeoSchema,
+  dependencia: dependenciaSchema,
+  cargo: cargoSchema,
 });
 
 export type Personal = z.infer<typeof personalSchema>;

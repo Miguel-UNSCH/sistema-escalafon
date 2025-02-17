@@ -13,26 +13,26 @@ export const GET = async (_: NextRequest, { params }: IParams) => {
     const personal = await prisma.personal.findUnique({
       where: { id: parseInt(id) },
       include: {
-        User: true,
-        DependenciaOficina: true,
-        Cargo: true,
-        Discapacidad: true,
+        user: true,
+        dependencia: true,
+        cargo: true,
+        discapacidades: true,
         hijos: true,
         estudios: true,
         capacitaciones: true,
         experiencias: true,
         contratos: true,
-        RenunciaLiquidacion: true,
-        Desplazamiento: true,
-        DescansoMedico: true,
-        PermisoLicenciaVacacion: true,
-        Ascenso: true,
-        BonificacionPersonal: true,
-        BonificacionFamiliar: true,
-        FichaEvaluacion: true,
-        Merito: true,
-        Demerito: true,
-        actasEntregadas: true,
+        renuncias: true,
+        desplazamientos: true,
+        descansos: true,
+        permisos: true,
+        ascensos: true,
+        bonificacionesPersonales: true,
+        bonificacionesFamiliares: true,
+        evaluaciones: true,
+        meritos: true,
+        demeritos: true,
+        actasCreadas: true,
         actasRecibidas: true,
       },
     });
@@ -45,20 +45,6 @@ export const GET = async (_: NextRequest, { params }: IParams) => {
   }
 };
 
-// termianr despues
-export const PUT = async (r: NextRequest, { params }: IParams) => {
-  try {
-    const { id } = await params;
-    if (!id) throw ForbiddenError("Falta el id del usuario");
-    if (isNaN(parseInt(id))) throw ForbiddenError("El id del usuario debe ser un número");
-
-    return NextResponse.json(id, { status: 200 });
-  } catch (error: unknown) {
-    return handleError(error as CustomError);
-  }
-};
-
-// falta el para que elimine de User los campos, ubigeoId
 export const DELETE = async (_: NextRequest, { params }: IParams) => {
   try {
     const { id } = await params;

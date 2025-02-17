@@ -1,5 +1,19 @@
 import { object, string, number, z, date, optional } from "zod";
 
+export const EstadoCivil = z.enum(["S", "C", "D", "V"]);
+export const GrupoSanguineo = z.enum([
+  "A_POSITIVO",
+  "A_NEGATIVO",
+  "B_POSITIVO",
+  "B_NEGATIVO",
+  "AB_POSITIVO",
+  "AB_NEGATIVO",
+  "O_POSITIVO",
+  "O_NEGATIVO",
+]);
+export const Sexo = z.enum(["M", "F"]);
+export const Status = z.enum(["ENABLED", "DISABLED"]);
+
 export const loginSchema = object({
   email: string({ required_error: "Email is required" }).min(1, "Email is required").email("Invalid email"),
   password: string({ required_error: "Password is required" })
@@ -24,11 +38,6 @@ enum Role {
   ADMIN = "ADMIN",
 }
 
-enum Status {
-  ENABLED = "ENABLED",
-  DISABLED = "DISABLED",
-}
-
 export const userSchema = object({
   id: string().min(1, "El ID es obligatorio"),
   nombres: string().min(1, "El nombre es obligatorio"),
@@ -37,7 +46,7 @@ export const userSchema = object({
   email: optional(string().email("El correo electrónico debe ser válido").max(255, "El correo electrónico es demasiado largo")),
   password: optional(string().min(8, "La contraseña debe tener al menos 8 caracteres")),
   ubigeoId: optional(number().int().positive("El ID del ubigeo debe ser un número positivo")),
-  status: z.enum([Status.ENABLED, Status.DISABLED]).default(Status.ENABLED), // Valor por defecto 'ENABLED'
+  status: Status.default("ENABLED"),
   personalId: optional(number().int().positive("El ID del personal debe ser un número positivo")),
   conyugeId: optional(number().int().positive("El ID del cónyuge debe ser un número positivo")),
   hijoId: optional(number().int().positive("El ID del hijo debe ser un número positivo")),

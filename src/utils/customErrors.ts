@@ -1,17 +1,19 @@
-export const BadRequestError = (message: string) => ({ statusCode: 400, message: message });
+import { CustomError } from "@/middleware/errorHandler";
 
-export const UnauthorizedError = (message: string) => ({ statusCode: 401, message: message });
+export const BadRequestError = (message: string) => new CustomError(message, 400);
 
-export const ForbiddenError = (message: string) => ({ statusCode: 403, message: message });
+export const UnauthorizedError = (message: string) => new CustomError(message, 401);
 
-export const NotFoundError = (message: string) => ({ statusCode: 404, message: message });
+export const ForbiddenError = (message: string) => new CustomError(message, 403);
 
-export const ConflictError = (message: string) => ({ statusCode: 409, message: message });
+export const NotFoundError = (message: string) => new CustomError(message, 404);
 
-export const UnprocessableEntityError = (message: string) => ({ statusCode: 422, message: message });
+export const ConflictError = (message: string) => new CustomError(message, 409);
 
-export const TooManyRequestsError = (message: string) => ({ statusCode: 429, message: message });
+export const UnprocessableEntityError = (message: string) => new CustomError(message, 422);
 
-export const InternalServerError = (message: string) => ({ statusCode: 500, message: message });
+export const TooManyRequestsError = (message: string) => new CustomError(message, 429);
 
-export const NotImplementedError = (message: string) => ({ statusCode: 501, message: message });
+export const InternalServerError = (message: string) => new CustomError(message, 500);
+
+export const NotImplementedError = (message: string) => new CustomError(message, 501);
