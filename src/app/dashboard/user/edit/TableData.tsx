@@ -79,6 +79,7 @@ export function TableData({ data }: TableDataProps) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+  const [globalFilter, setGlobalFilter] = React.useState(""); // Nuevo estado para búsqueda
 
   const table = useReactTable({
     data,
@@ -97,15 +98,24 @@ export function TableData({ data }: TableDataProps) {
       columnVisibility,
       rowSelection,
     },
+    globalFilterFn: (row, columnId, filterValue) => {
+      const dni = row.original.dni.toLowerCase();
+      const nombres = row.original.user.nombres.toLowerCase();
+      const apellidos = row.original.user.apellidos.toLowerCase();
+      return dni.includes(filterValue.toLowerCase()) || nombres.includes(filterValue.toLowerCase()) || apellidos.includes(filterValue.toLowerCase());
+    },
   });
 
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
         <Input
-          placeholder="Buscar por nombre, apellido o DNI"
-          value={(table.getColumn("dni")?.getFilterValue() as string) ?? ""}
-          onChange={(event) => table.getColumn("dni")?.setFilterValue(event.target.value)}
+          placeholder="Buscar por DNI, nombres o apellidos"
+          value={globalFilter}
+          onChange={(event) => {
+            setGlobalFilter(event.target.value);
+            table.setGlobalFilter(event.target.value);
+          }}
           className="max-w-sm"
         />
         <DropdownMenu>
@@ -118,18 +128,16 @@ export function TableData({ data }: TableDataProps) {
             {table
               .getAllColumns()
               .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
+              .map((column) => (
+                <DropdownMenuCheckboxItem
+                  key={column.id}
+                  className="capitalize"
+                  checked={column.getIsVisible()}
+                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                >
+                  {column.id}
+                </DropdownMenuCheckboxItem>
+              ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
