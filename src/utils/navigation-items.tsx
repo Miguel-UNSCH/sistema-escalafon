@@ -1,6 +1,18 @@
 import { MenuItem } from "@/interfaces/MenuItem";
-import { ChartColumn, IdCard, UserRound, UserRoundCog, UserRoundPlus, UsersRound } from "lucide-react";
-import { FaIdCard, FaBriefcase, FaMoneyBill, FaTrophy, FaFileAlt, FaSignOutAlt, FaTachometerAlt } from "react-icons/fa";
+import {
+  Banknote,
+  BriefcaseBusiness,
+  ChartColumn,
+  File,
+  IdCard,
+  LayoutDashboard,
+  LogOut,
+  Trophy,
+  UserRound,
+  UserRoundCog,
+  UserRoundPlus,
+  UsersRound,
+} from "lucide-react";
 
 interface NavigationItems {
   title: string;
@@ -13,7 +25,7 @@ export const navigationItems: NavigationItems[] = [
     menuItem: [
       {
         label: "dashboard",
-        icon: <FaTachometerAlt />,
+        icon: <LayoutDashboard size={16} />,
         path: "/dashboard",
         badge: "2",
         submenus: [{ label: "panel", path: "/dashboard/panel" }],
@@ -23,21 +35,8 @@ export const navigationItems: NavigationItems[] = [
   {
     title: "gestión de usuarios",
     menuItem: [
-      {
-        label: "crear usuario",
-        icon: <UserRoundPlus size={16} />,
-        path: "/dashboard/user/create",
-      },
-      {
-        label: "editar usuario",
-        icon: <UsersRound size={16} />,
-        path: "/dashboard/user/edit",
-      },
-      {
-        label: "roles y permisos",
-        icon: <IdCard size={16} />,
-        path: "/dashboard/user/permissions",
-      },
+      { label: "crear usuario", icon: <UserRoundPlus size={16} />, path: "/dashboard/user/create" },
+      { label: "editar usuario", icon: <UsersRound size={16} />, path: "/dashboard/user/edit" },
     ],
   },
   {
@@ -47,39 +46,25 @@ export const navigationItems: NavigationItems[] = [
         label: "información personal",
         icon: <UserRoundCog size={16} />,
         path: "/dashboard/personal-file/personal-information",
-        // badge: "0",
         submenus: [
-          {
-            label: "datos personales",
-            path: "/dashboard/personal-file/personal-information/personal-data",
-          },
-          {
-            label: "datos del cónyuge",
-            path: "/dashboard/personal-file/personal-information/spouse-data",
-          },
-          {
-            label: "datos de los hijos",
-            path: "/dashboard/personal-file/personal-information/children-data",
-          },
+          { label: "datos personales", path: "/dashboard/personal-file/personal-information/personal-data" },
+          { label: "datos del cónyuge", path: "/dashboard/personal-file/personal-information/spouse-data" },
+          { label: "datos de los hijos", path: "/dashboard/personal-file/personal-information/children-data" },
         ],
       },
       {
         label: "estudios y capacitación",
-        icon: <FaBriefcase />,
+        icon: <BriefcaseBusiness size={16} />,
         path: "/dashboard/personal-file/studies-training",
         submenus: [
           { label: "estudios", path: "/dashboard/personal-file/studies-training/studies" },
           { label: "capacitación", path: "/dashboard/personal-file/studies-training/training" },
         ],
       },
-      {
-        label: "experiencia laboral",
-        icon: <FaBriefcase />,
-        path: "/dashboard/personal-file/experience",
-      },
+      { label: "experiencia laboral", icon: <BriefcaseBusiness size={16} />, path: "/dashboard/personal-file/experience" },
       {
         label: "discapacidad",
-        icon: <FaIdCard />,
+        icon: <IdCard size={16} />,
         path: "/dashboard/personal-file/disability",
       },
     ],
@@ -87,32 +72,16 @@ export const navigationItems: NavigationItems[] = [
   {
     title: "situación laboral",
     menuItem: [
-      {
-        label: "contratos y nombramiento",
-        icon: <FaBriefcase />,
-        path: "/dashboard/work-situation/contracts",
-      },
-      {
-        label: "renuncia y liquidación",
-        icon: <FaSignOutAlt />,
-        path: "/dashboard/work-situation/renunciation",
-      },
+      { label: "contratos y nombramiento", icon: <BriefcaseBusiness size={16} />, path: "/dashboard/work-situation/contracts" },
+      { label: "renuncia y liquidación", icon: <LogOut size={16} />, path: "/dashboard/work-situation/renunciation" },
       {
         label: "desplazamiento",
-        icon: <FaBriefcase />,
+        icon: <BriefcaseBusiness size={16} />,
         path: "/dashboard/work-situation/displacement",
       },
-      {
-        label: "descanso médico",
-        icon: <FaFileAlt />,
-        path: "/dashboard/work-situation/medical-rest",
-      },
-      {
-        label: "permisos / licencias / vacaciones",
-        icon: <FaFileAlt />,
-        path: "/dashboard/work-situation/permissions",
-      },
-      { label: "ascensos", icon: <FaTrophy />, path: "/dashboard/work-situation/promotions" },
+      { label: "descanso médico", icon: <File size={16} />, path: "/dashboard/work-situation/medical-rest" },
+      { label: "permisos / licencias", icon: <File size={16} />, path: "/dashboard/work-situation/permissions" },
+      { label: "ascensos", icon: <Trophy size={16} />, path: "/dashboard/work-situation/promotions" },
     ],
   },
   {
@@ -120,67 +89,34 @@ export const navigationItems: NavigationItems[] = [
     menuItem: [
       {
         label: "bonificaciones",
-        icon: <FaMoneyBill />,
+        icon: <Banknote size={16} />,
         path: "/dashboard/bonuses-evaluations",
         submenus: [
-          {
-            label: "bonificación personal",
-            icon: <FaMoneyBill />,
-            path: "/dashboard/bonuses-evaluations/personal",
-          },
-          {
-            label: "bonificación familiar",
-            icon: <FaMoneyBill />,
-            path: "/dashboard/bonuses-evaluations/family",
-          },
+          { label: "bonificación personal", path: "/dashboard/bonuses-evaluations/personal" },
+          { label: "bonificación familiar", path: "/dashboard/bonuses-evaluations/family" },
         ],
       },
-      {
-        label: "ficha de evaluación",
-        icon: <FaFileAlt />,
-        path: "/dashboard/bonuses-evaluations/evaluations",
-      },
+      { label: "ficha de evaluación", icon: <File size={16} />, path: "/dashboard/bonuses-evaluations/evaluations" },
     ],
   },
   {
     title: "méritos y deméritos",
     menuItem: [
-      { label: "méritos", icon: <FaTrophy />, path: "/dashboard/merits-demerits/merits" },
-      { label: "deméritos", icon: <FaTrophy />, path: "/dashboard/merits-demerits/demerits" },
+      { label: "méritos", icon: <Trophy size={16} />, path: "/dashboard/merits-demerits/merits" },
+      { label: "deméritos", icon: <Trophy size={16} />, path: "/dashboard/merits-demerits/demerits" },
     ],
   },
   {
     title: "documentos / otros",
-    menuItem: [
-      {
-        label: "acta de entrega",
-        icon: <FaFileAlt />,
-        path: "/dashboard/documents",
-      },
-    ],
+    menuItem: [{ label: "acta de entrega", icon: <File size={16} />, path: "/dashboard/documents" }],
   },
   {
-    title: "reportes (Solo Admin)",
+    title: "reportes",
     menuItem: [
-      {
-        label: "reportes mensuales",
-        icon: <ChartColumn />,
-        path: "/dashboard/reports/monthly",
-      },
-      {
-        label: "reportes anuales",
-        icon: <ChartColumn />,
-        path: "/dashboard/reports/annual",
-      },
-      {
-        label: "reportes personalizados",
-        icon: <ChartColumn />,
-        path: "/dashboard/reports/defaults",
-      },
+      { label: "reportes mensuales", icon: <ChartColumn size={16} />, path: "/dashboard/reports/monthly" },
+      { label: "reportes anuales", icon: <ChartColumn size={16} />, path: "/dashboard/reports/annual" },
+      { label: "reportes personalizados", icon: <ChartColumn size={16} />, path: "/dashboard/reports/defaults" },
     ],
   },
-  {
-    title: "mi cuenta",
-    menuItem: [{ label: "configuracion", icon: <UserRound />, path: "/dashboard/settings" }],
-  },
+  { title: "mi cuenta", menuItem: [{ label: "configuracion", icon: <UserRound size={16} />, path: "/dashboard/settings" }] },
 ];

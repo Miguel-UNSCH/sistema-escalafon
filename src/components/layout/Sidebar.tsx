@@ -1,5 +1,5 @@
 import { useState } from "react";
-import UserInfo from "../cards/UserInfo";
+// import UserInfo from "../cards/UserInfo";
 import SidebarMenuGroup from "../menus/SidebarMenuGroup";
 import { navigationItems } from "@/utils/navigation-items";
 import Link from "next/link";
@@ -22,7 +22,7 @@ export default function Sidebar({ isOpen, isMobile }: SidebarProps) {
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
         ${isMobile ? "fixed" : "absolute"}
         inset-y-0 left-0 z-50 border-r border-border-primary border-dashed
-        w-72 bg-[#e6e9ef] text-text-primary transition-transform duration-300 ease-in-out h-full
+        w-1/6 bg-[#e6e9ef] text-text-primary transition-transform duration-300 ease-in-out h-full
       `}
       >
         <div className="flex flex-col gap-6 py-4 pl-4 w-full h-full">
@@ -31,7 +31,7 @@ export default function Sidebar({ isOpen, isMobile }: SidebarProps) {
               <Image src={logo} alt="Logo Gobierno Regional" className="" width={200} height={100} priority />
             </Link>
           </div>
-          <UserInfo />
+          {/* <UserInfo /> */}
 
           <div className={`pr-2 h-full overflow-y-auto`}>
             {navigationItems.map((group, idx) => (
