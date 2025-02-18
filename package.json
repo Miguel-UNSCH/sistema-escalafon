@@ -16,8 +16,11 @@
     "@hookform/resolvers": "^4.0.0",
     "@lucide/lab": "^0.1.2",
     "@prisma/client": "^6.3.1",
+    "@radix-ui/react-checkbox": "^1.1.4",
+    "@radix-ui/react-dropdown-menu": "^2.1.6",
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-slot": "^1.1.2",
+    "@tanstack/react-table": "^8.21.2",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -46,7 +49,7 @@
     "postcss": "^8",
     "prisma": "^6.3.1",
     "tailwindcss": "^3.4.1",
-    "tsx": "^4.19.2",
+    "tsx": "^3.12.10",
     "typescript": "^5"
   }
 }
