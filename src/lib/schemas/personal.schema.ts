@@ -1,4 +1,4 @@
-import { object, string, number, boolean, z } from "zod";
+import { object, string, number, boolean, z, date } from "zod";
 
 import { UbigeoSchema } from "./ubigeo.schema";
 import { dependenciaSchema } from "./dependencia.schema";
@@ -13,15 +13,9 @@ export const personalSchema = object({
   nAutogenerado: string({ required_error: "Número autogenerado es requerido" }),
   licenciaConducir: string().optional(),
   grupoSanguineo: GrupoSanguineo,
-  fechaIngreso: string({ required_error: "Fecha de ingreso es requerida" }).refine(
-    (val) => !isNaN(Date.parse(val)),
-    "La fecha de ingreso debe ser válida (formato ISO 8601)"
-  ),
+  fechaIngreso: date().optional(),
   unidadEstructurada: string({ required_error: "Unidad estructurada es requerida" }),
-  fechaNacimiento: string({ required_error: "Fecha de nacimiento es requerida" }).refine(
-    (val) => !isNaN(Date.parse(val)),
-    "La fecha de nacimiento debe ser válida (formato ISO 8601)"
-  ),
+  fechaNacimiento: date().optional(),
   nacionalidad: string({ required_error: "Nacionalidad es requerida" }),
   domicilio: string({ required_error: "Domicilio es requerido" }),
   interiorUrbanizacion: string().optional(),

@@ -1,469 +1,549 @@
 "use client";
-import { SubmitHandler, useForm } from "react-hook-form";
-import React, { useState, useEffect } from "react";
-import { LuSave } from "react-icons/lu";
-import { personalDataSchema } from "@/validations/personalFileSchema";
+
+import React, { useEffect, useState } from "react";
+import { z } from "zod";
+import { format } from "date-fns";
+import { useForm } from "react-hook-form";
+import { CalendarIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-/** ---------------------------------------------------------------------------------------------------------------------------------------------- */
-export type IForm = {
-  apellidoPaterno: string;
-  apellidoMaterno: string;
-  nombres: string;
-  sexo: string;
-  edad: number;
-  dni: string;
-  nAutogenerado: string;
-  licenciaConducir: string;
-  grupoSanguineo: string;
-  fechaIngreso: string;
-  unidadEstructurada: string;
-  fechaNacimiento: string;
-  nacionalidad: string;
-  domicilio: string;
-  interiorUrbanizacion: string;
-  telefono: string;
-  celular: string;
-  email: string;
-  regimenPensionario: string;
-  nombreAfp: string;
-  situacionLaboral: string;
-  estadoCivil: string;
-  discapacidad: boolean;
-  departamento: string; // ubigeo
-  provincia: string; // ubigeo
-  distrito: string; // ubigeo
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Calendar } from "@/components/ui/calendar";
+import { personalSchema } from "@/lib/schemas/personal.schema";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
-  cargo: string;
-  dependenciaOficina: string;
-};
-const Form = () => {
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<IForm>({
-    resolver: zodResolver(personalDataSchema),
-  });
+const FormPersonalData = () => {
+  const [edad, setEdad] = useState<number>(0); // Para almacenar la edad
+  const [fechaNacimiento, setFechaNacimiento] = useState<Date | null>(null); // Para almacenar la fecha de nacimiento seleccionada
 
-  const [edad, setEdad] = useState<number | null>(null);
+  const calcularEdad = (fechaNac: Date | null) => {
+    if (!fechaNac) return;
 
-  const calculateAge = (birthDate: string) => {
-    const birthDateObj = new Date(birthDate);
-    const today = new Date();
-
-    if (birthDateObj > today) {
-      setEdad(0);
-      return;
+    const hoy = new Date();
+    const edadCalculada = hoy.getFullYear() - fechaNac.getFullYear();
+    const mes = hoy.getMonth() - fechaNac.getMonth();
+    // Si el mes actual es menor que el mes de nacimiento o si es el mismo mes pero el día actual es anterior
+    if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNac.getDate())) {
+      setEdad(edadCalculada - 1);
+    } else {
+      setEdad(edadCalculada);
     }
-
-    let edad = today.getFullYear() - birthDateObj.getFullYear();
-    const month = today.getMonth() - birthDateObj.getMonth();
-
-    if (month < 0 || (month === 0 && today.getDate() < birthDateObj.getDate())) edad -= 1;
-
-    setEdad(edad < 0 ? 0 : edad);
   };
 
   useEffect(() => {
-    if (edad !== null) setValue("edad", edad);
-  }, [edad, setValue]);
+    // Calcular edad cuando la fecha de nacimiento cambie
+    calcularEdad(fechaNacimiento);
+  }, [fechaNacimiento]);
 
-  const onSubmit: SubmitHandler<IForm> = (data) => console.log(data);
+  const form = useForm<z.infer<typeof personalSchema>>({
+    resolver: zodResolver(personalSchema),
+    defaultValues: {
+      ubigeo: {
+        departamento: "AYACUCHO",
+        provincia: "HUAMANGA",
+        distrito: "HUAMANGA",
+      },
+      cargo: {
+        nombre: "",
+      },
+      dependencia: {
+        nombre: "",
+        direccion: "",
+        codigo: "",
+      },
+      dni: "",
+      nAutogenerado: "",
+      licenciaConducir: "",
+      edad,
+    },
+  });
+  console.log(edad);
 
-  const today = new Date().toISOString().split("T")[0];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onSubmit = (data: any) => console.log(data);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="font-inter">
-      <div className="flex flex-row items-center gap-2">
-        <div className="flex flex-col font-poppins">
-          <label htmlFor="nombres" className="block mb-2 pl-1 font-medium text-text-primary">
-            Nombres
-          </label>
-          <input
-            id="nombres"
-            {...register("nombres", { required: "Este campo es obligatorio" })}
-            placeholder="Ingrese sus nombres"
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
+    <div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="nacionalidad"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nacionalidad</FormLabel>
+                <FormControl>
+                  <Input placeholder="Nacionalidad" {...field} type="text" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.nombres?.message}</span>
-        </div>
 
-        <div className="flex flex-col font-poppins">
-          <label htmlFor="apellidoPaterno" className="block mb-2 pl-1 font-medium text-text-primary">
-            Apellido Paterno
-          </label>
-          <input
-            id="apellidoPaterno"
-            {...register("apellidoPaterno", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-          />
-          <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.apellidoPaterno?.message}</span>
-        </div>
+          <div className="flex flex-col">
+            <p className="font-inter font-semibold">Lugar de nacimiento</p>
+            <div className="gap-2 grid grid-cols-3">
+              <FormField
+                control={form.control}
+                name="ubigeo.departamento"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Departamento</FormLabel>
+                    <FormControl>
+                      <Input placeholder="AYACUCHO" {...field} type="text" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="ubigeo.provincia"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Provincia</FormLabel>
+                    <FormControl>
+                      <Input placeholder="HUAMANGA" {...field} type="text" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="ubigeo.distrito"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Distrito</FormLabel>
+                    <FormControl>
+                      <Input placeholder="AYACUCHO" {...field} type="text" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
 
-        <div className="flex flex-col font-poppins">
-          <label htmlFor="apellidoMaterno" className="block mb-2 pl-1 font-medium text-text-primary">
-            Apellido Materno
-          </label>
-          <input
-            id="apellidoMaterno"
-            {...register("apellidoMaterno", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-          />
-          <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.apellidoMaterno?.message}</span>
-        </div>
-      </div>
+          <div className="gap-2 grid grid-cols-2">
+            <FormField
+              control={form.control}
+              name="domicilio"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Domicilio</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Domicilio" {...field} type="text" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="interiorUrbanizacion"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Interior - Urbanizacion</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Interior - urbanizacion" {...field} type="text" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-      <div className="flex flex-row items-center gap-2 w-full">
-        <div className="flex flex-col w-1/2 font-poppins">
-          <label htmlFor="sexo" className="block mb-2 font-medium text-text-primary">
-            Sexo
-          </label>
-          <select
-            id="sexo"
-            {...register("sexo", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-          >
-            <option value="">Seleccione el sexo</option>
-            <option value="M">Masculino</option>
-            <option value="F">Femenino</option>
-          </select>
-          <span className="font-montserrat font-semibold text-[#d20f39] text-sm">{errors.sexo?.message}</span>
-        </div>
+          <FormField
+            control={form.control}
+            name="cargo.nombre"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Cargo</FormLabel>
+                <FormControl>
+                  <Input placeholder="ASISTENTE VIRTUAL" {...field} type="text" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <div className="flex flex-col w-1/2 font-poppins">
-          <label htmlFor="grupoSanguineo" className="block mb-2 font-medium text-text-primary">
-            Grupo sanguíneo
-          </label>
-          <input
-            id="grupoSanguineo"
-            {...register("grupoSanguineo", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-          />
-          {errors.grupoSanguineo && <p>{errors.grupoSanguineo.message}</p>}
-        </div>
+          <div className="flex flex-col">
+            <p className="font-inter font-semibold">Dependencia</p>
+            <div className="gap-2 grid grid-cols-3">
+              <FormField
+                control={form.control}
+                name="dependencia.nombre"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nombre</FormLabel>
+                    <FormControl>
+                      <Input placeholder="nombre de la dependencia" {...field} type="text" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="dependencia.direccion"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Direccion</FormLabel>
+                    <FormControl>
+                      <Input placeholder="direccion de la dependencia" {...field} type="text" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="dependencia.codigo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Codigo</FormLabel>
+                    <FormControl>
+                      <Input placeholder="codigo de la dependencia" {...field} type="text" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
 
-        <div className="flex flex-col font-poppins">
-          <label htmlFor="edad" className="block mb-2 font-medium text-text-primary">
-            Edad
-          </label>
-          <input
-            id="edad"
-            type="number"
-            value={edad || 0}
-            {...register("edad", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-          />
-          {errors.edad && <p>{errors.edad.message}</p>}
-        </div>
-      </div>
+          <div className="gap-2 grid grid-cols-2">
+            <FormField
+              control={form.control}
+              name="dni"
+              render={({ field }) => (
+                <FormItem className="">
+                  <FormLabel>DNI</FormLabel>
+                  <FormControl>
+                    <Input placeholder="12345678" {...field} type="text" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="sexo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Sexo</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccione su sexo" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="M">Masculino</SelectItem>
+                      <SelectItem value="F">Femenino</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-      <div className="flex flex-col font-poppins">
-        <label htmlFor="dni" className="block mb-2 font-medium text-text-primary">
-          DNI / Carnet de extranjería
-        </label>
-        <input
-          id="dni"
-          {...register("dni", { required: "Este campo es obligatorio" })}
-          className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-        />
-        {errors.dni && <p>{errors.dni.message}</p>}
-      </div>
+          <FormField
+            control={form.control}
+            name="nAutogenerado"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>N Autogenerado</FormLabel>
+                <FormControl>
+                  <Input placeholder="numero autogenerado" {...field} type="text" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-      <div className="flex flex-row items-center gap-2 w-full">
-        <div className="flex flex-col w-1/2 font-poppins">
-          <label htmlFor="nAutogenerado" className="block mb-2 font-medium text-text-primary">
-            N° de Autogenerado
-          </label>
-          <input
-            id="nAutogenerado"
-            {...register("nAutogenerado", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
+          <FormField
+            control={form.control}
+            name="licenciaConducir"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Licencia de conducir</FormLabel>
+                <FormControl>
+                  <Input placeholder="licencia de conducir" {...field} type="text" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          {errors.nAutogenerado && <p>{errors.nAutogenerado.message}</p>}
-        </div>
 
-        <div className="flex flex-col w-full font-poppins">
-          <label htmlFor="licenciaConducir" className="block mb-2 font-medium text-text-primary">
-            Licencia de conducir
-          </label>
-          <input
-            id="licenciaConducir"
-            {...register("licenciaConducir", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
+          <FormField
+            control={form.control}
+            name="grupoSanguineo"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Grupo saguineo</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccione una opcion" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="A_POSITIVO">A+</SelectItem>
+                    <SelectItem value="A_NEGATIVO">A-</SelectItem>
+                    <SelectItem value="B_POSITIVO">B+</SelectItem>
+                    <SelectItem value="B_NEGATIVO">B-</SelectItem>
+                    <SelectItem value="AB_POSITIVO">AB+</SelectItem>
+                    <SelectItem value="AB_NEGATIVO">AB-</SelectItem>
+                    <SelectItem value="O_POSITIVO">O+</SelectItem>
+                    <SelectItem value="O_NEGATIVO">O-</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          {errors.licenciaConducir && <p>{errors.licenciaConducir.message}</p>}
-        </div>
-      </div>
 
-      <div className="flex flex-col font-poppins">
-        <label htmlFor="fechaIngreso" className="block mb-2 font-medium text-text-primary">
-          Fecha de ingreso
-        </label>
-        <input
-          id="fechaIngreso"
-          type="date"
-          {...register("fechaIngreso", { required: "Este campo es obligatorio" })}
-          className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-        />
-        {errors.fechaIngreso && <p>{errors.fechaIngreso.message}</p>}
-      </div>
+          <div className="gap-2 grid grid-cols-2">
+            <FormField
+              control={form.control}
+              name="fechaNacimiento"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Fecha de nacimiento</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(" pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
+                          onClick={() => setEdad(18)} // Esto no es necesario si ya calculas la edad automáticamente
+                        >
+                          {field.value ? format(field.value, "PPP") : <span>Seleccione la fecha</span>}
+                          <CalendarIcon className="opacity-50 ml-auto w-4 h-4" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="p-0 w-auto" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={(date) => {
+                          field.onChange(date); // Actualiza el valor del campo
+                          setFechaNacimiento(date); // Actualiza el estado de la fecha de nacimiento
+                        }}
+                        disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="fechaIngreso"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Fecha de ingreso</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button variant={"outline"} className={cn(" pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
+                          {field.value ? format(field.value, "PPP") : <span>Seleccione la fecha</span>}
+                          <CalendarIcon className="opacity-50 ml-auto w-4 h-4" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="p-0 w-auto" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-      <div className="flex flex-col font-poppins">
-        <label htmlFor="unidadEstructurada" className="block mb-2 font-medium text-text-primary">
-          Unidad estructurada
-        </label>
-        <input
-          id="unidadEstructurada"
-          {...register("unidadEstructurada", { required: "Este campo es obligatorio" })}
-          className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-        />
-        {errors.unidadEstructurada && <p>{errors.unidadEstructurada.message}</p>}
-      </div>
+          <FormField
+            control={form.control}
+            name="unidadEstructurada"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Unidad estructurada</FormLabel>
+                <FormControl>
+                  <Input placeholder="feha de ingreso" {...field} type="text" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-      <div className="flex flex-row items-center gap-2 w-full">
-        <div className="flex flex-col w-1/2 font-poppins">
-          <label htmlFor="dependenciaOficina" className="block mb-2 font-medium text-text-primary capitalize">
-            dependencia/oficina
-          </label>
-          <input
-            id="dependenciaOficina"
-            {...register("dependenciaOficina", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-          />
-          {errors.dependenciaOficina && <p>{errors.dependenciaOficina.message}</p>}
-        </div>
+          <div className="gap-2 grid grid-cols-2">
+            <FormField
+              control={form.control}
+              name="celular"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Celular</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Celular" {...field} type="text" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="telefono"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Telefono</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Telefono" {...field} type="text" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-        <div className="flex flex-col w-1/2 font-poppins">
-          <label htmlFor="cargo" className="block mb-2 font-medium text-text-primary capitalize">
-            cargo
-          </label>
-          <input
-            id="cargo"
-            {...register("cargo", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
+          <FormField
+            control={form.control}
+            name="regimenPensionario"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Régimen pensionario</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccione su régimen pensionario" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="L. N° 29903">L. N° 29903</SelectItem>
+                    <SelectItem value="D. L. N° 19990">D. L. N° 19990</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          {errors.cargo && <p>{errors.cargo.message}</p>}
-        </div>
-      </div>
 
-      <div className="flex flex-row items-center gap-2 w-ful">
-        <div className="flex flex-col w-1/2 font-poppins">
-          <label htmlFor="nacionalidad" className="block mb-2 font-medium text-text-primary capitalize">
-            nacionalidad
-          </label>
-          <input
-            id="nacionalidad"
-            {...register("nacionalidad", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
+          <FormField
+            control={form.control}
+            name="nombreAfp"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nombre AFP</FormLabel>
+                <FormControl>
+                  <Input placeholder="nombre AFP" {...field} type="text" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          {errors.nacionalidad && <p>{errors.nacionalidad.message}</p>}
-        </div>
 
-        <div className="flex flex-col w-1/2 font-poppins">
-          <label htmlFor="fechaNacimiento" className="block mb-2 font-medium text-text-primary capitalize">
-            fecha de nacimiento
-          </label>
-          <input
-            id="fechaNacimiento"
-            type="date"
-            {...register("fechaNacimiento", { required: "Este campo es obligatorio" })}
-            onChange={(e) => calculateAge(e.target.value)}
-            max={today}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
+          <FormField
+            control={form.control}
+            name="situacionLaboral"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Régimen pensionario</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccione su situación laboral" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Nombrado-D-L. 276">Nombrado-D-L. 276</SelectItem>
+                    <SelectItem value="Contratado plaza vacante">Contratado plaza vacante</SelectItem>
+                    <SelectItem value="Contratado ley 30057">Contratado ley 30057</SelectItem>
+                    <SelectItem value="Contratado CAS-Indeterminado">Contratado CAS-Indeterminado</SelectItem>
+                    <SelectItem value="Contratado en CAS-Temporal D.L. 1057">Contratado en CAS-Temporal D.L. 1057</SelectItem>
+                    <SelectItem value="Contratado en proyecto de inversión">Contratado en proyecto de inversión</SelectItem>
+                    <SelectItem value="Practicantes preprofesionales-D.L. 1404">Practicantes preprofesionales-D.L. 1404</SelectItem>
+                    <SelectItem value="Practicante profesional-D.L. 1004">Practicante profesional-D.L. 1004</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          {errors.fechaNacimiento && <p>{errors.fechaNacimiento.message}</p>}
-        </div>
-      </div>
 
-      <div className="flex flex-row items-center gap-2 w-full">
-        <div className="flex flex-col w-1/3 font-poppins">
-          <label htmlFor="departamento" className="block mb-2 font-medium text-text-primary capitalize">
-            departamento
-          </label>
-          <input
-            id="departamento"
-            {...register("departamento", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
+          <FormField
+            control={form.control}
+            name="estadoCivil"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Estado civil</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Estado civil" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="S">Soltero</SelectItem>
+                    <SelectItem value="C">Casado</SelectItem>
+                    <SelectItem value="V">Viudo</SelectItem>
+                    <SelectItem value="D">Divorciado</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-          {errors.departamento && <p>{errors.departamento.message}</p>}
-        </div>
-        <div className="flex flex-col w-1/3 font-poppins">
-          <label htmlFor="provincia" className="block mb-2 font-medium text-text-primary capitalize">
-            provincia
-          </label>
-          <input
-            id="provincia"
-            {...register("provincia", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-          />
-          {errors.provincia && <p>{errors.provincia.message}</p>}
-        </div>
-        <div className="flex flex-col w-1/3 font-poppins">
-          <label htmlFor="distrito" className="block mb-2 font-medium text-text-primary capitalize">
-            distrito
-          </label>
-          <input
-            id="distrito"
-            {...register("distrito", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-          />
-          {errors.distrito && <p>{errors.distrito.message}</p>}
-        </div>
-      </div>
 
-      <div className="flex flex-row items-center gap-2 w-full">
-        <div className="flex flex-col w-1/2 font-poppins">
-          <label htmlFor="domicilio" className="block mb-2 font-medium text-text-primary capitalize">
-            domicilio
-          </label>
-          <input
-            id="domicilio"
-            {...register("domicilio", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
+          <FormField
+            control={form.control}
+            name="discapacidad"
+            render={({ field }) => (
+              <FormItem className="flex flex-row justify-between items-center p-4 border hover:border-[#d20f39] rounded-lg">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base">Discapacidad</FormLabel>
+                  <FormDescription>Presenta algun tipo de discapacidad.</FormDescription>
+                </div>
+                <FormControl>
+                  <Switch checked={field.value} onCheckedChange={field.onChange} className="" />
+                </FormControl>
+              </FormItem>
+            )}
           />
-          {errors.domicilio && <p>{errors.domicilio.message}</p>}
-        </div>
-        <div className="flex flex-col w-1/2 font-poppins">
-          <label htmlFor="interiorUrbanizacion" className="block mb-2 font-medium text-text-primary capitalize">
-            interior urbanizacion
-          </label>
-          <input
-            id="interiorUrbanizacion"
-            {...register("interiorUrbanizacion", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-          />
-          {errors.interiorUrbanizacion && <p>{errors.interiorUrbanizacion.message}</p>}
-        </div>
-      </div>
 
-      <div className="flex flex-row items-center gap-2 w-full">
-        <div className="flex flex-col w-1/2 font-poppins">
-          <label htmlFor="telefono" className="block mb-2 font-medium text-text-primary capitalize">
-            telefono
-          </label>
-          <input
-            id="telefono"
-            {...register("telefono", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-          />
-          {errors.telefono && <p>{errors.telefono.message}</p>}
-        </div>
-        <div className="flex flex-col w-1/2 font-poppins">
-          <label htmlFor="celular" className="block mb-2 font-medium text-text-primary capitalize">
-            celular
-          </label>
-          <input
-            id="celular"
-            {...register("celular", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-          />
-          {errors.celular && <p>{errors.celular.message}</p>}
-        </div>
-      </div>
-
-      <div className="flex flex-col w-full font-poppins">
-        <label htmlFor="email" className="block mb-2 font-medium text-text-primary capitalize">
-          email
-        </label>
-        <input
-          id="email"
-          {...register("email", { required: "Este campo es obligatorio" })}
-          className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-        />
-        {errors.email && <p>{errors.email.message}</p>}
-      </div>
-
-      <div className="flex flex-row items-center gap-2">
-        <div className="flex flex-col w-1/3 font-poppins">
-          <label htmlFor="regimenPensionario" className="block mb-2 font-medium text-text-primary capitalize">
-            regimenPensionario
-          </label>
-          <input
-            id="regimenPensionario"
-            {...register("regimenPensionario", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-          />
-          {errors.regimenPensionario && <p>{errors.regimenPensionario.message}</p>}
-        </div>
-        <div className="flex flex-col w-1/3 font-poppins">
-          <label htmlFor="nombreAfp" className="block mb-2 font-medium text-text-primary capitalize">
-            nombreAfp
-          </label>
-          <input
-            id="nombreAfp"
-            {...register("nombreAfp", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-          />
-          {errors.nombreAfp && <p>{errors.nombreAfp.message}</p>}
-        </div>
-        <div className="flex flex-col w-1/3 font-poppins">
-          <label htmlFor="situacionLaboral" className="block mb-2 font-medium text-text-primary capitalize">
-            situacionLaboral
-          </label>
-          <input
-            id="situacionLaboral"
-            {...register("situacionLaboral", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-          />
-          {errors.situacionLaboral && <p>{errors.situacionLaboral.message}</p>}
-        </div>
-      </div>
-
-      <div className="flex flex-row items-center gap-2 w-full">
-        <div className="flex flex-col w-1/2 font-poppins">
-          <label htmlFor="estadoCivil" className="block mb-2 font-medium text-text-primary capitalize">
-            estadoCivil
-          </label>
-          <input
-            id="estadoCivil"
-            {...register("estadoCivil", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-          />
-          {errors.estadoCivil && <p>{errors.estadoCivil.message}</p>}
-        </div>
-        <div className="flex flex-col w-1/2 font-poppins">
-          <label htmlFor="discapacidad" className="block mb-2 font-medium text-text-primary capitalize">
-            discapacidad
-          </label>
-          <input
-            id="discapacidad"
-            {...register("discapacidad", { required: "Este campo es obligatorio" })}
-            className="bg-transparent mb-5 p-2.5 border border-border-primary rounded-lg focus:outline-none w-full text-sm"
-          />
-          {errors.discapacidad && <p>{errors.discapacidad.message}</p>}
-        </div>
-      </div>
-
-      <div className="flex flex-row justify-end items-center gap-2">
-        <div className="flex flex-row items-center gap-2 bg-[#179299] p-2 rounded-lg">
-          <LuSave className="ml-2" />
-          <button type="submit" className="pr-2">
-            Guardar
-          </button>
-        </div>
-      </div>
-    </form>
+          <div className="flex justify-end">
+            <Button type="submit" className="justify-end bg-[#d20f39] hover:bg-[#e64553]">
+              Guardar
+            </Button>
+          </div>
+        </form>
+      </Form>
+      ;
+    </div>
   );
 };
 
-/** ---------------------------------------------------------------------------------------------------------------------------------------------- */
-
 const page = () => {
   return (
-    <div className="flex flex-col justify-center items-center w-full font-poppins text-[#11111b]">
-      <div className="flex flex-col items-center gap-4 bg-white p-8 rounded-lg w-auto">
-        <h3 className="font-montserrat font-bold text-2xl text-center uppercase">datos personales</h3>
-        <div className="hidden flex-row justify-evenly items-center gap-2">
-          <span className="flex justify-center items-center bg-[#ccd0da] rounded-full w-8 h-8">1</span>
-          <div className="flex-grow bg-[#ccd0da] h-1"></div>
-          <span className="flex justify-center items-center bg-[#ccd0da] rounded-full w-8 h-8">2</span>
-        </div>
-
-        <div className="flex justify-center items-center">
-          <Form />
-        </div>
+    <div className="flex justify-center w-full h-full">
+      <div className="flex flex-col gap-2 w-4/5">
+        <p className="font-inter font-bold text-2xl text-center uppercase">Información Personal</p>
+        <FormPersonalData />
       </div>
     </div>
   );
