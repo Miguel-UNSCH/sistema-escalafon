@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { z } from "zod";
 import { format } from "date-fns";
 import { useForm } from "react-hook-form";
@@ -18,28 +18,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 const FormPersonalData = () => {
-  const [edad, setEdad] = useState<number>(0); // Para almacenar la edad
-  const [fechaNacimiento, setFechaNacimiento] = useState<Date | null>(null); // Para almacenar la fecha de nacimiento seleccionada
-
-  const calcularEdad = (fechaNac: Date | null) => {
-    if (!fechaNac) return;
-
-    const hoy = new Date();
-    const edadCalculada = hoy.getFullYear() - fechaNac.getFullYear();
-    const mes = hoy.getMonth() - fechaNac.getMonth();
-    // Si el mes actual es menor que el mes de nacimiento o si es el mismo mes pero el día actual es anterior
-    if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNac.getDate())) {
-      setEdad(edadCalculada - 1);
-    } else {
-      setEdad(edadCalculada);
-    }
-  };
-
-  useEffect(() => {
-    // Calcular edad cuando la fecha de nacimiento cambie
-    calcularEdad(fechaNacimiento);
-  }, [fechaNacimiento]);
-
   const form = useForm<z.infer<typeof personalSchema>>({
     resolver: zodResolver(personalSchema),
     defaultValues: {
@@ -59,10 +37,9 @@ const FormPersonalData = () => {
       dni: "",
       nAutogenerado: "",
       licenciaConducir: "",
-      edad,
+      edad: 18,
     },
   });
-  console.log(edad);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = (data: any) => console.log(data);
@@ -321,11 +298,7 @@ const FormPersonalData = () => {
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={cn(" pl-3 text-left font-normal", !field.value && "text-muted-foreground")}
-                          onClick={() => setEdad(18)} // Esto no es necesario si ya calculas la edad automáticamente
-                        >
+                        <Button variant={"outline"} className={cn(" pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
                           {field.value ? format(field.value, "PPP") : <span>Seleccione la fecha</span>}
                           <CalendarIcon className="opacity-50 ml-auto w-4 h-4" />
                         </Button>
@@ -336,8 +309,7 @@ const FormPersonalData = () => {
                         mode="single"
                         selected={field.value}
                         onSelect={(date) => {
-                          field.onChange(date); // Actualiza el valor del campo
-                          setFechaNacimiento(date); // Actualiza el estado de la fecha de nacimiento
+                          field.onChange(date);
                         }}
                         disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                         initialFocus
