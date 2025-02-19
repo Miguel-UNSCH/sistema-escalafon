@@ -4,21 +4,7 @@ import { FaChevronRight } from "react-icons/fa";
 import { MenuItem } from "@/interfaces/MenuItem";
 import { usePathname } from "next/navigation";
 import { Dot } from "lucide-react";
-
-const SidebarMenuGroup: React.FC<SidebarMenuGroupProps> = ({ title, items, openMenu, setOpenMenu }) => {
-  return (
-    <nav className="mt-4">
-      <h2 className="px-4 font-semibold text-[#4c4f69] text-xs uppercase tracking-wide">{title}</h2>
-      <ul className="space-y-1 mt-2">
-        {items.map((item, idx) => (
-          <SidebarMenuItem key={idx} item={item} openMenu={openMenu} setOpenMenu={setOpenMenu} />
-        ))}
-      </ul>
-    </nav>
-  );
-};
-
-export default SidebarMenuGroup;
+import { useAuth } from "@/hooks/useAuth";
 
 const SidebarMenuItem: React.FC<{
   item: MenuItem;
@@ -102,8 +88,30 @@ const SidebarMenuItem: React.FC<{
   );
 };
 
+const SidebarMenuGroup: React.FC<SidebarMenuGroupProps> = ({ title, adm, items, openMenu, setOpenMenu }) => {
+  const { session } = useAuth();
+
+  const shouldRender = adm === true ? session?.user?.role === "ADMIN" : true;
+
+  if (!shouldRender) return null;
+
+  return (
+    <nav className="mt-4">
+      <h2 className="px-4 font-semibold text-[#4c4f69] text-xs uppercase tracking-wide">{title}</h2>
+      <ul className="space-y-1 mt-2">
+        {items.map((item, idx) => (
+          <SidebarMenuItem key={idx} item={item} openMenu={openMenu} setOpenMenu={setOpenMenu} />
+        ))}
+      </ul>
+    </nav>
+  );
+};
+
+export default SidebarMenuGroup;
+
 interface SidebarMenuGroupProps {
   title: string;
+  adm?: boolean;
   items: MenuItem[];
   openMenu: string | null;
   setOpenMenu: (menu: string | null) => void;

@@ -16,12 +16,14 @@ import {
 
 interface NavigationItems {
   title: string;
+  adm?: boolean;
   menuItem: MenuItem[];
 }
 
 export const navigationItems: NavigationItems[] = [
   {
     title: "inicio",
+    adm: true,
     menuItem: [
       {
         label: "dashboard",
@@ -34,6 +36,7 @@ export const navigationItems: NavigationItems[] = [
   },
   {
     title: "gestión de usuarios",
+    adm: true,
     menuItem: [
       { label: "crear usuario", icon: <UserRoundPlus size={16} />, path: "/dashboard/user/create" },
       { label: "editar usuario", icon: <UsersRound size={16} />, path: "/dashboard/user/edit" },
@@ -103,7 +106,7 @@ export const navigationItems: NavigationItems[] = [
     title: "méritos y deméritos",
     menuItem: [
       { label: "méritos", icon: <Trophy size={16} />, path: "/dashboard/merits-demerits/merits" },
-      { label: "deméritos", icon: <Trophy size={16} />, path: "/dashboard/merits-demerits/demerits" },
+      { label: "deméritos", adm: true, icon: <Trophy size={16} />, path: "/dashboard/merits-demerits/demerits" },
     ],
   },
   {
