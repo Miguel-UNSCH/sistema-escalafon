@@ -1,36 +1,5 @@
 import { z } from "zod";
 
-export const personalDataSchema = z.object({
-  apellidoPaterno: z.string().nonempty("apellido paterno es obligatorio"),
-  apellidoMaterno: z.string().nonempty("apellido materno es obligatorio"),
-  nombres: z.string().nonempty("nombres es obligatorio"),
-  sexo: z.enum(["M", "F"]),
-  edad: z.number().int().min(18, "El valor mínimo es 18"),
-  dni: z.string().length(8, "El DNI debe tener 8 dígitos"),
-  nAutogenerado: z.string().nonempty("Este campo es obligatorio"),
-  licenciaConducir: z.string().length(1, "La licencia de conducir debe tener 1 caracter"),
-  grupoSanguineo: z.string().length(2, "El grupo sanguíneo debe tener 2 caracteres"),
-  fechaIngreso: z.date().min(new Date(1900, 0, 1), "La fecha de ingreso no puede ser anterior al 01/01/1900"),
-  unidadEstructurada: z.string().nonempty("Este campo es obligatorio"),
-  fechaNacimiento: z.date().min(new Date(1900, 0, 1), "La fecha de nacimiento no puede ser anterior al 01/01/1900"),
-  nacionalidad: z.string().nonempty("Este campo es obligatorio"),
-  domicilio: z.string().nonempty("Este campo es obligatorio"),
-  interiorUrbanizacion: z.string(),
-  telefono: z.string().length(9, "El teléfono debe tener 9 dígitos"),
-  celular: z.string().length(9, "El celular debe tener 9 dígitos"),
-  email: z.string().email("El email no es válido"),
-  regimenPensionario: z.string().nonempty("Este campo es obligatorio"),
-  nombreAfp: z.string().nonempty("Este campo es obligatorio"),
-  situacionLaboral: z.string().nonempty("Este campo es obligatorio"),
-  estadoCivil: z.string().nonempty("Este campo es obligatorio"),
-  discapacidad: z.boolean(),
-  departamento: z.string(),
-  provincia: z.string(),
-  distrito: z.string(),
-  cargo: z.string().nonempty("Este campo es obligatorio"),
-  dependenciaOficina: z.string().nonempty("Este campo es obligatorio"),
-});
-
 export const capacitacionSchema = z.object({
   centroCapacitacion: z.string().nonempty("Este campo es obligatorio"),
   materia: z.string().nonempty("Este campo es obligatorio"),

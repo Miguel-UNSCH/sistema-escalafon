@@ -40,8 +40,6 @@ const FormRegister = () => {
         setError(null);
         form.reset();
       }
-
-      console.log(response);
     });
   };
 

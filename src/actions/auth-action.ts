@@ -1,18 +1,18 @@
 "use server";
 
-import { signIn } from "@/auth";
-import { prisma } from "@/lib/prisma";
-import { loginSchema, registerSchema } from "@/lib/zod";
-import { AuthError } from "next-auth";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
+import { signIn } from "@/auth";
+import { prisma } from "@/lib/prisma";
+import { AuthError } from "next-auth";
+import { loginSchema, registerSchema } from "@/lib/zod";
 
 export const loginAction = async (values: z.infer<typeof loginSchema>) => {
   try {
     await signIn("credentials", { email: values.email, password: values.password, redirect: false });
 
     return { success: true };
-  } catch (error) {
+  } catch (error: unknown) {
     if (error instanceof AuthError) return { error: error.cause?.err?.message };
 
     return { error: "error 500" };
@@ -28,14 +28,10 @@ export const registerAction = async (values: z.infer<typeof registerSchema>) => 
     if (user) return { error: "email already registered" };
 
     const password = await bcrypt.hash(data.password, 10);
-
     await prisma.user.create({ data: { nombres: data.nombres, apellidos: data.apellidos, email: data.email, password } });
 
-    // await signIn("credentials", { email: data.email, password: data.password, redirect: false }); no se pueden registrar, en las especificaciones no
-
     return { success: true };
-  } catch (error) {
-    console.log(error);
+  } catch (error: unknown) {
     if (error instanceof AuthError) return { error: error.cause?.err?.message };
 
     return { error: "error 500" };

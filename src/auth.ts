@@ -1,23 +1,27 @@
 import NextAuth from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-// import { prisma } from "@/libs/prisma";
-import authConfig from "@/config/auth.config";
 import { prisma } from "@/lib/prisma";
+import authConfig from "@/config/auth.config";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt", maxAge: 4 * 60 * 60 },
   ...authConfig,
   callbacks: {
-    /** jwt() se ejecuta cada vez que se crea o actualia un token JWT, aqui puedes agregar informacion adicional al token */
+    /** jwt() se ejecuta cada vez que se crea o actualiza un token JWT, aquí puedes agregar información adicional al token */
     jwt({ token, user }) {
-      if (user) token.role = user.role; // user is available during sign-in
+      if (user) {
+        token.role = user.role;
+        // if (!user.id) generar un error
+        token.id = user.id || "";
+      }
       return token;
     },
-    /** session() se utiliza para agregar la informacion del token a la session del usuario, lo que hace que este disponible en el cliente */
+    /** session() se utiliza para agregar la información del token a la sesión del usuario, lo que hace que esté disponible en el cliente */
     session({ session, token }) {
       if (session.user) {
-        session.user.role = token.role; // user is available during sign-in
+        session.user.role = token.role;
+        session.user.id = token.id; // Aseguramos que el ID esté disponible en la sesión del cliente
       }
       return session;
     },
