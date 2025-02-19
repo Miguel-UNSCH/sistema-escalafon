@@ -11,6 +11,7 @@ const SidebarMenuItem: React.FC<{
   openMenu: string | null;
   setOpenMenu: (menu: string | null) => void;
 }> = ({ item, openMenu, setOpenMenu }) => {
+  const { session } = useAuth();
   const pathname = usePathname();
   const hasSubmenus = item.submenus && item.submenus.length > 0;
   const isActive = item.path === pathname;
@@ -22,6 +23,10 @@ const SidebarMenuItem: React.FC<{
       setOpenMenu(item.label);
     }
   }, [isSubmenuActive, item.label, setOpenMenu]);
+
+  // Verificar si el usuario tiene acceso según el rol
+  const shouldRender = item.adm === true ? session?.user?.role === "ADMIN" : true;
+  if (!shouldRender) return null;
 
   const toggleSubmenu = () => {
     setOpenMenu(isOpen ? null : item.label);
