@@ -103,18 +103,18 @@ export const POST = async (request: NextRequest) => {
         },
       });
     }
+    console.log(validatedPersonal);
 
     const personal = await prisma.personal.create({
       data: {
         sexo: validatedPersonal.sexo,
-        edad: validatedPersonal.edad,
         dni: validatedPersonal.dni,
         nAutogenerado: validatedPersonal.nAutogenerado,
         licenciaConducir: validatedPersonal.licenciaConducir,
         grupoSanguineo: validatedPersonal.grupoSanguineo,
         fechaIngreso: validatedPersonal.fechaIngreso,
-        unidadEstructurada: validatedPersonal.unidadEstructurada,
         fechaNacimiento: validatedPersonal.fechaNacimiento,
+        unidadEstructurada: validatedPersonal.unidadEstructurada,
         nacionalidad: validatedPersonal.nacionalidad,
         domicilio: validatedPersonal.domicilio,
         interiorUrbanizacion: validatedPersonal.interiorUrbanizacion,

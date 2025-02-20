@@ -20,4 +20,4 @@ export const hijoSchema = z.object({
   ubigeo: UbigeoSchema,
 });
 
-export type Hijo = z.infer<typeof hijoSchema>;
+export type ZHijo = z.infer<typeof hijoSchema>;

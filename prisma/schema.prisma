@@ -162,7 +162,6 @@ model Cargo {
 model Personal {
   id                   Int            @id @default(autoincrement())
   sexo                 Sexo
-  edad                 Int
   dni                  String         @unique
   nAutogenerado        String
   licenciaConducir     String?
@@ -220,11 +219,11 @@ model Conyuge {
   userId String @unique
 
   fechaNacimiento  DateTime
-  gradoInstruccion String
+  gradoInstruccion String //opcional
   profesion        String?
-  ocupacion        String?
-  centroTrabajo    String?
-  postgrado        String?
+  ocupacion        String? // deberia eliminarlo
+  centroTrabajo    String? // deberia eliminarlo
+  postgrado        String? // deberia eliminarlo
   status           Status    @default(ENABLED)
   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   personal         Personal?
