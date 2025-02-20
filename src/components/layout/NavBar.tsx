@@ -1,7 +1,6 @@
 import { RiSearch2Line } from "react-icons/ri";
 import { AlignJustify, Bell } from "lucide-react";
 import { ThemeToggle } from "../theme-toogle";
-import { useAuth } from "@/hooks/useAuth";
 import UserCard from "../cards/UserCard";
 
 interface NavbarProps {
@@ -11,7 +10,6 @@ interface NavbarProps {
 }
 
 const Navbar = ({ isSidebarOpen, isMobile, onMenuClick }: NavbarProps) => {
-  const { session } = useAuth();
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-30 py-4 px-8 flex items-center justify-between bg-bg-primary/80 backdrop-blur-md transition-all duration-300 ease-in-out ${
@@ -46,7 +44,6 @@ const Navbar = ({ isSidebarOpen, isMobile, onMenuClick }: NavbarProps) => {
         <div className="hover:bg-[#ccd0da] p-2 rounded-full">
           <Bell size={26} className="rounded-full text-[#d20f39]" />
         </div>
-        {session?.user?.id && <p>{session?.user?.id}</p>}
         <UserCard />
       </div>
     </nav>

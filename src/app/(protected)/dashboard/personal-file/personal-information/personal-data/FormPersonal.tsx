@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/hooks/useAuth";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
@@ -13,10 +12,12 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { personalSchema, ZPersonal } from "@/lib/schemas/personal.schema";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 
 export const PersonalForm = () => {
-  const { session } = useAuth();
-  console.log(session);
+  const { data: session, status } = useSession(); // ✅ Obtiene la sesión
+  console.log("Estado de sesión:", status, session);
   const form = useForm<ZPersonal>({
     resolver: zodResolver(personalSchema),
     defaultValues: {
@@ -55,10 +56,17 @@ export const PersonalForm = () => {
     },
   });
 
+  // ✅ Asignar userId una vez que la sesión esté disponible
+  useEffect(() => {
+    if (session?.user?.id) {
+      form.setValue("userId", session.user.id);
+    }
+  }, [session, form.setValue, form]);
+
   const onSubmit = (data: ZPersonal) => {
     const transformedData = {
       ...data,
-      userId: session?.user?.id,
+      userId: "chnage-id",
       fechaIngreso: data.fechaIngreso ? new Date(data.fechaIngreso).toISOString() : null,
       fechaNacimiento: data.fechaNacimiento ? new Date(data.fechaNacimiento).toISOString() : null,
     };

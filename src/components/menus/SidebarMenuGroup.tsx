@@ -3,12 +3,12 @@ import Link from "next/link";
 import { Dot } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { FaChevronRight } from "react-icons/fa";
+import { useSession } from "next-auth/react"; // ✅ Importamos useSession
 
 import { MenuItem } from "@/interfaces/MenuItem";
-import { useAuth } from "@/hooks/useAuth";
 
 const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item, openMenu, setOpenMenu }) => {
-  const { session } = useAuth();
+  const { data: session, status } = useSession(); // ✅ Obtiene la sesión y el estado
   const pathname = usePathname();
   const hasSubmenus = item.submenus && item.submenus.length > 0;
   const isActive = item.path === pathname;
@@ -19,6 +19,12 @@ const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item, openMenu, setOp
     if (isSubmenuActive) setOpenMenu(item.label);
   }, [isSubmenuActive, item.label, setOpenMenu]);
 
+  // ✅ Mostrar loading mientras se carga la sesión
+  if (status === "loading") {
+    return <p className="px-6 py-2 text-gray-500 text-sm">Cargando menú...</p>;
+  }
+
+  // ✅ Validación para ADMIN si el item requiere permisos
   const shouldRender = item.adm === true ? session?.user?.role === "ADMIN" : true;
   if (!shouldRender) return null;
 
@@ -71,10 +77,8 @@ const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item, openMenu, setOp
       ) : (
         <Link
           href={item.path || "#"}
-          className={`
-            flex items-center justify-between px-6 py-4 font-medium text-sm rounded-lg
-            ${isActive ? "bg-[#e64553] bg-opacity-20 text-[#d20f39]" : "text-[#5c5f77] hover:text-[#e64553]"}
-          `}
+          className={`flex items-center justify-between px-6 py-4 font-medium text-sm rounded-lg
+            ${isActive ? "bg-[#e64553] bg-opacity-20 text-[#d20f39]" : "text-[#5c5f77] hover:text-[#e64553]"}`}
         >
           <div className="flex items-center gap-4 overflow-hidden">
             {item.icon && <span>{item.icon}</span>}
@@ -94,10 +98,15 @@ interface SidebarMenuItemProps {
 }
 
 const SidebarMenuGroup: React.FC<SidebarMenuGroupProps> = ({ title, adm, items, openMenu, setOpenMenu }) => {
-  const { session } = useAuth();
+  const { data: session, status } = useSession(); // ✅ Reemplazo de useAuth
 
+  // ✅ Esperar carga de sesión antes de mostrar
+  if (status === "loading") {
+    return <p className="px-6 py-2 text-gray-500 text-sm">Cargando menú...</p>;
+  }
+
+  // ✅ Control de acceso basado en el rol
   const shouldRender = adm === true ? session?.user?.role === "ADMIN" : true;
-
   if (!shouldRender) return null;
 
   return (

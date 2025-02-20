@@ -12,8 +12,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     jwt({ token, user }) {
       if (user) {
         token.role = user.role;
-        // if (!user.id) generar un error
-        token.id = user.id || "";
+        if (!user.id) {
+          throw new Error("User ID is missing");
+        }
+        token.id = user.id;
       }
       return token;
     },
