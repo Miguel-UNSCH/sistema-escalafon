@@ -1,16 +1,13 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
-import { FaChevronRight } from "react-icons/fa";
-import { MenuItem } from "@/interfaces/MenuItem";
-import { usePathname } from "next/navigation";
 import { Dot } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { FaChevronRight } from "react-icons/fa";
+
+import { MenuItem } from "@/interfaces/MenuItem";
 import { useAuth } from "@/hooks/useAuth";
 
-const SidebarMenuItem: React.FC<{
-  item: MenuItem;
-  openMenu: string | null;
-  setOpenMenu: (menu: string | null) => void;
-}> = ({ item, openMenu, setOpenMenu }) => {
+const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item, openMenu, setOpenMenu }) => {
   const { session } = useAuth();
   const pathname = usePathname();
   const hasSubmenus = item.submenus && item.submenus.length > 0;
@@ -19,12 +16,9 @@ const SidebarMenuItem: React.FC<{
   const isOpen = openMenu === item.label;
 
   useEffect(() => {
-    if (isSubmenuActive) {
-      setOpenMenu(item.label);
-    }
+    if (isSubmenuActive) setOpenMenu(item.label);
   }, [isSubmenuActive, item.label, setOpenMenu]);
 
-  // Verificar si el usuario tiene acceso según el rol
   const shouldRender = item.adm === true ? session?.user?.role === "ADMIN" : true;
   if (!shouldRender) return null;
 
@@ -92,6 +86,12 @@ const SidebarMenuItem: React.FC<{
     </li>
   );
 };
+
+interface SidebarMenuItemProps {
+  item: MenuItem;
+  openMenu: string | null;
+  setOpenMenu: (menu: string | null) => void;
+}
 
 const SidebarMenuGroup: React.FC<SidebarMenuGroupProps> = ({ title, adm, items, openMenu, setOpenMenu }) => {
   const { session } = useAuth();
