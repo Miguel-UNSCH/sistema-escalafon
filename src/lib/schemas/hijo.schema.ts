@@ -1,11 +1,6 @@
 import { z } from "zod";
 import { UbigeoSchema } from "./ubigeo.schema";
-
-// Enum para Status (según el modelo proporcionado, debería estar en tu código también)
-enum Status {
-  ENABLED = "ENABLED",
-  DISABLED = "DISABLED",
-}
+import { Status } from "../zod";
 
 export const hijoSchema = z.object({
   nombres: z.string(),
@@ -19,7 +14,7 @@ export const hijoSchema = z.object({
   fechaNacimiento: z.string(),
   edad: z.number().int().min(0, "La edad no puede ser negativa"),
   gradoInstruccion: z.string().min(1, "El grado de instrucción es obligatorio"),
-  status: z.enum([Status.ENABLED, Status.DISABLED]).default(Status.ENABLED), // Asumimos que el valor por defecto es 'ENABLED'
+  status: Status.optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
   ubigeo: UbigeoSchema,

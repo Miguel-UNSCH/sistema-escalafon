@@ -74,13 +74,30 @@ export const columns: ColumnDef<IPersonal>[] = [
   },
 ];
 
-export function TableData({ data }: TableDataProps) {
+const campos = {
+  dni: "dni",
+  user_nombres: "nombres",
+  user_apellidos: "apellidos",
+  user_email: "email",
+  cargo_nombre: "cargo",
+  dependencia_nombre: "dependencia",
+  situacionLaboral: "situacion laboral",
+  nAutogenerado: "n° autogenerado",
+  celular: "celular",
+  regimenPensionario: "regimen pensionario",
+};
+
+export const TableData = ({ data }: TableDataProps) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
+    situacionLaboral: false,
+    nAutogenerado: false,
+    celular: false,
+    regimenPensionario: false,
+  });
   const [rowSelection, setRowSelection] = React.useState({});
-  const [globalFilter, setGlobalFilter] = React.useState(""); // Nuevo estado para búsqueda
-
+  const [globalFilter, setGlobalFilter] = React.useState("");
   const table = useReactTable({
     data,
     columns,
@@ -105,7 +122,6 @@ export function TableData({ data }: TableDataProps) {
       return dni.includes(filterValue.toLowerCase()) || nombres.includes(filterValue.toLowerCase()) || apellidos.includes(filterValue.toLowerCase());
     },
   });
-
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
@@ -135,7 +151,7 @@ export function TableData({ data }: TableDataProps) {
                   checked={column.getIsVisible()}
                   onCheckedChange={(value) => column.toggleVisibility(!!value)}
                 >
-                  {column.id}
+                  {campos[`${column.id}`]}
                 </DropdownMenuCheckboxItem>
               ))}
           </DropdownMenuContent>
@@ -188,7 +204,7 @@ export function TableData({ data }: TableDataProps) {
       </div>
     </div>
   );
-}
+};
 
 interface TableDataProps {
   data: IPersonal[];

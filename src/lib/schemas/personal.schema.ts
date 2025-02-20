@@ -33,4 +33,4 @@ export const personalSchema = object({
   cargo: cargoSchema,
 });
 
-export type Personal = z.infer<typeof personalSchema>;
+export type ZPersonal = z.infer<typeof personalSchema>;

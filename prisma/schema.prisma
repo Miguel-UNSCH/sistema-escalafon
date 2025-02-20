@@ -167,9 +167,9 @@ model Personal {
   nAutogenerado        String
   licenciaConducir     String?
   grupoSanguineo       GrupoSanguineo
-  fechaIngreso         String
+  fechaIngreso         DateTime
   unidadEstructurada   String
-  fechaNacimiento      String
+  fechaNacimiento      DateTime
   nacionalidad         String
   domicilio            String
   interiorUrbanizacion String?
