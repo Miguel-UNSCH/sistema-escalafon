@@ -1,129 +1,30 @@
-import React from "react";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { Input } from "../ui/input";
 
-import { IInputBasicFields, IInputDateFields, IInputFileLabels } from "@/types/input";
-import { IStudiesTraining } from "@/utils/personal-file";
-import { Control, Controller } from "react-hook-form";
-
-/** ---------------------------------------------------------------------------------------------------------------------------------------------- */
-export interface IInputDateProps {
-  control: Control<IStudiesTraining>;
-  fields: IInputDateFields[];
+interface TextFieldProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  control: any;
+  name: string;
+  label: string;
+  placeholder?: string;
+  disabled?: boolean;
+  type?: string;
 }
 
-export const InputDate: React.FC<IInputDateProps> = ({ control, fields }) => {
+export const TextField = ({ control, name, label, placeholder, disabled = false, type = "text" }: TextFieldProps) => {
   return (
-    <div className={`grid gap-4 md:grid-cols-${fields.length}`}>
-      {fields.map((i) => (
-        <div key={i.name}>
-          <label htmlFor={i.name} className="block mb-2 font-medium text-text-primary">
-            {i.label}
-          </label>
-          <div className="flex flex-row items-center mb-5 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
-            {/* From Date Picker */}
-            <Controller
-              name={`${i.name}Start` as keyof IStudiesTraining}
-              control={control}
-              render={({ field }) => (
-                <input
-                  {...field}
-                  type="date"
-                  id={`${i.name}-from`}
-                  className="bg-transparent p-2.5 focus:outline-none focus:border-transparent border-none focus:ring-0 w-full text-sm"
-                  required={i.required}
-                />
-              )}
-            />
-            <span className="px-2 text-text-primary">-</span>
-            {/* To Date Picker */}
-            <Controller
-              name={`${i.name}End` as keyof IStudiesTraining}
-              control={control}
-              render={({ field }) => (
-                <input
-                  {...field}
-                  type="date"
-                  id={`${i.name}-to`}
-                  className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm"
-                  required={i.required}
-                />
-              )}
-            />
-          </div>
-        </div>
-      ))}
-    </div>
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>{label}</FormLabel>
+          <FormControl>
+            <Input placeholder={placeholder} {...field} type={type} disabled={disabled} />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 };
-
-/** ---------------------------------------------------------------------------------------------------------------------------------------------- */
-interface IInputFileProps {
-  control: Control<IStudiesTraining>;
-  fields: IInputFileLabels[];
-}
-
-export const InputFile: React.FC<IInputFileProps> = ({ control, fields }) => {
-  return (
-    <div className={`grid gap-4 md:grid-cols-${fields.length}`}>
-      {fields.map((i) => (
-        <div key={i.name} className="flex flex-col">
-          <label htmlFor={i.name} className="block mb-2 font-medium text-text-primary">
-            {i.label}
-          </label>
-          <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
-            {i?.icon}
-            <Controller
-              name={i.name as keyof IStudiesTraining}
-              control={control}
-              render={({ field }) => (
-                <input
-                  {...field}
-                  type="file"
-                  id={i.name}
-                  className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
-                  accept=".jpg,.png,.pdf"
-                  required={i?.required}
-                />
-              )}
-            />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-/** ---------------------------------------------------------------------------------------------------------------------------------------------- */
-
-interface IBasicInputProps {
-  control: Control<IStudiesTraining>;
-  fields: IInputBasicFields[];
-}
-
-export const BasicInput: React.FC<IBasicInputProps> = ({ control, fields }) => (
-  <div className={`grid gap-4 md:grid-cols-${fields.length}`}>
-    {fields.map((i) => (
-      <div key={i.name} className="flex flex-col">
-        <label htmlFor={i.name} className="block mb-2 font-medium text-text-primary">
-          {i.label}
-        </label>
-        <div className="flex flex-row items-center mb-5 pl-2 border border-border-primary focus-within:border-border-focus rounded-lg transition-colors">
-          {i?.icon}
-          <Controller
-            name={i.name as keyof IStudiesTraining}
-            control={control}
-            defaultValue={i.defaultValue || ""}
-            render={({ field }) => (
-              <input
-                {...field}
-                id={i.name}
-                className="bg-transparent p-2.5 focus:border-transparent border-none focus:outline-none focus:ring-0 w-full text-sm outline-none"
-                placeholder={i.placeholder}
-                required={i?.required}
-              />
-            )}
-          />
-        </div>
-      </div>
-    ))}
-  </div>
-);

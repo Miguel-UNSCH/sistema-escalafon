@@ -1,27 +1,59 @@
-import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { CalendarIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Calendar } from "@/components/ui/calendar";
 import { personalSchema, ZPersonal } from "@/lib/schemas/personal.schema";
 import { createPersonal, getCurrentPersonal } from "@/services/personalService";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { TextField } from "@/components/forms/InputTypes";
+import { SelectField } from "@/components/forms/SelectTypes";
+import { DatePicker } from "@/components/forms/DateTypes";
 
 export const PersonalForm = () => {
   const { data: session } = useSession();
   const [loading, setLoading] = useState<boolean>(true);
   const [isCompleteFromDB, setIsCompleteFromDB] = useState(false);
-  const [error, setError] = useState<string | null>(null); // Estado para errores
+  const [error, setError] = useState<string | null>(null);
+
+  const estadoCivilOptions = [
+    { key: "S", value: "Soltero" },
+    { key: "C", value: "Casado" },
+    { key: "V", value: "Viudo" },
+    { key: "D", value: "Divorciado" },
+  ];
+
+  const grupoSanguineoOptions = [
+    { key: "A_POSITIVO", value: "A+" },
+    { key: "A_NEGATIVO", value: "A-" },
+    { key: "B_POSITIVO", value: "B+" },
+    { key: "B_NEGATIVO", value: "B-" },
+    { key: "AB_POSITIVO", value: "AB+" },
+    { key: "AB_NEGATIVO", value: "AB-" },
+    { key: "O_POSITIVO", value: "O+" },
+    { key: "O_NEGATIVO", value: "O-" },
+  ];
+
+  const sexoOptions = [
+    { key: "F", value: "Femenino" },
+    { key: "M", value: "Masculino" },
+  ];
+
+  const situacionLaboralOptions = [
+    { key: "Nombrado-D-L. 276", value: "Nombrado-D-L. 276" },
+    { key: "Contratado plaza vacante", value: "Contratado plaza vacante" },
+    { key: "Contratado ley 30057", value: "Contratado ley 30057" },
+    { key: "Contratado CAS-Indeterminado", value: "Contratado CAS-Indeterminado" },
+    { key: "Contratado en CAS-Temporal D.L. 1057", value: "Contratado en CAS-Temporal D.L. 1057" },
+    { key: "Contratado en proyecto de inversión", value: "Contratado en proyecto de inversión" },
+    { key: "Practicantes preprofesionales-D.L. 1404", value: "Practicantes preprofesionales-D.L. 1404" },
+    { key: "Practicante profesional-D.L. 1004", value: "Practicante profesional-D.L. 1004" },
+  ];
 
   const form = useForm<ZPersonal>({
     resolver: zodResolver(personalSchema),
@@ -67,7 +99,7 @@ export const PersonalForm = () => {
           } else {
             setIsCompleteFromDB(false);
           }
-          setError(null); // Limpiar error si la petición fue exitosa
+          setError(null);
         } catch (err) {
           console.error("Error obteniendo datos personales:", err);
           setError("No se pudo obtener la información personal. Inténtalo más tarde.");
@@ -104,19 +136,7 @@ export const PersonalForm = () => {
         </Alert>
       )}
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
-        <FormField
-          control={form.control}
-          name="nacionalidad"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nacionalidad *</FormLabel>
-              <FormControl>
-                <Input placeholder="Nacionalidad" {...field} type="text" disabled={isCompleteFromDB} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <TextField control={form.control} name="nacionalidad" label="Nacionalidad *" placeholder="Nacionalidad" disabled={isCompleteFromDB} />
 
         <div className="flex flex-col">
           <p className="font-inter font-semibold">Lugar de nacimiento</p>
@@ -128,12 +148,13 @@ export const PersonalForm = () => {
                 <FormItem>
                   <FormLabel>Departamento *</FormLabel>
                   <FormControl>
-                    <Input placeholder="AYACUCHO" {...field} type="text" disabled={isCompleteFromDB} />
+                    <Input placeholder="Ingrese nombre del departamento" {...field} type="text" disabled={isCompleteFromDB} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="ubigeo.provincia"
@@ -141,12 +162,13 @@ export const PersonalForm = () => {
                 <FormItem>
                   <FormLabel>Provincia *</FormLabel>
                   <FormControl>
-                    <Input placeholder="HUAMANGA" {...field} type="text" disabled={isCompleteFromDB} />
+                    <Input placeholder="Ingrese nombre dela provincia" {...field} type="text" disabled={isCompleteFromDB} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="ubigeo.distrito"
@@ -154,7 +176,7 @@ export const PersonalForm = () => {
                 <FormItem>
                   <FormLabel>Distrito *</FormLabel>
                   <FormControl>
-                    <Input placeholder="AYACUCHO" {...field} type="text" disabled={isCompleteFromDB} />
+                    <Input placeholder="Ingrese nombre del distrito" {...field} type="text" disabled={isCompleteFromDB} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -164,32 +186,8 @@ export const PersonalForm = () => {
         </div>
 
         <div className="gap-2 grid grid-cols-2">
-          <FormField
-            control={form.control}
-            name="domicilio"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Domicilio *</FormLabel>
-                <FormControl>
-                  <Input placeholder="Domicilio" {...field} type="text" disabled={isCompleteFromDB} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="interiorUrbanizacion"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Interior - Urbanizacion</FormLabel>
-                <FormControl>
-                  <Input placeholder="Interior - urbanizacion" {...field} type="text" disabled={isCompleteFromDB} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <TextField control={form.control} name="domicilio" label="Domicilio *" placeholder="Domicilio" disabled={isCompleteFromDB} />
+          <TextField control={form.control} name="interiorUrbanizacion" label="Interior - Urbanizacion" placeholder="Interior - Urbanizacion" disabled={isCompleteFromDB} />
         </div>
 
         <FormField
@@ -199,7 +197,7 @@ export const PersonalForm = () => {
             <FormItem>
               <FormLabel>Cargo *</FormLabel>
               <FormControl>
-                <Input placeholder="ASISTENTE VIRTUAL" {...field} type="text" disabled={isCompleteFromDB} />
+                <Input placeholder="cargo actual" {...field} type="text" disabled={isCompleteFromDB} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -222,6 +220,7 @@ export const PersonalForm = () => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="dependencia.direccion"
@@ -235,6 +234,7 @@ export const PersonalForm = () => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="dependencia.codigo"
@@ -252,202 +252,27 @@ export const PersonalForm = () => {
         </div>
 
         <div className="gap-2 grid grid-cols-2">
-          <FormField
-            control={form.control}
-            name="dni"
-            render={({ field }) => (
-              <FormItem className="">
-                <FormLabel>DNI *</FormLabel>
-                <FormControl>
-                  <Input placeholder="12345678" {...field} type="text" disabled={isCompleteFromDB} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="sexo"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Sexo *</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isCompleteFromDB}>
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Seleccione su sexo" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="M">Masculino</SelectItem>
-                    <SelectItem value="F">Femenino</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <TextField control={form.control} name="dni" label="dni *" placeholder="Telefono" disabled={isCompleteFromDB} />
+          <SelectField control={form.control} name="sexo" label="Sexo *" placeholder="Seleccione su sexo" options={sexoOptions} disabled={isCompleteFromDB} />
         </div>
 
         <div className="gap-2 grid grid-cols-2">
-          <FormField
-            control={form.control}
-            name="nAutogenerado"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>N Autogenerado *</FormLabel>
-                <FormControl>
-                  <Input placeholder="numero autogenerado" {...field} type="text" disabled={isCompleteFromDB} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="licenciaConducir"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Licencia de conducir</FormLabel>
-                <FormControl>
-                  <Input placeholder="licencia de conducir" {...field} type="text" disabled={isCompleteFromDB} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <TextField control={form.control} name="nAutogenerado" label="N Autogenerado *" placeholder="numero autogenerado" disabled={isCompleteFromDB} />
+          <TextField control={form.control} name="licenciaConducir" label="Licencia de conducir" placeholder="Licencia de conducir" disabled={isCompleteFromDB} />
         </div>
 
-        <FormField
-          control={form.control}
-          name="grupoSanguineo"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Grupo saguineo *</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isCompleteFromDB}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccione una opcion" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="A_POSITIVO">A+</SelectItem>
-                  <SelectItem value="A_NEGATIVO">A-</SelectItem>
-                  <SelectItem value="B_POSITIVO">B+</SelectItem>
-                  <SelectItem value="B_NEGATIVO">B-</SelectItem>
-                  <SelectItem value="AB_POSITIVO">AB+</SelectItem>
-                  <SelectItem value="AB_NEGATIVO">AB-</SelectItem>
-                  <SelectItem value="O_POSITIVO">O+</SelectItem>
-                  <SelectItem value="O_NEGATIVO">O-</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <SelectField control={form.control} name="grupoSanguineo" label="Grupo sanguíneo *" options={grupoSanguineoOptions} disabled={isCompleteFromDB} />
 
         <div className="gap-2 grid grid-cols-2">
-          <FormField
-            control={form.control}
-            name="fechaNacimiento"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Fecha de nacimiento *</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button variant={"outline"} className={cn("pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
-                        {field.value ? format(new Date(field.value), "PPP") : <span>Seleccione la fecha</span>}
-                        <CalendarIcon className="opacity-50 ml-auto w-4 h-4" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="p-0 w-auto" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value ? field.value : undefined}
-                      onSelect={(date) => field.onChange(date ? date.toISOString() : "")}
-                      disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="fechaIngreso"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Fecha de ingreso *</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button variant={"outline"} className={cn("pl-3 text-left font-normal", !field.value && "text-muted-foreground")}>
-                        {field.value ? format(new Date(field.value), "PPP") : <span>Seleccione la fecha</span>}
-                        <CalendarIcon className="opacity-50 ml-auto w-4 h-4" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="p-0 w-auto" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value ? field.value : undefined}
-                      onSelect={(date) => field.onChange(date ? date.toISOString() : "")}
-                      disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <DatePicker control={form.control} name="fechaNacimiento" label="Fecha de nacimiento" disabled={isCompleteFromDB} />
+          <DatePicker control={form.control} name="fechaIngreso" label="Fecha de ingreso" disabled={isCompleteFromDB} />
         </div>
 
-        <FormField
-          control={form.control}
-          name="unidadEstructurada"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Unidad estructurada *</FormLabel>
-              <FormControl>
-                <Input placeholder="Unidad estructurada" {...field} type="text" disabled={isCompleteFromDB} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <TextField control={form.control} name="unidadEstructurada" label="Unidad estructurada *" placeholder="Unidad estructurada" disabled={isCompleteFromDB} />
 
         <div className="gap-2 grid grid-cols-2">
-          <FormField
-            control={form.control}
-            name="celular"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Celular *</FormLabel>
-                <FormControl>
-                  <Input placeholder="Celular" {...field} type="text" disabled={isCompleteFromDB} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="telefono"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Telefono</FormLabel>
-                <FormControl>
-                  <Input placeholder="Telefono" {...field} type="text" disabled={isCompleteFromDB} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <TextField control={form.control} name="celular" label="Celular *" placeholder="Celular" disabled={isCompleteFromDB} />
+          <TextField control={form.control} name="telefono" label="Telefono" placeholder="Telefono" disabled={isCompleteFromDB} />
         </div>
 
         <FormField
@@ -472,71 +297,11 @@ export const PersonalForm = () => {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="nombreAfp"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nombre AFP *</FormLabel>
-              <FormControl>
-                <Input placeholder="nombre AFP" {...field} type="text" disabled={isCompleteFromDB} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <TextField control={form.control} name="nombreAfp" label="Nombre AFP *" placeholder="nombre AFP" disabled={isCompleteFromDB} />
 
-        <FormField
-          control={form.control}
-          name="situacionLaboral"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Situacion Laboral *</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isCompleteFromDB}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccione su situación laboral" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="Nombrado-D-L. 276">Nombrado-D-L. 276</SelectItem>
-                  <SelectItem value="Contratado plaza vacante">Contratado plaza vacante</SelectItem>
-                  <SelectItem value="Contratado ley 30057">Contratado ley 30057</SelectItem>
-                  <SelectItem value="Contratado CAS-Indeterminado">Contratado CAS-Indeterminado</SelectItem>
-                  <SelectItem value="Contratado en CAS-Temporal D.L. 1057">Contratado en CAS-Temporal D.L. 1057</SelectItem>
-                  <SelectItem value="Contratado en proyecto de inversión">Contratado en proyecto de inversión</SelectItem>
-                  <SelectItem value="Practicantes preprofesionales-D.L. 1404">Practicantes preprofesionales-D.L. 1404</SelectItem>
-                  <SelectItem value="Practicante profesional-D.L. 1004">Practicante profesional-D.L. 1004</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <SelectField control={form.control} name="situacionLaboral" label="Situación Laboral *" options={situacionLaboralOptions} disabled={isCompleteFromDB} />
 
-        <FormField
-          control={form.control}
-          name="estadoCivil"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Estado civil *</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isCompleteFromDB}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Estado civil" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="S">Soltero</SelectItem>
-                  <SelectItem value="C">Casado</SelectItem>
-                  <SelectItem value="V">Viudo</SelectItem>
-                  <SelectItem value="D">Divorciado</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <SelectField control={form.control} name="estadoCivil" label="Estado civil *" options={estadoCivilOptions} disabled={isCompleteFromDB} />
 
         <FormField
           control={form.control}
