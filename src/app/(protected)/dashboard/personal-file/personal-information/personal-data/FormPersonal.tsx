@@ -15,11 +15,13 @@ import { createPersonal, getCurrentPersonal } from "@/services/personalService";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export const PersonalForm = () => {
   const { data: session } = useSession();
   const [loading, setLoading] = useState<boolean>(true);
   const [isCompleteFromDB, setIsCompleteFromDB] = useState(false);
+  const [error, setError] = useState<string | null>(null); // Estado para errores
 
   const form = useForm<ZPersonal>({
     resolver: zodResolver(personalSchema),
@@ -62,9 +64,13 @@ export const PersonalForm = () => {
           if (personalData) {
             form.reset(personalData);
             setIsCompleteFromDB(true);
-          } else setIsCompleteFromDB(false);
-        } catch (error) {
-          console.error("Error obteniendo datos personales:", error);
+          } else {
+            setIsCompleteFromDB(false);
+          }
+          setError(null); // Limpiar error si la petición fue exitosa
+        } catch (err) {
+          console.error("Error obteniendo datos personales:", err);
+          setError("No se pudo obtener la información personal. Inténtalo más tarde.");
           setIsCompleteFromDB(false);
         } finally {
           setLoading(false);
@@ -78,10 +84,12 @@ export const PersonalForm = () => {
   const onSubmit = async (data: ZPersonal) => {
     try {
       await createPersonal(data);
-      setIsCompleteFromDB(true);
       console.log("Datos enviados correctamente");
-    } catch (error) {
-      console.error("Error enviando los datos:", error);
+      setIsCompleteFromDB(true);
+      setError(null);
+    } catch (err) {
+      console.error("Error enviando los datos:", err);
+      setError("Hubo un problema al guardar los datos. Verifica la información.");
     }
   };
 
@@ -89,6 +97,12 @@ export const PersonalForm = () => {
 
   return (
     <Form {...form}>
+      {error && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
         <FormField
           control={form.control}
@@ -114,7 +128,7 @@ export const PersonalForm = () => {
                 <FormItem>
                   <FormLabel>Departamento *</FormLabel>
                   <FormControl>
-                    <Input placeholder="AYACUCHO" {...field} type="text" />
+                    <Input placeholder="AYACUCHO" {...field} type="text" disabled={isCompleteFromDB} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -127,7 +141,7 @@ export const PersonalForm = () => {
                 <FormItem>
                   <FormLabel>Provincia *</FormLabel>
                   <FormControl>
-                    <Input placeholder="HUAMANGA" {...field} type="text" />
+                    <Input placeholder="HUAMANGA" {...field} type="text" disabled={isCompleteFromDB} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -140,7 +154,7 @@ export const PersonalForm = () => {
                 <FormItem>
                   <FormLabel>Distrito *</FormLabel>
                   <FormControl>
-                    <Input placeholder="AYACUCHO" {...field} type="text" />
+                    <Input placeholder="AYACUCHO" {...field} type="text" disabled={isCompleteFromDB} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -157,7 +171,7 @@ export const PersonalForm = () => {
               <FormItem>
                 <FormLabel>Domicilio *</FormLabel>
                 <FormControl>
-                  <Input placeholder="Domicilio" {...field} type="text" />
+                  <Input placeholder="Domicilio" {...field} type="text" disabled={isCompleteFromDB} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -170,7 +184,7 @@ export const PersonalForm = () => {
               <FormItem>
                 <FormLabel>Interior - Urbanizacion</FormLabel>
                 <FormControl>
-                  <Input placeholder="Interior - urbanizacion" {...field} type="text" />
+                  <Input placeholder="Interior - urbanizacion" {...field} type="text" disabled={isCompleteFromDB} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -185,7 +199,7 @@ export const PersonalForm = () => {
             <FormItem>
               <FormLabel>Cargo *</FormLabel>
               <FormControl>
-                <Input placeholder="ASISTENTE VIRTUAL" {...field} type="text" />
+                <Input placeholder="ASISTENTE VIRTUAL" {...field} type="text" disabled={isCompleteFromDB} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -202,7 +216,7 @@ export const PersonalForm = () => {
                 <FormItem>
                   <FormLabel>Nombre *</FormLabel>
                   <FormControl>
-                    <Input placeholder="nombre de la dependencia" {...field} type="text" />
+                    <Input placeholder="nombre de la dependencia" {...field} type="text" disabled={isCompleteFromDB} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -215,7 +229,7 @@ export const PersonalForm = () => {
                 <FormItem>
                   <FormLabel>Direccion</FormLabel>
                   <FormControl>
-                    <Input placeholder="direccion de la dependencia" {...field} type="text" />
+                    <Input placeholder="direccion de la dependencia" {...field} type="text" disabled={isCompleteFromDB} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -228,7 +242,7 @@ export const PersonalForm = () => {
                 <FormItem>
                   <FormLabel>Codigo</FormLabel>
                   <FormControl>
-                    <Input placeholder="codigo de la dependencia" {...field} type="text" />
+                    <Input placeholder="codigo de la dependencia" {...field} type="text" disabled={isCompleteFromDB} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -245,7 +259,7 @@ export const PersonalForm = () => {
               <FormItem className="">
                 <FormLabel>DNI *</FormLabel>
                 <FormControl>
-                  <Input placeholder="12345678" {...field} type="text" />
+                  <Input placeholder="12345678" {...field} type="text" disabled={isCompleteFromDB} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -257,7 +271,7 @@ export const PersonalForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Sexo *</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isCompleteFromDB}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Seleccione su sexo" />
@@ -282,7 +296,7 @@ export const PersonalForm = () => {
               <FormItem>
                 <FormLabel>N Autogenerado *</FormLabel>
                 <FormControl>
-                  <Input placeholder="numero autogenerado" {...field} type="text" />
+                  <Input placeholder="numero autogenerado" {...field} type="text" disabled={isCompleteFromDB} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -295,7 +309,7 @@ export const PersonalForm = () => {
               <FormItem>
                 <FormLabel>Licencia de conducir</FormLabel>
                 <FormControl>
-                  <Input placeholder="licencia de conducir" {...field} type="text" />
+                  <Input placeholder="licencia de conducir" {...field} type="text" disabled={isCompleteFromDB} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -309,7 +323,7 @@ export const PersonalForm = () => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Grupo saguineo *</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isCompleteFromDB}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccione una opcion" />
@@ -400,7 +414,7 @@ export const PersonalForm = () => {
             <FormItem>
               <FormLabel>Unidad estructurada *</FormLabel>
               <FormControl>
-                <Input placeholder="Unidad estructurada" {...field} type="text" />
+                <Input placeholder="Unidad estructurada" {...field} type="text" disabled={isCompleteFromDB} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -415,7 +429,7 @@ export const PersonalForm = () => {
               <FormItem>
                 <FormLabel>Celular *</FormLabel>
                 <FormControl>
-                  <Input placeholder="Celular" {...field} type="text" />
+                  <Input placeholder="Celular" {...field} type="text" disabled={isCompleteFromDB} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -428,7 +442,7 @@ export const PersonalForm = () => {
               <FormItem>
                 <FormLabel>Telefono</FormLabel>
                 <FormControl>
-                  <Input placeholder="Telefono" {...field} type="text" />
+                  <Input placeholder="Telefono" {...field} type="text" disabled={isCompleteFromDB} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -442,7 +456,7 @@ export const PersonalForm = () => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Régimen pensionario *</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isCompleteFromDB}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccione su régimen pensionario" />
@@ -465,7 +479,7 @@ export const PersonalForm = () => {
             <FormItem>
               <FormLabel>Nombre AFP *</FormLabel>
               <FormControl>
-                <Input placeholder="nombre AFP" {...field} type="text" />
+                <Input placeholder="nombre AFP" {...field} type="text" disabled={isCompleteFromDB} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -478,7 +492,7 @@ export const PersonalForm = () => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Situacion Laboral *</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isCompleteFromDB}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccione su situación laboral" />
@@ -506,7 +520,7 @@ export const PersonalForm = () => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Estado civil *</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isCompleteFromDB}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Estado civil" />
@@ -534,7 +548,7 @@ export const PersonalForm = () => {
                 <FormDescription>Presenta algun tipo de discapacidad.</FormDescription>
               </div>
               <FormControl>
-                <Switch checked={field.value} onCheckedChange={field.onChange} className="" />
+                <Switch checked={field.value} onCheckedChange={field.onChange} className="" disabled={isCompleteFromDB} />
               </FormControl>
             </FormItem>
           )}
