@@ -1,5 +1,4 @@
 import { useState } from "react";
-// import UserInfo from "../cards/UserInfo";
 import SidebarMenuGroup from "../menus/SidebarMenuGroup";
 import { navigationItems } from "@/utils/navigation-items";
 import Link from "next/link";
@@ -31,7 +30,6 @@ export default function Sidebar({ isOpen, isMobile }: SidebarProps) {
               <Image src={logo} alt="Logo Gobierno Regional" className="" width={200} height={100} priority />
             </Link>
           </div>
-          {/* <UserInfo /> */}
 
           <div className={`pr-2 h-full overflow-y-auto`}>
             {navigationItems.map((group, idx) => (

@@ -1,9 +1,10 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
+
 import FormLogin from "@/components/form-login";
 import { ThemeToggle } from "@/components/theme-toogle";
-import Image from "next/image";
 import logoLight from "@/assets/logos/inicio_claro.png";
 
 const Page = () => {

@@ -1,23 +1,26 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-
-import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
-import { Switch } from "@/components/ui/switch";
-import { personalSchema, ZPersonal } from "@/lib/schemas/personal.schema";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { CalendarIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Calendar } from "@/components/ui/calendar";
+import { personalSchema, ZPersonal } from "@/lib/schemas/personal.schema";
+import { createPersonal, getCurrentPersonal } from "@/services/personalService";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 export const PersonalForm = () => {
-  const { data: session, status } = useSession(); // ✅ Obtiene la sesión
-  console.log("Estado de sesión:", status, session);
+  const { data: session } = useSession();
+  const [loading, setLoading] = useState<boolean>(true);
+  const [isCompleteFromDB, setIsCompleteFromDB] = useState(false);
+
   const form = useForm<ZPersonal>({
     resolver: zodResolver(personalSchema),
     defaultValues: {
@@ -30,14 +33,8 @@ export const PersonalForm = () => {
       },
       domicilio: "",
       interiorUrbanizacion: "",
-      cargo: {
-        nombre: "",
-      },
-      dependencia: {
-        nombre: "",
-        direccion: "",
-        codigo: "",
-      },
+      cargo: { nombre: "" },
+      dependencia: { nombre: "", direccion: "", codigo: "" },
       sexo: undefined,
       dni: "",
       nAutogenerado: "",
@@ -56,27 +53,43 @@ export const PersonalForm = () => {
     },
   });
 
-  // ✅ Asignar userId una vez que la sesión esté disponible
   useEffect(() => {
-    if (session?.user?.id) {
-      form.setValue("userId", session.user.id);
-    }
-  }, [session, form.setValue, form]);
-
-  const onSubmit = (data: ZPersonal) => {
-    const transformedData = {
-      ...data,
-      userId: "chnage-id",
-      fechaIngreso: data.fechaIngreso ? new Date(data.fechaIngreso).toISOString() : null,
-      fechaNacimiento: data.fechaNacimiento ? new Date(data.fechaNacimiento).toISOString() : null,
+    const fetchPersonalData = async () => {
+      if (session?.user?.id) {
+        form.setValue("userId", session.user.id);
+        try {
+          const personalData = await getCurrentPersonal(session.user.id);
+          if (personalData) {
+            form.reset(personalData);
+            setIsCompleteFromDB(true);
+          } else setIsCompleteFromDB(false);
+        } catch (error) {
+          console.error("Error obteniendo datos personales:", error);
+          setIsCompleteFromDB(false);
+        } finally {
+          setLoading(false);
+        }
+      }
     };
 
-    console.log("Datos transformados antes de enviar:", transformedData);
+    fetchPersonalData();
+  }, [session, form]);
+
+  const onSubmit = async (data: ZPersonal) => {
+    try {
+      await createPersonal(data);
+      setIsCompleteFromDB(true);
+      console.log("Datos enviados correctamente");
+    } catch (error) {
+      console.error("Error enviando los datos:", error);
+    }
   };
+
+  if (loading) return <p>Cargando datos...</p>;
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
         <FormField
           control={form.control}
           name="nacionalidad"
@@ -84,7 +97,7 @@ export const PersonalForm = () => {
             <FormItem>
               <FormLabel>Nacionalidad *</FormLabel>
               <FormControl>
-                <Input placeholder="Nacionalidad" {...field} type="text" />
+                <Input placeholder="Nacionalidad" {...field} type="text" disabled={isCompleteFromDB} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -464,7 +477,7 @@ export const PersonalForm = () => {
           name="situacionLaboral"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Régimen pensionario *</FormLabel>
+              <FormLabel>Situacion Laboral *</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
@@ -528,9 +541,11 @@ export const PersonalForm = () => {
         />
 
         <div className="flex justify-end">
-          <Button type="submit" onClick={() => console.log(form)} className="justify-end bg-[#d20f39] hover:bg-[#e64553]">
-            Guardar
-          </Button>
+          {!isCompleteFromDB && (
+            <Button type="submit" onClick={() => console.log(form)} className="justify-end bg-[#d20f39] hover:bg-[#e64553]">
+              Guardar
+            </Button>
+          )}
         </div>
       </form>
     </Form>

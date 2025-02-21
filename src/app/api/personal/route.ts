@@ -1,8 +1,9 @@
+import { NextRequest, NextResponse } from "next/server";
+
 import { prisma } from "@/lib/prisma";
 import { personalSchema } from "@/lib/schemas/personal.schema";
 import { CustomError, handleError } from "@/middleware/errorHandler";
 import { BadRequestError, NotFoundError } from "@/utils/customErrors";
-import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (r: NextRequest) => {
   try {
@@ -15,9 +16,29 @@ export const GET = async (r: NextRequest) => {
     const sCivil = searchParams.get("estadoCivil");
     const nombres = searchParams.get("nombres");
     const apellidos = searchParams.get("apellidos");
+    const userId = searchParams.get("userId");
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = {};
+
+    if (userId) where.userId = userId;
+    if (userId) {
+      const currentPersonal = await prisma.personal.findUnique({
+        where: { userId },
+        include: {
+          dependencia: true,
+          cargo: true,
+          user: true,
+        },
+      });
+      if (!currentPersonal) throw NotFoundError("Personal no encontrado");
+      if (!currentPersonal.user.ubigeoId) throw NotFoundError("Usuario no encontrado");
+      const ubigeo = await prisma.ubigeo.findUnique({ where: { id: currentPersonal.user.ubigeoId } });
+      if (!ubigeo) throw NotFoundError("Ubigeo no encontrado");
+
+      const data = { ...currentPersonal, ubigeo };
+      return NextResponse.json(data, { status: 200 });
+    }
 
     if (sexo) where.sexo = sexo;
     if (edad) where.edad = parseInt(edad, 10);
@@ -36,24 +57,6 @@ export const GET = async (r: NextRequest) => {
         user: true,
         dependencia: true,
         cargo: true,
-        discapacidades: true,
-        hijos: true,
-        estudios: true,
-        capacitaciones: true,
-        experiencias: true,
-        contratos: true,
-        renuncias: true,
-        desplazamientos: true,
-        descansos: true,
-        permisos: true,
-        ascensos: true,
-        bonificacionesPersonales: true,
-        bonificacionesFamiliares: true,
-        evaluaciones: true,
-        meritos: true,
-        demeritos: true,
-        actasCreadas: true,
-        actasRecibidas: true,
       },
     });
 
@@ -103,7 +106,6 @@ export const POST = async (request: NextRequest) => {
         },
       });
     }
-    console.log(validatedPersonal);
 
     const personal = await prisma.personal.create({
       data: {
