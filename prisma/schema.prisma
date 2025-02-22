@@ -14,9 +14,8 @@ datasource db {
 }
 
 enum Role {
-  ADMIN // para el administrador
-  PERSONAL // para todos los personales
-  OTHER // para cpnyuge - hijo
+  ADMIN
+  PERSONAL
 }
 
 enum Status {
@@ -76,25 +75,6 @@ enum TipoPermisoLicenciaVacacion {
   PERMISO_FAMILIAR
 }
 
-model User {
-  id        String  @id @default(cuid())
-  nombres   String
-  apellidos String
-  role      Role    @default(PERSONAL)
-  email     String? @unique
-  password  String?
-  ubigeoId  Int?
-  status    Status  @default(ENABLED)
-
-  ubigeo   Ubigeo?   @relation(fields: [ubigeoId], references: [id])
-  personal Personal? // Relación 1:1 con Personal
-  hijo     Hijo? // Relación 1:1 con Hijo
-  conyuge  Conyuge? // Relación 1:1 con Conyuge
-
-  updatedAt DateTime @updatedAt
-  createdAt DateTime @default(now())
-}
-
 model Ubigeo {
   id           Int    @id @default(autoincrement())
   inei         String @unique
@@ -102,32 +82,33 @@ model Ubigeo {
   departamento String
   provincia    String
   distrito     String
-  status       Status @default(ENABLED)
+
+  user    User[]
+  hijo    Hijo[]
+  Conyuge Conyuge[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User[] // Relación 1:N con usuarios
 }
 
 model Dependencia {
   id        Int     @id @default(autoincrement())
   nombre    String  @unique
-  direccion String? // Dirección de la dependencia
-  codigo    String? @unique // Código identificador opcional
-  status    Status  @default(ENABLED)
+  direccion String?
+  codigo    String? @unique
 
   personal                 Personal[]
-  experienciasLaborales    ExperienciaLaboral[] // Relación 1:N con ExperienciaLaboral
+  experienciasLaborales    ExperienciaLaboral[]
   contratos                Contrato[]
   renuncias                Renuncia[]
   descansos                DescansoMedico[]
   permisos                 PermisoLicenciaVacacion[]
   bonificacionesPersonales BonificacionPersonal[]
   bonificacionesFamiliares BonificacionFamiliar[]
-  ascensos                 Ascenso[]                 @relation("DependenciasAscenso") // Relación N:M con Ascenso
+  ascensos                 Ascenso[]                 @relation("DependenciasAscenso")
   meritos                  Merito[]
   demeritos                Demerito[]
-  desplazamientos          Desplazamiento[]          @relation("DependenciasDesplazamiento") // Relación N:M con Desplazamiento
+  desplazamientos          Desplazamiento[]          @relation("DependenciasDesplazamiento")
 
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
@@ -138,7 +119,6 @@ model Dependencia {
 model Cargo {
   id     Int    @id @default(autoincrement())
   nombre String @unique
-  status Status @default(ENABLED)
 
   personal                 Personal[]
   experienciaLaborales     ExperienciaLaboral[]
@@ -152,8 +132,25 @@ model Cargo {
   meritos                  Merito[]
   demeritos                Demerito[]
   actasEntrega             ActaEntrega[]
-  ascensos                 Ascenso[]                 @relation("CargosAscenso") // Relación N:M con Ascenso
-  desplazamientos          Desplazamiento[]          @relation("CargosDesplazamiento") // Relación N:M con Desplazamiento
+  ascensos                 Ascenso[]                 @relation("CargosAscenso")
+  desplazamientos          Desplazamiento[]          @relation("CargosDesplazamiento")
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model User {
+  id        String  @id @default(cuid())
+  nombres   String
+  apellidos String
+  role      Role    @default(PERSONAL)
+  email     String? @unique
+  password  String?
+  ubigeoId  Int?
+  status    Status  @default(ENABLED)
+
+  ubigeo   Ubigeo?   @relation(fields: [ubigeoId], references: [id])
+  personal Personal?
 
   updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
@@ -187,62 +184,62 @@ model Personal {
   userId        String @unique
 
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  conyuge     Conyuge?    @relation(fields: [conyugeId], references: [id])
   cargo       Cargo       @relation(fields: [cargoId], references: [id], onDelete: Restrict)
   dependencia Dependencia @relation(fields: [dependenciaId], references: [id], onDelete: Restrict)
 
   hijos                    Hijo[]
-  discapacidades           Discapacidad[] // Relación 1:N con Discapacidad
-  estudios                 Estudios[] // Relación 1:N con Estudios
-  capacitaciones           Capacitacion[] // Relación 1:N con Capacitacion
-  experiencias             ExperienciaLaboral[] // Relación 1:N con ExperienciaLaboral
-  contratos                Contrato[] // Relación 1:N con Contrato
-  renuncias                Renuncia[] // Relación 1:N con Renuncia
-  descansos                DescansoMedico[] // Relación 1:N con DescansoMedico
-  permisos                 PermisoLicenciaVacacion[] // Relación 1:N con PermisoLicenciaVacacion
-  bonificacionesPersonales BonificacionPersonal[] // Relación 1:N con BonificacionPersonal
-  bonificacionesFamiliares BonificacionFamiliar[] // Relación 1:N con BonificacionFamiliar
-  evaluaciones             FichaEvaluacion[] // Relación 1:N con FichaEvaluacion
-  meritos                  Merito[] // Relación 1:N con Merito
-  demeritos                Demerito[] // Relación 1:N con Demerito
-  ascensos                 Ascenso[] // Relación 1:N con el modelo Ascenso
-  desplazamientos          Desplazamiento[] // Relación 1:N con el modelo Desplazamiento
-  actasCreadas             ActaEntrega[]             @relation("EntregaPor") // Relación como creador del acta
-  actasRecibidas           ActaEntregaDestinatario[] // Relación como destinatario del acta
+  discapacidades           Discapacidad[]
+  estudios                 Estudios[]
+  capacitaciones           Capacitacion[]
+  experiencias             ExperienciaLaboral[]
+  contratos                Contrato[]
+  renuncias                Renuncia[]
+  descansos                DescansoMedico[]
+  permisos                 PermisoLicenciaVacacion[]
+  bonificacionesPersonales BonificacionPersonal[]
+  bonificacionesFamiliares BonificacionFamiliar[]
+  evaluaciones             FichaEvaluacion[]
+  meritos                  Merito[]
+  demeritos                Demerito[]
+  ascensos                 Ascenso[]
+  desplazamientos          Desplazamiento[]
+  actasCreadas             ActaEntrega[]             @relation("EntregaPor")
+  actasRecibidas           ActaEntregaDestinatario[]
+  conyuge                  Conyuge?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Conyuge {
-  id     Int    @id @default(autoincrement())
-  userId String @unique
-
+  id               Int      @id @default(autoincrement())
+  personalId       Int      @unique
+  ubigeoId         Int
   fechaNacimiento  DateTime
-  gradoInstruccion String //opcional
+  gradoInstruccion String
   profesion        String?
-  ocupacion        String? // deberia eliminarlo
-  centroTrabajo    String? // deberia eliminarlo
-  postgrado        String? // deberia eliminarlo
-  status           Status    @default(ENABLED)
-  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  personal         Personal?
+  postgrado        String?
+  ocupacion        String
+  centroTrabajo    String?
+  status           Status   @default(ENABLED)
+
+  personal Personal @relation(fields: [personalId], references: [id], onDelete: Cascade)
+  ubigeo   Ubigeo   @relation(fields: [ubigeoId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Hijo {
-  id         Int    @id @default(autoincrement())
-  userId     String @unique
-  personalId Int
-
-  fechaNacimiento  String
-  edad             Int
+  id               Int      @id @default(autoincrement())
+  personalId       Int
+  ubigeoId         Int
+  fechaNacimiento  DateTime
   gradoInstruccion String
   status           Status   @default(ENABLED)
-  personal         Personal @relation(fields: [personalId], references: [id], onDelete: Cascade) // Relación 1:N con Personal
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  personal Personal @relation(fields: [personalId], references: [id], onDelete: Cascade)
+  ubigeo   Ubigeo   @relation(fields: [ubigeoId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -253,8 +250,8 @@ model Discapacidad {
   personalId         Int
   tipo               String
   documentoSustento  String
-  organoEstructurado String // idk ???
-  condicionLaboral   String // como? Personal > situacionLaboral
+  organoEstructurado String
+  condicionLaboral   String
   status             Status @default(ENABLED)
 
   personal Personal @relation(fields: [personalId], references: [id], onDelete: Cascade)
@@ -322,8 +319,8 @@ model Contrato {
   resolucionNombramiento String? // Resolución de nombramiento (opcional)
   regimenLaboral         String // Régimen laboral
   nivelRemuneracion      String? // Rango salarial, ejemplo: "1000 - 1500"
-  pap                    String? // Proyecto de Actividades o Producto
-  cnp                    String? // Clasificador Nacional de Puestos
+  pap                    Int          @unique
+  cnp                    Int          @unique
   fechaIngreso           DateTime // Fecha de inicio del contrato
   fechaCese              DateTime? // Fecha de cese (opcional, puede ser null para contratos activos)
   aniosServicio          Int? // Años de servicio acumulados (opcional)
@@ -414,7 +411,7 @@ model Ascenso {
   id                Int    @id @default(autoincrement())
   resolucionAscenso String
   nivelRemunerativo String // "1000 - 1500"
-  pap               String // "anterior - posterior"
+  pap               Int    @unique // "anterior - posterior"
   cnp               String
   personalId        Int
   status            Status @default(ENABLED)
