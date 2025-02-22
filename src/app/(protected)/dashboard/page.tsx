@@ -1,21 +1,155 @@
-import React from "react";
+"use client";
 
-function page() {
+import { TextField } from "@/components/forms/InputTypes";
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { cargoSchema, ZCargo } from "@/lib/schemas/cargo.schema";
+import { createCargo, getCargo } from "@/services/cargoService";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+
+const DataUbigeo = () => {
+  return <div>datos de ubigeo</div>;
+};
+
+const FormUbigeo = () => {
+  return <div>formulario de ubigeo</div>;
+};
+
+const DataDependencia = () => {
+  return <div>datos de dependencia</div>;
+};
+
+const FormDependencia = () => {
+  return <div>formulario de dependencia</div>;
+};
+
+const DataCargo = () => {
+  const [cargos, setCargos] = useState<{ id: number; nombre: string }[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCargos = async () => {
+      setLoading(true);
+      try {
+        const response = await getCargo();
+        if (response?.error) {
+          setError(response.error);
+        } else {
+          setCargos(response);
+        }
+      } catch (err) {
+        setError("Error al obtener los cargos.");
+        console.log(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCargos();
+  }, []);
+
   return (
-    <div className="space-y-10 p-2 h-full">
-      <div className="relative bg-gradient-to-r from-blue-600 to-blue-400 p-6 rounded-lg overflow-hidden">
-        <h2 className="z-10 relative font-bold text-white text-lg">Explore Redesigned Able Pro</h2>
-        <p className="z-10 relative text-white text-sm">
-          The Brand new User Interface with power of Bootstrap Components. Explore the Endless possibilities with Able Pro.
-        </p>
-        <button className="z-10 relative mt-4 px-4 py-2 border border-white rounded-lg text-white">Exclusive on Themeforest</button>
+    <div className="p-4">
+      <h2 className="mb-4 font-bold text-lg">Lista de Cargos</h2>
 
-        {/* Onda de fondo */}
-        <div className="-top-20 -left-20 absolute bg-blue-500 opacity-30 blur-3xl rounded-full w-[300px] h-[300px]"></div>
-        <div className="right-0 -bottom-20 absolute bg-blue-300 opacity-50 blur-3xl rounded-full w-[400px] h-[400px]"></div>
+      {loading ? (
+        <p>crear un spiner</p>
+      ) : error ? (
+        <p className="text-red-500">{error}</p>
+      ) : (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="font-inter font-bold text-base">N</TableHead>
+              <TableHead className="font-inter font-bold text-base">Cargo Estructural</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {cargos.length > 0 ? (
+              cargos.map((cargo) => (
+                <TableRow key={cargo.id}>
+                  <TableCell>{cargo.id}</TableCell>
+                  <TableCell>{cargo.nombre}</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={2} className="text-gray-500 text-center">
+                  No hay cargos registrados.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      )}
+    </div>
+  );
+};
+
+const FormCargo = () => {
+  const form = useForm<ZCargo>({
+    resolver: zodResolver(cargoSchema),
+    defaultValues: {
+      nombre: "",
+    },
+  });
+
+  const onSubmit = async (values: ZCargo) => {
+    const uppercaseNombre = values.nombre.toUpperCase(); // Convertir a mayúsculas
+    const response = await createCargo({ nombre: uppercaseNombre });
+
+    if (response?.error) {
+      console.error("Error al crear el cargo:", response.error);
+    } else {
+      console.log("Cargo creado con éxito:", response);
+      form.reset(); // Limpiar formulario tras éxito
+    }
+  };
+
+  return (
+    <div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-row items-end gap-2">
+          <TextField control={form.control} name="nombre" label="Registrar nuevo cargo" placeholder="Nombre del cargo" disabled={false} />
+
+          <Button type="submit" className="justify-end bg-[#d20f39] hover:bg-[#e64553]">
+            Guardar
+          </Button>
+        </form>
+      </Form>
+    </div>
+  );
+};
+
+const Page = () => {
+  return (
+    <div className="flex justify-center w-full h-full">
+      <div className="flex flex-row gap-4 w-4/5">
+        <div className="w-1/2">
+          <p className="font-inter font-semibold text-lg">Ubigeo</p>
+          <DataUbigeo />
+          <FormUbigeo />
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <div>
+            <p className="font-inter font-semibold text-lg">Dependencia</p>
+            <DataDependencia />
+            <FormDependencia />
+          </div>
+          <div>
+            <p className="font-inter font-semibold text-lg">Cargo</p>
+            <DataCargo />
+            <FormCargo />
+          </div>
+        </div>
       </div>
     </div>
   );
-}
+};
 
-export default page;
+export default Page;
