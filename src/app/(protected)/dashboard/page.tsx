@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
+import { ZDependencia } from "@/lib/schemas/dependencia.schema";
 
 const DataUbigeo = () => {
   return <div>datos de ubigeo</div>;
@@ -23,7 +24,36 @@ const DataDependencia = () => {
 };
 
 const FormDependencia = () => {
-  return <div>formulario de dependencia</div>;
+  const form = useForm<ZDependencia>({
+    resolver: zodResolver(cargoSchema),
+    defaultValues: {
+      nombre: "",
+    },
+  });
+  const onSubmit = async (values: ZDependencia) => {
+    const uppercaseNombre = values.nombre.toUpperCase();
+    const response = await createCargo({ nombre: uppercaseNombre });
+
+    if (response?.error) {
+      console.error("Error al crear el cargo:", response.error);
+    } else {
+      console.log("Cargo creado con éxito:", response);
+      form.reset();
+    }
+  };
+  return (
+    <div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-row items-end gap-2">
+          <TextField control={form.control} name="nombre" label="Registrar nueva dependencia" placeholder="Dependencia / Oficina" disabled={false} />
+
+          <Button type="submit" className="justify-end bg-[#d20f39] hover:bg-[#e64553]">
+            Registrar
+          </Button>
+        </form>
+      </Form>
+    </div>
+  );
 };
 
 const DataCargo = () => {
@@ -59,9 +89,8 @@ const DataCargo = () => {
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : (
-        <div className="shadow-md border rounded-md w-full">
+        <div className="shadow-md border rounded-sm w-full">
           <div className="overflow-hidden">
-            {/* Cabecera fija */}
             <Table className="w-full">
               <TableHeader className="top-0 z-10 sticky bg-gray-200">
                 <TableRow>
@@ -72,7 +101,6 @@ const DataCargo = () => {
             </Table>
           </div>
 
-          {/* Cuerpo scrollable */}
           <div className="max-h-72 overflow-y-auto">
             <Table className="w-full">
               <TableBody>
@@ -108,29 +136,27 @@ const FormCargo = () => {
   });
 
   const onSubmit = async (values: ZCargo) => {
-    const uppercaseNombre = values.nombre.toUpperCase(); // Convertir a mayúsculas
+    const uppercaseNombre = values.nombre.toUpperCase();
     const response = await createCargo({ nombre: uppercaseNombre });
 
     if (response?.error) {
       console.error("Error al crear el cargo:", response.error);
     } else {
       console.log("Cargo creado con éxito:", response);
-      form.reset(); // Limpiar formulario tras éxito
+      form.reset();
     }
   };
 
   return (
-    <div>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-row items-end gap-2">
-          <TextField control={form.control} name="nombre" label="Registrar nuevo cargo" placeholder="Nombre del cargo" disabled={false} />
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-row items-end gap-2">
+        <TextField control={form.control} name="nombre" label="Registrar nuevo cargo" placeholder="Cargo" disabled={false} />
 
-          <Button type="submit" className="justify-end bg-[#d20f39] hover:bg-[#e64553]">
-            Guardar
-          </Button>
-        </form>
-      </Form>
-    </div>
+        <Button type="submit" className="justify-end bg-[#d20f39] hover:bg-[#e64553]">
+          Registrar
+        </Button>
+      </form>
+    </Form>
   );
 };
 

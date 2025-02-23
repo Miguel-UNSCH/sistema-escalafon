@@ -95,7 +95,7 @@ model Dependencia {
   id        Int     @id @default(autoincrement())
   nombre    String  @unique
   direccion String?
-  codigo    String? @unique
+  codigo    String  @unique
 
   personal                 Personal[]
   experienciasLaborales    ExperienciaLaboral[]

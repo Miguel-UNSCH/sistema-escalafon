@@ -6,4 +6,4 @@ export const dependenciaSchema = object({
   codigo: z.string().optional(),
 });
 
-export type Dependencia = z.infer<typeof dependenciaSchema>;
+export type ZDependencia = z.infer<typeof dependenciaSchema>;
