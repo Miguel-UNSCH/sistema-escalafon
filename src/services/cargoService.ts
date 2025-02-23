@@ -9,12 +9,3 @@ export const getCargo = async () => {
     return error.response.data;
   }
 };
-
-export const createCargo = async (cargoData: { nombre: string }) => {
-  try {
-    const response = await api.post(`/cargo`, cargoData);
-    return response.data;
-  } catch (error: any) {
-    return error.response.data;
-  }
-};
