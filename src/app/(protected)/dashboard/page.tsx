@@ -43,7 +43,7 @@ const DataCargo = () => {
         }
       } catch (err) {
         setError("Error al obtener los cargos.");
-        console.log(err);
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -54,37 +54,46 @@ const DataCargo = () => {
 
   return (
     <div className="p-4">
-      <h2 className="mb-4 font-bold text-lg">Lista de Cargos</h2>
-
       {loading ? (
-        <p>crear un spiner</p>
+        <p>Cargando...</p>
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="font-inter font-bold text-base">N</TableHead>
-              <TableHead className="font-inter font-bold text-base">Cargo Estructural</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {cargos.length > 0 ? (
-              cargos.map((cargo) => (
-                <TableRow key={cargo.id}>
-                  <TableCell>{cargo.id}</TableCell>
-                  <TableCell>{cargo.nombre}</TableCell>
+        <div className="shadow-md border rounded-md w-full">
+          <div className="overflow-hidden">
+            {/* Cabecera fija */}
+            <Table className="w-full">
+              <TableHeader className="top-0 z-10 sticky bg-gray-200">
+                <TableRow>
+                  <TableHead className="font-inter font-bold text-base">N</TableHead>
+                  <TableHead className="font-inter font-bold text-base">Cargo Estructural</TableHead>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={2} className="text-gray-500 text-center">
-                  No hay cargos registrados.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              </TableHeader>
+            </Table>
+          </div>
+
+          {/* Cuerpo scrollable */}
+          <div className="max-h-72 overflow-y-auto">
+            <Table className="w-full">
+              <TableBody>
+                {cargos.length > 0 ? (
+                  cargos.map((cargo) => (
+                    <TableRow key={cargo.id}>
+                      <TableCell>{cargo.id}</TableCell>
+                      <TableCell>{cargo.nombre}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={2} className="text-gray-500 text-center">
+                      No hay cargos registrados.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
       )}
     </div>
   );
