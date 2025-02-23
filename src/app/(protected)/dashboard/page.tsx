@@ -1,59 +1,15 @@
 "use client";
 
-import { TextField } from "@/components/forms/InputTypes";
-import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
-import { cargoSchema, ZCargo } from "@/lib/schemas/cargo.schema";
-import { createCargo, getCargo } from "@/services/cargoService";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useForm } from "react-hook-form";
+import { getCargo } from "@/services/cargoService";
 import { useEffect, useState } from "react";
-import { ZDependencia } from "@/lib/schemas/dependencia.schema";
 
 const DataUbigeo = () => {
   return <div>datos de ubigeo</div>;
 };
 
-const FormUbigeo = () => {
-  return <div>formulario de ubigeo</div>;
-};
-
 const DataDependencia = () => {
   return <div>datos de dependencia</div>;
-};
-
-const FormDependencia = () => {
-  const form = useForm<ZDependencia>({
-    resolver: zodResolver(cargoSchema),
-    defaultValues: {
-      nombre: "",
-    },
-  });
-  const onSubmit = async (values: ZDependencia) => {
-    const uppercaseNombre = values.nombre.toUpperCase();
-    const response = await createCargo({ nombre: uppercaseNombre });
-
-    if (response?.error) {
-      console.error("Error al crear el cargo:", response.error);
-    } else {
-      console.log("Cargo creado con éxito:", response);
-      form.reset();
-    }
-  };
-  return (
-    <div>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-row items-end gap-2">
-          <TextField control={form.control} name="nombre" label="Registrar nueva dependencia" placeholder="Dependencia / Oficina" disabled={false} />
-
-          <Button type="submit" className="justify-end bg-[#d20f39] hover:bg-[#e64553]">
-            Registrar
-          </Button>
-        </form>
-      </Form>
-    </div>
-  );
 };
 
 const DataCargo = () => {
@@ -127,59 +83,23 @@ const DataCargo = () => {
   );
 };
 
-const FormCargo = () => {
-  const form = useForm<ZCargo>({
-    resolver: zodResolver(cargoSchema),
-    defaultValues: {
-      nombre: "",
-    },
-  });
-
-  const onSubmit = async (values: ZCargo) => {
-    const uppercaseNombre = values.nombre.toUpperCase();
-    const response = await createCargo({ nombre: uppercaseNombre });
-
-    if (response?.error) {
-      console.error("Error al crear el cargo:", response.error);
-    } else {
-      console.log("Cargo creado con éxito:", response);
-      form.reset();
-    }
-  };
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-row items-end gap-2">
-        <TextField control={form.control} name="nombre" label="Registrar nuevo cargo" placeholder="Cargo" disabled={false} />
-
-        <Button type="submit" className="justify-end bg-[#d20f39] hover:bg-[#e64553]">
-          Registrar
-        </Button>
-      </form>
-    </Form>
-  );
-};
-
 const Page = () => {
   return (
     <div className="flex justify-center w-full h-full">
-      <div className="flex flex-row gap-4 w-4/5">
+      <div className="flex flex-row gap-4 px-2 w-full">
         <div className="w-1/2">
           <p className="font-inter font-semibold text-lg">Ubigeo</p>
           <DataUbigeo />
-          <FormUbigeo />
         </div>
 
         <div className="flex flex-col gap-4">
           <div>
             <p className="font-inter font-semibold text-lg">Dependencia</p>
             <DataDependencia />
-            <FormDependencia />
           </div>
           <div>
             <p className="font-inter font-semibold text-lg">Cargo</p>
             <DataCargo />
-            <FormCargo />
           </div>
         </div>
       </div>

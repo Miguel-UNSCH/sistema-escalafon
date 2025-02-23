@@ -109,11 +109,11 @@ model Dependencia {
   meritos                  Merito[]
   demeritos                Demerito[]
   desplazamientos          Desplazamiento[]          @relation("DependenciasDesplazamiento")
+  fichaEvaluaciones        FichaEvaluacion[]
+  actasEntrega             ActaEntrega[]
 
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-  fichaEvaluaciones FichaEvaluacion[]
-  actasEntrega      ActaEntrega[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Cargo {

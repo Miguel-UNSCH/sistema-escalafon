@@ -1,16 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { CustomError, handleError } from "@/middleware/errorHandler";
 import { prisma } from "@/lib/prisma";
 import { BadRequestError } from "@/utils/customErrors";
-
-interface IFilters {
-  inei?: string;
-  reniec?: string;
-  departamento?: string;
-  provincia?: string;
-  distrito?: string;
-}
+import { CustomError, handleError } from "@/middleware/errorHandler";
 
 export const GET = async (req: NextRequest) => {
   try {
@@ -22,7 +14,7 @@ export const GET = async (req: NextRequest) => {
     const provincia: string | null = searchParams.get("provincia");
     const distrito: string | null = searchParams.get("distrito");
 
-    const filters: IFilters = {};
+    const filters: { inei?: string; reniec?: string; departamento?: string; provincia?: string; distrito?: string } = {};
 
     if (inei) filters.inei = inei;
     if (reniec) filters.reniec = reniec;

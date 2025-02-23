@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { CustomError, handleError } from "@/middleware/errorHandler";
 import { prisma } from "@/lib/prisma";
-import { BadRequestError } from "@/utils/customErrors";
 import { IParams } from "@/interfaces";
+import { BadRequestError } from "@/utils/customErrors";
+import { CustomError, handleError } from "@/middleware/errorHandler";
 
 export const GET = async (_: NextRequest, { params }: IParams) => {
   try {
