@@ -5,15 +5,54 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { personalSchema, ZPersonal } from "@/lib/schemas/personal.schema";
-import { createPersonal, getCurrentPersonal } from "@/services/personalService";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { TextField } from "@/components/forms/InputTypes";
-import { SelectField } from "@/components/forms/SelectTypes";
 import { DatePicker } from "@/components/forms/DateTypes";
+import { TextField } from "@/components/forms/InputTypes";
+import { SelectField, SwitchField } from "@/components/forms/SelectTypes";
+import { personalSchema, ZPersonal } from "@/lib/schemas/personal.schema";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { createPersonal, getCurrentPersonal } from "@/services/personalService";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { UbigeoForm } from "@/components/forms/UbigeoForm";
+import { CargoField } from "@/components/forms/CargoForm";
+
+const estadoCivilOptions = [
+  { key: "S", value: "Soltero" },
+  { key: "C", value: "Casado" },
+  { key: "V", value: "Viudo" },
+  { key: "D", value: "Divorciado" },
+];
+
+const grupoSanguineoOptions = [
+  { key: "A_POSITIVO", value: "A+" },
+  { key: "A_NEGATIVO", value: "A-" },
+  { key: "B_POSITIVO", value: "B+" },
+  { key: "B_NEGATIVO", value: "B-" },
+  { key: "AB_POSITIVO", value: "AB+" },
+  { key: "AB_NEGATIVO", value: "AB-" },
+  { key: "O_POSITIVO", value: "O+" },
+  { key: "O_NEGATIVO", value: "O-" },
+];
+
+const sexoOptions = [
+  { key: "F", value: "Femenino" },
+  { key: "M", value: "Masculino" },
+];
+
+const situacionLaboralOptions = [
+  { key: "Nombrado-D-L. 276", value: "Nombrado-D-L. 276" },
+  { key: "Contratado plaza vacante", value: "Contratado plaza vacante" },
+  { key: "Contratado ley 30057", value: "Contratado ley 30057" },
+  { key: "Contratado CAS-Indeterminado", value: "Contratado CAS-Indeterminado" },
+  { key: "Contratado en CAS-Temporal D.L. 1057", value: "Contratado en CAS-Temporal D.L. 1057" },
+  { key: "Contratado en proyecto de inversión", value: "Contratado en proyecto de inversión" },
+  { key: "Practicantes preprofesionales-D.L. 1404", value: "Practicantes preprofesionales-D.L. 1404" },
+  { key: "Practicante profesional-D.L. 1004", value: "Practicante profesional-D.L. 1004" },
+];
+
+const rPensionarioOptions = [
+  { key: "L. N° 29903", value: "L. N° 29903" },
+  { key: "D. L. N° 19990", value: "D. L. N° 19990" },
+];
 
 export const PersonalForm = () => {
   const { data: session } = useSession();
@@ -21,46 +60,14 @@ export const PersonalForm = () => {
   const [isCompleteFromDB, setIsCompleteFromDB] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const estadoCivilOptions = [
-    { key: "S", value: "Soltero" },
-    { key: "C", value: "Casado" },
-    { key: "V", value: "Viudo" },
-    { key: "D", value: "Divorciado" },
-  ];
-
-  const grupoSanguineoOptions = [
-    { key: "A_POSITIVO", value: "A+" },
-    { key: "A_NEGATIVO", value: "A-" },
-    { key: "B_POSITIVO", value: "B+" },
-    { key: "B_NEGATIVO", value: "B-" },
-    { key: "AB_POSITIVO", value: "AB+" },
-    { key: "AB_NEGATIVO", value: "AB-" },
-    { key: "O_POSITIVO", value: "O+" },
-    { key: "O_NEGATIVO", value: "O-" },
-  ];
-
-  const sexoOptions = [
-    { key: "F", value: "Femenino" },
-    { key: "M", value: "Masculino" },
-  ];
-
-  const situacionLaboralOptions = [
-    { key: "Nombrado-D-L. 276", value: "Nombrado-D-L. 276" },
-    { key: "Contratado plaza vacante", value: "Contratado plaza vacante" },
-    { key: "Contratado ley 30057", value: "Contratado ley 30057" },
-    { key: "Contratado CAS-Indeterminado", value: "Contratado CAS-Indeterminado" },
-    { key: "Contratado en CAS-Temporal D.L. 1057", value: "Contratado en CAS-Temporal D.L. 1057" },
-    { key: "Contratado en proyecto de inversión", value: "Contratado en proyecto de inversión" },
-    { key: "Practicantes preprofesionales-D.L. 1404", value: "Practicantes preprofesionales-D.L. 1404" },
-    { key: "Practicante profesional-D.L. 1004", value: "Practicante profesional-D.L. 1004" },
-  ];
-
   const form = useForm<ZPersonal>({
     resolver: zodResolver(personalSchema),
     defaultValues: {
       userId: "",
       nacionalidad: "",
       ubigeo: {
+        inei: "",
+        reniec: "",
         departamento: "",
         provincia: "",
         distrito: "",
@@ -92,13 +99,12 @@ export const PersonalForm = () => {
       if (session?.user?.id) {
         form.setValue("userId", session.user.id);
         try {
-          const personalData = await getCurrentPersonal(session.user.id);
+          const personalData: ZPersonal = await getCurrentPersonal(session.user.id);
           if (personalData) {
             form.reset(personalData);
             setIsCompleteFromDB(true);
-          } else {
-            setIsCompleteFromDB(false);
-          }
+          } else setIsCompleteFromDB(false);
+
           setError(null);
         } catch (err) {
           console.error("Error obteniendo datos personales:", err);
@@ -135,53 +141,14 @@ export const PersonalForm = () => {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
+
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
         <TextField control={form.control} name="nacionalidad" label="Nacionalidad *" placeholder="Nacionalidad" disabled={isCompleteFromDB} />
 
         <div className="flex flex-col">
           <p className="font-inter font-semibold">Lugar de nacimiento</p>
           <div className="gap-2 grid grid-cols-3">
-            <FormField
-              control={form.control}
-              name="ubigeo.departamento"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Departamento *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ingrese nombre del departamento" {...field} type="text" disabled={isCompleteFromDB} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="ubigeo.provincia"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Provincia *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ingrese nombre dela provincia" {...field} type="text" disabled={isCompleteFromDB} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="ubigeo.distrito"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Distrito *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ingrese nombre del distrito" {...field} type="text" disabled={isCompleteFromDB} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <UbigeoForm isCompleteFromDB={isCompleteFromDB} />
           </div>
         </div>
 
@@ -190,19 +157,7 @@ export const PersonalForm = () => {
           <TextField control={form.control} name="interiorUrbanizacion" label="Interior - Urbanizacion" placeholder="Interior - Urbanizacion" disabled={isCompleteFromDB} />
         </div>
 
-        <FormField
-          control={form.control}
-          name="cargo.nombre"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Cargo *</FormLabel>
-              <FormControl>
-                <Input placeholder="cargo actual" {...field} type="text" disabled={isCompleteFromDB} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <CargoField control={form.control} name="cargo.nombre" disabled={isCompleteFromDB} />
 
         <div className="flex flex-col">
           <p className="font-inter font-semibold">Dependencia</p>
@@ -275,26 +230,13 @@ export const PersonalForm = () => {
           <TextField control={form.control} name="telefono" label="Telefono" placeholder="Telefono" disabled={isCompleteFromDB} />
         </div>
 
-        <FormField
+        <SelectField
           control={form.control}
           name="regimenPensionario"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Régimen pensionario *</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isCompleteFromDB}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccione su régimen pensionario" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="L. N° 29903">L. N° 29903</SelectItem>
-                  <SelectItem value="D. L. N° 19990">D. L. N° 19990</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
+          label="Régimen pensionario *"
+          placeholder="Régimen pensionario"
+          options={rPensionarioOptions}
+          disabled={isCompleteFromDB}
         />
 
         <TextField control={form.control} name="nombreAfp" label="Nombre AFP *" placeholder="nombre AFP" disabled={isCompleteFromDB} />
@@ -303,21 +245,7 @@ export const PersonalForm = () => {
 
         <SelectField control={form.control} name="estadoCivil" label="Estado civil *" options={estadoCivilOptions} disabled={isCompleteFromDB} />
 
-        <FormField
-          control={form.control}
-          name="discapacidad"
-          render={({ field }) => (
-            <FormItem className="flex flex-row justify-between items-center p-4 border hover:border-[#d20f39] rounded-lg">
-              <div className="space-y-0.5">
-                <FormLabel className="text-base">Discapacidad *</FormLabel>
-                <FormDescription>Presenta algun tipo de discapacidad.</FormDescription>
-              </div>
-              <FormControl>
-                <Switch checked={field.value} onCheckedChange={field.onChange} className="" disabled={isCompleteFromDB} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
+        <SwitchField control={form.control} name="discapacidad" label="Estado civil *" description="Presenta algun tipo de discapacidad." disabled={isCompleteFromDB} />
 
         <div className="flex justify-end">
           {!isCompleteFromDB && (

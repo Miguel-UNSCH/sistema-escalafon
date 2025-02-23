@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Switch } from "../ui/switch";
 
 interface SelectFieldProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: any;
   name: string;
   label: string;
@@ -34,6 +35,34 @@ export const SelectField = ({ control, name, label, options, placeholder = "Sele
             </SelectContent>
           </Select>
           <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+};
+
+interface SwitchFieldProps {
+  control: any;
+  name: string;
+  label: string;
+  description?: string;
+  disabled?: boolean;
+}
+
+export const SwitchField: React.FC<SwitchFieldProps> = ({ control, name, label, description, disabled = false }) => {
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem className="flex flex-row justify-between items-center p-4 border hover:border-[#d20f39] rounded-lg">
+          <div className="space-y-0.5">
+            <FormLabel className="text-base">{label}</FormLabel>
+            {description && <FormDescription>{description}</FormDescription>}
+          </div>
+          <FormControl>
+            <Switch checked={field.value} onCheckedChange={field.onChange} className="" disabled={disabled} />
+          </FormControl>
         </FormItem>
       )}
     />

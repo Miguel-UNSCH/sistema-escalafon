@@ -8,4 +8,4 @@ export const UbigeoSchema = z.object({
   distrito: z.string({ required_error: "distrito es requerido" }),
 });
 
-export type Ubigeo = z.infer<typeof UbigeoSchema>;
+export type ZUbigeo = z.infer<typeof UbigeoSchema>;

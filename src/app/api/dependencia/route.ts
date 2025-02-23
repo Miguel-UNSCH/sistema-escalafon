@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextRequest, NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
@@ -8,15 +9,15 @@ export const GET = async (req: NextRequest) => {
   try {
     const { searchParams } = req.nextUrl;
 
-    const nombre = searchParams.get("nombre");
-    const direccion = searchParams.get("direccion");
-    const codigo = searchParams.get("codigo");
+    const nombre: string | null = searchParams.get("nombre");
+    const direccion: string | null = searchParams.get("direccion");
+    const codigo: string | null = searchParams.get("codigo");
 
-    const filters: { nombre?: string; direccion?: string; codigo?: string } = {};
+    const filters: any = {};
 
-    if (nombre) filters.nombre = nombre;
-    if (direccion) filters.direccion = direccion;
-    if (codigo) filters.codigo = codigo;
+    if (nombre) filters.nombre = { contains: nombre, mode: "insensitive" };
+    if (direccion) filters.direccion = { contains: direccion, mode: "insensitive" };
+    if (codigo) filters.codigo = { contains: codigo, mode: "insensitive" };
 
     if (Object.keys(filters).length === 0) {
       const dependencias = await prisma.dependencia.findMany();
