@@ -48,3 +48,14 @@ export const gradoInstruccionOptions = [
   { key: "posgrado", value: "Posgrado" },
   { key: "null", value: "Prefiero no decirlo" },
 ];
+
+export const formacionAcademicaOptions = [
+  { key: "PRIMARIA COMPLETA", value: "primaria completa" },
+  { key: "PRIMARIA INCOMPLETA", value: "primaria incompleta" },
+  { key: "SECUNDARIA COMPLETA", value: "secundaria completa" },
+  { key: "SECUNDARIA INCOMPLETA", value: "secundaria incompleta" },
+  { key: "BACHILLER", value: "bachiller" },
+  { key: "TITULADO", value: "titulado" },
+  { key: "POSTGRADO", value: "postgrado" },
+  { key: "TÉCNICO COMPLETO", value: "técnico completo" },
+];
