@@ -1,5 +1,4 @@
 import { object, string, z } from "zod";
-import { Status } from "@/lib/zod";
 import { UbigeoSchema } from "./ubigeo.schema";
 
 export const conyugeSchema = object({
@@ -15,7 +14,6 @@ export const conyugeSchema = object({
   ocupacion: string(),
   centroTrabajo: string().optional(),
   postgrado: string().optional(),
-  status: Status.optional(),
 
   ubigeo: UbigeoSchema,
 });

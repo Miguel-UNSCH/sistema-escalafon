@@ -135,6 +135,7 @@ export const POST = async (request: NextRequest) => {
 
     return NextResponse.json(personal, { status: 201 });
   } catch (error: unknown) {
+    console.log(error);
     return handleError(error as CustomError);
   }
 };

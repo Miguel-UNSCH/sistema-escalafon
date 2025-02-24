@@ -8,7 +8,7 @@ import { getCurrentPersonal } from "@/services/personalService";
 
 const Page = () => {
   const { data: session } = useSession();
-  const [personal, setPersonal] = useState<ZPersonal | null>(null);
+  const [personal, setPersonal] = useState<(ZPersonal & { id: number }) | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -17,7 +17,7 @@ const Page = () => {
       if (session?.user?.id) {
         try {
           setLoading(true);
-          const personalData = await getCurrentPersonal(session.user.id);
+          const personalData: ZPersonal & { id: number } = await getCurrentPersonal(session.user.id);
           setPersonal(personalData);
           setError(null);
         } catch (err) {
@@ -51,7 +51,7 @@ const Page = () => {
     <div className="flex justify-center w-full h-full">
       <div className="flex flex-col gap-2 w-4/5">
         <p className="font-inter font-bold text-2xl text-center uppercase">Datos del Cónyuge</p>
-        <ConyugeForm />
+        <ConyugeForm personalId={personal.id} />
       </div>
     </div>
   );

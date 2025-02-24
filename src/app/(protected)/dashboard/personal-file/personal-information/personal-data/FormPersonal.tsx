@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useSession } from "next-auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Form } from "@/components/ui/form";
@@ -12,20 +11,20 @@ import { UbigeoForm } from "@/components/forms/UbigeoForm";
 import { DependenciaField } from "@/components/forms/DependenciaField";
 import { SelectField, SwitchField } from "@/components/forms/SelectTypes";
 import { personalSchema, ZPersonal } from "@/lib/schemas/personal.schema";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { createPersonal, getCurrentPersonal } from "@/services/personalService";
 import { estadoCivilOptions, grupoSanguineoOptions, rPensionarioOptions, sexoOptions, situacionLaboralOptions } from "@/utils/items";
 
-export const PersonalForm = () => {
-  const { data: session } = useSession();
+interface PersonalFormProps {
+  userId: string;
+}
+export const PersonalForm = ({ userId }: PersonalFormProps) => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [isCompleteFromDB, setIsCompleteFromDB] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const form = useForm<ZPersonal>({
     resolver: zodResolver(personalSchema),
     defaultValues: {
-      userId: "",
+      userId,
       nacionalidad: "",
       ubigeo: {
         inei: "",
@@ -58,34 +57,25 @@ export const PersonalForm = () => {
 
   useEffect(() => {
     const fetchPersonalData = async () => {
-      if (session?.user?.id) {
-        form.setValue("userId", session.user.id);
-        try {
-          const personalData: ZPersonal = await getCurrentPersonal(session.user.id);
-          if (personalData) {
-            form.reset(personalData);
-            setIsCompleteFromDB(true);
-          } else setIsCompleteFromDB(false);
+      try {
+        const personalData: (ZPersonal & { id: number }) | null = await getCurrentPersonal(userId);
+        if (personalData && personalData !== null) form.reset(personalData);
 
-          setError(null);
-        } catch (err) {
-          console.error("Error obteniendo datos personales:", err);
-          setError("No se pudo obtener la información personal. Inténtalo más tarde.");
-          setIsCompleteFromDB(false);
-        } finally {
-          setLoading(false);
-        }
+        setError(null);
+      } catch (err) {
+        console.error("Error obteniendo datos personales:", err);
+        setError("No se pudo obtener la información personal. Inténtalo más tarde.");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchPersonalData();
-  }, [session, form]);
+  }, [userId, form]);
 
   const onSubmit = async (data: ZPersonal) => {
     try {
       await createPersonal(data);
-      console.log("Datos enviados correctamente");
-      setIsCompleteFromDB(true);
       setError(null);
     } catch (err) {
       console.error("Error enviando los datos:", err);
@@ -97,59 +87,52 @@ export const PersonalForm = () => {
 
   return (
     <Form {...form}>
-      {error && (
-        <Alert variant="destructive" className="mb-4">
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
-        <TextField control={form.control} name="nacionalidad" label="Nacionalidad *" placeholder="Nacionalidad" disabled={isCompleteFromDB} />
+        <TextField control={form.control} name="nacionalidad" label="Nacionalidad *" placeholder="Nacionalidad" disabled={false} />
 
         <div className="flex flex-col">
           <p className="font-inter font-semibold">Lugar de nacimiento</p>
           <div className="gap-2 grid grid-cols-3">
-            <UbigeoForm isCompleteFromDB={isCompleteFromDB} />
+            <UbigeoForm isCompleteFromDB={false} />
           </div>
         </div>
 
         <div className="gap-2 grid grid-cols-2">
-          <TextField control={form.control} name="domicilio" label="Domicilio *" placeholder="Domicilio" disabled={isCompleteFromDB} />
-          <TextField control={form.control} name="interiorUrbanizacion" label="Interior - Urbanizacion" placeholder="Interior - Urbanizacion" disabled={isCompleteFromDB} />
+          <TextField control={form.control} name="domicilio" label="Domicilio *" placeholder="Domicilio" disabled={false} />
+          <TextField control={form.control} name="interiorUrbanizacion" label="Interior - Urbanizacion" placeholder="Interior - Urbanizacion" disabled={false} />
         </div>
 
-        <CargoField control={form.control} name="cargo.nombre" disabled={isCompleteFromDB} />
+        <CargoField control={form.control} name="cargo.nombre" disabled={false} />
 
         <div className="flex flex-col">
           <p className="font-inter font-semibold">Dependencia</p>
           <div className="gap-2 grid grid-cols-3">
-            <DependenciaField control={form.control} disabled={isCompleteFromDB} />
+            <DependenciaField control={form.control} disabled={false} />
           </div>
         </div>
 
         <div className="gap-2 grid grid-cols-2">
-          <TextField control={form.control} name="dni" label="dni *" placeholder="Telefono" disabled={isCompleteFromDB} />
-          <SelectField control={form.control} name="sexo" label="Sexo *" placeholder="Seleccione su sexo" options={sexoOptions} disabled={isCompleteFromDB} />
+          <TextField control={form.control} name="dni" label="dni *" placeholder="dni" disabled={false} />
+          <SelectField control={form.control} name="sexo" label="Sexo *" placeholder="Seleccione su sexo" options={sexoOptions} disabled={false} />
         </div>
 
         <div className="gap-2 grid grid-cols-2">
-          <TextField control={form.control} name="nAutogenerado" label="N Autogenerado *" placeholder="numero autogenerado" disabled={isCompleteFromDB} />
-          <TextField control={form.control} name="licenciaConducir" label="Licencia de conducir" placeholder="Licencia de conducir" disabled={isCompleteFromDB} />
+          <TextField control={form.control} name="nAutogenerado" label="N Autogenerado *" placeholder="numero autogenerado" disabled={false} />
+          <TextField control={form.control} name="licenciaConducir" label="Licencia de conducir" placeholder="Licencia de conducir" disabled={false} />
         </div>
 
-        <SelectField control={form.control} name="grupoSanguineo" label="Grupo sanguíneo *" options={grupoSanguineoOptions} disabled={isCompleteFromDB} />
+        <SelectField control={form.control} name="grupoSanguineo" label="Grupo sanguíneo *" options={grupoSanguineoOptions} disabled={false} />
 
         <div className="gap-2 grid grid-cols-2">
-          <DatePicker control={form.control} name="fechaNacimiento" label="Fecha de nacimiento" disabled={isCompleteFromDB} />
-          <DatePicker control={form.control} name="fechaIngreso" label="Fecha de ingreso" disabled={isCompleteFromDB} />
+          <DatePicker control={form.control} name="fechaNacimiento" label="Fecha de nacimiento" disabled={false} />
+          <DatePicker control={form.control} name="fechaIngreso" label="Fecha de ingreso" disabled={false} />
         </div>
 
-        <TextField control={form.control} name="unidadEstructurada" label="Unidad estructurada *" placeholder="Unidad estructurada" disabled={isCompleteFromDB} />
+        <TextField control={form.control} name="unidadEstructurada" label="Unidad estructurada *" placeholder="Unidad estructurada" disabled={false} />
 
         <div className="gap-2 grid grid-cols-2">
-          <TextField control={form.control} name="celular" label="Celular *" placeholder="Celular" disabled={isCompleteFromDB} />
-          <TextField control={form.control} name="telefono" label="Telefono" placeholder="Telefono" disabled={isCompleteFromDB} />
+          <TextField control={form.control} name="celular" label="Celular *" placeholder="Celular" disabled={false} />
+          <TextField control={form.control} name="telefono" label="Telefono" placeholder="Telefono" disabled={false} />
         </div>
 
         <SelectField
@@ -158,23 +141,22 @@ export const PersonalForm = () => {
           label="Régimen pensionario *"
           placeholder="Régimen pensionario"
           options={rPensionarioOptions}
-          disabled={isCompleteFromDB}
+          disabled={false}
         />
 
-        <TextField control={form.control} name="nombreAfp" label="Nombre AFP *" placeholder="nombre AFP" disabled={isCompleteFromDB} />
+        <TextField control={form.control} name="nombreAfp" label="Nombre AFP *" placeholder="nombre AFP" disabled={false} />
 
-        <SelectField control={form.control} name="situacionLaboral" label="Situación Laboral *" options={situacionLaboralOptions} disabled={isCompleteFromDB} />
+        <SelectField control={form.control} name="situacionLaboral" label="Situación Laboral *" options={situacionLaboralOptions} disabled={false} />
 
-        <SelectField control={form.control} name="estadoCivil" label="Estado civil *" options={estadoCivilOptions} disabled={isCompleteFromDB} />
+        <SelectField control={form.control} name="estadoCivil" label="Estado civil *" options={estadoCivilOptions} disabled={false} />
 
-        <SwitchField control={form.control} name="discapacidad" label="Estado civil *" description="Presenta algun tipo de discapacidad." disabled={isCompleteFromDB} />
+        <SwitchField control={form.control} name="discapacidad" label="Estado civil *" description="Presenta algun tipo de discapacidad." disabled={false} />
 
+        {error && <pre>{JSON.stringify(error, null, 2)}</pre>}
         <div className="flex justify-end">
-          {!isCompleteFromDB && (
-            <Button type="submit" onClick={() => console.log(form)} className="justify-end bg-[#d20f39] hover:bg-[#e64553]">
-              Guardar
-            </Button>
-          )}
+          <Button type="submit" onClick={() => console.log(form)} className="justify-end bg-[#d20f39] hover:bg-[#e64553]">
+            Guardar
+          </Button>
         </div>
       </form>
     </Form>

@@ -4,10 +4,10 @@ import { ZConyuge } from "@/lib/schemas/conyuge.schema";
 
 export const getConyuge = async (personalId: number) => {
   try {
-    const response = await api.get(`/conyuge/${personalId}`);
+    const response = await api.get(`/conyuge?personalId=${personalId}`);
     return response.data;
   } catch (error: any) {
-    return error.response?.data || { error: "Error desconocido al obtener el ubigeo" };
+    return error.response?.data || { error: "Error desconocido al obtener el datos" };
   }
 };
 
@@ -21,6 +21,6 @@ export const createConyuge = async (data: ZConyuge) => {
     const response = await api.post(`/conyuge`, transformedData);
     return response.data;
   } catch (error: any) {
-    return error.response?.data || { error: "Error desconocido al obtener los ubigeos" };
+    return error.response?.data || { error: "Error desconocido al obtener los datos" };
   }
 };

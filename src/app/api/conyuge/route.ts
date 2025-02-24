@@ -8,12 +8,11 @@ import { BadRequestError, ConflictError, NotFoundError } from "@/utils/customErr
 export const GET = async (request: NextRequest) => {
   try {
     const personalId = request.nextUrl.searchParams.get("personalId");
-
     if (!personalId) throw BadRequestError("El ID del personal es requerido.");
 
     const conyuge = await prisma.conyuge.findUnique({
       where: { personalId: Number(personalId) },
-      include: { personal: true },
+      include: { personal: true, ubigeo: true },
     });
 
     if (!conyuge) throw NotFoundError("Cónyuge no encontrado.");
@@ -41,13 +40,7 @@ export const POST = async (request: NextRequest) => {
     if (!["C"].includes(personal.estadoCivil)) throw ConflictError("El personal no es casado o viudo");
 
     const ubigeo = await prisma.ubigeo.findFirst({
-      where: {
-        inei: { equals: validatedConyuge.ubigeo.departamento, mode: "insensitive" },
-        reniec: { equals: validatedConyuge.ubigeo.departamento, mode: "insensitive" },
-        departamento: { equals: validatedConyuge.ubigeo.departamento, mode: "insensitive" },
-        provincia: { equals: validatedConyuge.ubigeo.provincia, mode: "insensitive" },
-        distrito: { equals: validatedConyuge.ubigeo.distrito, mode: "insensitive" },
-      },
+      where: { inei: validatedConyuge.ubigeo.inei },
     });
     if (!ubigeo) throw BadRequestError("El ubigeo proporcionado no existe.");
 
