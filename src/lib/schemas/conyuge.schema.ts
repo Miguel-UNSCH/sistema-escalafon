@@ -12,7 +12,7 @@ export const conyugeSchema = object({
     .transform((date) => new Date(date)),
   gradoInstruccion: string({ required_error: "El grado de instrucción es requerido" }),
   profesion: string().optional(),
-  ocupacion: string().optional(),
+  ocupacion: string(),
   centroTrabajo: string().optional(),
   postgrado: string().optional(),
   status: Status.optional(),

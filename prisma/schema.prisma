@@ -214,12 +214,14 @@ model Personal {
 model Conyuge {
   id               Int      @id @default(autoincrement())
   personalId       Int      @unique
-  ubigeoId         Int
+  nombres          String
+  apellidos        String
   fechaNacimiento  DateTime
+  ubigeoId         Int
   gradoInstruccion String
+  ocupacion        String
   profesion        String?
   postgrado        String?
-  ocupacion        String
   centroTrabajo    String?
   status           Status   @default(ENABLED)
 
@@ -234,6 +236,8 @@ model Hijo {
   id               Int      @id @default(autoincrement())
   personalId       Int
   ubigeoId         Int
+  nombres          String
+  apellidos        String
   fechaNacimiento  DateTime
   gradoInstruccion String
   status           Status   @default(ENABLED)
