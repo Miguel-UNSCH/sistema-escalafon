@@ -4,22 +4,14 @@ import { CustomError, handleError } from "@/middleware/errorHandler";
 import { BadRequestError, NotFoundError } from "@/utils/customErrors";
 import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (r: NextRequest) => {
+export const GET = async (request: NextRequest) => {
   try {
-    const { searchParams } = r.nextUrl;
+    const { searchParams } = request.nextUrl;
     const personalId = searchParams.get("personalId");
-    const nombres = searchParams.get("nombres");
-    const apellidos = searchParams.get("apellidos");
+    if (!personalId) throw BadRequestError("El ID del personal es obligatorio.");
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const where: any = {};
-
-    if (personalId) where.personalId = parseInt(personalId, 10);
-    if (nombres) where.User = { nombres: { contains: nombres, mode: "insensitive" } };
-    if (apellidos) where.User = { ...where.User, apellidos: { contains: apellidos, mode: "insensitive" } };
-
-    const hijos = await prisma.hijo.findMany({ where, include: { user: true } });
-    if (!hijos.length) throw NotFoundError("Hijo(s) no encontrado(s)");
+    const hijos = await prisma.hijo.findMany({ where: { personalId: parseInt(personalId, 10) } });
+    if (!hijos.length) throw NotFoundError("No se encontraron hijos asociados al personal.");
 
     return NextResponse.json(hijos, { status: 200 });
   } catch (error: unknown) {
@@ -42,39 +34,17 @@ export const POST = async (request: NextRequest) => {
     const personal = await prisma.personal.findUnique({ where: { id: validatedHijo.personalId } });
     if (!personal) throw NotFoundError("El personal proporcionado no existe.");
 
-    const ubigeo = await prisma.ubigeo.findFirst({
-      where: {
-        departamento: { equals: validatedHijo.ubigeo.departamento, mode: "insensitive" },
-        provincia: { equals: validatedHijo.ubigeo.provincia, mode: "insensitive" },
-        distrito: { equals: validatedHijo.ubigeo.distrito, mode: "insensitive" },
-      },
-    });
+    const ubigeo = await prisma.ubigeo.findFirst({ where: { inei: validatedHijo.ubigeo.inei } });
     if (!ubigeo) throw BadRequestError("El ubigeo proporcionado no existe.");
-
-    const newUser = await prisma.user.create({
-      data: {
-        nombres: validatedHijo.nombres,
-        apellidos: validatedHijo.apellidos,
-        ubigeoId: ubigeo.id,
-      },
-    });
 
     const newHijo = await prisma.hijo.create({
       data: {
-        userId: newUser.id,
         personalId: validatedHijo.personalId,
+        nombres: validatedHijo.nombres,
+        apellidos: validatedHijo.apellidos,
         fechaNacimiento: validatedHijo.fechaNacimiento,
-        edad: validatedHijo.edad,
         gradoInstruccion: validatedHijo.gradoInstruccion,
-      },
-    });
-
-    await prisma.personal.update({
-      where: { id: validatedHijo.personalId },
-      data: {
-        hijos: {
-          connect: { id: newHijo.id },
-        },
+        ubigeoId: ubigeo.id,
       },
     });
 

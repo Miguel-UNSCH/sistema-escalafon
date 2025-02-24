@@ -23,16 +23,10 @@ export const GET = async (r: NextRequest) => {
 
     if (userId) where.userId = userId;
     if (userId) {
-      const currentPersonal = await prisma.personal.findUnique({
-        where: { userId },
-        include: {
-          dependencia: true,
-          cargo: true,
-          user: true,
-        },
-      });
+      const currentPersonal = await prisma.personal.findUnique({ where: { userId }, include: { dependencia: true, cargo: true, user: true } });
       if (!currentPersonal) throw NotFoundError("Personal no encontrado");
       if (!currentPersonal.user.ubigeoId) throw NotFoundError("Usuario no encontrado");
+
       const ubigeo = await prisma.ubigeo.findUnique({ where: { id: currentPersonal.user.ubigeoId } });
       if (!ubigeo) throw NotFoundError("Ubigeo no encontrado");
 
@@ -48,17 +42,9 @@ export const GET = async (r: NextRequest) => {
     if (sCivil) where.estadoCivil = sCivil;
 
     if (nombres) where.User = { nombres: { contains: nombres, mode: "insensitive" } };
-
     if (apellidos) where.User = { ...where.User, apellidos: { contains: apellidos, mode: "insensitive" } };
 
-    const personals = await prisma.personal.findMany({
-      where,
-      include: {
-        user: true,
-        dependencia: true,
-        cargo: true,
-      },
-    });
+    const personals = await prisma.personal.findMany({ where, include: { user: true, dependencia: true, cargo: true } });
 
     if (!personals.length) throw NotFoundError("Personal(es) no encontrado(s)");
 
@@ -80,13 +66,7 @@ export const POST = async (request: NextRequest) => {
 
     const validatedPersonal = result.data;
 
-    const ubigeo = await prisma.ubigeo.findFirst({
-      where: {
-        departamento: { equals: validatedPersonal.ubigeo.departamento, mode: "insensitive" },
-        provincia: { equals: validatedPersonal.ubigeo.provincia, mode: "insensitive" },
-        distrito: { equals: validatedPersonal.ubigeo.distrito, mode: "insensitive" },
-      },
-    });
+    const ubigeo = await prisma.ubigeo.findFirst({ where: { inei: validatedPersonal.ubigeo.inei } });
     if (!ubigeo) throw BadRequestError("El ubigeo proporcionado no existe.");
 
     const user = await prisma.user.findUnique({ where: { id: validatedPersonal.userId } });

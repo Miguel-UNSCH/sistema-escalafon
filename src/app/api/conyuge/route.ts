@@ -10,10 +10,7 @@ export const GET = async (request: NextRequest) => {
     const personalId = request.nextUrl.searchParams.get("personalId");
     if (!personalId) throw BadRequestError("El ID del personal es requerido.");
 
-    const conyuge = await prisma.conyuge.findUnique({
-      where: { personalId: Number(personalId) },
-      include: { personal: true, ubigeo: true },
-    });
+    const conyuge = await prisma.conyuge.findUnique({ where: { personalId: Number(personalId) }, include: { personal: true, ubigeo: true } });
 
     if (!conyuge) throw NotFoundError("Cónyuge no encontrado.");
 
@@ -39,9 +36,7 @@ export const POST = async (request: NextRequest) => {
     if (!personal) throw NotFoundError("El personal proporcionado no existe.");
     if (!["C"].includes(personal.estadoCivil)) throw ConflictError("El personal no es casado o viudo");
 
-    const ubigeo = await prisma.ubigeo.findFirst({
-      where: { inei: validatedConyuge.ubigeo.inei },
-    });
+    const ubigeo = await prisma.ubigeo.findFirst({ where: { inei: validatedConyuge.ubigeo.inei } });
     if (!ubigeo) throw BadRequestError("El ubigeo proporcionado no existe.");
 
     const newConyuge = await prisma.conyuge.create({
@@ -59,10 +54,7 @@ export const POST = async (request: NextRequest) => {
       },
     });
 
-    await prisma.personal.update({
-      where: { id: validatedConyuge.personalId },
-      data: { conyugeId: newConyuge.id },
-    });
+    await prisma.personal.update({ where: { id: validatedConyuge.personalId }, data: { conyugeId: newConyuge.id } });
 
     return NextResponse.json(newConyuge, { status: 201 });
   } catch (error: unknown) {
