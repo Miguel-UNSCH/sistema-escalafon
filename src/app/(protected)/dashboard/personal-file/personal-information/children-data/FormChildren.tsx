@@ -1,19 +1,20 @@
 "use client";
 
-import { DatePicker } from "@/components/forms/DateTypes";
-import { TextField } from "@/components/forms/InputTypes";
-import { SelectField } from "@/components/forms/SelectTypes";
-import { UbigeoForm } from "@/components/forms/UbigeoForm";
-import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
-import { hijoSchema } from "@/lib/schemas/hijo.schema";
-import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { Form } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { gradoInstruccionOptions } from "@/utils/items";
+import { DatePicker } from "@/components/forms/DateTypes";
+import { TextField } from "@/components/forms/InputTypes";
+import { UbigeoForm } from "@/components/forms/UbigeoForm";
+import { SelectField } from "@/components/forms/SelectTypes";
+import { hijoSchema, ZHijo } from "@/lib/schemas/hijo.schema";
 
 export const FormHijo = () => {
-  const form = useForm<z.infer<typeof hijoSchema>>({
+  const form = useForm<ZHijo>({
     resolver: zodResolver(hijoSchema),
     defaultValues: {
       nombres: "",
@@ -30,19 +31,7 @@ export const FormHijo = () => {
     },
   });
 
-  const gradoInstruccionOptions = [
-    { key: "sin instruccion", value: "Sin Instruccion" },
-    { key: "primaria completa", value: "Primaria Completa" },
-    { key: "primaria incompleta", value: "Primaria Incompleta" },
-    { key: "secundaria completa", value: "Secundaria Completa" },
-    { key: "secundaria incompleta", value: "Secundaria Incompleta" },
-    { key: "tecnico", value: "Tecnico" },
-    { key: "universitario", value: "Universitario" },
-    { key: "posgrado", value: "Posgrado" },
-    { key: "null", value: "Prefiero no decirlo" },
-  ];
-
-  const onSubmit = (data: z.infer<typeof hijoSchema>) => console.log(data);
+  const onSubmit = (data: ZHijo) => console.log(data);
 
   return (
     <Form {...form}>

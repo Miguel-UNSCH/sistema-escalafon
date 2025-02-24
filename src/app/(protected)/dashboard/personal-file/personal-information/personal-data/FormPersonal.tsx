@@ -3,56 +3,18 @@ import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { CargoField } from "@/components/forms/CargoForm";
 import { DatePicker } from "@/components/forms/DateTypes";
 import { TextField } from "@/components/forms/InputTypes";
+import { UbigeoForm } from "@/components/forms/UbigeoForm";
+import { DependenciaField } from "@/components/forms/DependenciaField";
 import { SelectField, SwitchField } from "@/components/forms/SelectTypes";
 import { personalSchema, ZPersonal } from "@/lib/schemas/personal.schema";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { createPersonal, getCurrentPersonal } from "@/services/personalService";
-import { Form } from "@/components/ui/form";
-import { UbigeoForm } from "@/components/forms/UbigeoForm";
-import { CargoField } from "@/components/forms/CargoForm";
-import { DependenciaField } from "@/components/forms/DependenciaField";
-
-const estadoCivilOptions = [
-  { key: "S", value: "Soltero" },
-  { key: "C", value: "Casado" },
-  { key: "V", value: "Viudo" },
-  { key: "D", value: "Divorciado" },
-];
-
-const grupoSanguineoOptions = [
-  { key: "A_POSITIVO", value: "A+" },
-  { key: "A_NEGATIVO", value: "A-" },
-  { key: "B_POSITIVO", value: "B+" },
-  { key: "B_NEGATIVO", value: "B-" },
-  { key: "AB_POSITIVO", value: "AB+" },
-  { key: "AB_NEGATIVO", value: "AB-" },
-  { key: "O_POSITIVO", value: "O+" },
-  { key: "O_NEGATIVO", value: "O-" },
-];
-
-const sexoOptions = [
-  { key: "F", value: "Femenino" },
-  { key: "M", value: "Masculino" },
-];
-
-const situacionLaboralOptions = [
-  { key: "Nombrado-D-L. 276", value: "Nombrado-D-L. 276" },
-  { key: "Contratado plaza vacante", value: "Contratado plaza vacante" },
-  { key: "Contratado ley 30057", value: "Contratado ley 30057" },
-  { key: "Contratado CAS-Indeterminado", value: "Contratado CAS-Indeterminado" },
-  { key: "Contratado en CAS-Temporal D.L. 1057", value: "Contratado en CAS-Temporal D.L. 1057" },
-  { key: "Contratado en proyecto de inversión", value: "Contratado en proyecto de inversión" },
-  { key: "Practicantes preprofesionales-D.L. 1404", value: "Practicantes preprofesionales-D.L. 1404" },
-  { key: "Practicante profesional-D.L. 1004", value: "Practicante profesional-D.L. 1004" },
-];
-
-const rPensionarioOptions = [
-  { key: "L. N° 29903", value: "L. N° 29903" },
-  { key: "D. L. N° 19990", value: "D. L. N° 19990" },
-];
+import { estadoCivilOptions, grupoSanguineoOptions, rPensionarioOptions, sexoOptions, situacionLaboralOptions } from "@/utils/items";
 
 export const PersonalForm = () => {
   const { data: session } = useSession();

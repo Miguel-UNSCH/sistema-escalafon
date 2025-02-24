@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
+import { gradoInstruccionOptions } from "@/utils/items";
 import { DatePicker } from "@/components/forms/DateTypes";
 import { TextField } from "@/components/forms/InputTypes";
 import { UbigeoForm } from "@/components/forms/UbigeoForm";
@@ -32,24 +33,10 @@ export const ConyugeForm = () => {
     },
   });
 
-  // Escuchar cambios en el grado de instrucción
   const gradoInstruccion = useWatch({ control: form.control, name: "gradoInstruccion" });
 
-  // Determinar si los campos deben estar habilitados
   const isProfesionEnabled = ["tecnico", "universitario", "posgrado"].includes(gradoInstruccion);
   const isPostgradoEnabled = gradoInstruccion === "posgrado";
-
-  const gradoInstruccionOptions = [
-    { key: "sin instruccion", value: "Sin Instruccion" },
-    { key: "primaria completa", value: "Primaria Completa" },
-    { key: "primaria incompleta", value: "Primaria Incompleta" },
-    { key: "secundaria completa", value: "Secundaria Completa" },
-    { key: "secundaria incompleta", value: "Secundaria Incompleta" },
-    { key: "tecnico", value: "Tecnico" },
-    { key: "universitario", value: "Universitario" },
-    { key: "posgrado", value: "Posgrado" },
-    { key: "null", value: "Prefiero no decirlo" },
-  ];
 
   const onSubmit = (data: ZConyuge) => console.log(data);
 
