@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -12,18 +12,27 @@ import { TextField } from "@/components/forms/InputTypes";
 import { UbigeoForm } from "@/components/forms/UbigeoForm";
 import { SelectField } from "@/components/forms/SelectTypes";
 import { hijoSchema, ZHijo } from "@/lib/schemas/hijo.schema";
+import { getHijos, createHijo } from "@/services/hijoService";
 
-export const FormHijo = () => {
+interface HijoFormProps {
+  personalId: number;
+}
+
+export const FormHijo = ({ personalId }: HijoFormProps) => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
   const form = useForm<ZHijo>({
     resolver: zodResolver(hijoSchema),
     defaultValues: {
+      personalId,
       nombres: "",
       apellidos: "",
-      personalId: 1,
       fechaNacimiento: undefined,
-      gradoInstruccion: "",
-
+      gradoInstruccion: undefined,
       ubigeo: {
+        inei: "",
+        reniec: "",
         departamento: "",
         provincia: "",
         distrito: "",
@@ -31,7 +40,38 @@ export const FormHijo = () => {
     },
   });
 
-  const onSubmit = (data: ZHijo) => console.log(data);
+  useEffect(() => {
+    const fetchHijosData = async () => {
+      try {
+        const hijosData: ZHijo[] = await getHijos(personalId);
+
+        if (hijosData.length > 0) {
+          form.reset(hijosData[0]);
+        }
+
+        setError(null);
+      } catch (err) {
+        console.error("Error obteniendo datos del hijo:", err);
+        setError("No se encontraron datos del hijo.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHijosData();
+  }, [personalId, form]);
+
+  const onSubmit = async (data: ZHijo) => {
+    try {
+      await createHijo(data);
+      setError(null);
+    } catch (err) {
+      console.error("Error enviando los datos:", err);
+      setError("Hubo un problema al guardar los datos. Verifica la información.");
+    }
+  };
+
+  if (loading) return <p className="text-gray-500 text-center">Cargando datos...</p>;
 
   return (
     <Form {...form}>
@@ -59,8 +99,10 @@ export const FormHijo = () => {
           disabled={false}
         />
 
+        {error && <pre className="text-red-500 text-center">{JSON.stringify(error, null, 2)}</pre>}
+
         <div className="flex justify-end">
-          <Button type="submit" className="justify-end bg-[#d20f39] hover:bg-[#e64553]">
+          <Button type="submit" onClick={() => console.log(form.getValues())} className="justify-end bg-[#d20f39] hover:bg-[#e64553]">
             Guardar
           </Button>
         </div>

@@ -10,7 +10,7 @@ export const GET = async (request: NextRequest) => {
     const personalId = searchParams.get("personalId");
     if (!personalId) throw BadRequestError("El ID del personal es obligatorio.");
 
-    const hijos = await prisma.hijo.findMany({ where: { personalId: parseInt(personalId, 10) } });
+    const hijos = await prisma.hijo.findMany({ where: { personalId: parseInt(personalId, 10) }, include: { ubigeo: true } });
     if (!hijos.length) throw NotFoundError("No se encontraron hijos asociados al personal.");
 
     return NextResponse.json(hijos, { status: 200 });

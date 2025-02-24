@@ -35,7 +35,6 @@ const Page = () => {
   if (loading) return <p className="text-gray-500 text-center">Cargando datos...</p>;
   if (error) return <p className="text-red-500 text-center">{error}</p>;
 
-  // Verificar estado civil
   if (personal?.estadoCivil !== "C") {
     return (
       <div className="flex justify-center items-center h-full">
