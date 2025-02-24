@@ -1,18 +1,16 @@
-import { object, string, z } from "zod";
+import { z } from "zod";
 
-// Enum para Status (según el modelo proporcionado, debería estar en tu código también)
-enum Status {
-  ENABLED = "ENABLED",
-  DISABLED = "DISABLED",
-}
-
-export const estudiosSchema = object({
-  personalId: string().min(1, "El ID del personal es obligatorio"),
-  nivel: string().min(1, "El nivel de estudios es obligatorio"),
-  periodo: string().regex(/^\d{2}\/\d{2}\/\d{4} - \d{2}\/\d{2}\/\d{4}$/, "El periodo debe tener el formato 'dd/mm/yyyy - dd/mm/yyyy'"),
-  institucion: string().min(1, "La institución educativa es obligatoria"),
-  otrosEstudios: string().optional(), // Los estudios adicionales son opcionales
-  status: z.enum([Status.ENABLED, Status.DISABLED]).optional(),
+const periodoSchema = z.object({
+  from: z.preprocess((val) => (typeof val === "string" ? new Date(val) : val), z.date()),
+  to: z.preprocess((val) => (typeof val === "string" ? new Date(val) : val), z.date()),
 });
 
-export type Estudios = z.infer<typeof estudiosSchema>;
+export const estudioSchema = z.object({
+  personalId: z.number().int().positive("El ID del personal debe ser un número positivo"),
+  nivel: z.string().min(3, "El nivel de estudios es obligatorio"),
+  periodo: periodoSchema, // Se valida como un objeto JSON con { from, to }
+  institucion: z.string().min(3, "El nombre de la institución es obligatorio"),
+  otrosEstudios: z.string().optional(),
+});
+
+export type ZEstudio = z.infer<typeof estudioSchema>;

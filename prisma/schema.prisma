@@ -267,13 +267,13 @@ model Discapacidad {
 model Estudios {
   id            Int     @id @default(autoincrement())
   personalId    Int
-  nivel         String // formación académica (Primaria, Secundaria, Universitaria, etc.)
-  periodo       String // "dd/mm/yyyy - dd/mm/yyyy" -- puede incluir en proceso o solo culminados
+  nivel         String
+  periodo       Json // {from: date, to: date}
   institucion   String
-  otrosEstudios String? // Estudios adicionales con certificación opcional
+  otrosEstudios String?
   status        Status  @default(ENABLED)
 
-  personal Personal @relation(fields: [personalId], references: [id], onDelete: Cascade) // Relación con Personal (N:1)
+  personal Personal @relation(fields: [personalId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
