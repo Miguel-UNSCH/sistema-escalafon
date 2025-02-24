@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/forms/DateTypes";
 import { TextField } from "@/components/forms/InputTypes";
@@ -11,9 +10,10 @@ import { SelectField, SwitchField } from "@/components/forms/SelectTypes";
 import { personalSchema, ZPersonal } from "@/lib/schemas/personal.schema";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { createPersonal, getCurrentPersonal } from "@/services/personalService";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { UbigeoForm } from "@/components/forms/UbigeoForm";
 import { CargoField } from "@/components/forms/CargoForm";
+import { DependenciaField } from "@/components/forms/DependenciaField";
 
 const estadoCivilOptions = [
   { key: "S", value: "Soltero" },
@@ -162,47 +162,7 @@ export const PersonalForm = () => {
         <div className="flex flex-col">
           <p className="font-inter font-semibold">Dependencia</p>
           <div className="gap-2 grid grid-cols-3">
-            <FormField
-              control={form.control}
-              name="dependencia.nombre"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nombre *</FormLabel>
-                  <FormControl>
-                    <Input placeholder="nombre de la dependencia" {...field} type="text" disabled={isCompleteFromDB} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="dependencia.direccion"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Direccion</FormLabel>
-                  <FormControl>
-                    <Input placeholder="direccion de la dependencia" {...field} type="text" disabled={isCompleteFromDB} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="dependencia.codigo"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Codigo</FormLabel>
-                  <FormControl>
-                    <Input placeholder="codigo de la dependencia" {...field} type="text" disabled={isCompleteFromDB} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <DependenciaField control={form.control} disabled={isCompleteFromDB} />
           </div>
         </div>
 
