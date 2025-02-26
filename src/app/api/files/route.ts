@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
 import fs from "fs";
 import path from "path";
-
-const prisma = new PrismaClient();
+import { CustomError, handleError } from "@/middleware/errorHandler";
+import { BadRequestError, NotFoundError } from "@/utils/customErrors";
+import { prisma } from "@/lib/prisma";
 
 const ALLOWED_EXTENSIONS = [".pdf", ".docx", ".doc", ".png", ".jpg", ".jpeg"];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -11,57 +11,51 @@ const UPLOADS_DIR = path.join(process.cwd(), "uploads");
 
 export async function POST(req: NextRequest) {
   try {
-    // Obtener parámetros de la URL
     const { searchParams } = new URL(req.url);
     const personalId = searchParams.get("personalId");
-    const folder = searchParams.get("folder") || ""; // Puede ser "estudios" o vacío
+    const folder = searchParams.get("folder") || "";
 
-    if (!personalId) {
-      return NextResponse.json({ error: "El personalId es requerido" }, { status: 400 });
-    }
+    if (!personalId) throw BadRequestError("El personalId es requerido");
 
-    // Leer el archivo desde la solicitud
+    const currentPersonal = await prisma.personal.findUnique({ where: { id: personalId } });
+    if (!currentPersonal) throw NotFoundError("Personal no encontrado");
+
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
 
-    if (!file) {
-      return NextResponse.json({ error: "No se proporcionó un archivo" }, { status: 400 });
-    }
+    if (!file) throw NotFoundError("No se proporcionó un archivo");
 
     // Validar tamaño y extensión
     const ext = path.extname(file.name).toLowerCase();
-    if (!ALLOWED_EXTENSIONS.includes(ext)) {
-      return NextResponse.json({ error: "Formato de archivo no permitido" }, { status: 400 });
-    }
-    if (file.size > MAX_FILE_SIZE) {
-      return NextResponse.json({ error: "El archivo excede el tamaño máximo permitido" }, { status: 400 });
-    }
+    if (!ALLOWED_EXTENSIONS.includes(ext)) throw BadRequestError("Formato de archivo no permitido");
+    if (file.size > MAX_FILE_SIZE) throw BadRequestError("El archivo excede el tamaño máximo permitido");
 
     // Crear la estructura de carpetas
     const personalFolder = path.join(UPLOADS_DIR, personalId);
     const finalFolder = folder ? path.join(personalFolder, folder) : personalFolder;
 
-    if (!fs.existsSync(finalFolder)) {
-      fs.mkdirSync(finalFolder, { recursive: true });
-    }
+    if (!fs.existsSync(finalFolder)) fs.mkdirSync(finalFolder, { recursive: true });
 
-    // Guardar el archivo
-    const filePath = path.join(finalFolder, file.name);
+    // Generar nombre único basado en la fecha actual
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-"); // Formato seguro para nombres de archivos
+    const uniqueFileName = `${timestamp}${ext}`;
+    const filePath = path.join(finalFolder, uniqueFileName);
+
+    // Guardar archivo en el sistema
     const buffer = Buffer.from(await file.arrayBuffer());
     fs.writeFileSync(filePath, buffer);
 
-    // Guardar en la base de datos
+    // Guardar información en la base de datos con el nombre original
     const archivo = await prisma.archivo.create({
       data: {
-        name: file.name,
-        path: filePath,
+        name: file.name, // Guardamos el nombre original
+        path: filePath, // Guardamos la ruta con el nombre único
         size: file.size,
       },
     });
 
-    return NextResponse.json({ message: "Archivo subido con éxito", archivo });
-  } catch (error) {
-    console.error("Error al subir archivo:", error);
-    return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 });
+    return NextResponse.json(archivo.id, { status: 200 });
+  } catch (error: unknown) {
+    return handleError(error as CustomError);
   }
 }

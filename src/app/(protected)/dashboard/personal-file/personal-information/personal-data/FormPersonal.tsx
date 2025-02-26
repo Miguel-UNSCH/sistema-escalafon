@@ -54,6 +54,7 @@ export const PersonalForm = ({ userId }: PersonalFormProps) => {
       discapacidad: false,
     },
   });
+  console.log(userId);
 
   useEffect(() => {
     const fetchPersonalData = async () => {
@@ -75,7 +76,7 @@ export const PersonalForm = ({ userId }: PersonalFormProps) => {
 
   const onSubmit = async (data: ZPersonal) => {
     try {
-      await createPersonal(data);
+      await createPersonal({ ...data, userId });
       setError(null);
     } catch (err) {
       console.error("Error enviando los datos:", err);

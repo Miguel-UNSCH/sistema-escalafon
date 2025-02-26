@@ -1,28 +1,16 @@
-import axios from "axios";
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const uploadFile = async (file: string) => {
+import api from "@/config/axios.config";
+
+export const uploadFile = async (params: { personalId: string; folder?: string }, file: File) => {
   try {
-    const fileServerUrl = process.env.NEXT_PUBLIC_FILE_SERVER_URL;
-    const token = process.env.NEXT_PUBLIC_FILE_SERVER_TOKEN;
+    const formData = new FormData();
+    formData.append("file", file);
 
-    if (!fileServerUrl) throw new Error("La URL del servidor de archivos no está configurada");
-    if (!token) throw new Error("El token de autenticación no está configurado");
-
-    const response = await axios.post(
-      `${fileServerUrl}/sistema-escalafon/upload`,
-      { file },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const queryParams = new URLSearchParams(params as Record<string, string>).toString();
+    const response = await api.post(`/files?${queryParams}`, formData, { headers: { "Content-Type": "multipart/form-data" } });
 
     return response.data;
   } catch (error: any) {
-    console.error("Error al subir archivo:", error.response?.data || error.message);
-    return error.response?.data || { error: "Error desconocido" };
+    return error.response?.data || { error: "Error desconocido al subir el archivo" };
   }
 };
