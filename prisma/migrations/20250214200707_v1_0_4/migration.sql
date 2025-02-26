@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "Hijo" ALTER COLUMN "fechaNacimiento" SET DATA TYPE TEXT,
-ALTER COLUMN "userId" SET DATA TYPE TEXT;
