@@ -139,6 +139,15 @@ model Cargo {
   createdAt DateTime @default(now())
 }
 
+model Archivo {
+  id   String @id @default(cuid())
+  name String
+  path String
+  size Int
+
+  createdAt DateTime @default(now())
+}
+
 model User {
   id        String  @id @default(cuid())
   nombres   String
@@ -157,7 +166,7 @@ model User {
 }
 
 model Personal {
-  id                   Int            @id @default(autoincrement())
+  id                   String         @id @default(uuid())
   sexo                 Sexo
   dni                  String         @unique
   nAutogenerado        String
@@ -213,7 +222,7 @@ model Personal {
 
 model Conyuge {
   id               Int      @id @default(autoincrement())
-  personalId       Int      @unique
+  personalId       String   @unique
   nombres          String
   apellidos        String
   fechaNacimiento  DateTime
@@ -234,7 +243,7 @@ model Conyuge {
 
 model Hijo {
   id               Int      @id @default(autoincrement())
-  personalId       Int
+  personalId       String
   ubigeoId         Int
   nombres          String
   apellidos        String
@@ -251,7 +260,7 @@ model Hijo {
 
 model Discapacidad {
   id                 Int    @id @default(autoincrement())
-  personalId         Int
+  personalId         String
   tipo               String
   documentoSustento  String
   organoEstructurado String
@@ -266,7 +275,7 @@ model Discapacidad {
 
 model Estudios {
   id            Int     @id @default(autoincrement())
-  personalId    Int
+  personalId    String
   nivel         String
   periodo       Json // {from: date, to: date}
   institucion   String
@@ -281,7 +290,7 @@ model Estudios {
 
 model Capacitacion {
   id                 Int      @id @default(autoincrement())
-  personalId         Int
+  personalId         String
   centroCapacitacion String
   materia            String
   especialidad       String // profesión o especialidad
@@ -299,7 +308,7 @@ model Capacitacion {
 
 model ExperienciaLaboral {
   id                Int      @id @default(autoincrement())
-  personalId        Int
+  personalId        String
   dependenciaId     Int?
   cargoId           Int?
   documentoSustento String // Certificado, Constancia, Resolución, etc.
@@ -328,7 +337,7 @@ model Contrato {
   fechaIngreso           DateTime // Fecha de inicio del contrato
   fechaCese              DateTime? // Fecha de cese (opcional, puede ser null para contratos activos)
   aniosServicio          Int? // Años de servicio acumulados (opcional)
-  personalId             Int
+  personalId             String
   dependenciaId          Int
   cargoId                Int
   status                 Status       @default(ENABLED)
@@ -346,7 +355,7 @@ model Renuncia {
   documentoRenuncia String // Carta, resolución de renuncia
   motivoRenuncia    String // Motivo de renuncia (Particular, salud, personal)
   fechaRenuncia     DateTime // Fecha de la renuncia
-  personalId        Int
+  personalId        String
   dependenciaId     Int?
   cargoId           Int
   status            Status   @default(ENABLED)
@@ -364,7 +373,7 @@ model Desplazamiento {
   tipoDesplazamiento  TipoDesplazamiento // Tipo de desplazamiento
   documentoRotacion   String // Memorando, resolución
   fechaDesplazamiento DateTime // Fecha de desplazamiento
-  personalId          Int
+  personalId          String
   status              Status             @default(ENABLED)
 
   cargos       Cargo[]       @relation("CargosDesplazamiento") // Relación N:M con Cargo
@@ -382,7 +391,7 @@ model DescansoMedico {
   periodo           String // "dd/mm/yyyy - dd/mm/yyyy"
   cargoId           Int
   dependenciaId     Int
-  personalId        Int
+  personalId        String
   status            Status       @default(ENABLED)
 
   personal    Personal    @relation(fields: [personalId], references: [id], onDelete: Cascade) // Borrado en cascada
@@ -400,7 +409,7 @@ model PermisoLicenciaVacacion {
   periodo                     String // "dd/mm/yyyy - dd/mm/yyyy"
   dependenciaId               Int
   cargoId                     Int
-  personalId                  Int
+  personalId                  String
   status                      Status                      @default(ENABLED)
 
   personal    Personal    @relation(fields: [personalId], references: [id], onDelete: Cascade)
@@ -417,7 +426,7 @@ model Ascenso {
   nivelRemunerativo String // "1000 - 1500"
   pap               Int    @unique // "anterior - posterior"
   cnp               String
-  personalId        Int
+  personalId        String
   status            Status @default(ENABLED)
 
   cargos       Cargo[]       @relation("CargosAscenso") // Relación N:M con Cargo
@@ -433,7 +442,7 @@ model BonificacionPersonal {
   tipoBonificacion       String
   resolucionBonificacion String
   cargoId                Int
-  personalId             Int
+  personalId             String
   dependenciaId          Int
   status                 Status @default(ENABLED)
 
@@ -451,7 +460,7 @@ model BonificacionFamiliar {
   resolucionBonificacion String
   cargoId                Int
   dependenciaId          Int
-  personalId             Int
+  personalId             String
   status                 Status @default(ENABLED)
 
   cargo       Cargo       @relation(fields: [cargoId], references: [id])
@@ -466,7 +475,7 @@ model FichaEvaluacion {
   id                Int      @id @default(autoincrement())
   documentoSustento String
   fechaEvaluacion   DateTime
-  personalId        Int
+  personalId        String
   dependenciaId     Int
   cargoId           Int
   status            Status   @default(ENABLED)
@@ -481,7 +490,7 @@ model FichaEvaluacion {
 
 model Merito {
   id                Int      @id @default(autoincrement())
-  personalId        Int
+  personalId        String
   dependenciaId     Int
   cargoId           Int
   documentoSustento String // Resoluciones, Cartas, etc.
@@ -498,7 +507,7 @@ model Merito {
 
 model Demerito {
   id                Int    @id @default(autoincrement())
-  personalId        Int
+  personalId        String
   dependenciaId     Int
   cargoId           Int
   documentoSustento String // Resoluciones, Memorando, etc.
@@ -516,7 +525,7 @@ model Demerito {
 
 model ActaEntrega {
   id                   Int    @id @default(autoincrement())
-  actaEntregadoPorId   Int // Personal que entrega el acta
+  actaEntregadoPorId   String // Personal que entrega el acta
   dependenciaOficinaId Int
   cargoId              Int
   dependenciaId        Int
@@ -534,9 +543,9 @@ model ActaEntrega {
 }
 
 model ActaEntregaDestinatario {
-  id             Int @id @default(autoincrement())
+  id             Int    @id @default(autoincrement())
   actaId         Int // ID del ActaEntrega
-  destinatarioId Int // ID del Personal que es destinatario
+  destinatarioId String // ID del Personal que es destinatario
 
   acta         ActaEntrega @relation(fields: [actaId], references: [id], onDelete: Cascade)
   destinatario Personal    @relation(fields: [destinatarioId], references: [id], onDelete: Cascade)
