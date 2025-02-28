@@ -10,7 +10,7 @@ export const GET = async (request: NextRequest) => {
     const personalId = request.nextUrl.searchParams.get("personalId");
     if (!personalId) throw BadRequestError("El ID del personal es requerido.");
 
-    const conyuge = await prisma.conyuge.findUnique({ where: { personalId: Number(personalId) }, include: { personal: true, ubigeo: true } });
+    const conyuge = await prisma.conyuge.findUnique({ where: { personalId }, include: { personal: true, ubigeo: true } });
 
     if (!conyuge) throw NotFoundError("Cónyuge no encontrado.");
 

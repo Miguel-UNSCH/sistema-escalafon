@@ -14,11 +14,7 @@ import { SelectField } from "@/components/forms/SelectTypes";
 import { conyugeSchema, ZConyuge } from "@/lib/schemas/conyuge.schema";
 import { createConyuge, getConyuge } from "@/services/conyugeService";
 
-interface ConyugeFormProps {
-  personalId: number;
-}
-
-export const ConyugeForm = ({ personalId }: ConyugeFormProps) => {
+export const ConyugeForm = ({ personalId }: { personalId: string }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,7 +24,7 @@ export const ConyugeForm = ({ personalId }: ConyugeFormProps) => {
       personalId,
       nombres: "",
       apellidos: "",
-      gradoInstruccion: "",
+      gradoInstruccion: undefined,
       fechaNacimiento: undefined,
       profesion: "",
       ocupacion: "",
@@ -47,7 +43,7 @@ export const ConyugeForm = ({ personalId }: ConyugeFormProps) => {
   useEffect(() => {
     const fetchConyugeData = async () => {
       try {
-        const conyugeData: (ZConyuge & { id: number }) | null = await getConyuge(personalId);
+        const conyugeData: (ZConyuge & { id: string }) | null = await getConyuge(personalId);
         if (conyugeData && conyugeData !== null) form.reset(conyugeData);
 
         setError(null);
@@ -64,8 +60,8 @@ export const ConyugeForm = ({ personalId }: ConyugeFormProps) => {
 
   const gradoInstruccion = useWatch({ control: form.control, name: "gradoInstruccion" });
 
-  const isProfesionEnabled = ["tecnico", "universitario", "posgrado"].includes(gradoInstruccion);
-  const isPostgradoEnabled = gradoInstruccion === "posgrado";
+  const isProfesionEnabled = ["TEC", "UNI", "POS"].includes(gradoInstruccion);
+  const isPostgradoEnabled = gradoInstruccion === "POS";
 
   const onSubmit = async (data: ZConyuge) => {
     try {
@@ -90,7 +86,7 @@ export const ConyugeForm = ({ personalId }: ConyugeFormProps) => {
         <div className="flex flex-col">
           <p className="font-inter font-semibold">Lugar de nacimiento</p>
           <div className="gap-2 grid grid-cols-3">
-            <UbigeoForm isCompleteFromDB={false} />
+            <UbigeoForm control={form.control} setValue={form.setValue} watch={form.watch} isCompleteFromDB={false} />
           </div>
         </div>
 

@@ -2,7 +2,7 @@
 import api from "@/config/axios.config";
 import { ZConyuge } from "@/lib/schemas/conyuge.schema";
 
-export const getConyuge = async (personalId: number) => {
+export const getConyuge = async (personalId: string) => {
   try {
     const response = await api.get(`/conyuge?personalId=${personalId}`);
     return response.data;
