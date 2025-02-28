@@ -49,12 +49,14 @@ export const PersonalForm = ({ userId }: { userId: string }) => {
     discapacidad: false,
   };
 
+  console.log(error);
+
   const form = useForm<ZPersonal>({ resolver: zodResolver(personalSchema), defaultValues });
 
   useEffect(() => {
     const fetchPersonalData = async () => {
       try {
-        const personalData: ZPersonal & { id: number } = await getCurrentPersonal(userId);
+        const personalData: ZPersonal & { id: string } = await getCurrentPersonal(userId);
         if (personalData && personalData.id === null) {
           console.log("personalDat", personalData);
         } else {
@@ -152,7 +154,6 @@ export const PersonalForm = ({ userId }: { userId: string }) => {
 
         <SwitchField control={form.control} name="discapacidad" label="Estado civil *" description="Presenta algun tipo de discapacidad." disabled={false} />
 
-        {error && <pre>{JSON.stringify(error, null, 2)}</pre>}
         <div className="flex justify-end">
           <Button type="submit" onClick={() => console.log(form)} className="justify-end bg-[#d20f39] hover:bg-[#e64553]">
             Guardar

@@ -18,33 +18,36 @@ export const ConyugeForm = ({ personalId }: { personalId: string }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const form = useForm<ZConyuge>({
-    resolver: zodResolver(conyugeSchema),
-    defaultValues: {
-      personalId,
-      nombres: "",
-      apellidos: "",
-      gradoInstruccion: undefined,
-      fechaNacimiento: undefined,
-      profesion: "",
-      ocupacion: "",
-      centroTrabajo: "",
-      postgrado: "",
-      ubigeo: {
-        inei: "",
-        reniec: "",
-        departamento: "",
-        provincia: "",
-        distrito: "",
-      },
+  const defaultValues = {
+    personalId,
+    nombres: "",
+    apellidos: "",
+    gradoInstruccion: undefined,
+    fechaNacimiento: undefined,
+    profesion: "",
+    ocupacion: "",
+    centroTrabajo: "",
+    postgrado: "",
+    ubigeo: {
+      inei: "",
+      reniec: "",
+      departamento: "",
+      provincia: "",
+      distrito: "",
     },
-  });
+  };
+
+  const form = useForm<ZConyuge>({ resolver: zodResolver(conyugeSchema), defaultValues });
 
   useEffect(() => {
     const fetchConyugeData = async () => {
       try {
         const conyugeData: (ZConyuge & { id: string }) | null = await getConyuge(personalId);
-        if (conyugeData && conyugeData !== null) form.reset(conyugeData);
+        if (conyugeData && conyugeData.id !== null) {
+          console.log("conyugeData", conyugeData);
+        } else {
+          form.reset({ ...conyugeData, personalId });
+        }
 
         setError(null);
       } catch (err) {
