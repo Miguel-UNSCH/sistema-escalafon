@@ -75,6 +75,45 @@ enum TipoPermisoLicenciaVacacion {
   PERMISO_FAMILIAR
 }
 
+enum SituacionLaboral {
+  ND276 // Nombrado-D-L. 276
+  CPV // Contratado plaza vacante
+  CL30057 // Contratado ley 30057
+  CASI // Contratado CAS-Indeterminado
+  CAST // Contratado en CAS-Temporal D.L. 1057
+  CPI // Contratado en proyecto de inversión
+  PPP1404 // Practicantes preprofesionales-D.L. 1404
+  PP1004 // Practicante profesional-D.L. 1004
+}
+
+enum RegimenPensionario {
+  L29903 // L. N° 29903
+  DL19990 // D. L. N° 19990
+}
+
+enum GradoInstruccion {
+  SIN // Sin Instrucción
+  PC // Primaria Completa
+  PI // Primaria Incompleta
+  SC // Secundaria Completa
+  SI // Secundaria Incompleta
+  TEC // Técnico
+  UNI // Universitario
+  POS // Posgrado
+  NULL // Prefiero no decirlo
+}
+
+enum FormacionAcademica {
+  PC // Primaria Completa
+  PI // Primaria Incompleta
+  SC // Secundaria Completa
+  SI // Secundaria Incompleta
+  BAC // Bachiller
+  TIT // Titulado
+  POS // Postgrado
+  TEC // Técnico Completo
+}
+
 model Ubigeo {
   id           Int    @id @default(autoincrement())
   inei         String @unique
@@ -166,9 +205,9 @@ model User {
 }
 
 model Personal {
-  id                   String         @id @default(uuid())
+  id                   String             @id @default(uuid())
   sexo                 Sexo
-  dni                  String         @unique
+  dni                  String             @unique
   nAutogenerado        String
   licenciaConducir     String?
   grupoSanguineo       GrupoSanguineo
@@ -180,12 +219,12 @@ model Personal {
   interiorUrbanizacion String?
   telefono             String?
   celular              String
-  regimenPensionario   String
+  regimenPensionario   RegimenPensionario
   nombreAfp            String?
-  situacionLaboral     String
+  situacionLaboral     SituacionLaboral
   estadoCivil          EstadoCivil
   discapacidad         Boolean
-  status               Status         @default(ENABLED)
+  status               Status             @default(ENABLED)
 
   cargoId       Int
   dependenciaId Int
@@ -221,18 +260,18 @@ model Personal {
 }
 
 model Conyuge {
-  id               Int      @id @default(autoincrement())
-  personalId       String   @unique
+  id               Int              @id @default(autoincrement())
+  personalId       String           @unique
   nombres          String
   apellidos        String
   fechaNacimiento  DateTime
   ubigeoId         Int
-  gradoInstruccion String
+  gradoInstruccion GradoInstruccion
   ocupacion        String
   profesion        String?
   postgrado        String?
   centroTrabajo    String?
-  status           Status   @default(ENABLED)
+  status           Status           @default(ENABLED)
 
   personal Personal @relation(fields: [personalId], references: [id], onDelete: Cascade)
   ubigeo   Ubigeo   @relation(fields: [ubigeoId], references: [id])
@@ -242,14 +281,14 @@ model Conyuge {
 }
 
 model Hijo {
-  id               Int      @id @default(autoincrement())
+  id               Int              @id @default(autoincrement())
   personalId       String
   ubigeoId         Int
   nombres          String
   apellidos        String
   fechaNacimiento  DateTime
-  gradoInstruccion String
-  status           Status   @default(ENABLED)
+  gradoInstruccion GradoInstruccion
+  status           Status           @default(ENABLED)
 
   personal Personal @relation(fields: [personalId], references: [id], onDelete: Cascade)
   ubigeo   Ubigeo   @relation(fields: [ubigeoId], references: [id])

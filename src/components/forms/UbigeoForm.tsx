@@ -1,17 +1,21 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { SelectField } from "./SelectTypes";
-import { ZUbigeo } from "@/lib/schemas/ubigeo.schema";
 import { getUbigeo } from "@/services/ubigeoService";
-import { useFormContext } from "react-hook-form";
+import { Control, UseFormSetValue, UseFormWatch } from "react-hook-form";
+import { ZUbigeo } from "@/lib/schemas/ubigeo.schema";
 
-export const UbigeoForm = ({ isCompleteFromDB }: { isCompleteFromDB: boolean }) => {
-  const { control, setValue, watch } = useFormContext();
+interface UbigeoFormProps {
+  control: Control<any>;
+  isCompleteFromDB: boolean;
+  setValue: UseFormSetValue<any>;
+  watch: UseFormWatch<any>;
+}
 
+export const UbigeoForm = ({ control, isCompleteFromDB, setValue, watch }: UbigeoFormProps) => {
   const [departamentos, setDepartamentos] = useState<string[]>([]);
   const [provincias, setProvincias] = useState<string[]>([]);
   const [distritos, setDistritos] = useState<string[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [ubigeoData, setUbigeoData] = useState<any[]>([]);
 
   const selectedDepartamento = watch("ubigeo.departamento");
   const selectedProvincia = watch("ubigeo.provincia");
@@ -22,8 +26,6 @@ export const UbigeoForm = ({ isCompleteFromDB }: { isCompleteFromDB: boolean }) 
   useEffect(() => {
     const fetchDepartamentos = async () => {
       const data: ZUbigeo[] = await getUbigeo({});
-      setUbigeoData(data);
-
       const uniqueDepartamentos = Array.from(new Set(data.map((ubi) => ubi.departamento)));
       setDepartamentos(uniqueDepartamentos);
     };
@@ -31,34 +33,63 @@ export const UbigeoForm = ({ isCompleteFromDB }: { isCompleteFromDB: boolean }) 
   }, []);
 
   useEffect(() => {
-    if (selectedDepartamento) {
-      const filteredData = ubigeoData.filter((ubi) => ubi.departamento === selectedDepartamento);
-      const uniqueProvincias = Array.from(new Set(filteredData.map((ubi) => ubi.provincia)));
-      setProvincias(uniqueProvincias);
-      setValue("ubigeo.provincia", "");
-      setDistritos([]);
-    }
-  }, [selectedDepartamento, setValue, ubigeoData]);
+    const fetchProvincias = async () => {
+      if (selectedDepartamento) {
+        const data: ZUbigeo[] = await getUbigeo({ departamento: selectedDepartamento });
+        const uniqueProvincias = Array.from(new Set(data.map((ubi) => ubi.provincia)));
+        setProvincias(uniqueProvincias);
+        setDistritos([]);
 
-  useEffect(() => {
-    if (selectedProvincia) {
-      const filteredData = ubigeoData.filter((ubi) => ubi.departamento === selectedDepartamento && ubi.provincia === selectedProvincia);
-      const uniqueDistritos = Array.from(new Set(filteredData.map((ubi) => ubi.distrito)));
-      setDistritos(uniqueDistritos);
-      setValue("ubigeo.distrito", "");
-    }
-  }, [selectedProvincia, selectedDepartamento, setValue, ubigeoData]);
-
-  useEffect(() => {
-    if (selectedDistrito) {
-      const selectedUbigeo = ubigeoData.find((ubi) => ubi.departamento === selectedDepartamento && ubi.provincia === selectedProvincia && ubi.distrito === selectedDistrito);
-
-      if (selectedUbigeo) {
-        setValue("ubigeo.inei", selectedUbigeo.inei);
-        setValue("ubigeo.reniec", selectedUbigeo.reniec);
+        if (!uniqueProvincias.includes(selectedProvincia)) {
+          setValue("ubigeo.provincia", "");
+          setValue("ubigeo.distrito", "");
+        }
       }
-    }
-  }, [selectedDistrito, selectedProvincia, selectedDepartamento, setValue, ubigeoData]);
+    };
+    fetchProvincias();
+  }, [selectedDepartamento, selectedProvincia, setValue]);
+
+  useEffect(() => {
+    const fetchDistritos = async () => {
+      if (selectedDepartamento && selectedProvincia) {
+        const data: ZUbigeo[] = await getUbigeo({ departamento: selectedDepartamento, provincia: selectedProvincia });
+        const uniqueDistritos = Array.from(new Set(data.map((ubi) => ubi.distrito)));
+        setDistritos(uniqueDistritos);
+
+        if (!uniqueDistritos.includes(selectedDistrito)) {
+          setValue("ubigeo.distrito", "");
+        }
+      }
+    };
+    fetchDistritos();
+  }, [selectedProvincia, selectedDepartamento, selectedDistrito, setValue]);
+
+  useEffect(() => {
+    const fetchUbigeoDetails = async () => {
+      if (selectedDepartamento && selectedProvincia && selectedDistrito) {
+        const data = await getUbigeo({ departamento: selectedDepartamento, provincia: selectedProvincia, distrito: selectedDistrito });
+        if (data.length > 0) {
+          setValue("ubigeo.inei", data[0].inei);
+          setValue("ubigeo.reniec", data[0].reniec);
+        }
+      }
+    };
+    fetchUbigeoDetails();
+  }, [selectedDistrito, selectedProvincia, selectedDepartamento, setValue]);
+
+  useEffect(() => {
+    const initializeUbigeo = async () => {
+      if (selectedDepartamento && !provincias.length) {
+        const data: ZUbigeo[] = await getUbigeo({ departamento: selectedDepartamento });
+        setProvincias(Array.from(new Set(data.map((ubi) => ubi.provincia))));
+      }
+      if (selectedProvincia && !distritos.length) {
+        const data: ZUbigeo[] = await getUbigeo({ departamento: selectedDepartamento, provincia: selectedProvincia });
+        setDistritos(Array.from(new Set(data.map((ubi) => ubi.distrito))));
+      }
+    };
+    initializeUbigeo();
+  }, [distritos.length, provincias.length, selectedDepartamento, selectedProvincia]);
 
   return (
     <>
@@ -84,7 +115,7 @@ export const UbigeoForm = ({ isCompleteFromDB }: { isCompleteFromDB: boolean }) 
         label="Distrito *"
         options={convertArrayToObjects(distritos)}
         placeholder="Seleccione el distrito"
-        disabled={isCompleteFromDB || !selectedProvincia}
+        disabled={isCompleteFromDB || !selectedProvincia || distritos.length === 0}
       />
     </>
   );

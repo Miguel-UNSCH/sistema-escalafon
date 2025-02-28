@@ -1,18 +1,14 @@
 import { object, string, number, z, date, optional } from "zod";
 
 export const EstadoCivil = z.enum(["S", "C", "D", "V"]);
-export const GrupoSanguineo = z.enum([
-  "A_POSITIVO",
-  "A_NEGATIVO",
-  "B_POSITIVO",
-  "B_NEGATIVO",
-  "AB_POSITIVO",
-  "AB_NEGATIVO",
-  "O_POSITIVO",
-  "O_NEGATIVO",
-]);
+export const GrupoSanguineo = z.enum(["A_POSITIVO", "A_NEGATIVO", "B_POSITIVO", "B_NEGATIVO", "AB_POSITIVO", "AB_NEGATIVO", "O_POSITIVO", "O_NEGATIVO"]);
 export const Sexo = z.enum(["M", "F"]);
 export const Status = z.enum(["ENABLED", "DISABLED"]);
+
+export const SituacionLaboral = z.enum(["ND276", "CPV", "CL30057", "CASI", "CAST", "CPI", "PPP1404", "PP1004"]);
+export const RegimenPensionario = z.enum(["L29903", "DL19990"]);
+export const GradoInstruccion = z.enum(["SIN", "PC", "PI", "SC", "SI", "TEC", "UNI", "POS", "NULL"]);
+export const FormacionAcademica = z.enum(["PC", "PI", "SC", "SI", "BAC", "TIT", "POS", "TEC"]);
 
 export const loginSchema = object({
   email: string({ required_error: "Email is required" }).min(1, "Email is required").email("Invalid email"),
@@ -23,9 +19,7 @@ export const loginSchema = object({
 });
 
 export const registerSchema = object({
-  email: string({ required_error: "El correo electrónico es obligatorio" })
-    .min(1, "El correo electrónico es obligatorio")
-    .email("Correo electrónico no válido"),
+  email: string({ required_error: "El correo electrónico es obligatorio" }).min(1, "El correo electrónico es obligatorio").email("Correo electrónico no válido"),
   password: string({ required_error: "La contraseña es obligatoria" })
     .min(8, "La contraseña debe tener al menos 8 caracteres")
     .max(32, "La contraseña debe tener menos de 32 caracteres")

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { UbigeoSchema } from "./ubigeo.schema";
 import { dependenciaSchema } from "./dependencia.schema";
 import { cargoSchema } from "./cargo.schema";
-import { EstadoCivil, GrupoSanguineo, Sexo } from "../zod";
+import { EstadoCivil, GrupoSanguineo, RegimenPensionario, Sexo, SituacionLaboral } from "../zod";
 
 export const personalSchema = z.object({
   userId: z.string({ required_error: "Usuario es requerido" }),
@@ -19,7 +19,6 @@ export const personalSchema = z.object({
     .string({ required_error: "Fecha de ingreso es requerida" })
     .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
     .transform((date) => new Date(date)),
-
   fechaNacimiento: z
     .string({ required_error: "Fecha de nacimiento es requerida" })
     .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
@@ -27,9 +26,9 @@ export const personalSchema = z.object({
   unidadEstructurada: z.string({ required_error: "Unidad estructurada es requerida" }),
   telefono: z.string().optional(),
   celular: z.string({ required_error: "Celular es requerido" }),
-  regimenPensionario: z.string({ required_error: "Régimen pensionario es requerido" }), // select - option
+  regimenPensionario: RegimenPensionario,
   nombreAfp: z.string().optional(),
-  situacionLaboral: z.string({ required_error: "Situación laboral es requerida" }), // select - option
+  situacionLaboral: SituacionLaboral,
   estadoCivil: EstadoCivil,
   discapacidad: z.boolean({ required_error: "Discapacidad es requerida" }),
 

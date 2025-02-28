@@ -14,53 +14,52 @@ import { personalSchema, ZPersonal } from "@/lib/schemas/personal.schema";
 import { createPersonal, getCurrentPersonal } from "@/services/personalService";
 import { estadoCivilOptions, grupoSanguineoOptions, rPensionarioOptions, sexoOptions, situacionLaboralOptions } from "@/utils/items";
 
-interface PersonalFormProps {
-  userId: string;
-}
-export const PersonalForm = ({ userId }: PersonalFormProps) => {
+export const PersonalForm = ({ userId }: { userId: string }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const form = useForm<ZPersonal>({
-    resolver: zodResolver(personalSchema),
-    defaultValues: {
-      userId,
-      nacionalidad: "",
-      ubigeo: {
-        inei: "",
-        reniec: "",
-        departamento: "",
-        provincia: "",
-        distrito: "",
-      },
-      domicilio: "",
-      interiorUrbanizacion: "",
-      cargo: { nombre: "" },
-      dependencia: { nombre: "", direccion: "", codigo: "" },
-      sexo: undefined,
-      dni: "",
-      nAutogenerado: "",
-      licenciaConducir: "",
-      grupoSanguineo: undefined,
-      fechaIngreso: undefined,
-      fechaNacimiento: undefined,
-      unidadEstructurada: "",
-      telefono: "",
-      celular: "",
-      regimenPensionario: undefined,
-      nombreAfp: "",
-      situacionLaboral: undefined,
-      estadoCivil: undefined,
-      discapacidad: false,
+  const defaultValues = {
+    userId,
+    nacionalidad: "",
+    ubigeo: {
+      inei: "",
+      reniec: "",
+      departamento: "",
+      provincia: "",
+      distrito: "",
     },
-  });
-  console.log(userId);
+    domicilio: "",
+    interiorUrbanizacion: "",
+    cargo: { nombre: "" },
+    dependencia: { nombre: "", direccion: "", codigo: "" },
+    sexo: undefined,
+    dni: "",
+    nAutogenerado: "",
+    licenciaConducir: "",
+    grupoSanguineo: undefined,
+    fechaIngreso: undefined,
+    fechaNacimiento: undefined,
+    unidadEstructurada: "",
+    telefono: "",
+    celular: "",
+    regimenPensionario: undefined,
+    nombreAfp: "",
+    situacionLaboral: undefined,
+    estadoCivil: undefined,
+    discapacidad: false,
+  };
+
+  const form = useForm<ZPersonal>({ resolver: zodResolver(personalSchema), defaultValues });
 
   useEffect(() => {
     const fetchPersonalData = async () => {
       try {
-        const personalData: (ZPersonal & { id: number }) | null = await getCurrentPersonal(userId);
-        if (personalData && personalData !== null) form.reset(personalData);
+        const personalData: ZPersonal & { id: number } = await getCurrentPersonal(userId);
+        if (personalData && personalData.id === null) {
+          console.log("personalDat", personalData);
+        } else {
+          form.reset({ ...personalData, userId });
+        }
 
         setError(null);
       } catch (err) {
@@ -89,18 +88,18 @@ export const PersonalForm = ({ userId }: PersonalFormProps) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
-        <TextField control={form.control} name="nacionalidad" label="Nacionalidad *" placeholder="Nacionalidad" disabled={false} />
+        <TextField control={form.control} name="nacionalidad" label="Nacionalidad *" placeholder="Nacionalidad" />
 
         <div className="flex flex-col">
           <p className="font-inter font-semibold">Lugar de nacimiento</p>
           <div className="gap-2 grid grid-cols-3">
-            <UbigeoForm isCompleteFromDB={false} />
+            <UbigeoForm control={form.control} setValue={form.setValue} watch={form.watch} isCompleteFromDB={false} />
           </div>
         </div>
 
         <div className="gap-2 grid grid-cols-2">
-          <TextField control={form.control} name="domicilio" label="Domicilio *" placeholder="Domicilio" disabled={false} />
-          <TextField control={form.control} name="interiorUrbanizacion" label="Interior - Urbanizacion" placeholder="Interior - Urbanizacion" disabled={false} />
+          <TextField control={form.control} name="domicilio" label="Domicilio *" placeholder="Domicilio" />
+          <TextField control={form.control} name="interiorUrbanizacion" label="Interior - Urbanizacion" placeholder="Interior - Urbanizacion" />
         </div>
 
         <CargoField control={form.control} name="cargo.nombre" disabled={false} />
@@ -113,13 +112,13 @@ export const PersonalForm = ({ userId }: PersonalFormProps) => {
         </div>
 
         <div className="gap-2 grid grid-cols-2">
-          <TextField control={form.control} name="dni" label="dni *" placeholder="dni" disabled={false} />
+          <TextField control={form.control} name="dni" label="dni *" placeholder="dni" />
           <SelectField control={form.control} name="sexo" label="Sexo *" placeholder="Seleccione su sexo" options={sexoOptions} disabled={false} />
         </div>
 
         <div className="gap-2 grid grid-cols-2">
-          <TextField control={form.control} name="nAutogenerado" label="N Autogenerado *" placeholder="numero autogenerado" disabled={false} />
-          <TextField control={form.control} name="licenciaConducir" label="Licencia de conducir" placeholder="Licencia de conducir" disabled={false} />
+          <TextField control={form.control} name="nAutogenerado" label="N Autogenerado *" placeholder="numero autogenerado" />
+          <TextField control={form.control} name="licenciaConducir" label="Licencia de conducir" placeholder="Licencia de conducir" />
         </div>
 
         <SelectField control={form.control} name="grupoSanguineo" label="Grupo sanguíneo *" options={grupoSanguineoOptions} disabled={false} />
@@ -129,11 +128,11 @@ export const PersonalForm = ({ userId }: PersonalFormProps) => {
           <DatePicker control={form.control} name="fechaIngreso" label="Fecha de ingreso" disabled={false} />
         </div>
 
-        <TextField control={form.control} name="unidadEstructurada" label="Unidad estructurada *" placeholder="Unidad estructurada" disabled={false} />
+        <TextField control={form.control} name="unidadEstructurada" label="Unidad estructurada *" placeholder="Unidad estructurada" />
 
         <div className="gap-2 grid grid-cols-2">
-          <TextField control={form.control} name="celular" label="Celular *" placeholder="Celular" disabled={false} />
-          <TextField control={form.control} name="telefono" label="Telefono" placeholder="Telefono" disabled={false} />
+          <TextField control={form.control} name="celular" label="Celular *" placeholder="Celular" />
+          <TextField control={form.control} name="telefono" label="Telefono" placeholder="Telefono" />
         </div>
 
         <SelectField
@@ -145,7 +144,7 @@ export const PersonalForm = ({ userId }: PersonalFormProps) => {
           disabled={false}
         />
 
-        <TextField control={form.control} name="nombreAfp" label="Nombre AFP *" placeholder="nombre AFP" disabled={false} />
+        <TextField control={form.control} name="nombreAfp" label="Nombre AFP *" placeholder="nombre AFP" />
 
         <SelectField control={form.control} name="situacionLaboral" label="Situación Laboral *" options={situacionLaboralOptions} disabled={false} />
 

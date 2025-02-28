@@ -9,11 +9,8 @@ export const GET = async (r: NextRequest) => {
   try {
     const { searchParams } = r.nextUrl;
     const sexo = searchParams.get("sexo");
-    const edad = searchParams.get("edad");
     const dni = searchParams.get("dni");
-    const gSang = searchParams.get("grupoSanguineo");
     const regPen = searchParams.get("regimenPensionario");
-    const sCivil = searchParams.get("estadoCivil");
     const nombres = searchParams.get("nombres");
     const apellidos = searchParams.get("apellidos");
     const userId = searchParams.get("userId");
@@ -35,14 +32,11 @@ export const GET = async (r: NextRequest) => {
     }
 
     if (sexo) where.sexo = sexo;
-    if (edad) where.edad = parseInt(edad, 10);
     if (dni) where.dni = dni;
-    if (gSang) where.grupoSanguineo = gSang;
-    if (regPen) where.regimenPensionario = { contains: regPen };
-    if (sCivil) where.estadoCivil = sCivil;
+    if (regPen) where.regimenPensionario = regPen;
 
-    if (nombres) where.User = { nombres: { contains: nombres, mode: "insensitive" } };
-    if (apellidos) where.User = { ...where.User, apellidos: { contains: apellidos, mode: "insensitive" } };
+    if (nombres) where.user = { nombres: { contains: nombres, mode: "insensitive" } };
+    if (apellidos) where.user = { ...where.user, apellidos: { contains: apellidos, mode: "insensitive" } };
 
     const personals = await prisma.personal.findMany({ where, include: { user: true, dependencia: true, cargo: true } });
 
