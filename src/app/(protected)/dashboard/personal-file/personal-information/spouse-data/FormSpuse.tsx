@@ -43,10 +43,23 @@ export const ConyugeForm = ({ personalId }: { personalId: string }) => {
     const fetchConyugeData = async () => {
       try {
         const conyugeData: (ZConyuge & { id: string }) | null = await getConyuge(personalId);
-        if (conyugeData && conyugeData.id !== null) {
+
+        if (conyugeData) {
           console.log("conyugeData", conyugeData);
-        } else {
-          form.reset({ ...conyugeData, personalId });
+
+          const safeUbigeo = conyugeData.ubigeo ?? {
+            inei: "",
+            reniec: "",
+            departamento: "",
+            provincia: "",
+            distrito: "",
+          };
+
+          form.reset({
+            ...conyugeData,
+            ubigeo: safeUbigeo,
+            personalId,
+          });
         }
 
         setError(null);
