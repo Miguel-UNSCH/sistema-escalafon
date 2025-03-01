@@ -8,7 +8,7 @@ import { ZPersonal } from "@/lib/schemas/personal.schema";
 
 const Page = () => {
   const { data: session } = useSession();
-  const [personal, setPersonal] = useState<(ZPersonal & { id: number }) | null>(null);
+  const [personal, setPersonal] = useState<(ZPersonal & { id: string }) | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -17,7 +17,7 @@ const Page = () => {
       if (session?.user?.id) {
         try {
           setLoading(true);
-          const personalData: ZPersonal & { id: number } = await getCurrentPersonal(session.user.id);
+          const personalData: ZPersonal & { id: string } = await getCurrentPersonal(session.user.id);
           setPersonal(personalData);
           setError(null);
         } catch (err) {

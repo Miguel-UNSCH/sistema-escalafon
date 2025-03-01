@@ -96,9 +96,7 @@ const FormRegister = () => {
                 <FormControl>
                   <Input placeholder="contraseña" {...field} type="password" />
                 </FormControl>
-                <FormDescription>
-                  La contraseña debe tener al menos 8 caracteres, incluir una mayúscula, una minúscula, un número y un carácter especial.
-                </FormDescription>
+                <FormDescription>La contraseña debe tener al menos 8 caracteres, incluir una mayúscula, una minúscula, un número y un carácter especial.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}

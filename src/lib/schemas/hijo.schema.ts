@@ -1,15 +1,16 @@
 import { z } from "zod";
 import { UbigeoSchema } from "./ubigeo.schema";
+import { GradoInstruccion } from "../zod";
 
 export const hijoSchema = z.object({
-  personalId: z.number().int().positive("El ID del personal debe ser un número positivo"),
+  personalId: z.string(),
   nombres: z.string(),
   apellidos: z.string(),
   fechaNacimiento: z
     .string({ required_error: "Fecha de nacimiento es requerida" })
     .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
     .transform((date) => new Date(date)),
-  gradoInstruccion: z.string().min(1, "El grado de instrucción es obligatorio"),
+  gradoInstruccion: GradoInstruccion,
 
   ubigeo: UbigeoSchema,
 });

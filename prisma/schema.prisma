@@ -225,6 +225,7 @@ model Personal {
   estadoCivil          EstadoCivil
   discapacidad         Boolean
   status               Status             @default(ENABLED)
+  // anios de sevicio agregar
 
   cargoId       Int
   dependenciaId Int

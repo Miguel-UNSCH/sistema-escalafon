@@ -2,7 +2,7 @@
 import api from "@/config/axios.config";
 import { ZHijo } from "@/lib/schemas/hijo.schema";
 
-export const getHijos = async (personalId: number) => {
+export const getHijos = async (personalId: string) => {
   try {
     const response = await api.get(`/hijo?personalId=${personalId}`);
     return response.data;

@@ -14,11 +14,7 @@ import { SelectField } from "@/components/forms/SelectTypes";
 import { hijoSchema, ZHijo } from "@/lib/schemas/hijo.schema";
 import { getHijos, createHijo } from "@/services/hijoService";
 
-interface HijoFormProps {
-  personalId: number;
-}
-
-export const FormHijo = ({ personalId }: HijoFormProps) => {
+export const FormHijo = ({ personalId }: { personalId: string }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -84,7 +80,7 @@ export const FormHijo = ({ personalId }: HijoFormProps) => {
         <div className="flex flex-col">
           <p className="font-inter font-semibold">Lugar de nacimiento</p>
           <div className="gap-2 grid grid-cols-3">
-            <UbigeoForm isCompleteFromDB={false} />
+            <UbigeoForm control={form.control} setValue={form.setValue} watch={form.watch} isCompleteFromDB={false} />
           </div>
         </div>
 
