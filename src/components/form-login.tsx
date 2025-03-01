@@ -53,12 +53,7 @@ const FormLogin = () => {
                 <FormLabel>Password</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Input
-                      placeholder="**********"
-                      {...field}
-                      type={showPassword ? "text" : "password"}
-                      className="pr-10" // Espacio para el icono
-                    />
+                    <Input placeholder="**********" {...field} type={showPassword ? "text" : "password"} className="pr-10" />
                     <Button
                       type="button"
                       variant="ghost"

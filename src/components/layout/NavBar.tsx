@@ -18,19 +18,19 @@ const Navbar = ({ isSidebarOpen, isMobile, onMenuClick }: NavbarProps) => {
     >
       <div className="flex items-center">
         <button onClick={onMenuClick} className="hover:bg-icon-hover mr-4 p-2 rounded-md transition-all duration-100">
-          <AlignJustify strokeWidth={1.75} className="text-[#d20f39]" size={26} />
+          <AlignJustify strokeWidth={1.75} className="text-red" size={26} />
         </button>
 
         <form className="hidden sm:block mx-auto max-w-md">
           <label className="sr-only">Search</label>
           <div className="relative">
             <div className="absolute inset-y-0 flex items-center ps-3 pointer-events-none start-0">
-              <RiSearch2Line className="text-[#d20f39] text-lg" />
+              <RiSearch2Line className="text-red text-lg" />
             </div>
             <input
               type="search"
               id="default-search"
-              className="block bg-bg-card p-3 pl-10 ring-border-primary focus:ring-border-focus border-none rounded-lg ring-1 w-full text-text-primary text-sm transition-all duration-250"
+              className="block bg-mantle p-3 pl-10 border-none rounded-lg ring-1 ring-maroon focus:ring-red w-full text-text text-sm transition-all duration-250"
               placeholder="Search..."
               required
             />
@@ -41,8 +41,8 @@ const Navbar = ({ isSidebarOpen, isMobile, onMenuClick }: NavbarProps) => {
       <div className="flex flex-row items-center gap-4">
         <ThemeToggle />
 
-        <div className="hover:bg-[#ccd0da] p-2 rounded-full">
-          <Bell size={26} className="rounded-full text-[#d20f39]" />
+        <div className="hover:bg-mantle p-2 rounded-full">
+          <Bell size={26} className="rounded-full text-red" />
         </div>
         <UserCard />
       </div>
