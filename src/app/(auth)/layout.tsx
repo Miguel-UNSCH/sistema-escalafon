@@ -3,5 +3,5 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div className="place-items-center grid bg-[#eff1f5] min-h-screen font-poppins">{children}</div>;
+  return <div className="place-items-center grid min-h-screen font-poppins">{children}</div>;
 }

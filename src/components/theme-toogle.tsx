@@ -12,8 +12,8 @@ export function ThemeToggle() {
   };
 
   return (
-    <button onClick={toggleTheme} className="hover:bg-[#ccd0da] p-2 rounded-full transition-all">
-      {theme === "dark" ? <Sun size={26} className="rounded-full text-[#f38ba8]" /> : <Moon size={26} className="rounded-full text-[#d20f39]" />}
+    <button onClick={toggleTheme} className="hover:bg-mantle p-2 rounded-full text-maroon hover:text-red transition-all">
+      {theme === "dark" ? <Sun size={26} className="rounded-full" /> : <Moon size={26} className="rounded-full" />}
     </button>
   );
 }
