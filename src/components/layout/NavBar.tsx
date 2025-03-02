@@ -1,7 +1,23 @@
 import { RiSearch2Line } from "react-icons/ri";
-import { AlignJustify, Bell } from "lucide-react";
+import { AlignJustify, LogOut, UserRound } from "lucide-react";
 import { ThemeToggle } from "../theme-toogle";
-import UserCard from "../cards/UserCard";
+import logout from "@/helpers/logout";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { getUser } from "@/services/userService";
+
+interface IUser {
+  id: string;
+  nombres: string;
+  apellidos: string;
+  role: string;
+  email: string;
+  password: string;
+  ubigeoId: number;
+  status: string;
+  updatedAt: Date;
+  createdAt: Date;
+}
 
 interface NavbarProps {
   isSidebarOpen: boolean;
@@ -10,6 +26,23 @@ interface NavbarProps {
 }
 
 const Navbar = ({ isSidebarOpen, isMobile, onMenuClick }: NavbarProps) => {
+  const session = useSession();
+  const [user, setUser] = useState<IUser | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        if (!session.data?.user?.id) return;
+        const userData = await getUser(session.data.user.id);
+        setUser(userData);
+      } catch (error) {
+        console.error("Error al obtener usuario", error);
+      }
+    };
+
+    fetchUser();
+  }, [session]);
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-30 py-4 px-8 flex items-center justify-between bg-bg-primary/80 backdrop-blur-md transition-all duration-300 ease-in-out ${
@@ -41,10 +74,14 @@ const Navbar = ({ isSidebarOpen, isMobile, onMenuClick }: NavbarProps) => {
       <div className="flex flex-row items-center gap-4">
         <ThemeToggle />
 
-        <div className="hover:bg-mantle p-2 rounded-full">
-          <Bell size={26} className="rounded-full text-red" />
+        <div className="flex flex-row items-center gap-2 hover:bg-mantle p-2 rounded-full text-red">
+          {user && <p className="">{user.nombres}</p>}
+          <UserRound size={24} />
         </div>
-        <UserCard />
+
+        <div className="hover:bg-mantle p-2 rounded-full text-red">
+          <LogOut size={24} onClick={logout} />
+        </div>
       </div>
     </nav>
   );
