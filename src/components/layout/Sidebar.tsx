@@ -31,7 +31,7 @@ export default function Sidebar({ isOpen, isMobile }: SidebarProps) {
             </Link>
           </div>
 
-          <div className={`pr-2 h-full overflow-y-auto`}>
+          <div className={`pr-2 h-full overflow-y-auto mb-5`}>
             {navigationItems.map((group, idx) => (
               <SidebarMenuGroup key={idx} title={group.title} adm={group.adm} items={group.menuItem} openMenu={openMenu} setOpenMenu={setOpenMenu} />
             ))}

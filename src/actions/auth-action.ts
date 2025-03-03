@@ -2,20 +2,39 @@
 
 import { z } from "zod";
 import bcrypt from "bcryptjs";
-import { signIn } from "@/auth";
+import { auth, signIn } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { AuthError } from "next-auth";
 import { loginSchema, registerSchema } from "@/lib/zod";
 
 export const loginAction = async (values: z.infer<typeof loginSchema>) => {
   try {
-    await signIn("credentials", { email: values.email, password: values.password, redirect: false });
+    const result = await signIn("credentials", {
+      email: values.email,
+      password: values.password,
+      redirect: false, // 🚨 Evita redirecciones automáticas
+    });
 
-    return { success: true };
+    if (result?.error) {
+      return { error: "Credenciales incorrectas" };
+    }
+
+    // ✅ Obtener sesión después del login
+    const session = await auth(); // Alternativa: await getSession();
+
+    if (!session?.user) {
+      return { error: "No se pudo obtener la sesión" };
+    }
+
+    return {
+      success: true,
+      role: session.user.role, // 🚨 Asegúrate de que NextAuth devuelve el rol
+    };
   } catch (error: unknown) {
-    if (error instanceof AuthError) return { error: error.cause?.err?.message };
-
-    return { error: "error 500" };
+    if (error instanceof AuthError) {
+      return { error: error.cause?.err?.message };
+    }
+    return { error: "Error 500: Fallo interno del servidor" };
   }
 };
 

@@ -16,7 +16,6 @@ export const navigationItems: NavigationItems[] = [
         label: "dashboard",
         icon: <LayoutDashboard size={16} />,
         path: "/dashboard",
-        badge: "2",
         submenus: [{ label: "registrar", path: "/dashboard" }],
       },
     ],

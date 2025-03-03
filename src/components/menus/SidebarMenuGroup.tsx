@@ -1,14 +1,14 @@
-import React, { useEffect } from "react";
 import Link from "next/link";
-import { Dot } from "lucide-react";
+
+import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import { FaChevronRight } from "react-icons/fa";
-import { useSession } from "next-auth/react"; // ✅ Importamos useSession
+import { ChevronRight, Dot } from "lucide-react";
 
 import { MenuItem } from "@/interfaces/MenuItem";
 
 const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item, openMenu, setOpenMenu }) => {
-  const { data: session, status } = useSession(); // ✅ Obtiene la sesión y el estado
+  const { data: session, status } = useSession();
   const pathname = usePathname();
   const hasSubmenus = item.submenus && item.submenus.length > 0;
   const isActive = item.path === pathname;
@@ -19,22 +19,16 @@ const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item, openMenu, setOp
     if (isSubmenuActive) setOpenMenu(item.label);
   }, [isSubmenuActive, item.label, setOpenMenu]);
 
-  // ✅ Mostrar loading mientras se carga la sesión
-  if (status === "loading") {
-    return <p className="px-6 py-2 text-gray-500 text-sm">Cargando menú...</p>;
-  }
+  if (status === "loading") return <p className="px-6 py-2 text-subtext1 text-sm">Cargando menú...</p>;
 
-  // ✅ Validación para ADMIN si el item requiere permisos
   const shouldRender = item.adm === true ? session?.user?.role === "ADMIN" : true;
   if (!shouldRender) return null;
 
-  const toggleSubmenu = () => {
-    setOpenMenu(isOpen ? null : item.label);
-  };
+  const toggleSubmenu = () => setOpenMenu(isOpen ? null : item.label);
 
   const parentItemClasses = `
     flex items-center justify-between px-6 py-4 font-medium cursor-pointer text-sm rounded-lg
-    ${isActive || isSubmenuActive ? "bg-[#e64553] bg-opacity-20 text-[#d20f39]" : "text-text-link hover:bg-link-hover"}
+    ${isActive || isSubmenuActive ? "bg-maroon text-base" : "text-mauve hover:text-red"}
   `;
 
   return (
@@ -47,8 +41,7 @@ const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item, openMenu, setOp
               <span className="font-inter text-sm capitalize">{item.label}</span>
             </div>
             <div className="flex items-center space-x-2">
-              {item.badge && <span className="inline-block bg-[#e64553] p-1 px-2 rounded-full text-white text-xs">{item.badge}</span>}
-              <FaChevronRight size={10} className={`transition-transform duration-300 ${isOpen ? "rotate-90" : "rotate-0"}`} />
+              <ChevronRight size={16} className={`transition-transform duration-300 ${isOpen ? "rotate-90" : "rotate-0"}`} />
             </div>
           </div>
 
@@ -58,13 +51,13 @@ const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item, openMenu, setOp
                 const isSubItemActive = sub.path === pathname;
                 const subItemClasses = `
                   group flex items-center px-4 py-2 text-sm font-medium rounded-lg
-                  ${isSubItemActive ? "text-[#d20f39]" : "text-[#5c5f77] hover:text-[#e64553]"}
+                  ${isSubItemActive ? "text-red" : "text-subtext1 hover:text-maroon"}
                 `;
                 return (
                   <li key={subIndex}>
                     <Link href={sub.path || "#"} className={subItemClasses}>
                       <span className="flex items-center">
-                        <Dot className="" size={24} />
+                        <Dot size={24} />
                       </span>
                       <p className="capitalize">{sub.label}</p>
                     </Link>
@@ -78,13 +71,12 @@ const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item, openMenu, setOp
         <Link
           href={item.path || "#"}
           className={`flex items-center justify-between px-6 py-4 font-medium text-sm rounded-lg
-            ${isActive ? "bg-[#e64553] bg-opacity-20 text-[#d20f39]" : "text-[#5c5f77] hover:text-[#e64553]"}`}
+            ${isActive ? "bg-maroon text-base" : "text-subtext1 hover:text-maroon"}`}
         >
           <div className="flex items-center gap-4 overflow-hidden">
             {item.icon && <span>{item.icon}</span>}
             <span className="capitalize text-nowrap">{item.label}</span>
           </div>
-          {item.badge && <span className="inline-block bg-link-main px-2 py-0.5 rounded-full text-white text-xs">{item.badge}</span>}
         </Link>
       )}
     </li>
@@ -98,20 +90,16 @@ interface SidebarMenuItemProps {
 }
 
 const SidebarMenuGroup: React.FC<SidebarMenuGroupProps> = ({ title, adm, items, openMenu, setOpenMenu }) => {
-  const { data: session, status } = useSession(); // ✅ Reemplazo de useAuth
+  const { data: session, status } = useSession();
 
-  // ✅ Esperar carga de sesión antes de mostrar
-  if (status === "loading") {
-    return <p className="px-6 py-2 text-gray-500 text-sm">Cargando menú...</p>;
-  }
+  if (status === "loading") return <p className="px-6 py-2 text-text text-sm">Cargando menú...</p>;
 
-  // ✅ Control de acceso basado en el rol
   const shouldRender = adm === true ? session?.user?.role === "ADMIN" : true;
   if (!shouldRender) return null;
 
   return (
     <nav className="mt-4">
-      <h2 className="px-4 font-semibold text-[#4c4f69] text-xs uppercase tracking-wide">{title}</h2>
+      <h2 className="px-4 font-semibold text-text text-xs uppercase tracking-wide">{title}</h2>
       <ul className="space-y-1 mt-2">
         {items.map((item, idx) => (
           <SidebarMenuItem key={idx} item={item} openMenu={openMenu} setOpenMenu={setOpenMenu} />

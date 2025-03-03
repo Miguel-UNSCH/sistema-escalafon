@@ -31,14 +31,22 @@ const FormLogin = () => {
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     startTransition(async () => {
       const response = await loginAction(values);
+
       if (response.error) {
         setError(response.error);
       } else {
-        router.push("/dashboard");
+        const userRole = response.role; // ✅ Obtener el rol del usuario
+
+        if (userRole === "ADMIN") {
+          router.push("/dashboard");
+        } else if (userRole === "PERSONAL") {
+          router.push("/dashboard/personal-file/personal-information/personal-data");
+        } else {
+          setError("Rol no reconocido, contacta con el administrador.");
+        }
       }
     });
   };
-
   return (
     <div className="mx-auto w-full max-w-md">
       <Form {...form}>
