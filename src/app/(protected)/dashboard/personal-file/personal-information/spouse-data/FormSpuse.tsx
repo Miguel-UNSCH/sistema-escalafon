@@ -45,8 +45,6 @@ export const ConyugeForm = ({ personalId }: { personalId: string }) => {
         const conyugeData: (ZConyuge & { id: string }) | null = await getConyuge(personalId);
 
         if (conyugeData) {
-          console.log("conyugeData", conyugeData);
-
           const safeUbigeo = conyugeData.ubigeo ?? {
             inei: "",
             reniec: "",

@@ -98,7 +98,7 @@ export const FormHijo = ({ personalId }: { personalId: string }) => {
         {error && <pre className="text-red-500 text-center">{JSON.stringify(error, null, 2)}</pre>}
 
         <div className="flex justify-end">
-          <Button type="submit" onClick={() => console.log(form.getValues())} className="justify-end bg-[#d20f39] hover:bg-[#e64553]">
+          <Button type="submit" onClick={() => console.log(form.getValues())} className="justify-end bg-maroon hover:bg-red">
             Guardar
           </Button>
         </div>
