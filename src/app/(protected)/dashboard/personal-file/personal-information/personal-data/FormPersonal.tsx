@@ -43,6 +43,7 @@ export const PersonalForm = ({ userId }: { userId: string }) => {
     telefono: "",
     celular: "",
     regimenPensionario: undefined,
+    aniosServicio: 0,
     nombreAfp: "",
     situacionLaboral: undefined,
     estadoCivil: undefined,
@@ -84,8 +85,6 @@ export const PersonalForm = ({ userId }: { userId: string }) => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
-        <TextField control={form.control} name="nacionalidad" label="Nacionalidad *" placeholder="Nacionalidad" />
-
         <div className="flex flex-col">
           <p className="font-inter font-semibold">Lugar de nacimiento</p>
           <div className="gap-2 grid grid-cols-3">
@@ -140,13 +139,15 @@ export const PersonalForm = ({ userId }: { userId: string }) => {
           disabled={false}
         />
 
+        <TextField control={form.control} name="aniosServicio" label="Anios de Servicio *" placeholder="0" type="number" />
+
         <TextField control={form.control} name="nombreAfp" label="Nombre AFP *" placeholder="nombre AFP" />
 
         <SelectField control={form.control} name="situacionLaboral" label="Situación Laboral *" options={situacionLaboralOptions} disabled={false} />
 
         <SelectField control={form.control} name="estadoCivil" label="Estado civil *" options={estadoCivilOptions} disabled={false} />
 
-        <SwitchField control={form.control} name="discapacidad" label="Estado civil *" description="Presenta algun tipo de discapacidad." disabled={false} />
+        <SwitchField control={form.control} name="discapacidad" label="Discapacidad *" description="Presenta algun tipo de discapacidad." disabled={false} />
 
         {error && <pre>{JSON.stringify(error, null, 2)}</pre>}
         <div className="flex justify-end">

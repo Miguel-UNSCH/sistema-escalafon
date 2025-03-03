@@ -55,13 +55,13 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({ control, name, label, 
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex flex-row justify-between items-center p-4 border hover:border-[#d20f39] rounded-lg">
+        <FormItem className="flex flex-row justify-between items-center p-4 border border-transparent hover:border-red rounded-lg">
           <div className="space-y-0.5">
-            <FormLabel className="text-base">{label}</FormLabel>
+            <FormLabel className="text-text">{label}</FormLabel>
             {description && <FormDescription>{description}</FormDescription>}
           </div>
           <FormControl>
-            <Switch checked={field.value} onCheckedChange={field.onChange} className="" disabled={disabled} />
+            <Switch checked={field.value} onCheckedChange={field.onChange} disabled={disabled} />
           </FormControl>
         </FormItem>
       )}

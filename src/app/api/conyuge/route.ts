@@ -34,7 +34,7 @@ export const POST = async (request: NextRequest) => {
 
     const personal = await prisma.personal.findUnique({ where: { id: validatedConyuge.personalId } });
     if (!personal) throw NotFoundError("El personal proporcionado no existe.");
-    if (!["C"].includes(personal.estadoCivil)) throw ConflictError("El personal no es casado o viudo");
+    if (!["C"].includes(personal.estadoCivil)) throw ConflictError("El personal no es casado");
 
     const ubigeo = await prisma.ubigeo.findFirst({ where: { inei: validatedConyuge.ubigeo.inei } });
     if (!ubigeo) throw BadRequestError("El ubigeo proporcionado no existe.");
@@ -49,7 +49,6 @@ export const POST = async (request: NextRequest) => {
         profesion: validatedConyuge.profesion,
         ocupacion: validatedConyuge.ocupacion,
         centroTrabajo: validatedConyuge.centroTrabajo,
-        postgrado: validatedConyuge.postgrado,
         ubigeoId: ubigeo.id,
       },
     });

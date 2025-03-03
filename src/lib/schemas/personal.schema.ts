@@ -7,7 +7,6 @@ import { EstadoCivil, GrupoSanguineo, RegimenPensionario, Sexo, SituacionLaboral
 
 export const personalSchema = z.object({
   userId: z.string({ required_error: "Usuario es requerido" }),
-  nacionalidad: z.string({ required_error: "Nacionalidad es requerida" }),
   domicilio: z.string({ required_error: "Domicilio es requerido" }),
   interiorUrbanizacion: z.string().optional(),
   sexo: Sexo,
@@ -25,6 +24,7 @@ export const personalSchema = z.object({
     .transform((date) => new Date(date)),
   unidadEstructurada: z.string({ required_error: "Unidad estructurada es requerida" }),
   telefono: z.string().optional(),
+  aniosServicio: z.number({ required_error: "" }),
   celular: z.string({ required_error: "Celular es requerido" }),
   regimenPensionario: RegimenPensionario,
   nombreAfp: z.string().optional(),

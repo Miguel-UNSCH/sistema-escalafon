@@ -214,18 +214,17 @@ model Personal {
   fechaIngreso         DateTime
   unidadEstructurada   String
   fechaNacimiento      DateTime
-  nacionalidad         String
   domicilio            String
   interiorUrbanizacion String?
   telefono             String?
   celular              String
   regimenPensionario   RegimenPensionario
   nombreAfp            String?
+  aniosServicio        Int
   situacionLaboral     SituacionLaboral
   estadoCivil          EstadoCivil
   discapacidad         Boolean
   status               Status             @default(ENABLED)
-  // anios de sevicio agregar
 
   cargoId       Int
   dependenciaId Int
@@ -270,7 +269,6 @@ model Conyuge {
   gradoInstruccion GradoInstruccion
   ocupacion        String
   profesion        String?
-  postgrado        String?
   centroTrabajo    String?
   status           Status           @default(ENABLED)
 
@@ -334,7 +332,7 @@ model Capacitacion {
   centroCapacitacion String
   materia            String
   especialidad       String // profesión o especialidad
-  periodo            String // "dd/mm/yyyy - dd/mm/yyyy"
+  periodo            Json // {from: date, to: date}
   horasLectivas      Int
   fechaEmision       DateTime
   certificadoPdf     String
@@ -353,7 +351,7 @@ model ExperienciaLaboral {
   cargoId           Int?
   documentoSustento String // Certificado, Constancia, Resolución, etc.
   centroLabor       String // Nombre del centro de trabajo
-  periodo           String // "dd/mm/yyyy - dd/mm/yyyy"
+  periodo           Json // {from: date, to: date}
   fechaEmision      DateTime
   status            Status   @default(ENABLED)
 
@@ -428,7 +426,7 @@ model DescansoMedico {
   id                Int          @id @default(autoincrement())
   tipoDescanso      TipoDescanso
   documentoSustento String
-  periodo           String // "dd/mm/yyyy - dd/mm/yyyy"
+  periodo           Json // {from: date, to: date}
   cargoId           Int
   dependenciaId     Int
   personalId        String
@@ -446,7 +444,7 @@ model PermisoLicenciaVacacion {
   id                          Int                         @id @default(autoincrement())
   tipoPermisoLicenciaVacacion TipoPermisoLicenciaVacacion
   documentoSustento           String
-  periodo                     String // "dd/mm/yyyy - dd/mm/yyyy"
+  periodo                     Json // {from: date, to: date}
   dependenciaId               Int
   cargoId                     Int
   personalId                  String
@@ -464,7 +462,7 @@ model Ascenso {
   id                Int    @id @default(autoincrement())
   resolucionAscenso String
   nivelRemunerativo String // "1000 - 1500"
-  pap               Int    @unique // "anterior - posterior"
+  periodo           Json // {from: date, to: date}
   cnp               String
   personalId        String
   status            Status @default(ENABLED)
@@ -552,7 +550,7 @@ model Demerito {
   cargoId           Int
   documentoSustento String // Resoluciones, Memorando, etc.
   tipoSancion       String // suspensión de labor sin goce de haberes, Amonestación, Papeleta de abandono
-  fechaSancion      String // "dd/mm/yyyy - dd/mm/yyyy"
+  fechaSancion      String
   status            Status @default(ENABLED)
 
   personal    Personal    @relation(fields: [personalId], references: [id], onDelete: Cascade)
@@ -570,7 +568,7 @@ model ActaEntrega {
   cargoId              Int
   dependenciaId        Int
   documentoSustento    String // Acta de entrega
-  fecha                String // "dd/mm/yyyy - dd/mm/yyyy"
+  fecha                String
   status               Status @default(ENABLED)
 
   actaEntregadoPor Personal                  @relation("EntregaPor", fields: [actaEntregadoPorId], references: [id])
@@ -584,8 +582,8 @@ model ActaEntrega {
 
 model ActaEntregaDestinatario {
   id             Int    @id @default(autoincrement())
-  actaId         Int // ID del ActaEntrega
-  destinatarioId String // ID del Personal que es destinatario
+  actaId         Int
+  destinatarioId String
 
   acta         ActaEntrega @relation(fields: [actaId], references: [id], onDelete: Cascade)
   destinatario Personal    @relation(fields: [destinatarioId], references: [id], onDelete: Cascade)

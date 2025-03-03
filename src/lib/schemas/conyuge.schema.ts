@@ -14,7 +14,6 @@ export const conyugeSchema = object({
   profesion: string().optional(),
   ocupacion: string(),
   centroTrabajo: string().optional(),
-  postgrado: string().optional(),
 
   ubigeo: UbigeoSchema,
 });

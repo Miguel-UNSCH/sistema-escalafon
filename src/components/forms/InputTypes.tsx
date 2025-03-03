@@ -20,7 +20,16 @@ export const TextField = ({ control, name, label, placeholder, disabled = false,
         <FormItem>
           {label && <FormLabel>{label}</FormLabel>}
           <FormControl>
-            <Input placeholder={placeholder} {...field} type={type} disabled={disabled} />
+            <Input
+              placeholder={placeholder}
+              {...field}
+              type={type}
+              disabled={disabled}
+              onChange={(e) => {
+                const value = e.target.value;
+                field.onChange(type === "number" ? Number(value) : value);
+              }}
+            />
           </FormControl>
           <FormMessage />
         </FormItem>

@@ -69,7 +69,7 @@ export interface IPersonal {
   fechaIngreso: string;
   unidadEstructurada: string;
   fechaNacimiento: string;
-  nacionalidad: string;
+  aniosServicio: number;
   domicilio: string;
   interiorUrbanizacion: string;
   telefono: string;

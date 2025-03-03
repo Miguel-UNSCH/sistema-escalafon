@@ -27,7 +27,6 @@ export const ConyugeForm = ({ personalId }: { personalId: string }) => {
     profesion: "",
     ocupacion: "",
     centroTrabajo: "",
-    postgrado: "",
     ubigeo: {
       inei: "",
       reniec: "",
@@ -75,7 +74,6 @@ export const ConyugeForm = ({ personalId }: { personalId: string }) => {
   const gradoInstruccion = useWatch({ control: form.control, name: "gradoInstruccion" });
 
   const isProfesionEnabled = ["TEC", "UNI", "POS"].includes(gradoInstruccion);
-  const isPostgradoEnabled = gradoInstruccion === "POS";
 
   const onSubmit = async (data: ZConyuge) => {
     try {
@@ -117,8 +115,6 @@ export const ConyugeForm = ({ personalId }: { personalId: string }) => {
 
         <TextField control={form.control} name="profesion" label="Profesión" placeholder="Ingrese su profesión" disabled={!isProfesionEnabled} />
 
-        <TextField control={form.control} name="postgrado" label="Postgrado" placeholder="Ingrese el postgrado" disabled={!isPostgradoEnabled} />
-
         <TextField control={form.control} name="ocupacion" label="Ocupación *" placeholder="Ocupación" disabled={false} />
 
         <TextField control={form.control} name="centroTrabajo" label="Centro de Trabajo" placeholder="Centro de trabajo" disabled={false} />
@@ -126,7 +122,7 @@ export const ConyugeForm = ({ personalId }: { personalId: string }) => {
         {error && <pre className="text-red-500 text-center">{JSON.stringify(error, null, 2)}</pre>}
 
         <div className="flex justify-end">
-          <Button type="submit" onClick={() => console.log(form.getValues())} className="justify-end bg-[#d20f39] hover:bg-[#e64553]">
+          <Button type="submit" onClick={() => console.log(form.getValues())} className="justify-end bg-maroon hover:bg-red">
             Guardar
           </Button>
         </div>
