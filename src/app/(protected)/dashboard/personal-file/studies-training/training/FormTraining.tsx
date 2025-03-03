@@ -2,9 +2,8 @@
 
 import React from "react";
 import { useForm } from "react-hook-form";
-import { capacitacionSchema } from "@/validations/personalFileSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ZCapacitacion } from "@/lib/schemas/capacitacion.schema";
+import { capacitacionSchema, ZCapacitacion } from "@/lib/schemas/capacitacion.schema";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/forms/InputTypes";

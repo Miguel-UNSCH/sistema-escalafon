@@ -38,7 +38,7 @@ const Page = () => {
   return (
     <div className="flex justify-center w-full h-full">
       <div className="flex flex-col gap-2 w-3/4">
-        <p className="font-inter font-bold text-2xl text-center uppercase">Estudios</p>
+        <p className="font-inter font-bold text-2xl text-center uppercase">Capacitacion</p>
         {personal?.id ? <FormTraining personalId={personal.id} /> : <p className="font-inter font-bold text-2xl text-center uppercase">No se pudo obtener el id del personal</p>}
       </div>
     </div>
