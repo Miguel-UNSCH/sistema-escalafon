@@ -12,7 +12,7 @@ export const loginAction = async (values: z.infer<typeof loginSchema>) => {
     const result = await signIn("credentials", {
       email: values.email,
       password: values.password,
-      redirect: false, // 🚨 Evita redirecciones automáticas
+      redirect: false,
     });
 
     if (result?.error) {
