@@ -155,6 +155,7 @@ model File {
   uploaded_by        User                 @relation(name: "file_uploaded_by", fields: [uploaded_by_id], references: [id], onDelete: Cascade)
   accessible_by      FileAccess[]
   FormacionAcademica FormacionAcademica[]
+  Capacitacion       Capacitacion[]
 
   @@map("files")
 }
@@ -184,6 +185,7 @@ model User {
   accessible_files    FileAccess[]
   personal            Personal?
   formacion_academica FormacionAcademica[]
+  capacitacion        Capacitacion[]
 
   @@map("users")
 }
@@ -282,4 +284,22 @@ model FormacionAcademica {
   file File? @relation(fields: [file_id], references: [id], onDelete: SetNull)
 
   @@map("estudios")
+}
+
+model Capacitacion {
+  id                  String @id @default(cuid())
+  centro_capacitacion String @db.Citext
+  materia             String @db.Citext
+  especialidad        String @db.Citext
+  periodo             Json // {from: DateTime, to: DateTime}
+  horas_lectivas      Int
+  tipo                String @default("certificado")
+
+  file_id String
+  user_id String
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  file File @relation(fields: [file_id], references: [id], onDelete: Cascade)
+
+  @@map("capacitacion")
 }
