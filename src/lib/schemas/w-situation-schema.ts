@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { fileSchema } from "@/lib/zod";
-import { CLaboral, RLaboral, TContrato } from "./enums";
+import { CLaboral, RLaboral, TContrato, TipoDesplazamiento } from "./enums";
 import { cargoSchema, dependenciaSchema } from "./others-schema";
 
 export const contratoSchema = z.object({
@@ -40,3 +40,18 @@ export const renunciaSchema = z.object({
   file: fileSchema,
 });
 export type ZRenunciaS = z.infer<typeof renunciaSchema>;
+
+export const desplazamientoSchema = z.object({
+  tipo_desplazamiento: TipoDesplazamiento,
+  fecha: z
+    .string({ required_error: "Fecha de inicio es requerida" })
+    .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
+    .transform((date) => new Date(date)),
+  tipo_file: z.string(),
+  current_cargo: cargoSchema,
+  new_cargo: cargoSchema,
+  current_dependencia: dependenciaSchema,
+  new_dependencia: dependenciaSchema,
+  file: fileSchema,
+});
+export type ZDesplazamientoS = z.infer<typeof desplazamientoSchema>;

@@ -167,7 +167,7 @@ model Ubigeo {
 
 model Dependencia {
   id        Int     @id @default(autoincrement())
-  nombre    String  @unique @db.Citext //? -- ?
+  nombre    String  @unique @db.Citext
   direccion String? @db.Citext
   codigo    String  @unique @db.Citext
 
@@ -175,6 +175,9 @@ model Dependencia {
   experience Experience[]
   contrato   Contrato[]
   renuncia   renuncia[]
+
+  desplazamientosDesde desplazamiento[] @relation(name: "dependencia_from")
+  desplazamientosHacia desplazamiento[] @relation(name: "dependencia_to")
 
   @@map("dependencias")
 }
@@ -187,6 +190,9 @@ model Cargo {
   experience Experience[]
   contrato   Contrato[]
   renuncia   renuncia[]
+
+  desplazamientosDesde desplazamiento[] @relation(name: "cargo_from")
+  desplazamientosHacia desplazamiento[] @relation(name: "cargo_to")
 
   @@map("cargos")
 }
@@ -208,6 +214,7 @@ model File {
   contrato           Contrato[]
   Discapacidad       discapacidad[]
   renuncia           renuncia[]
+  Desplazamiento     desplazamiento[]
 
   @@map("files")
 }
@@ -242,6 +249,7 @@ model User {
   contrato            Contrato[]
   Discapacidad        discapacidad[]
   renuncia            renuncia[]
+  Desplazamiento      desplazamiento[]
 
   @@map("users")
 }
@@ -443,4 +451,28 @@ model renuncia {
 
   @@unique([user_id, file_id])
   @@map("renuncias")
+}
+
+model desplazamiento {
+  id                  String             @id @default(cuid())
+  tipo_desplazamiento TipoDesplazamiento
+  fecha               DateTime
+  tipo_file           String
+
+  current_cargo_id       Int
+  new_cargo_id           Int
+  current_dependencia_id Int
+  new_dependencia_id     Int
+  file_id                String
+  user_id                String
+
+  current_cargo       Cargo       @relation(name: "cargo_from", fields: [current_cargo_id], references: [id], onDelete: Restrict)
+  new_cargo           Cargo       @relation(name: "cargo_to", fields: [new_cargo_id], references: [id], onDelete: Restrict)
+  current_dependencia Dependencia @relation(name: "dependencia_from", fields: [current_dependencia_id], references: [id], onDelete: Restrict)
+  new_dependencia     Dependencia @relation(name: "dependencia_to", fields: [new_dependencia_id], references: [id], onDelete: Restrict)
+  file                File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
+  user                User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, file_id])
+  @@map("desplazamientos")
 }

@@ -6,15 +6,15 @@ import { Input } from "@/components/ui/input";
 import { getAllDependencias } from "@/actions/others-action";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 
-export const DependenciaField = ({ control, disabled = false }: { control: Control<any>; disabled?: boolean }) => {
+export const DependenciaField = ({ control, name = "dependencia", disabled = false }: { control: Control<any>; name?: string; disabled?: boolean }) => {
   const [dependencias, setDependencias] = useState<Dependencia[]>([]);
   const [search, setSearch] = useState<string>("");
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const nombreField = useController({ control, name: "dependencia.nombre" });
-  const codigoField = useController({ control, name: "dependencia.codigo" });
-  const direccionField = useController({ control, name: "dependencia.direccion" });
+  const nombreField = useController({ control, name: `${name}.nombre` });
+  const codigoField = useController({ control, name: `${name}.codigo` });
+  const direccionField = useController({ control, name: `${name}.direccion` });
 
   useEffect(() => {
     const fetchDependencias = async () => {
@@ -42,7 +42,7 @@ export const DependenciaField = ({ control, disabled = false }: { control: Contr
     <>
       <FormField
         control={control}
-        name="dependencia.nombre"
+        name={`${name}.nombre`}
         render={({ field }) => (
           <FormItem className="relative">
             <FormLabel className="font-primary text-subtext0">Nombre *</FormLabel>
@@ -90,8 +90,8 @@ export const DependenciaField = ({ control, disabled = false }: { control: Contr
         )}
       />
 
-      <InputField control={control} name="dependencia.codigo" label="Código *" placeholder="Código de la dependencia" />
-      <InputField control={control} name="dependencia.direccion" label="Dirección *" placeholder="Dirección de la dependencia" />
+      <InputField control={control} name={`${name}.codigo`} label="Código *" placeholder="Código de la dependencia" />
+      <InputField control={control} name={`${name}.direccion`} label="Dirección *" placeholder="Dirección de la dependencia" />
     </>
   );
 };

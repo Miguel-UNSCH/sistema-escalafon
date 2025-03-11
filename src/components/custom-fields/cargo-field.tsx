@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { ZCargo } from "@/lib/schemas/others-schema";
 import { getAllCargos } from "@/actions/others-action";
 
-export const CargoField = ({ control, name, disabled = false }: { control: any; name: string; disabled?: boolean }) => {
+export const CargoField = ({ control, name, placeholder = "Cargo *", disabled = false }: { control: any; name: string; placeholder?: string; disabled?: boolean }) => {
   const [cargos, setCargos] = useState<string[]>([]);
   const [search, setSearch] = useState<string>("");
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
@@ -40,7 +40,7 @@ export const CargoField = ({ control, name, disabled = false }: { control: any; 
       name={name}
       render={({ field }) => (
         <FormItem className="relative">
-          <FormLabel>Cargo *</FormLabel>
+          <FormLabel>{placeholder}</FormLabel>
           <FormControl>
             <Input
               {...field}
