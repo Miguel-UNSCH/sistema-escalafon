@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { fileSchema, periodoSchema } from "@/lib/zod";
-import { NivelEducativo } from "./enums";
+import { NivelEducativo, TDiscapacidad, TEntCertDic } from "./enums";
 import { cargoSchema, dependenciaSchema } from "./others-schema";
 
 export const estudiosSchema = z.object({
@@ -31,3 +31,12 @@ export const expSchema = z.object({
   file: fileSchema,
 });
 export type ZExpS = z.infer<typeof expSchema>;
+
+export const disabilitySchema = z.object({
+  tipo: TDiscapacidad,
+  discapacidad: z.string(),
+  entidad_certificadora: TEntCertDic,
+  fecha_certificacion: z.string(),
+  file: fileSchema,
+});
+export type ZDisabilityS = z.infer<typeof disabilitySchema>;

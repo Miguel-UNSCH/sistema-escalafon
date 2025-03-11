@@ -113,3 +113,17 @@ export const nivelEducativoOp = [
   { key: "d", value: "DOCTORADO" },
   { key: "e", value: "ESPECIALIZACION" },
 ];
+
+export const tDscapacidadOp = [
+  { key: "sen", value: "SENSORIAL" },
+  { key: "mot", value: "MOTRIZ" },
+  { key: "int", value: "INTELECTUAL" },
+  { key: "psi", value: "PSICOLOGICO" },
+  { key: "mul", value: "MULTIPLE" },
+];
+
+export const entidad_certificadoraOp = [
+  { key: "min", value: "MINSA" },
+  { key: "ess", value: "ESSALUD" },
+  { key: "cod", value: "CONADIS" },
+];

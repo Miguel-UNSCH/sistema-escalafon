@@ -108,6 +108,34 @@ enum NivelEducativo {
   e
 }
 
+enum TContrato {
+  dl_276
+  cas
+  dl_276_proyecto
+  practicante
+}
+
+enum CLaboral {
+  nombrado
+  contratado
+  plaza_vacante
+  designado
+  indeterminado
+  eventual
+  reincorporado
+  mandato_judicial
+  profesional
+  preprofesional
+}
+
+enum RLaboral {
+  dl_276
+  fag_cas
+  fun_276
+  cas
+  regimen_especial
+}
+
 model Ubigeo {
   id           Int    @id @default(autoincrement())
   inei         String @unique
@@ -130,8 +158,8 @@ model Dependencia {
   codigo    String  @unique @db.Citext
 
   personal   Personal[]
-  Experience Experience[]
-  Contrato   Contrato[]
+  experience Experience[]
+  contrato   Contrato[]
 
   @@map("dependencias")
 }
@@ -141,8 +169,8 @@ model Cargo {
   nombre String @unique @db.Citext
 
   personal   Personal[]
-  Experience Experience[]
-  Contrato   Contrato[]
+  experience Experience[]
+  contrato   Contrato[]
 
   @@map("cargos")
 }
@@ -162,6 +190,7 @@ model File {
   capacitacion       Capacitacion[]
   experience         Experience[]
   contrato           Contrato[]
+  Discapacidad       discapacidad[]
 
   @@map("files")
 }
@@ -194,6 +223,7 @@ model User {
   capacitacion        Capacitacion[]
   experience          Experience[]
   contrato            Contrato[]
+  Discapacidad        discapacidad[]
 
   @@map("users")
 }
@@ -265,6 +295,37 @@ model Children {
   @@map("childrens")
 }
 
+enum TDiscapacidad {
+  sen
+  mot
+  int
+  psi
+  mul
+}
+
+enum TEntCertDic {
+  min
+  ess
+  cod
+}
+
+model discapacidad {
+  id                    String        @id @default(cuid())
+  tipo                  TDiscapacidad
+  discapacidad          String        @db.Citext // Descripción de la discapacidad
+  entidad_certificadora TEntCertDic
+  fecha_certificacion   DateTime?
+
+  user_id String
+  file_id String
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  file File @relation(fields: [file_id], references: [id], onDelete: Restrict)
+
+  @@unique([user_id, file_id])
+  @@map("discapacidades")
+}
+
 model PersonalChildren {
   id          String @id @default(cuid())
   personal_id String
@@ -291,6 +352,7 @@ model FormacionAcademica {
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
   file File @relation(fields: [file_id], references: [id], onDelete: Restrict)
 
+  @@unique([user_id, file_id])
   @@map("estudios")
 }
 
@@ -309,6 +371,7 @@ model Capacitacion {
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
   file File @relation(fields: [file_id], references: [id], onDelete: Restrict)
 
+  @@unique([user_id, file_id])
   @@map("capacitaciones")
 }
 
@@ -327,35 +390,8 @@ model Experience {
   cargo       Cargo       @relation(fields: [cargo_id], references: [id], onDelete: Restrict)
   dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
 
+  @@unique([user_id, file_id])
   @@map("experiencias")
-}
-
-enum TContrato {
-  dl_276
-  cas
-  dl_276_proyecto
-  practicante
-}
-
-enum CLaboral {
-  nombrado
-  contratado
-  plaza_vacante
-  designado
-  indeterminado
-  eventual
-  reincorporado
-  mandato_judicial
-  profesional
-  preprofesional
-}
-
-enum RLaboral {
-  dl_276
-  fag_cas
-  fun_276
-  cas
-  regimen_especial
 }
 
 model Contrato {
@@ -382,5 +418,6 @@ model Contrato {
   file        File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
   user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
+  @@unique([user_id, file_id])
   @@map("contratos")
 }

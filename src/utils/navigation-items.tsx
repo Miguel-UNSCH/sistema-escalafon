@@ -11,20 +11,9 @@ export const navigationItems: NavigationItems[] = [
   {
     title: "inicio",
     adm: true,
-    menuItem: [
-      {
-        label: "dashboard",
-        icon: <LayoutDashboard size={16} />,
-        path: "/dashboard",
-        submenus: [{ label: "registrar", path: "/dashboard" }],
-      },
-    ],
+    menuItem: [{ label: "dashboard", icon: <LayoutDashboard size={16} />, path: "/dashboard", submenus: [{ label: "registrar", path: "/dashboard" }] }],
   },
-  {
-    title: "gestión de usuarios",
-    adm: true,
-    menuItem: [{ label: "administrar usuario", icon: <UsersRound size={16} />, path: "/user" }],
-  },
+  { title: "gestión de usuarios", adm: true, menuItem: [{ label: "administrar usuario", icon: <UsersRound size={16} />, path: "/user" }] },
   {
     title: "ficha personal",
     menuItem: [
@@ -48,23 +37,15 @@ export const navigationItems: NavigationItems[] = [
         ],
       },
       { label: "experiencia laboral", icon: <BriefcaseBusiness size={16} />, path: "/personal-file/experience" },
-      {
-        label: "discapacidad",
-        icon: <IdCard size={16} />,
-        path: "/personal-file/disability",
-      },
+      { label: "discapacidad", icon: <IdCard size={16} />, path: "/personal-file/disability" },
     ],
   },
   {
     title: "situación laboral",
     menuItem: [
       { label: "contratos y nombramiento", icon: <BriefcaseBusiness size={16} />, path: "/work-situation/contracts" },
-      { label: "renuncia y liquidación", icon: <LogOut size={16} />, path: "/work-situation/renunciation" },
-      {
-        label: "desplazamiento",
-        icon: <BriefcaseBusiness size={16} />,
-        path: "/work-situation/displacement",
-      },
+      { label: "renuncia", icon: <LogOut size={16} />, path: "/work-situation/renunciation" },
+      { label: "desplazamiento", icon: <BriefcaseBusiness size={16} />, path: "/work-situation/displacement" },
       { label: "descanso médico", icon: <File size={16} />, path: "/work-situation/medical-rest" },
       { label: "permisos / licencias", icon: <File size={16} />, path: "/work-situation/permissions" },
       { label: "ascensos", icon: <Trophy size={16} />, path: "/work-situation/promotions" },
@@ -92,10 +73,7 @@ export const navigationItems: NavigationItems[] = [
       { label: "deméritos", adm: true, icon: <Trophy size={16} />, path: "/merits-demerits/demerits" },
     ],
   },
-  {
-    title: "documentos / otros",
-    menuItem: [{ label: "acta de entrega", icon: <File size={16} />, path: "/documents" }],
-  },
+  { title: "documentos / otros", menuItem: [{ label: "acta de entrega", icon: <File size={16} />, path: "/documents" }] },
   {
     title: "reportes",
     menuItem: [
