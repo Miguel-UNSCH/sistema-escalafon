@@ -36,7 +36,10 @@ export const disabilitySchema = z.object({
   tipo: TDiscapacidad,
   discapacidad: z.string(),
   entidad_certificadora: TEntCertDic,
-  fecha_certificacion: z.string(),
+  fecha_certificacion: z
+    .string({ required_error: "Fecha de certificacion es requerida" })
+    .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
+    .transform((date) => new Date(date)),
   file: fileSchema,
 });
 export type ZDisabilityS = z.infer<typeof disabilitySchema>;

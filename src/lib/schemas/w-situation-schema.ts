@@ -28,3 +28,15 @@ export const contratoSchema = z.object({
   dependencia: dependenciaSchema,
 });
 export type ZContratoS = z.infer<typeof contratoSchema>;
+
+export const renunciaSchema = z.object({
+  motivo: z.string(),
+  fecha: z
+    .string({ required_error: "Fecha de inicio es requerida" })
+    .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
+    .transform((date) => new Date(date)),
+  cargo: cargoSchema,
+  dependencia: dependenciaSchema,
+  file: fileSchema,
+});
+export type ZRenunciaS = z.infer<typeof renunciaSchema>;

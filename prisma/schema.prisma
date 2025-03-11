@@ -136,6 +136,20 @@ enum RLaboral {
   regimen_especial
 }
 
+enum TDiscapacidad {
+  sen
+  mot
+  int
+  psi
+  mul
+}
+
+enum TEntCertDic {
+  min
+  ess
+  cod
+}
+
 model Ubigeo {
   id           Int    @id @default(autoincrement())
   inei         String @unique
@@ -160,6 +174,7 @@ model Dependencia {
   personal   Personal[]
   experience Experience[]
   contrato   Contrato[]
+  renuncia   renuncia[]
 
   @@map("dependencias")
 }
@@ -171,6 +186,7 @@ model Cargo {
   personal   Personal[]
   experience Experience[]
   contrato   Contrato[]
+  renuncia   renuncia[]
 
   @@map("cargos")
 }
@@ -191,6 +207,7 @@ model File {
   experience         Experience[]
   contrato           Contrato[]
   Discapacidad       discapacidad[]
+  renuncia           renuncia[]
 
   @@map("files")
 }
@@ -224,6 +241,7 @@ model User {
   experience          Experience[]
   contrato            Contrato[]
   Discapacidad        discapacidad[]
+  renuncia            renuncia[]
 
   @@map("users")
 }
@@ -293,20 +311,6 @@ model Children {
   parents PersonalChildren[]
 
   @@map("childrens")
-}
-
-enum TDiscapacidad {
-  sen
-  mot
-  int
-  psi
-  mul
-}
-
-enum TEntCertDic {
-  min
-  ess
-  cod
 }
 
 model discapacidad {
@@ -420,4 +424,23 @@ model Contrato {
 
   @@unique([user_id, file_id])
   @@map("contratos")
+}
+
+model renuncia {
+  id     String   @id @default(cuid())
+  motivo String   @db.Citext
+  fecha  DateTime
+
+  cargo_id       Int
+  dependencia_id Int
+  file_id        String
+  user_id        String
+
+  cargo       Cargo       @relation(fields: [cargo_id], references: [id], onDelete: Restrict)
+  dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
+  file        File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
+  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, file_id])
+  @@map("renuncias")
 }
