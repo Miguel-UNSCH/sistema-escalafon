@@ -7,38 +7,19 @@ import { Children } from "@prisma/client";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-export const TableData = () => {
-  const [child, setChild] = useState<Children[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+type TableDataProps = {
+  children: Children[];
+  loading: boolean;
+};
 
-  const fetchChildren = async () => {
-    setLoading(true);
-    try {
-      const response = await getChilds();
-      if (response.success && response.data) {
-        setChild(response.data);
-        toast.success("Hijos cargados correctamente.");
-      } else {
-        toast.error(response.message || "No se pudieron obtener los hijos.");
-      }
-    } catch (e: unknown) {
-      toast.error("Error al obtener los hijos.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchChildren();
-  }, []);
-
+export const TableData: React.FC<TableDataProps> = ({ children, loading }) => {
   const theadContent = ["Nombres", "Apellidos", "DNI", "Fecha de Nacimiento", "Grado de Instrucción"];
 
   return (
     <div className="relative bg-mantle sm:rounded-md overflow-x-auto">
       {loading ? (
         <p className="py-4 text-subtext0 text-center">Cargando datos...</p>
-      ) : child.length === 0 ? (
+      ) : children.length === 0 ? (
         <p className="py-4 text-subtext0 text-center">Aún no existen registros.</p>
       ) : (
         <table className="w-full text-text text-sm text-left rtl:text-right">
@@ -52,7 +33,7 @@ export const TableData = () => {
             </tr>
           </thead>
           <tbody>
-            {child.map(({ id, nombres, apellidos, dni, fecha_nacimiento, grado_instruccion }) => (
+            {children.map(({ id, nombres, apellidos, dni, fecha_nacimiento, grado_instruccion }) => (
               <tr key={id} className="hover:bg-crust text-subtext0 text-sm cursor-pointer" onClick={() => toast.success(`ID: ${id}`)}>
                 <td className="px-3 py-4">{nombres}</td>
                 <td className="px-3 py-4">{apellidos}</td>

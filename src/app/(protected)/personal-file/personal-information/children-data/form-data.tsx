@@ -16,7 +16,11 @@ import { gradoInstruccionOp } from "@/utils/options";
 import { createChild } from "@/actions/children-action";
 import toast from "react-hot-toast";
 
-export const FormData = () => {
+type FormDataProps = {
+  fetchChildren: () => void;
+};
+
+export const FormData: React.FC<FormDataProps> = ({ fetchChildren }) => {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<ZChildren>({
@@ -40,6 +44,7 @@ export const FormData = () => {
         } else {
           toast.success("Hijo registrado exitosamente.");
           form.reset();
+          fetchChildren();
         }
       } catch (e: unknown) {
         toast.error("Error al registrar el hijo.");
