@@ -1,29 +1,31 @@
-import { prisma } from "@/lib/prisma";
 import { loginSchema } from "@/lib/zod";
 import type { NextAuthConfig } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
+
 import bcrypt from "bcryptjs";
-// notice this is only object, not a full Auth.js instance
+
+import Credentials from "next-auth/providers/credentials";
+import { prisma } from "@/config/prisma.config";
+
 export default {
   providers: [
     Credentials({
       authorize: async (credentials) => {
         const { data, success } = loginSchema.safeParse(credentials);
-        if (!success) throw new Error("Invalid credentials");
+        if (!success) {
+          throw new Error("Invalid credentials");
+        }
 
-        const user = await prisma.user.findUnique({
-          where: {
-            email: data.email,
-          },
-        });
+        const user = await prisma.user.findUnique({ where: { email: data.email } });
 
-        if (!user) throw new Error("Invalid credentials [email]");
+        if (!user) {
+          throw new Error("Invalid credentials [user-not-found]");
+        }
 
-        if (!user.password) throw new Error("Invalid credentials [password]");
+        const isValid = bcrypt.compare(data.password, user.password);
 
-        const isValid = await bcrypt.compare(data.password, user.password);
-
-        if (!isValid) throw new Error("Invalid credentials [password]");
+        if (!isValid) {
+          throw new Error("Invalid credentials [password-not-match]");
+        }
 
         return user;
       },

@@ -1,26 +1,21 @@
 "use client";
 
-import { z } from "zod";
-import { loginSchema } from "@/lib/zod";
-import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { loginSchema, ZLoginS } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import React, { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { Form, FormMessage } from "@/components/ui/form";
 import { loginAction } from "@/actions/auth-action";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { TextField } from "./forms/InputTypes";
+import { useRouter } from "next/navigation";
+import { InputField } from "./custom-fields/input-field";
 
-const FormLogin = () => {
-  const router = useRouter();
-
-  const [showPassword, setShowPassword] = useState(false);
+export const FormLogin = () => {
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
-  const form = useForm<z.infer<typeof loginSchema>>({
+  const form = useForm<ZLoginS>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
@@ -28,64 +23,41 @@ const FormLogin = () => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof loginSchema>) => {
+  const onSubmit = (data: ZLoginS) => {
+    setError(null);
+
     startTransition(async () => {
-      const response = await loginAction(values);
+      const response = await loginAction(data);
 
       if (response.error) {
         setError(response.error);
-      } else {
-        const userRole = response.role; // ✅ Obtener el rol del usuario
+        return;
+      }
 
-        if (userRole === "ADMIN") {
-          router.push("/dashboard");
-        } else if (userRole === "PERSONAL") {
-          router.push("/dashboard/personal-file/personal-information/personal-data");
+      if (response.success) {
+        if (response.must_change_pwd) {
+          router.push("/change-password");
         } else {
-          setError("Rol no reconocido, contacta con el administrador.");
+          router.push(response.role === "admin" ? "/dashboard" : "/personal-file");
         }
       }
     });
   };
+
   return (
-    <div className="mx-auto w-full max-w-md">
+    <div className="flex flex-col items-center gap-4 w-1/4">
+      <p className="font-primary font-bold text-red text-2xl uppercase">Iniciar sesión</p>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <TextField control={form.control} name="email" label="Email" placeholder="jdoe@regionayacucho.edu" />
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
+          <InputField control={form.control} name="email" label="Email" placeholder="john_doe@gmail.com" />
+          <InputField control={form.control} name="password" label="Contraseña" placeholder="**********" type="password" />
 
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <div className="relative">
-                    <Input placeholder="**********" {...field} type={showPassword ? "text" : "password"} className="pr-10" />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="top-1/2 right-2 absolute bg-transparent hover:bg-transparent -translate-y-1/2 transform"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                    >
-                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </Button>
-                  </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {error && <div className="font-inter text-red text-sm">{error}</div>}
-          <Button type="submit" disabled={isPending} className="bg-red hover:bg-maroon w-full">
-            Iniciar Sesión
+          {error && <FormMessage className="text-red">{error}</FormMessage>}
+          <Button type="submit" disabled={isPending} className="flex bg-red hover:bg-maroon w-full">
+            {isPending ? "Cargando..." : "Iniciar sesión"}
           </Button>
         </form>
       </Form>
     </div>
   );
 };
-
-export default FormLogin;

@@ -1,0 +1,67 @@
+// eslint-disable no-console
+"use server";
+
+import { auth } from "@/auth";
+import { prisma } from "@/config/prisma.config";
+import { ZPersonal } from "@/lib/schemas/personal-schema";
+
+export const getCurrentPersonal = async (email: string) => {
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) return null;
+
+    const personal = await prisma.personal.findUnique({ where: { user_id: user.id }, include: { dependencia: true, cargo: true, user: true, ubigeo: true } });
+
+    return personal || null;
+  } catch (error) {
+    console.error("Error al obtener personal:", error);
+    return null;
+  }
+};
+
+export const createPersonal = async (data: ZPersonal) => {
+  try {
+    const session = await auth();
+    if (!session || !session?.user?.email) throw new Error("No autorizado");
+
+    const currentUser = await prisma.user.findUnique({ where: { email: session.user.email } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    const ubigeo = await prisma.ubigeo.findFirst({ where: { inei: data.ubigeo.inei } });
+    if (!ubigeo) throw new Error("El ubigeo proporcionado no existe.");
+
+    const cargo = await prisma.cargo.findUnique({ where: { nombre: data.cargo.nombre } });
+    if (!cargo) throw new Error("El cargo especificado no existe.");
+
+    const dependencia = await prisma.dependencia.findUnique({ where: { codigo: data.dependencia.codigo } });
+    if (!dependencia) throw new Error("La dependencia especificada no existe.");
+
+    await prisma.personal.create({
+      data: {
+        user_id: currentUser.id,
+        sexo: data.sexo,
+        grupo_sanguineo: data.grupo_sanguineo,
+        n_autogenerado: data.n_autogenerado,
+        licencia_conducir: data.licencia_conducir,
+        fecha_ingreso: new Date(data.fecha_ingreso).toISOString(),
+        anios_servicio: data.anios_servicio,
+        fecha_nacimiento: new Date(data.fecha_nacimiento).toISOString(),
+        domicilio: data.domicilio.toUpperCase(),
+        numero_contacto: data.numero_contacto,
+        unidad_estructurada: data.unidad_estructurada, //???
+        regimen_pensionario: data.regimen_pensionario,
+        situacion_laboral: data.situacion_laboral,
+        estado_civil: data.estado_civil,
+        discapacidad: data.discapacidad,
+        cargo_id: cargo.id,
+        dependencia_id: dependencia.id,
+        ubigeo_id: ubigeo.id,
+      },
+    });
+
+    return { success: true, message: "Personal creado exitosamente." };
+  } catch (error) {
+    console.error("Error al crear el Personal:", error);
+    return { success: false, message: "Error al crear al personal." };
+  }
+};

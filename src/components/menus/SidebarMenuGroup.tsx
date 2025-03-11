@@ -1,14 +1,13 @@
 import Link from "next/link";
 
 import { useEffect } from "react";
-import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { ChevronRight, Dot } from "lucide-react";
 
-import { MenuItem } from "@/interfaces/MenuItem";
+import { MenuItem } from "@/interfaces";
+import { Session } from "next-auth";
 
-const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item, openMenu, setOpenMenu }) => {
-  const { data: session, status } = useSession();
+const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item, openMenu, setOpenMenu, session }) => {
   const pathname = usePathname();
   const hasSubmenus = item.submenus && item.submenus.length > 0;
   const isActive = item.path === pathname;
@@ -19,9 +18,9 @@ const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item, openMenu, setOp
     if (isSubmenuActive) setOpenMenu(item.label);
   }, [isSubmenuActive, item.label, setOpenMenu]);
 
-  if (status === "loading") return <p className="px-6 py-2 text-subtext1 text-sm">Cargando menú...</p>;
+  if (!session) return <p className="px-6 py-2 text-subtext1 text-sm">Cargando menú...</p>;
 
-  const shouldRender = item.adm === true ? session?.user?.role === "ADMIN" : true;
+  const shouldRender = item.adm === true ? session.user.role === "admin" : true;
   if (!shouldRender) return null;
 
   const toggleSubmenu = () => setOpenMenu(isOpen ? null : item.label);
@@ -87,14 +86,13 @@ interface SidebarMenuItemProps {
   item: MenuItem;
   openMenu: string | null;
   setOpenMenu: (menu: string | null) => void;
+  session: Session | null; // 🔥 Se recibe la sesión por props
 }
 
-const SidebarMenuGroup: React.FC<SidebarMenuGroupProps> = ({ title, adm, items, openMenu, setOpenMenu }) => {
-  const { data: session, status } = useSession();
+const SidebarMenuGroup: React.FC<SidebarMenuGroupProps> = ({ title, adm = false, items, openMenu, setOpenMenu, session }) => {
+  if (!session) return <p className="px-6 py-2 text-text text-sm">Cargando menú...</p>;
 
-  if (status === "loading") return <p className="px-6 py-2 text-text text-sm">Cargando menú...</p>;
-
-  const shouldRender = adm === true ? session?.user?.role === "ADMIN" : true;
+  const shouldRender = adm === true ? session.user.role === "admin" : true;
   if (!shouldRender) return null;
 
   return (
@@ -102,7 +100,7 @@ const SidebarMenuGroup: React.FC<SidebarMenuGroupProps> = ({ title, adm, items, 
       <h2 className="px-4 font-semibold text-text text-xs uppercase tracking-wide">{title}</h2>
       <ul className="space-y-1 mt-2">
         {items.map((item, idx) => (
-          <SidebarMenuItem key={idx} item={item} openMenu={openMenu} setOpenMenu={setOpenMenu} />
+          <SidebarMenuItem key={idx} item={item} openMenu={openMenu} setOpenMenu={setOpenMenu} session={session} />
         ))}
       </ul>
     </nav>
@@ -117,4 +115,5 @@ interface SidebarMenuGroupProps {
   items: MenuItem[];
   openMenu: string | null;
   setOpenMenu: (menu: string | null) => void;
+  session: Session | null;
 }

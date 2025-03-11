@@ -1,9 +1,10 @@
-import Dashboard from "./dashboard/Dashboard";
+"use server";
 
-export default function DashboardLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return <Dashboard>{children}</Dashboard>;
+import { auth } from "@/auth";
+import { Dashboard } from "./Dashboard";
+
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const session = await auth();
+
+  return <Dashboard session={session}>{children}</Dashboard>;
 }

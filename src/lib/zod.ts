@@ -1,54 +1,47 @@
-import { object, string, number, z, date, optional } from "zod";
+import { getMimeValues } from "@/utils";
+import { z } from "zod";
 
-export const EstadoCivil = z.enum(["S", "C", "D", "V"]);
-export const GrupoSanguineo = z.enum(["A_POSITIVO", "A_NEGATIVO", "B_POSITIVO", "B_NEGATIVO", "AB_POSITIVO", "AB_NEGATIVO", "O_POSITIVO", "O_NEGATIVO"]);
-export const Sexo = z.enum(["M", "F"]);
-export const Status = z.enum(["ENABLED", "DISABLED"]);
+const passwordValidation = z
+  .string()
+  .min(8, "Debe tener al menos 8 caracteres")
+  .max(32, "Debe tener como máximo 32 caracteres")
+  .regex(/[A-Z]/, "Debe tener al menos una mayúscula")
+  .regex(/[a-z]/, "Debe tener al menos una minúscula")
+  .regex(/[0-9]/, "Debe tener al menos un número")
+  .regex(/[@$!%*?&]/, "Debe tener un carácter especial");
 
-export const SituacionLaboral = z.enum(["ND276", "CPV", "CL30057", "CASI", "CAST", "CPI", "PPP1404", "PP1004"]);
-export const RegimenPensionario = z.enum(["L29903", "DL19990"]);
-export const GradoInstruccion = z.enum(["SIN", "PC", "PI", "SC", "SI", "TEC", "UNI", "POS", "NULL"]);
-export const FormacionAcademica = z.enum(["PC", "PI", "SC", "SI", "BAC", "TIT", "POS", "TEC"]);
-
-export const loginSchema = object({
-  email: string({ required_error: "Email is required" }).min(1, "Email is required").email("Invalid email"),
-  password: string({ required_error: "Password is required" })
-    .min(1, "Password is required")
-    .min(6, "Password must be more than 8 characters")
-    .max(32, "Password must be less than 32 characters"),
+export const changePwdSchema = z.object({ pwd: z.string(), newPwd: passwordValidation, repeatNewPwd: passwordValidation }).refine((data) => data.newPwd === data.repeatNewPwd, {
+  message: "Las contraseñas no coinciden",
+  path: ["repeatNewPwd"],
 });
 
-export const registerSchema = object({
-  email: string({ required_error: "El correo electrónico es obligatorio" }).min(1, "El correo electrónico es obligatorio").email("Correo electrónico no válido"),
-  password: string({ required_error: "La contraseña es obligatoria" })
-    .min(8, "La contraseña debe tener al menos 8 caracteres")
-    .max(32, "La contraseña debe tener menos de 32 caracteres")
-    .regex(/[A-Z]/, "La contraseña debe tener al menos una letra mayúscula")
-    .regex(/[a-z]/, "La contraseña debe tener al menos una letra minúscula")
-    .regex(/[0-9]/, "La contraseña debe tener al menos un número")
-    .regex(/[@$!%*?&]/, "La contraseña debe tener al menos un carácter especial (@$!%*?&)"),
-  repeatPassword: string({ required_error: "Repetir la contraseña es obligatorio" }),
-  nombres: string({ required_error: "Los nombres son obligatorios" }).min(1, "Debe ingresar sus nombres"),
-  apellidos: string({ required_error: "Los apellidos son obligatorios" }).min(1, "Debe ingresar sus apellidos"),
-}).superRefine(({ password, repeatPassword }, ctx) => {
-  if (password !== repeatPassword) {
-    ctx.addIssue({ code: "custom", path: ["repeatPassword"], message: "Las contraseñas deben coincidir" });
-  }
+export type ZChangePwdS = z.infer<typeof changePwdSchema>;
+
+export const loginSchema = z.object({
+  email: z.string({ required_error: "El correo es obligatorio" }).min(1, "El correo es obligatorio").email("Correo inválido"),
+  password: z.string({ required_error: "La contraseña es obligatoria" }).min(8, "La contraseña es obligatoria"),
 });
 
-export const userSchema = object({
-  id: string().min(1, "El ID es obligatorio"),
-  nombres: string().min(1, "El nombre es obligatorio"),
-  apellidos: string().min(1, "El apellido es obligatorio"),
-  email: optional(string().email("El correo electrónico debe ser válido").max(255, "El correo electrónico es demasiado largo")),
-  password: optional(string().min(8, "La contraseña debe tener al menos 8 caracteres")),
-  ubigeoId: optional(number().int().positive("El ID del ubigeo debe ser un número positivo")),
-  status: Status.default("ENABLED"),
-  personalId: optional(number().int().positive("El ID del personal debe ser un número positivo")),
-  conyugeId: optional(number().int().positive("El ID del cónyuge debe ser un número positivo")),
-  hijoId: optional(number().int().positive("El ID del hijo debe ser un número positivo")),
-  updatedAt: date().optional(),
-  createdAt: date().default(() => new Date()),
+export type ZLoginS = z.infer<typeof loginSchema>;
+
+export const registerSchema = z.object({
+  name: z.string({ required_error: "Name is required" }).min(1, "Name is required").max(32, "Name must be less than 32 characters"),
+  lastName: z.string({ required_error: "Last name is required" }).min(1, "Last name is required").max(32, "Last name must be less than 32 characters"),
+  dni: z.string({ required_error: "dni is required" }),
+  email: z.string({ required_error: "Email is required" }).min(1, "Email is required").email("Invalid email"),
+});
+export type ZRegisterS = z.infer<typeof registerSchema>;
+
+export const periodoSchema = z.object({
+  from: z.preprocess((val) => (typeof val === "string" ? new Date(val) : val), z.date()),
+  to: z.preprocess((val) => (typeof val === "string" ? new Date(val) : val), z.date()),
 });
 
-export type User = z.infer<typeof userSchema>;
+export const fileSchema = z
+  .instanceof(File, { message: "Debe ser un archivo válido." })
+  .refine((file) => file.size <= 20 * 1024 * 1024, {
+    message: "El archivo no debe superar los 20MB.",
+  })
+  .refine((file) => getMimeValues().includes(file.type), {
+    message: "Solo se permiten archivos PDF, DOCX, XLSX o JSON.",
+  });

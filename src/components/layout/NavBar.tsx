@@ -1,48 +1,18 @@
-import { RiSearch2Line } from "react-icons/ri";
-import { AlignJustify, LogOut, UserRound } from "lucide-react";
-import { ThemeToggle } from "../theme-toogle";
-import logout from "@/helpers/logout";
-import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
-import { getUser } from "@/services/userService";
+"use client";
 
-interface IUser {
-  id: string;
-  nombres: string;
-  apellidos: string;
-  role: string;
-  email: string;
-  password: string;
-  ubigeoId: number;
-  status: string;
-  updatedAt: Date;
-  createdAt: Date;
-}
+import { AlignJustify, Search, UserRound } from "lucide-react";
+import { ThemeToggle } from "../theme-provider";
+import { LogOutBtn } from "../log-out";
+import { Session } from "next-auth";
 
 interface NavbarProps {
   isSidebarOpen: boolean;
   isMobile: boolean;
   onMenuClick: () => void;
+  session: Session | null;
 }
 
-const Navbar = ({ isSidebarOpen, isMobile, onMenuClick }: NavbarProps) => {
-  const session = useSession();
-  const [user, setUser] = useState<IUser | null>(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        if (!session.data?.user?.id) return;
-        const userData = await getUser(session.data.user.id);
-        setUser(userData);
-      } catch (error) {
-        console.error("Error al obtener usuario", error);
-      }
-    };
-
-    fetchUser();
-  }, [session]);
-
+export const Navbar = ({ isSidebarOpen, isMobile, onMenuClick, session }: NavbarProps) => {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-30 py-4 px-8 flex items-center justify-between bg-bg-primary/80 backdrop-blur-md transition-all duration-300 ease-in-out ${
@@ -58,7 +28,7 @@ const Navbar = ({ isSidebarOpen, isMobile, onMenuClick }: NavbarProps) => {
           <label className="sr-only">Search</label>
           <div className="relative">
             <div className="absolute inset-y-0 flex items-center ps-3 pointer-events-none start-0">
-              <RiSearch2Line className="text-red text-lg" />
+              <Search className="text-red text-lg" />
             </div>
             <input
               type="search"
@@ -75,15 +45,14 @@ const Navbar = ({ isSidebarOpen, isMobile, onMenuClick }: NavbarProps) => {
         <ThemeToggle />
 
         <div className="flex flex-row items-center gap-2 hover:bg-mantle p-2 rounded-full text-red">
-          {user && <p className="">{user.nombres}</p>}
-          <UserRound size={24} />
+          {session?.user ? <p className="font-primary font-semibold">{session.user.name?.toUpperCase()}</p> : <p>Invitado</p>}
+          <UserRound size={18} />
         </div>
 
         <div className="hover:bg-mantle p-2 rounded-full text-red">
-          <LogOut size={24} onClick={logout} />
+          <LogOutBtn />
         </div>
       </div>
     </nav>
   );
 };
-export default Navbar;

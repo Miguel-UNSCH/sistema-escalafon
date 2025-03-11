@@ -1,0 +1,93 @@
+// eslint-disable no-unused-vars
+"use client";
+import { createStudy } from "@/actions/studies-action";
+import { DateField } from "@/components/custom-fields/date-field";
+import { InputField } from "@/components/custom-fields/input-field";
+import { SelectField } from "@/components/custom-fields/select-field";
+import { UploadField } from "@/components/custom-fields/upload-file";
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import { estudiosSchema, ZEstudioS } from "@/lib/schemas/personal-schema";
+import { uploadFile } from "@/service/file-service";
+import { nivelEducativoOp } from "@/utils/options";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Save } from "lucide-react";
+import React, { useTransition } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+
+export const FormData = () => {
+  const [isPending, startTransition] = useTransition();
+
+  const form = useForm<ZEstudioS>({
+    resolver: zodResolver(estudiosSchema),
+    defaultValues: {
+      institucion: "",
+      carrera: "",
+      periodo: { from: undefined, to: undefined },
+      file: undefined,
+      nivel: undefined,
+    },
+  });
+
+  const nivelSeleccionado = form.watch("nivel");
+  const requiereCarrera = ["t", "u", "m", "d", "e"].includes(nivelSeleccionado || "");
+
+  const onSubmit = async (data: ZEstudioS) => {
+    startTransition(async () => {
+      try {
+        let file_id = "";
+
+        if (data.file) {
+          const uploadResponse = await uploadFile(data.file, "estudios");
+          if (!uploadResponse.success || !uploadResponse.data) {
+            toast.error(uploadResponse.message || "Error al subir el archivo.");
+            return;
+          }
+          file_id = uploadResponse.data.id;
+        }
+
+        const result = await createStudy({ ...data, file_id });
+
+        if (!result.success) {
+          toast.error(result.message);
+        } else {
+          toast.success("Estudio registrado exitosamente.");
+          form.reset();
+        }
+      } catch (e: unknown) {
+        toast.error("Error al registrar el estudio.");
+      }
+    });
+  };
+
+  return (
+    <div className="flex flex-col gap-5 w-full">
+      <p className="font-primary font-semibold uppercase">Registrar</p>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
+          <SelectField control={form.control} name="nivel" label="Formacion Academica *" options={nivelEducativoOp} />
+
+          <div className="gap-2 grid grid-cols-2">
+            <InputField control={form.control} name="institucion" label="Nombre de la Institucion *" placeholder="Ingrese el nombre de la institucion" />
+            <InputField control={form.control} name="carrera" label="Carrera *" placeholder="Ingrese el nombre de la carrera" disabled={!requiereCarrera} />
+          </div>
+
+          <div className="gap-4 grid grid-cols-2">
+            <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={false} />
+            <DateField control={form.control} name="periodo.to" label="Fecha de culminacion" disabled={false} />
+          </div>
+
+          <UploadField control={form.control} name="file" label="Documento" allowedTypes={["pdf"]} />
+
+          <div className="flex justify-end">
+            <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
+              <Save />
+              {isPending ? "Guardando..." : "Registrar"}
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
+  );
+};

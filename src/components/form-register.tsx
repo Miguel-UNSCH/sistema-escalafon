@@ -1,142 +1,67 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { z } from "zod";
-import { registerSchema } from "@/lib/zod";
+import React, { useState, useTransition } from "react";
+import { registerSchema, ZRegisterS } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form, FormMessage } from "@/components/ui/form";
 import { registerAction } from "@/actions/auth-action";
-import { CircleCheck, CircleX } from "lucide-react";
+import { UserRoundPlus } from "lucide-react";
+import { InputField } from "./custom-fields/input-field";
 
-const FormRegister = () => {
+export const RegisterForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof registerSchema>>({
+  const form = useForm<ZRegisterS>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
+      name: "",
+      lastName: "",
+      dni: "",
       email: "",
-      password: "",
-      repeatPassword: "",
-      nombres: "",
-      apellidos: "",
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof registerSchema>) => {
+  const onSubmit = async (data: ZRegisterS) => {
+    setError(null);
+    setSuccess(null);
+
     startTransition(async () => {
-      const response = await registerAction(values);
+      const response = await registerAction(data);
 
       if (response.error) {
         setError(response.error);
-        setSuccess(null);
-      } else {
-        setSuccess("Usuario creado con éxito");
-        setError(null);
+      } else if (response.success) {
+        setSuccess(response.message || "Usuario creado con éxito.");
         form.reset();
+
+        setTimeout(() => setSuccess(null), 2000);
       }
     });
   };
 
   return (
-    <div className="mx-auto max-w-md">
-      <h2 className="font-inter font-bold text-2xl text-center uppercase">registrar</h2>
+    <div className="flex flex-col gap-2 w-1/3">
+      <p className="py-2 font-primary font-semibold text-text text-center uppercase">Registrar nuevo usuario</p>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="nombres"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nombres</FormLabel>
-                <FormControl>
-                  <Input placeholder="nombres" {...field} type="text" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="apellidos"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Apellidos</FormLabel>
-                <FormControl>
-                  <Input placeholder="apellidos" {...field} type="text" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="email" {...field} type="email" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Contraseña</FormLabel>
-                <FormControl>
-                  <Input placeholder="contraseña" {...field} type="password" />
-                </FormControl>
-                <FormDescription>La contraseña debe tener al menos 8 caracteres, incluir una mayúscula, una minúscula, un número y un carácter especial.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="repeatPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Repertir Contraseña</FormLabel>
-                <FormControl>
-                  <Input placeholder="repetir contraseña" {...field} type="password" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <InputField control={form.control} name="name" label="Nombres" placeholder="Ingrese el nombre" type="text" />
+          <InputField control={form.control} name="lastName" label="Apellidos" placeholder="Ingrese el apellido" type="text" />
+          <InputField control={form.control} name="dni" label="DNI" placeholder="Digite su DNI" type="text" />
+          <InputField control={form.control} name="email" label="Correo Electrónico" placeholder="Ingrese su email" type="email" />
 
-          {error && (
-            <div className="flex flex-row items-center gap-2 bg-[#e64553] bg-opacity-30 p-2 px-4 rounded-lg font-inter text-[#d20f39] text-sm">
-              <CircleX size={16} />
-              <p className="font-montserrat font-semibold">{error}</p>
-            </div>
-          )}
+          {error && <FormMessage className="text-red">{error}</FormMessage>}
+          {success && <FormMessage className="text-green">{success}</FormMessage>}
 
-          {success && (
-            <div className="flex flex-row items-center gap-2 bg-[#a6d189] bg-opacity-30 p-2 px-4 rounded-lg font-inter text-[#40a02b] text-sm">
-              <CircleCheck size={16} />
-              <p className="font-montserrat font-semibold">{success}</p>
-            </div>
-          )}
-          <div className="flex justify-end">
-            <Button type="submit" disabled={isPending} className="justify-end bg-[#d20f39] hover:bg-[#e64553]">
-              registrar usuario
-            </Button>
-          </div>
+          <Button type="submit" disabled={isPending} className="bg-red hover:bg-maroon w-full text-base">
+            <UserRoundPlus size={18} />
+            {isPending ? "Registrando..." : "Registrar Usuario"}
+          </Button>
         </form>
       </Form>
     </div>
   );
 };
-
-export default FormRegister;

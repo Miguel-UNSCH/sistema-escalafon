@@ -5,589 +5,278 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [citext]
 }
 
 enum Role {
-  ADMIN
-  PERSONAL
-}
-
-enum Status {
-  ENABLED
-  DISABLED
+  admin
+  personal
 }
 
 enum EstadoCivil {
-  S
-  C
-  D
-  V
+  s
+  c
+  d
+  v
 }
 
 enum GrupoSanguineo {
-  A_POSITIVO
-  A_NEGATIVO
-  B_POSITIVO
-  B_NEGATIVO
-  AB_POSITIVO
-  AB_NEGATIVO
-  O_POSITIVO
-  O_NEGATIVO
+  a_positivo
+  a_negativo
+  b_positivo
+  b_negativo
+  ab_positivo
+  ab_negativo
+  o_positivo
+  o_negativo
 }
 
 enum Sexo {
-  M
-  F
+  m
+  f
 }
 
 enum TipoContrato {
-  DECRETO_LEGISLATIVO_276
-  CAS
-  PROYECTO_INVERSION
-  PRACTICANTE
+  dl
+  cas
+  pi
+  p
 }
 
 enum TipoDesplazamiento {
-  ROTACION_INTERNA
-  ROTACION_VOLUNTARIA
-  REASIGNACION
-  DESIGNACION
-  DESTACADO
-  PERMUTA
-  ENCARGAR
+  ri
+  rv
+  r
+  d
+  p
 }
 
 enum TipoDescanso {
-  MEDICO
-  PARTICULAR
-  PRE_POSTNATAL
+  m
+  p
+  pn
 }
 
 enum TipoPermisoLicenciaVacacion {
-  PARTICULAR
-  VACACIONES
-  PERMISO_FAMILIAR
+  p
+  v
+  pf
 }
 
 enum SituacionLaboral {
-  ND276 // Nombrado-D-L. 276
-  CPV // Contratado plaza vacante
-  CL30057 // Contratado ley 30057
-  CASI // Contratado CAS-Indeterminado
-  CAST // Contratado en CAS-Temporal D.L. 1057
-  CPI // Contratado en proyecto de inversión
-  PPP1404 // Practicantes preprofesionales-D.L. 1404
-  PP1004 // Practicante profesional-D.L. 1004
+  nd276
+  cpv
+  cl30057
+  casi
+  cast
+  cpi
+  ppp1404
+  pp1004
 }
 
 enum RegimenPensionario {
-  L29903 // L. N° 29903
-  DL19990 // D. L. N° 19990
+  l29903
+  dl19990
 }
 
 enum GradoInstruccion {
-  SIN // Sin Instrucción
-  PC // Primaria Completa
-  PI // Primaria Incompleta
-  SC // Secundaria Completa
-  SI // Secundaria Incompleta
-  TEC // Técnico
-  UNI // Universitario
-  POS // Posgrado
-  NULL // Prefiero no decirlo
+  sin
+  pc
+  pi
+  sc
+  si
+  tec
+  uni
+  pos
+  null
 }
 
-enum FormacionAcademica {
-  PC // Primaria Completa
-  PI // Primaria Incompleta
-  SC // Secundaria Completa
-  SI // Secundaria Incompleta
-  BAC // Bachiller
-  TIT // Titulado
-  POS // Postgrado
-  TEC // Técnico Completo
+enum NivelEducativo {
+  p
+  s
+  t
+  u
+  m
+  d
+  e
 }
 
 model Ubigeo {
   id           Int    @id @default(autoincrement())
   inei         String @unique
   reniec       String @unique
-  departamento String
-  provincia    String
-  distrito     String
+  departamento String @db.Citext
+  provincia    String @db.Citext
+  distrito     String @db.Citext
 
-  user    User[]
-  hijo    Hijo[]
-  Conyuge Conyuge[]
+  personal Personal[]
+  conyuge  Conyuge[]
+  children Children[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@map("ubigeos")
 }
 
 model Dependencia {
   id        Int     @id @default(autoincrement())
-  nombre    String  @unique
-  direccion String?
-  codigo    String  @unique
+  nombre    String  @unique @db.Citext
+  direccion String? @db.Citext
+  codigo    String  @unique @db.Citext
 
-  personal                 Personal[]
-  experienciasLaborales    ExperienciaLaboral[]
-  contratos                Contrato[]
-  renuncias                Renuncia[]
-  descansos                DescansoMedico[]
-  permisos                 PermisoLicenciaVacacion[]
-  bonificacionesPersonales BonificacionPersonal[]
-  bonificacionesFamiliares BonificacionFamiliar[]
-  ascensos                 Ascenso[]                 @relation("DependenciasAscenso")
-  meritos                  Merito[]
-  demeritos                Demerito[]
-  desplazamientos          Desplazamiento[]          @relation("DependenciasDesplazamiento")
-  fichaEvaluaciones        FichaEvaluacion[]
-  actasEntrega             ActaEntrega[]
+  personal Personal[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@map("dependencias")
 }
 
 model Cargo {
   id     Int    @id @default(autoincrement())
-  nombre String @unique
+  nombre String @unique @db.Citext
 
-  personal                 Personal[]
-  experienciaLaborales     ExperienciaLaboral[]
-  contratos                Contrato[]
-  renuncias                Renuncia[]
-  descansos                DescansoMedico[]
-  permisos                 PermisoLicenciaVacacion[]
-  bonificacionesPersonales BonificacionPersonal[]
-  bonificacionesFamiliares BonificacionFamiliar[]
-  fichaEvaluaciones        FichaEvaluacion[]
-  meritos                  Merito[]
-  demeritos                Demerito[]
-  actasEntrega             ActaEntrega[]
-  ascensos                 Ascenso[]                 @relation("CargosAscenso")
-  desplazamientos          Desplazamiento[]          @relation("CargosDesplazamiento")
+  personal Personal[]
 
-  updatedAt DateTime @updatedAt
-  createdAt DateTime @default(now())
+  @@map("cargos")
 }
 
-model Archivo {
-  id   String @id @default(cuid())
-  name String
-  path String
-  size Int
+model File {
+  id             String @id @default(cuid())
+  name           String
+  path           String
+  size           Int
+  extension      String
+  uploaded_by_id String
+  folder         String
 
-  createdAt DateTime @default(now())
+  uploaded_by   User         @relation(name: "file_uploaded_by", fields: [uploaded_by_id], references: [id], onDelete: Cascade)
+  accessible_by FileAccess[]
+
+  @@map("files")
+}
+
+model FileAccess {
+  id      String @id @default(cuid())
+  file    File   @relation(fields: [file_id], references: [id], onDelete: Cascade)
+  file_id String
+  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id String
+
+  @@unique([file_id, user_id])
+  @@map("file_access")
 }
 
 model User {
-  id        String  @id @default(cuid())
-  nombres   String
-  apellidos String
-  role      Role    @default(PERSONAL)
-  email     String? @unique
-  password  String?
-  ubigeoId  Int?
-  status    Status  @default(ENABLED)
+  id              String @id @default(cuid())
+  name            String @db.Citext
+  last_name       String @db.Citext
+  email           String @unique @db.Citext
+  password        String
+  must_change_pwd Int    @default(1)
+  dni             String @unique
+  role            Role   @default(personal)
 
-  ubigeo   Ubigeo?   @relation(fields: [ubigeoId], references: [id])
-  personal Personal?
+  uploaded_files   File[]       @relation(name: "file_uploaded_by")
+  accessible_files FileAccess[]
+  personal         Personal?
 
-  updatedAt DateTime @updatedAt
-  createdAt DateTime @default(now())
+  @@map("users")
 }
 
 model Personal {
-  id                   String             @id @default(uuid())
-  sexo                 Sexo
-  dni                  String             @unique
-  nAutogenerado        String
-  licenciaConducir     String?
-  grupoSanguineo       GrupoSanguineo
-  fechaIngreso         DateTime
-  unidadEstructurada   String
-  fechaNacimiento      DateTime
-  domicilio            String
-  interiorUrbanizacion String?
-  telefono             String?
-  celular              String
-  regimenPensionario   RegimenPensionario
-  nombreAfp            String?
-  aniosServicio        Int
-  situacionLaboral     SituacionLaboral
-  estadoCivil          EstadoCivil
-  discapacidad         Boolean
-  status               Status             @default(ENABLED)
+  id                  String             @id @default(uuid())
+  sexo                Sexo
+  grupo_sanguineo     GrupoSanguineo
+  n_autogenerado      String
+  licencia_conducir   String?            @db.Citext
+  fecha_ingreso       DateTime
+  anios_servicio      Int
+  fecha_nacimiento    DateTime
+  domicilio           String             @db.Citext
+  numero_contacto     String
+  unidad_estructurada String             @db.Citext
+  regimen_pensionario RegimenPensionario
+  situacion_laboral   SituacionLaboral
+  estado_civil        EstadoCivil
+  discapacidad        Boolean            @default(false)
 
-  cargoId       Int
-  dependenciaId Int
-  conyugeId     Int?   @unique
-  userId        String @unique
+  cargo_id       Int
+  dependencia_id Int
+  ubigeo_id      Int
+  user_id        String  @unique
+  conyuge_id     String?
 
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  cargo       Cargo       @relation(fields: [cargoId], references: [id], onDelete: Restrict)
-  dependencia Dependencia @relation(fields: [dependenciaId], references: [id], onDelete: Restrict)
+  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  cargo       Cargo       @relation(fields: [cargo_id], references: [id], onDelete: Restrict)
+  dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
+  ubigeo      Ubigeo      @relation(fields: [ubigeo_id], references: [id], onDelete: Restrict)
 
-  hijos                    Hijo[]
-  discapacidades           Discapacidad[]
-  estudios                 Estudios[]
-  capacitaciones           Capacitacion[]
-  experiencias             ExperienciaLaboral[]
-  contratos                Contrato[]
-  renuncias                Renuncia[]
-  descansos                DescansoMedico[]
-  permisos                 PermisoLicenciaVacacion[]
-  bonificacionesPersonales BonificacionPersonal[]
-  bonificacionesFamiliares BonificacionFamiliar[]
-  evaluaciones             FichaEvaluacion[]
-  meritos                  Merito[]
-  demeritos                Demerito[]
-  ascensos                 Ascenso[]
-  desplazamientos          Desplazamiento[]
-  actasCreadas             ActaEntrega[]             @relation("EntregaPor")
-  actasRecibidas           ActaEntregaDestinatario[]
-  conyuge                  Conyuge?
+  conyuge            Conyuge?
+  children           PersonalChildren[]
+  formacionAcademica FormacionAcademica[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@map("personales")
 }
 
 model Conyuge {
-  id               Int              @id @default(autoincrement())
-  personalId       String           @unique
-  nombres          String
-  apellidos        String
-  fechaNacimiento  DateTime
-  ubigeoId         Int
-  gradoInstruccion GradoInstruccion
-  ocupacion        String
-  profesion        String?
-  centroTrabajo    String?
-  status           Status           @default(ENABLED)
+  id                String           @id @default(uuid())
+  nombres           String           @db.Citext
+  apellidos         String           @db.Citext
+  dni               String           @unique
+  fecha_nacimiento  DateTime
+  grado_instruccion GradoInstruccion
 
-  personal Personal @relation(fields: [personalId], references: [id], onDelete: Cascade)
-  ubigeo   Ubigeo   @relation(fields: [ubigeoId], references: [id])
+  ubigeo_id   Int
+  personal_id String @unique
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  personal Personal @relation(fields: [personal_id], references: [id], onDelete: Cascade)
+  ubigeo   Ubigeo   @relation(fields: [ubigeo_id], references: [id], onDelete: Restrict)
+
+  @@map("conyuges")
 }
 
-model Hijo {
-  id               Int              @id @default(autoincrement())
-  personalId       String
-  ubigeoId         Int
-  nombres          String
-  apellidos        String
-  fechaNacimiento  DateTime
-  gradoInstruccion GradoInstruccion
-  status           Status           @default(ENABLED)
+model Children {
+  id                String           @id @default(uuid())
+  nombres           String           @db.Citext
+  apellidos         String           @db.Citext
+  dni               String           @unique
+  fecha_nacimiento  DateTime
+  ubigeo_id         Int
+  grado_instruccion GradoInstruccion
 
-  personal Personal @relation(fields: [personalId], references: [id], onDelete: Cascade)
-  ubigeo   Ubigeo   @relation(fields: [ubigeoId], references: [id])
+  ubigeo Ubigeo @relation(fields: [ubigeo_id], references: [id], onDelete: Restrict)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  parents PersonalChildren[]
+
+  @@map("childrens")
 }
 
-model Discapacidad {
-  id                 Int    @id @default(autoincrement())
-  personalId         String
-  tipo               String
-  documentoSustento  String
-  organoEstructurado String
-  condicionLaboral   String
-  status             Status @default(ENABLED)
+model PersonalChildren {
+  id          String @id @default(uuid())
+  personal_id String
+  children_id String
 
-  personal Personal @relation(fields: [personalId], references: [id], onDelete: Cascade)
+  personal Personal @relation(fields: [personal_id], references: [id], onDelete: Cascade)
+  child    Children @relation(fields: [children_id], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@unique([personal_id, children_id])
+  @@map("personal_children")
 }
 
-model Estudios {
-  id            Int     @id @default(autoincrement())
-  personalId    String
-  nivel         String
-  periodo       Json // {from: date, to: date}
-  institucion   String
-  otrosEstudios String?
-  status        Status  @default(ENABLED)
+model FormacionAcademica {
+  id          String         @id @default(uuid())
+  nivel       NivelEducativo
+  institucion String         @db.Citext
+  carrera     String?        @db.Citext
+  periodo     Json // {from: DateTime, to: DateTime}
+  certificado String?
 
-  personal Personal @relation(fields: [personalId], references: [id], onDelete: Cascade)
+  personal_id String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
+  personal Personal @relation(fields: [personal_id], references: [id], onDelete: Cascade)
 
-model Capacitacion {
-  id                 Int      @id @default(autoincrement())
-  personalId         String
-  centroCapacitacion String
-  materia            String
-  especialidad       String // profesión o especialidad
-  periodo            Json // {from: date, to: date}
-  horasLectivas      Int
-  fechaEmision       DateTime
-  certificadoPdf     String
-  status             Status   @default(ENABLED)
-
-  personal Personal @relation(fields: [personalId], references: [id], onDelete: Cascade) // Relación con Personal (N:1)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ExperienciaLaboral {
-  id                Int      @id @default(autoincrement())
-  personalId        String
-  dependenciaId     Int?
-  cargoId           Int?
-  documentoSustento String // Certificado, Constancia, Resolución, etc.
-  centroLabor       String // Nombre del centro de trabajo
-  periodo           Json // {from: date, to: date}
-  fechaEmision      DateTime
-  status            Status   @default(ENABLED)
-
-  personal    Personal     @relation(fields: [personalId], references: [id], onDelete: Cascade) // Relación con Personal (N:1)
-  dependencia Dependencia? @relation(fields: [dependenciaId], references: [id], onDelete: SetNull) // Relación con Dependencia (opcional, puede ser null si no aplica)
-  cargo       Cargo?       @relation(fields: [cargoId], references: [id], onDelete: Restrict) // Relación con Cargo
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Contrato {
-  id                     Int          @id @default(autoincrement())
-  tipoContrato           TipoContrato // Tipo de contrato (Ejemplo: CAS, Nombrado, etc.)
-  condicionLaboral       String // Condición laboral específica
-  resolucionNombramiento String? // Resolución de nombramiento (opcional)
-  regimenLaboral         String // Régimen laboral
-  nivelRemuneracion      String? // Rango salarial, ejemplo: "1000 - 1500"
-  pap                    Int          @unique
-  cnp                    Int          @unique
-  fechaIngreso           DateTime // Fecha de inicio del contrato
-  fechaCese              DateTime? // Fecha de cese (opcional, puede ser null para contratos activos)
-  aniosServicio          Int? // Años de servicio acumulados (opcional)
-  personalId             String
-  dependenciaId          Int
-  cargoId                Int
-  status                 Status       @default(ENABLED)
-
-  personal    Personal    @relation(fields: [personalId], references: [id], onDelete: Cascade) // Relación con Personal (N:1)
-  dependencia Dependencia @relation(fields: [dependenciaId], references: [id], onDelete: Restrict) // Relación con Dependencia (N:1)
-  cargo       Cargo       @relation(fields: [cargoId], references: [id], onDelete: Restrict) // Relación con Cargo (N:1)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Renuncia {
-  id                Int      @id @default(autoincrement())
-  documentoRenuncia String // Carta, resolución de renuncia
-  motivoRenuncia    String // Motivo de renuncia (Particular, salud, personal)
-  fechaRenuncia     DateTime // Fecha de la renuncia
-  personalId        String
-  dependenciaId     Int?
-  cargoId           Int
-  status            Status   @default(ENABLED)
-
-  personal    Personal     @relation(fields: [personalId], references: [id], onDelete: Cascade)
-  cargo       Cargo        @relation(fields: [cargoId], references: [id])
-  dependencia Dependencia? @relation(fields: [dependenciaId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Desplazamiento {
-  id                  Int                @id @default(autoincrement())
-  tipoDesplazamiento  TipoDesplazamiento // Tipo de desplazamiento
-  documentoRotacion   String // Memorando, resolución
-  fechaDesplazamiento DateTime // Fecha de desplazamiento
-  personalId          String
-  status              Status             @default(ENABLED)
-
-  cargos       Cargo[]       @relation("CargosDesplazamiento") // Relación N:M con Cargo
-  dependencias Dependencia[] @relation("DependenciasDesplazamiento") // Relación N:M con Dependencia
-  personal     Personal      @relation(fields: [personalId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model DescansoMedico {
-  id                Int          @id @default(autoincrement())
-  tipoDescanso      TipoDescanso
-  documentoSustento String
-  periodo           Json // {from: date, to: date}
-  cargoId           Int
-  dependenciaId     Int
-  personalId        String
-  status            Status       @default(ENABLED)
-
-  personal    Personal    @relation(fields: [personalId], references: [id], onDelete: Cascade) // Borrado en cascada
-  cargo       Cargo       @relation(fields: [cargoId], references: [id])
-  dependencia Dependencia @relation(fields: [dependenciaId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model PermisoLicenciaVacacion {
-  id                          Int                         @id @default(autoincrement())
-  tipoPermisoLicenciaVacacion TipoPermisoLicenciaVacacion
-  documentoSustento           String
-  periodo                     Json // {from: date, to: date}
-  dependenciaId               Int
-  cargoId                     Int
-  personalId                  String
-  status                      Status                      @default(ENABLED)
-
-  personal    Personal    @relation(fields: [personalId], references: [id], onDelete: Cascade)
-  dependencia Dependencia @relation(fields: [dependenciaId], references: [id], onDelete: Restrict)
-  cargo       Cargo       @relation(fields: [cargoId], references: [id], onDelete: Restrict)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Ascenso {
-  id                Int    @id @default(autoincrement())
-  resolucionAscenso String
-  nivelRemunerativo String // "1000 - 1500"
-  periodo           Json // {from: date, to: date}
-  cnp               String
-  personalId        String
-  status            Status @default(ENABLED)
-
-  cargos       Cargo[]       @relation("CargosAscenso") // Relación N:M con Cargo
-  dependencias Dependencia[] @relation("DependenciasAscenso") // Relación N:M con Dependencia
-  personal     Personal      @relation(fields: [personalId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model BonificacionPersonal {
-  id                     Int    @id @default(autoincrement())
-  tipoBonificacion       String
-  resolucionBonificacion String
-  cargoId                Int
-  personalId             String
-  dependenciaId          Int
-  status                 Status @default(ENABLED)
-
-  cargo       Cargo       @relation(fields: [cargoId], references: [id])
-  personal    Personal    @relation(fields: [personalId], references: [id], onDelete: Cascade)
-  Dependencia Dependencia @relation(fields: [dependenciaId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model BonificacionFamiliar {
-  id                     Int    @id @default(autoincrement())
-  tipoBonificacion       String
-  resolucionBonificacion String
-  cargoId                Int
-  dependenciaId          Int
-  personalId             String
-  status                 Status @default(ENABLED)
-
-  cargo       Cargo       @relation(fields: [cargoId], references: [id])
-  personal    Personal    @relation(fields: [personalId], references: [id], onDelete: Cascade)
-  Dependencia Dependencia @relation(fields: [dependenciaId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model FichaEvaluacion {
-  id                Int      @id @default(autoincrement())
-  documentoSustento String
-  fechaEvaluacion   DateTime
-  personalId        String
-  dependenciaId     Int
-  cargoId           Int
-  status            Status   @default(ENABLED)
-
-  personal    Personal    @relation(fields: [personalId], references: [id], onDelete: Cascade)
-  dependencia Dependencia @relation(fields: [dependenciaId], references: [id])
-  cargo       Cargo       @relation(fields: [cargoId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Merito {
-  id                Int      @id @default(autoincrement())
-  personalId        String
-  dependenciaId     Int
-  cargoId           Int
-  documentoSustento String // Resoluciones, Cartas, etc.
-  fecha             DateTime
-  status            Status   @default(ENABLED)
-
-  personal    Personal    @relation(fields: [personalId], references: [id], onDelete: Cascade)
-  dependencia Dependencia @relation(fields: [dependenciaId], references: [id])
-  cargo       Cargo       @relation(fields: [cargoId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Demerito {
-  id                Int    @id @default(autoincrement())
-  personalId        String
-  dependenciaId     Int
-  cargoId           Int
-  documentoSustento String // Resoluciones, Memorando, etc.
-  tipoSancion       String // suspensión de labor sin goce de haberes, Amonestación, Papeleta de abandono
-  fechaSancion      String
-  status            Status @default(ENABLED)
-
-  personal    Personal    @relation(fields: [personalId], references: [id], onDelete: Cascade)
-  dependencia Dependencia @relation(fields: [dependenciaId], references: [id])
-  cargo       Cargo       @relation(fields: [cargoId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ActaEntrega {
-  id                   Int    @id @default(autoincrement())
-  actaEntregadoPorId   String // Personal que entrega el acta
-  dependenciaOficinaId Int
-  cargoId              Int
-  dependenciaId        Int
-  documentoSustento    String // Acta de entrega
-  fecha                String
-  status               Status @default(ENABLED)
-
-  actaEntregadoPor Personal                  @relation("EntregaPor", fields: [actaEntregadoPorId], references: [id])
-  dependencia      Dependencia               @relation(fields: [dependenciaId], references: [id])
-  cargo            Cargo                     @relation(fields: [cargoId], references: [id])
-  destinatarios    ActaEntregaDestinatario[] // Relación con destinatarios (muchos destinatarios)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model ActaEntregaDestinatario {
-  id             Int    @id @default(autoincrement())
-  actaId         Int
-  destinatarioId String
-
-  acta         ActaEntrega @relation(fields: [actaId], references: [id], onDelete: Cascade)
-  destinatario Personal    @relation(fields: [destinatarioId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  @@map("estudios")
 }
