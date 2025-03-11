@@ -7,7 +7,7 @@ import { SelectField } from "@/components/custom-fields/select-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { estudiosSchema, ZEstudioS } from "@/lib/schemas/personal-schema";
+import { estudiosSchema, ZEstudioS } from "@/lib/schemas/user-schema";
 import { uploadFile } from "@/service/file-service";
 import { nivelEducativoOp } from "@/utils/options";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,7 +16,11 @@ import React, { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-export const FormData = () => {
+type FormDataProps = {
+  fetchFormAc: () => void;
+};
+
+export const FormData: React.FC<FormDataProps> = ({ fetchFormAc }) => {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<ZEstudioS>({
@@ -54,6 +58,7 @@ export const FormData = () => {
         } else {
           toast.success("Estudio registrado exitosamente.");
           form.reset();
+          fetchFormAc();
         }
       } catch (e: unknown) {
         toast.error("Error al registrar el estudio.");
@@ -70,7 +75,7 @@ export const FormData = () => {
 
           <div className="gap-2 grid grid-cols-2">
             <InputField control={form.control} name="institucion" label="Nombre de la Institucion *" placeholder="Ingrese el nombre de la institucion" />
-            <InputField control={form.control} name="carrera" label="Carrera *" placeholder="Ingrese el nombre de la carrera" disabled={!requiereCarrera} />
+            <InputField control={form.control} name="carrera" label="Carrera/Especialidad *" placeholder="Ingrese el nombre de la carrera" disabled={!requiereCarrera} />
           </div>
 
           <div className="gap-4 grid grid-cols-2">

@@ -13,7 +13,7 @@ export const POST = async (req: Request) => {
     const currentUser = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (!currentUser) throw new Error("Usuario no encontrado");
 
-    const userId = currentUser.id;
+    const user_id = currentUser.id;
 
     const formData = await req.formData();
     const file = formData.get("file") as File;
@@ -27,17 +27,17 @@ export const POST = async (req: Request) => {
     const name = path.basename(originalName, extension);
 
     let storagePath = path.join(process.cwd(), "files", category);
-    if (category === "data") storagePath = path.join(storagePath, userId, subfolder);
+    if (category === "data") storagePath = path.join(storagePath, user_id, subfolder);
 
     await fs.mkdir(storagePath, { recursive: true });
 
     const newFile = await prisma.file.create({
       data: {
         name,
-        path: `files/${category}${category === "data" ? `/${userId}/${subfolder}` : ""}`,
+        path: `files/${category}${category === "data" ? `/${user_id}/${subfolder}` : ""}`,
         size: file.size,
         extension,
-        uploaded_by_id: userId,
+        uploaded_by_id: user_id,
         folder: category === "data" ? subfolder : category,
       },
     });

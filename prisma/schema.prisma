@@ -152,8 +152,9 @@ model File {
   uploaded_by_id String
   folder         String
 
-  uploaded_by   User         @relation(name: "file_uploaded_by", fields: [uploaded_by_id], references: [id], onDelete: Cascade)
-  accessible_by FileAccess[]
+  uploaded_by        User                 @relation(name: "file_uploaded_by", fields: [uploaded_by_id], references: [id], onDelete: Cascade)
+  accessible_by      FileAccess[]
+  FormacionAcademica FormacionAcademica[]
 
   @@map("files")
 }
@@ -179,15 +180,16 @@ model User {
   dni             String @unique
   role            Role   @default(personal)
 
-  uploaded_files   File[]       @relation(name: "file_uploaded_by")
-  accessible_files FileAccess[]
-  personal         Personal?
+  uploaded_files      File[]               @relation(name: "file_uploaded_by")
+  accessible_files    FileAccess[]
+  personal            Personal?
+  formacion_academica FormacionAcademica[]
 
   @@map("users")
 }
 
 model Personal {
-  id                  String             @id @default(uuid())
+  id                  String             @id @default(cuid())
   sexo                Sexo
   grupo_sanguineo     GrupoSanguineo
   n_autogenerado      String
@@ -214,15 +216,14 @@ model Personal {
   dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
   ubigeo      Ubigeo      @relation(fields: [ubigeo_id], references: [id], onDelete: Restrict)
 
-  conyuge            Conyuge?
-  children           PersonalChildren[]
-  formacionAcademica FormacionAcademica[]
+  conyuge  Conyuge?
+  children PersonalChildren[]
 
   @@map("personales")
 }
 
 model Conyuge {
-  id                String           @id @default(uuid())
+  id                String           @id @default(cuid())
   nombres           String           @db.Citext
   apellidos         String           @db.Citext
   dni               String           @unique
@@ -239,7 +240,7 @@ model Conyuge {
 }
 
 model Children {
-  id                String           @id @default(uuid())
+  id                String           @id @default(cuid())
   nombres           String           @db.Citext
   apellidos         String           @db.Citext
   dni               String           @unique
@@ -255,7 +256,7 @@ model Children {
 }
 
 model PersonalChildren {
-  id          String @id @default(uuid())
+  id          String @id @default(cuid())
   personal_id String
   children_id String
 
@@ -267,16 +268,18 @@ model PersonalChildren {
 }
 
 model FormacionAcademica {
-  id          String         @id @default(uuid())
+  id          String         @id @default(cuid())
   nivel       NivelEducativo
   institucion String         @db.Citext
   carrera     String?        @db.Citext
   periodo     Json // {from: DateTime, to: DateTime}
-  certificado String?
+  tipo        String         @default("certificado")
 
-  personal_id String
+  file_id String?
+  user_id String
 
-  personal Personal @relation(fields: [personal_id], references: [id], onDelete: Cascade)
+  user User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  file File? @relation(fields: [file_id], references: [id], onDelete: SetNull)
 
   @@map("estudios")
 }
