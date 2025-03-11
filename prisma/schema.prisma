@@ -125,11 +125,12 @@ model Ubigeo {
 
 model Dependencia {
   id        Int     @id @default(autoincrement())
-  nombre    String  @unique @db.Citext
+  nombre    String  @unique @db.Citext //? -- ?
   direccion String? @db.Citext
   codigo    String  @unique @db.Citext
 
-  personal Personal[]
+  personal   Personal[]
+  Experience Experience[]
 
   @@map("dependencias")
 }
@@ -138,7 +139,8 @@ model Cargo {
   id     Int    @id @default(autoincrement())
   nombre String @unique @db.Citext
 
-  personal Personal[]
+  personal   Personal[]
+  Experience Experience[]
 
   @@map("cargos")
 }
@@ -156,6 +158,7 @@ model File {
   accessible_by      FileAccess[]
   FormacionAcademica FormacionAcademica[]
   Capacitacion       Capacitacion[]
+  Experience         Experience[]
 
   @@map("files")
 }
@@ -186,6 +189,7 @@ model User {
   personal            Personal?
   formacion_academica FormacionAcademica[]
   capacitacion        Capacitacion[]
+  Experience          Experience[]
 
   @@map("users")
 }
@@ -277,11 +281,11 @@ model FormacionAcademica {
   periodo     Json // {from: DateTime, to: DateTime}
   tipo        String         @default("certificado")
 
-  file_id String?
+  file_id String
   user_id String
 
-  user User  @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  file File? @relation(fields: [file_id], references: [id], onDelete: SetNull)
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  file File @relation(fields: [file_id], references: [id], onDelete: Restrict)
 
   @@map("estudios")
 }
@@ -299,7 +303,25 @@ model Capacitacion {
   user_id String
 
   user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  file File @relation(fields: [file_id], references: [id], onDelete: Cascade)
+  file File @relation(fields: [file_id], references: [id], onDelete: Restrict)
 
-  @@map("capacitacion")
+  @@map("capacitaciones")
+}
+
+model Experience {
+  id           String @id @default(cuid())
+  centro_labor String @db.Citext
+  periodo      Json // {from: DateTime, to: DateTime}
+
+  user_id        String
+  file_id        String
+  cargo_id       Int
+  dependencia_id Int
+
+  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  file        File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
+  cargo       Cargo       @relation(fields: [cargo_id], references: [id], onDelete: Restrict)
+  dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
+
+  @@map("experiencias")
 }

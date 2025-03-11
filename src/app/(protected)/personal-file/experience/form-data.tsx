@@ -1,49 +1,47 @@
-// eslint-disable no-unused-vars
 "use client";
-import { createStudy } from "@/actions/studies-action";
-import { DateField } from "@/components/custom-fields/date-field";
-import { InputField } from "@/components/custom-fields/input-field";
-import { SelectField } from "@/components/custom-fields/select-field";
-import { UploadField } from "@/components/custom-fields/upload-file";
-import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
-import { estudiosSchema, ZEstudioS } from "@/lib/schemas/user-schema";
-import { uploadFile } from "@/service/file-service";
-import { nivelEducativoOp } from "@/utils/options";
-import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Save } from "lucide-react";
-import React, { useTransition } from "react";
-import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { useForm } from "react-hook-form";
+import React, { useTransition } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { Form } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { createExp } from "@/actions/exp-action";
+import { uploadFile } from "@/service/file-service";
+import { expSchema, ZExpS } from "@/lib/schemas/user-schema";
+import { DateField } from "@/components/custom-fields/date-field";
+import { CargoField } from "@/components/custom-fields/cargo-field";
+import { InputField } from "@/components/custom-fields/input-field";
+import { UploadField } from "@/components/custom-fields/upload-file";
+import { DependenciaField } from "@/components/custom-fields/dependencia-field";
 
 type FormDataProps = {
-  fetchFormAc: () => void;
+  fetchExperiences: () => void;
 };
 
-export const FormData: React.FC<FormDataProps> = ({ fetchFormAc }) => {
+export const FormData: React.FC<FormDataProps> = ({ fetchExperiences }) => {
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<ZEstudioS>({
-    resolver: zodResolver(estudiosSchema),
+  const form = useForm<ZExpS>({
+    resolver: zodResolver(expSchema),
     defaultValues: {
-      institucion: "",
-      carrera: "",
+      centro_labor: "",
       periodo: { from: undefined, to: undefined },
+      cargo: { nombre: "" },
+      dependencia: { nombre: "", codigo: "", direccion: "" },
       file: undefined,
-      nivel: undefined,
     },
   });
 
-  const nivelSeleccionado = form.watch("nivel");
-  const requiereCarrera = ["t", "u", "m", "d", "e"].includes(nivelSeleccionado || "");
-
-  const onSubmit = async (data: ZEstudioS) => {
+  const onSubmit = async (data: ZExpS) => {
     startTransition(async () => {
       try {
         let file_id = "";
 
         if (data.file) {
-          const uploadResponse = await uploadFile(data.file, "data", "estudios");
+          const uploadResponse = await uploadFile(data.file, "data", "experiencias");
           if (!uploadResponse.success || !uploadResponse.data) {
             toast.error(uploadResponse.message || "Error al subir el archivo.");
             return;
@@ -51,17 +49,18 @@ export const FormData: React.FC<FormDataProps> = ({ fetchFormAc }) => {
           file_id = uploadResponse.data.id;
         }
 
-        const result = await createStudy({ ...data, file_id });
+        const result = await createExp({ ...data, file_id });
 
         if (!result.success) {
           toast.error(result.message);
         } else {
-          toast.success("Estudio registrado exitosamente.");
+          toast.success("Experiencia registrada exitosamente.");
           form.reset();
-          fetchFormAc();
+          fetchExperiences();
         }
+        // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
-        toast.error("Error al registrar el estudio.");
+        toast.error("Error al registrar la experiencia.");
       }
     });
   };
@@ -71,11 +70,14 @@ export const FormData: React.FC<FormDataProps> = ({ fetchFormAc }) => {
       <p className="font-primary font-semibold uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
-          <SelectField control={form.control} name="nivel" label="Formacion Academica *" options={nivelEducativoOp} />
+          <InputField control={form.control} name="centro_labor" label="Centro de Labor *" placeholder="Ingrese el centro de labor" />
+          <CargoField control={form.control} name="cargo.nombre" />
 
-          <div className="gap-2 grid grid-cols-2">
-            <InputField control={form.control} name="institucion" label="Nombre de la Institucion *" placeholder="Ingrese el nombre de la institucion" />
-            <InputField control={form.control} name="carrera" label="Carrera/Especialidad *" placeholder="Ingrese el nombre de la carrera" disabled={!requiereCarrera} />
+          <div className="flex flex-col gap-2">
+            <p className="font-primary font-semibold text-md">Dependencia</p>
+            <div className="gap-2 grid grid-cols-3">
+              <DependenciaField control={form.control} />
+            </div>
           </div>
 
           <div className="gap-4 grid grid-cols-2">

@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { fileSchema, periodoSchema } from "@/lib/zod";
 import { NivelEducativo } from "./enums";
+import { cargoSchema, dependenciaSchema } from "./others-schema";
 
 export const estudiosSchema = z.object({
   institucion: z.string({ required_error: "Institución es requerida" }),
@@ -21,3 +22,12 @@ export const capacitacionSchema = z.object({
   file: fileSchema,
 });
 export type ZCapacitacionS = z.infer<typeof capacitacionSchema>;
+
+export const expSchema = z.object({
+  centro_labor: z.string(),
+  periodo: periodoSchema,
+  cargo: cargoSchema,
+  dependencia: dependenciaSchema,
+  file: fileSchema,
+});
+export type ZExpS = z.infer<typeof expSchema>;
