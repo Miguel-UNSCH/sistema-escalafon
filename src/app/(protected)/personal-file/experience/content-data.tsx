@@ -16,7 +16,6 @@ export const ContentData = () => {
   const [experiences, setExperiences] = useState<ExperienceRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Función para obtener las experiencias y actualizar la tabla
   const fetchExperiences = async () => {
     setLoading(true);
     try {
@@ -24,9 +23,8 @@ export const ContentData = () => {
       if (response.success && response.data) {
         setExperiences(response.data as ExperienceRecord[]);
         toast.success("Tabla actualizada correctamente.");
-      } else {
-        toast.error(response.message || "No se pudieron obtener las experiencias.");
-      }
+      } else toast.error(response.message || "No se pudieron obtener las experiencias.");
+
       // eslint-disable-next-line no-unused-vars
     } catch (e: unknown) {
       toast.error("Error al obtener las experiencias.");

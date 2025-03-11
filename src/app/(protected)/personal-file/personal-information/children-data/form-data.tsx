@@ -1,20 +1,20 @@
-// eslint-disable no-unused-vars
 "use client";
 
-import { useState, useTransition } from "react";
+import toast from "react-hot-toast";
+import { Save } from "lucide-react";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Save } from "lucide-react";
+
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { InputField } from "@/components/custom-fields/input-field";
+import { gradoInstruccionOp } from "@/utils/options";
+import { createChild } from "@/actions/children-action";
 import { DateField } from "@/components/custom-fields/date-field";
+import { InputField } from "@/components/custom-fields/input-field";
 import { SelectField } from "@/components/custom-fields/select-field";
 import { UbigeoField } from "@/components/custom-fields/ubigeo-field";
 import { childrenSchema, ZChildren } from "@/lib/schemas/personal-schema";
-import { gradoInstruccionOp } from "@/utils/options";
-import { createChild } from "@/actions/children-action";
-import toast from "react-hot-toast";
 
 type FormDataProps = {
   fetchChildren: () => void;
@@ -39,13 +39,13 @@ export const FormData: React.FC<FormDataProps> = ({ fetchChildren }) => {
     startTransition(async () => {
       try {
         const result = await createChild(data);
-        if (!result.success) {
-          toast.error(result.message);
-        } else {
+        if (!result.success) toast.error(result.message);
+        else {
           toast.success("Hijo registrado exitosamente.");
           form.reset();
           fetchChildren();
         }
+        // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
         toast.error("Error al registrar el hijo.");
       }

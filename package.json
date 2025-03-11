@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "npx oxlint ."
+    "lint": "oxlint ."
   },
   "prisma": {
     "seed": "tsx src/prisma/seed.ts"
@@ -46,6 +46,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "oxlint": "^0.15.14",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

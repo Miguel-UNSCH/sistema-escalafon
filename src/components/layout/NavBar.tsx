@@ -24,21 +24,23 @@ export const Navbar = ({ isSidebarOpen, isMobile, onMenuClick, session }: Navbar
           <AlignJustify strokeWidth={1.75} className="text-red" size={26} />
         </button>
 
-        <form className="hidden sm:block mx-auto max-w-md">
-          <label className="sr-only">Search</label>
-          <div className="relative">
-            <div className="absolute inset-y-0 flex items-center ps-3 pointer-events-none start-0">
-              <Search className="text-red text-lg" />
+        {session?.user.role === "admin" && (
+          <form className="hidden sm:block mx-auto max-w-md">
+            <label className="sr-only">Search</label>
+            <div className="relative">
+              <div className="absolute inset-y-0 flex items-center ps-3 pointer-events-none start-0">
+                <Search className="text-red text-lg" />
+              </div>
+              <input
+                type="search"
+                id="default-search"
+                className="block bg-mantle p-3 pl-10 border-none rounded-lg ring-1 ring-maroon focus:ring-red w-full text-text text-sm transition-all duration-250"
+                placeholder="Search..."
+                required
+              />
             </div>
-            <input
-              type="search"
-              id="default-search"
-              className="block bg-mantle p-3 pl-10 border-none rounded-lg ring-1 ring-maroon focus:ring-red w-full text-text text-sm transition-all duration-250"
-              placeholder="Search..."
-              required
-            />
-          </div>
-        </form>
+          </form>
+        )}
       </div>
 
       <div className="flex flex-row items-center gap-4">

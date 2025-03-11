@@ -131,6 +131,7 @@ model Dependencia {
 
   personal   Personal[]
   Experience Experience[]
+  Contrato   Contrato[]
 
   @@map("dependencias")
 }
@@ -141,6 +142,7 @@ model Cargo {
 
   personal   Personal[]
   Experience Experience[]
+  Contrato   Contrato[]
 
   @@map("cargos")
 }
@@ -156,9 +158,10 @@ model File {
 
   uploaded_by        User                 @relation(name: "file_uploaded_by", fields: [uploaded_by_id], references: [id], onDelete: Cascade)
   accessible_by      FileAccess[]
-  FormacionAcademica FormacionAcademica[]
-  Capacitacion       Capacitacion[]
-  Experience         Experience[]
+  formacionAcademica FormacionAcademica[]
+  capacitacion       Capacitacion[]
+  experience         Experience[]
+  contrato           Contrato[]
 
   @@map("files")
 }
@@ -189,7 +192,8 @@ model User {
   personal            Personal?
   formacion_academica FormacionAcademica[]
   capacitacion        Capacitacion[]
-  Experience          Experience[]
+  experience          Experience[]
+  contrato            Contrato[]
 
   @@map("users")
 }
@@ -324,4 +328,59 @@ model Experience {
   dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
 
   @@map("experiencias")
+}
+
+enum TContrato {
+  dl_276
+  cas
+  dl_276_proyecto
+  practicante
+}
+
+enum CLaboral {
+  nombrado
+  contratado
+  plaza_vacante
+  designado
+  indeterminado
+  eventual
+  reincorporado
+  mandato_judicial
+  profesional
+  preprofesional
+}
+
+enum RLaboral {
+  dl_276
+  fag_cas
+  fun_276
+  cas
+  regimen_especial
+}
+
+model Contrato {
+  id                  String    @id @default(cuid())
+  tipo_contrato       TContrato
+  condicion_laboral   CLaboral
+  resolucion_contrato String?   @db.Citext // Resolución de nombramiento, contrato o convenio
+  regimen_laboral     RLaboral
+  nivel_remuneracion  String?   @db.Citext // Solo para algunos contratos
+  pap                 Int? // Solo en DL 276
+  cnp                 Int? // Solo en DL 276
+  meta                String?   @db.Citext // Solo en DL 276 Proyecto
+  convenio            String?   @db.Citext // Solo en Practicante
+  fecha_ingreso       DateTime
+  fecha_cese          DateTime?
+
+  cargo_id       Int
+  dependencia_id Int
+  file_id        String
+  user_id        String
+
+  cargo       Cargo       @relation(fields: [cargo_id], references: [id], onDelete: Restrict)
+  dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
+  file        File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
+  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@map("contratos")
 }

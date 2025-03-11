@@ -23,9 +23,8 @@ export const ContentData = () => {
       if (response.success && response.data) {
         setFormAc(response.data as StudyRecord[]);
         toast.success("Tabla actualizada correctamente.");
-      } else {
-        toast.error(response.message || "No se pudieron obtener los estudios.");
-      }
+      } else toast.error(response.message || "No se pudieron obtener los estudios.");
+
       // eslint-disable-next-line no-unused-vars
     } catch (e: unknown) {
       toast.error("Error al obtener los estudios.");

@@ -28,6 +28,13 @@ export const tipoContratoOp = [
   { key: "p", value: "PLAZA" },
 ];
 
+export const TContratoOp = [
+  { key: "dl_276", value: "DL 276" },
+  { key: "cas", value: "CAS" },
+  { key: "dl_276_proyecto", value: "DL 276 PROYECTO" },
+  { key: "practicante", value: "PRACTICANTE" },
+];
+
 export const tipoDesplazamientoOp = [
   { key: "ri", value: "ROTACIÓN INTERNA" },
   { key: "rv", value: "ROTACIÓN VOLUNTARIA" },
@@ -59,9 +66,30 @@ export const situacionLaboralOp = [
   { key: "pp1004", value: "PRACTICANTE PROFESIONAL-D.L. 1004" },
 ];
 
+export const CLaboralOp = [
+  { key: "nombrado", value: "NOMBRADO" },
+  { key: "contratado", value: "CONTRATADO" },
+  { key: "plaza_vacante", value: "PLAZA VACANTE" },
+  { key: "designado", value: "DESIGNADO" },
+  { key: "indeterminado", value: "INDETERMINADO" },
+  { key: "eventual", value: "EVENTUAL" },
+  { key: "reincorporado", value: "REINCORPORADO" },
+  { key: "mandato_judicial", value: "MANDATO JUDICIAL" },
+  { key: "profesional", value: "PROFESIONAL" },
+  { key: "preprofesional", value: "PREPROFESIONAL" },
+];
+
 export const regimenPensionarioOp = [
   { key: "l29903", value: "LEY N° 29903" },
   { key: "dl19990", value: "DECRETO LEGISLATIVO N° 19990" },
+];
+
+export const RLaboralOp = [
+  { key: "dl_276", value: "DL 276" },
+  { key: "fag_cas", value: "FAG CAS" },
+  { key: "fun_276", value: "FUN 276" },
+  { key: "cas", value: "CAS" },
+  { key: "regimen_especial", value: "RÉGIMEN ESPECIAL" },
 ];
 
 export const gradoInstruccionOp = [

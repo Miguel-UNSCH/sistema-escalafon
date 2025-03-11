@@ -1,20 +1,21 @@
-// eslint-disable no-unused-vars
 "use client";
+
+import toast from "react-hot-toast";
+import { Save } from "lucide-react";
+import { useForm } from "react-hook-form";
+import React, { useTransition } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { Form } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { nivelEducativoOp } from "@/utils/options";
+import { uploadFile } from "@/service/file-service";
 import { createStudy } from "@/actions/studies-action";
 import { DateField } from "@/components/custom-fields/date-field";
 import { InputField } from "@/components/custom-fields/input-field";
-import { SelectField } from "@/components/custom-fields/select-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
-import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
 import { estudiosSchema, ZEstudioS } from "@/lib/schemas/user-schema";
-import { uploadFile } from "@/service/file-service";
-import { nivelEducativoOp } from "@/utils/options";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Save } from "lucide-react";
-import React, { useTransition } from "react";
-import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
+import { SelectField } from "@/components/custom-fields/select-field";
 
 type FormDataProps = {
   fetchFormAc: () => void;
@@ -53,13 +54,13 @@ export const FormData: React.FC<FormDataProps> = ({ fetchFormAc }) => {
 
         const result = await createStudy({ ...data, file_id });
 
-        if (!result.success) {
-          toast.error(result.message);
-        } else {
+        if (!result.success) toast.error(result.message);
+        else {
           toast.success("Estudio registrado exitosamente.");
           form.reset();
           fetchFormAc();
         }
+        // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
         toast.error("Error al registrar el estudio.");
       }

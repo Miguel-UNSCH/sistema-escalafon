@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { TableData } from "./table-data";
-import { FormData } from "./form-data";
-import { getCapacitaciones } from "@/actions/capacitacion-action";
 import { Capacitacion } from "@prisma/client";
+import React, { useEffect, useState } from "react";
+
+import { FormData } from "./form-data";
+import { TableData } from "./table-data";
+import { getCapacitaciones } from "@/actions/capacitacion-action";
 
 export type CapacitacionRecord = Omit<Capacitacion, "periodo"> & {
   periodo: { from: string; to: string };
@@ -15,7 +16,6 @@ export const ContentData = () => {
   const [capacitaciones, setCapacitaciones] = useState<CapacitacionRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Función para obtener las capacitaciones y actualizar la tabla
   const fetchCapacitaciones = async () => {
     setLoading(true);
     try {
@@ -23,9 +23,8 @@ export const ContentData = () => {
       if (response.success && response.data) {
         setCapacitaciones(response.data as CapacitacionRecord[]);
         toast.success("Tabla actualizada correctamente.");
-      } else {
-        toast.error(response.message || "No se pudieron obtener las capacitaciones.");
-      }
+      } else toast.error(response.message || "No se pudieron obtener las capacitaciones.");
+
       // eslint-disable-next-line no-unused-vars
     } catch (e: unknown) {
       toast.error("Error al obtener las capacitaciones.");

@@ -1,18 +1,19 @@
 "use client";
 
 import toast from "react-hot-toast";
-import React, { useTransition } from "react";
-import { useForm } from "react-hook-form";
-import { createCapacitacion } from "@/actions/capacitacion-action";
-import { uploadFile } from "@/service/file-service";
-import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
-import { capacitacionSchema, ZCapacitacionS } from "@/lib/schemas/user-schema";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Save } from "lucide-react";
+import { useForm } from "react-hook-form";
+import React, { useTransition } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { Form } from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { uploadFile } from "@/service/file-service";
+import { DateField } from "@/components/custom-fields/date-field";
+import { createCapacitacion } from "@/actions/capacitacion-action";
 import { InputField } from "@/components/custom-fields/input-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
-import { DateField } from "@/components/custom-fields/date-field";
+import { capacitacionSchema, ZCapacitacionS } from "@/lib/schemas/user-schema";
 
 type FormDataProps = {
   fetchCapacitaciones: () => void;
@@ -49,9 +50,8 @@ export const FormData: React.FC<FormDataProps> = ({ fetchCapacitaciones }) => {
 
         const result = await createCapacitacion({ ...data, file_id });
 
-        if (!result.success) {
-          toast.error(result.message);
-        } else {
+        if (!result.success) toast.error(result.message);
+        else {
           toast.success("Capacitación registrada exitosamente.");
           form.reset();
           fetchCapacitaciones();
