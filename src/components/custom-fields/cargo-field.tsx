@@ -5,7 +5,19 @@ import { Input } from "@/components/ui/input";
 import { ZCargo } from "@/lib/schemas/others-schema";
 import { getAllCargos } from "@/actions/others-action";
 
-export const CargoField = ({ control, name, placeholder = "Cargo *", disabled = false }: { control: any; name: string; placeholder?: string; disabled?: boolean }) => {
+export const CargoField = ({
+  control,
+  name,
+  label = "Cargo *",
+  placeholder = "Buscar cargo",
+  disabled = false,
+}: {
+  control: any;
+  name: string;
+  label?: string;
+  placeholder?: string;
+  disabled?: boolean;
+}) => {
   const [cargos, setCargos] = useState<string[]>([]);
   const [search, setSearch] = useState<string>("");
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
@@ -40,7 +52,7 @@ export const CargoField = ({ control, name, placeholder = "Cargo *", disabled = 
       name={name}
       render={({ field }) => (
         <FormItem className="relative">
-          <FormLabel>{placeholder}</FormLabel>
+          <FormLabel>{label}</FormLabel>
           <FormControl>
             <Input
               {...field}
@@ -51,7 +63,7 @@ export const CargoField = ({ control, name, placeholder = "Cargo *", disabled = 
                 setShowSuggestions(true);
                 field.onChange(e.target.value);
               }}
-              placeholder="Escriba el cargo..."
+              placeholder={placeholder}
               disabled={disabled}
               className="p-2 border rounded w-full font-text"
             />

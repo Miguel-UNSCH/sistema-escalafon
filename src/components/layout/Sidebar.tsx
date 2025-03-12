@@ -11,13 +11,13 @@ export const Sidebar = ({ isOpen, isMobile, session }: { isOpen: boolean; isMobi
 
   return (
     <>
-      {isOpen && isMobile && <div className="top-0 left-0 z-40 absolute bg-black/30 backdrop-blur-sm w-full h-full"></div>}
+      {isOpen && isMobile && <div className="top-0 left-0 z-40 absolute bg-black/30 backdrop-blur-xs w-full h-full"></div>}
       <aside
         className={`
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
         ${isMobile ? "fixed" : "absolute"}
         inset-y-0 left-0 z-50 border-r border-crust border-dashed 
-        w-1/6 bg-base text-text transition-transform duration-300 ease-in-out h-full
+        w-72 bg-base text-text transition-transform duration-300 ease-in-out h-full
       `}
       >
         <div className="flex flex-col gap-6 py-4 pl-4 w-full h-full">

@@ -73,7 +73,7 @@ export const navigationItems: NavigationItems[] = [
       { label: "deméritos", adm: true, icon: <Trophy size={16} />, path: "/merits-demerits/demerits" },
     ],
   },
-  { title: "documentos / otros", menuItem: [{ label: "acta de entrega", icon: <File size={16} />, path: "/documents" }] },
+  { title: "documentos / otros", menuItem: [{ label: "documentos", icon: <File size={16} />, path: "/documents" }] },
   {
     title: "reportes",
     menuItem: [

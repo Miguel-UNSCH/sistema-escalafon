@@ -14,14 +14,12 @@ export const changePwdSchema = z.object({ pwd: z.string(), newPwd: passwordValid
   message: "Las contraseñas no coinciden",
   path: ["repeatNewPwd"],
 });
-
 export type ZChangePwdS = z.infer<typeof changePwdSchema>;
 
 export const loginSchema = z.object({
   email: z.string({ required_error: "El correo es obligatorio" }).min(1, "El correo es obligatorio").email("Correo inválido"),
   password: z.string({ required_error: "La contraseña es obligatoria" }).min(8, "La contraseña es obligatoria"),
 });
-
 export type ZLoginS = z.infer<typeof loginSchema>;
 
 export const registerSchema = z.object({

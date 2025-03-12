@@ -31,7 +31,7 @@ export const Dashboard = ({ children, session }: { children: ReactNode; session:
         <Navbar onMenuClick={toggleSidebar} isSidebarOpen={isSidebarOpen} isMobile={isMobile} session={session} />
         <main className={`flex-1 overflow-x-hidden overflow-y-auto py-4 pl-8 transition-all duration-300 ease-in-out pt-20`}>{children}</main>
       </div>
-      {isMobile && isSidebarOpen && <div className="z-40 fixed inset-0 bg-[#e6e9ef] bg-opacity-50" onClick={toggleSidebar}></div>}
+      {isMobile && isSidebarOpen && <div className="z-40 fixed inset-0" onClick={toggleSidebar}></div>}
     </div>
   );
 };

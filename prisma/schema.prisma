@@ -150,6 +150,12 @@ enum TEntCertDic {
   cod
 }
 
+enum tipo_doc {
+  mem
+  ofi
+  act
+}
+
 model Ubigeo {
   id           Int    @id @default(autoincrement())
   inei         String @unique
@@ -186,6 +192,8 @@ model Dependencia {
   bonus_family         bonus_family[]
   evaluation           evaluation[]
   merito               merito[]
+  documentos_enviados  documento[]       @relation(name: "dependencia_emisor")
+  documentos_recibidos documento[]       @relation(name: "dependencia_receptor")
 
   @@map("dependencias")
 }
@@ -209,6 +217,8 @@ model Cargo {
   bonus_family         bonus_family[]
   evaluation           evaluation[]
   merito               merito[]
+  documentos_enviados  documento[]       @relation(name: "cargo_emisor")
+  documentos_recibidos documento[]       @relation(name: "cargo_receptor")
 
   @@map("cargos")
 }
@@ -238,6 +248,7 @@ model File {
   bonus_family       bonus_family[]
   evaluation         evaluation[]
   merito             merito[]
+  documento          documento[]
 
   @@map("files")
 }
@@ -263,23 +274,25 @@ model User {
   dni             String @unique
   role            Role   @default(personal)
 
-  uploaded_files      File[]               @relation(name: "file_uploaded_by")
-  accessible_files    FileAccess[]
-  personal            Personal?
-  formacion_academica FormacionAcademica[]
-  capacitacion        Capacitacion[]
-  experience          Experience[]
-  contrato            Contrato[]
-  Discapacidad        discapacidad[]
-  renuncia            renuncia[]
-  Desplazamiento      desplazamiento[]
-  descanso_medico     descanso_medico[]
-  per_lic_vac         per_lic_vac[]
-  ascenso             ascenso[]
-  bonus_personal      bonus_personal[]
-  bonus_family        bonus_family[]
-  evaluation          evaluation[]
-  merito              merito[]
+  uploaded_files       File[]               @relation(name: "file_uploaded_by")
+  accessible_files     FileAccess[]
+  personal             Personal?
+  formacion_academica  FormacionAcademica[]
+  capacitacion         Capacitacion[]
+  experience           Experience[]
+  contrato             Contrato[]
+  Discapacidad         discapacidad[]
+  renuncia             renuncia[]
+  Desplazamiento       desplazamiento[]
+  descanso_medico      descanso_medico[]
+  per_lic_vac          per_lic_vac[]
+  ascenso              ascenso[]
+  bonus_personal       bonus_personal[]
+  bonus_family         bonus_family[]
+  evaluation           evaluation[]
+  merito               merito[]
+  documentos_enviados  documento[]          @relation(name: "documento_emisor")
+  documentos_recibidos documento[]          @relation(name: "documento_receptor")
 
   @@map("users")
 }
@@ -651,6 +664,29 @@ model merito {
  * demeritos
  */
 
-/**
- * acata_entrega
- */
+model documento {
+  id               String   @id @default(cuid())
+  numero_documento String   @unique @db.Citext
+  tipo_documento   tipo_doc
+  asunto           String   @db.Citext
+  fecha_emision    DateTime @default(now())
+
+  file_id                 String
+  emisor_id               String
+  receptor_id             String
+  cargo_emisor_id         Int
+  cargo_receptor_id       Int
+  dependencia_emisor_id   Int
+  dependencia_receptor_id Int
+
+  file                 File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
+  emisor               User        @relation(name: "documento_emisor", fields: [emisor_id], references: [id], onDelete: Cascade)
+  receptor             User        @relation(name: "documento_receptor", fields: [receptor_id], references: [id], onDelete: Cascade)
+  cargo_emisor         Cargo       @relation(name: "cargo_emisor", fields: [cargo_emisor_id], references: [id], onDelete: Restrict)
+  cargo_receptor       Cargo       @relation(name: "cargo_receptor", fields: [cargo_receptor_id], references: [id], onDelete: Restrict)
+  dependencia_emisor   Dependencia @relation(name: "dependencia_emisor", fields: [dependencia_emisor_id], references: [id], onDelete: Restrict)
+  dependencia_receptor Dependencia @relation(name: "dependencia_receptor", fields: [dependencia_receptor_id], references: [id], onDelete: Restrict)
+
+  @@unique([emisor_id, file_id])
+  @@map("documentos")
+}

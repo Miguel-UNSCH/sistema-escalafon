@@ -127,3 +127,9 @@ export const entidad_certificadoraOp = [
   { key: "ess", value: "ESSALUD" },
   { key: "cod", value: "CONADIS" },
 ];
+
+export const tipo_docOp = [
+  { key: "mem", value: "MEMORANDO" },
+  { key: "ofi", value: "OFICIO" },
+  { key: "act", value: "ACTA" },
+];

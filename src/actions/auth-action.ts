@@ -32,10 +32,10 @@ export const registerAction = async (values: ZRegisterS) => {
 
     await prisma.user.create({
       data: {
-        name: data.name,
-        last_name: data.lastName,
+        name: data.name.toUpperCase(),
+        last_name: data.lastName.toUpperCase(),
         dni: data.dni,
-        email: data.email,
+        email: data.email.toUpperCase(),
         password,
       },
     });
