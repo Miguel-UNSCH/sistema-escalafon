@@ -15,5 +15,15 @@ export const bonusPersonalSchema = z.object({
 });
 export type ZBonusPersonal = z.infer<typeof bonusPersonalSchema>;
 
-export const bonusFamiliarSchema = z.object({});
+export const bonusFamiliarSchema = z.object({
+  tipo: z.string(),
+  resolucion_bonus: z.string(),
+  fecha: z
+    .string({ required_error: "Fecha es requerida" })
+    .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
+    .transform((date) => new Date(date)),
+  cargo: cargoSchema,
+  dependencia: dependenciaSchema,
+  file: fileSchema,
+});
 export type ZBonusFamiliar = z.infer<typeof bonusFamiliarSchema>;

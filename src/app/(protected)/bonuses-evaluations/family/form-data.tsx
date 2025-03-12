@@ -1,6 +1,6 @@
 "use client";
 
-import { createBonusPer } from "@/actions/bonus_per-action";
+import { createBonusFam } from "@/actions/bonus-fam-action";
 import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
 import { DependenciaField } from "@/components/custom-fields/dependencia-field";
@@ -8,7 +8,7 @@ import { InputField } from "@/components/custom-fields/input-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { bonusPersonalSchema, ZBonusPersonal } from "@/lib/schemas/bonus-schema";
+import { bonusFamiliarSchema, ZBonusFamiliar } from "@/lib/schemas/bonus-schema";
 import { uploadFile } from "@/service/file-service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save } from "lucide-react";
@@ -32,15 +32,15 @@ export const FormData: React.FC<FormDataProps> = ({ fetchBonuses }) => {
     file: undefined,
   };
 
-  const form = useForm<ZBonusPersonal>({ resolver: zodResolver(bonusPersonalSchema), defaultValues });
+  const form = useForm<ZBonusFamiliar>({ resolver: zodResolver(bonusFamiliarSchema), defaultValues });
 
-  const onSubmit = async (data: ZBonusPersonal) => {
+  const onSubmit = async (data: ZBonusFamiliar) => {
     startTransition(async () => {
       try {
         let file_id = "";
 
         if (data.file) {
-          const uploadResponse = await uploadFile(data.file, "bonificaciones");
+          const uploadResponse = await uploadFile(data.file, "bonificaciones-familiares");
           if (!uploadResponse.success || !uploadResponse.data) {
             toast.error(uploadResponse.message || "Error al subir el archivo.");
             return;
@@ -48,18 +48,17 @@ export const FormData: React.FC<FormDataProps> = ({ fetchBonuses }) => {
           file_id = uploadResponse.data.id;
         }
 
-        const result = await createBonusPer({ ...data, file_id });
+        const result = await createBonusFam({ ...data, file_id });
 
-        if (!result.success) {
-          toast.error(result.message);
-        } else {
-          toast.success("Bonificación personal registrada exitosamente.");
+        if (!result.success) toast.error(result.message);
+        else {
+          toast.success("Bonificación familiar registrada exitosamente.");
           form.reset();
           fetchBonuses();
         }
         // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
-        toast.error("Error al registrar la bonificación personal.");
+        toast.error("Error al registrar la bonificación familiar.");
       }
     });
   };
@@ -68,7 +67,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchBonuses }) => {
     <div className="flex flex-col gap-5 w-full">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
-          <InputField control={form.control} name="tipo" label="Tipo *" placeholder="Ingrese el tipo de bonificacion personal" />
+          <InputField control={form.control} name="tipo" label="Tipo *" placeholder="Ingrese el tipo de bonificacion familiar" />
           <InputField control={form.control} name="resolucion_bonus" label="Resolucion Bonus *" placeholder="Ingrese la resolucion" />
 
           <DateField control={form.control} name="fecha" label="Fecha de la bonificacion" disabled={false} />
