@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-import { fileSchema } from "@/lib/zod";
-import { CLaboral, RLaboral, TContrato, TipoDesplazamiento } from "./enums";
+import { fileSchema, periodoSchema } from "@/lib/zod";
+import { CLaboral, RLaboral, TContrato, TipoDescanso, TipoDesplazamiento } from "./enums";
 import { cargoSchema, dependenciaSchema } from "./others-schema";
 
 export const contratoSchema = z.object({
@@ -55,3 +55,12 @@ export const desplazamientoSchema = z.object({
   file: fileSchema,
 });
 export type ZDesplazamientoS = z.infer<typeof desplazamientoSchema>;
+
+export const descansoMedicoSchema = z.object({
+  tipo_descanso: TipoDescanso,
+  periodo: periodoSchema,
+  cargo: cargoSchema,
+  dependencia: dependenciaSchema,
+  file: fileSchema,
+});
+export type ZDesMedS = z.infer<typeof descansoMedicoSchema>;

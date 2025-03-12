@@ -176,8 +176,9 @@ model Dependencia {
   contrato   Contrato[]
   renuncia   renuncia[]
 
-  desplazamientosDesde desplazamiento[] @relation(name: "dependencia_from")
-  desplazamientosHacia desplazamiento[] @relation(name: "dependencia_to")
+  desplazamientosDesde desplazamiento[]  @relation(name: "dependencia_from")
+  desplazamientosHacia desplazamiento[]  @relation(name: "dependencia_to")
+  descanso_medico      descanso_medico[]
 
   @@map("dependencias")
 }
@@ -191,8 +192,9 @@ model Cargo {
   contrato   Contrato[]
   renuncia   renuncia[]
 
-  desplazamientosDesde desplazamiento[] @relation(name: "cargo_from")
-  desplazamientosHacia desplazamiento[] @relation(name: "cargo_to")
+  desplazamientosDesde desplazamiento[]  @relation(name: "cargo_from")
+  desplazamientosHacia desplazamiento[]  @relation(name: "cargo_to")
+  descanso_medico      descanso_medico[]
 
   @@map("cargos")
 }
@@ -215,6 +217,7 @@ model File {
   Discapacidad       discapacidad[]
   renuncia           renuncia[]
   Desplazamiento     desplazamiento[]
+  descanso_medico    descanso_medico[]
 
   @@map("files")
 }
@@ -250,6 +253,7 @@ model User {
   Discapacidad        discapacidad[]
   renuncia            renuncia[]
   Desplazamiento      desplazamiento[]
+  descanso_medico     descanso_medico[]
 
   @@map("users")
 }
@@ -475,4 +479,23 @@ model desplazamiento {
 
   @@unique([user_id, file_id])
   @@map("desplazamientos")
+}
+
+model descanso_medico {
+  id            String       @id @default(cuid())
+  tipo_descanso TipoDescanso
+  periodo       Json // {from: DateTime, to: DateTime}
+
+  user_id        String
+  file_id        String
+  cargo_id       Int
+  dependencia_id Int
+
+  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  file        File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
+  cargo       Cargo       @relation(fields: [cargo_id], references: [id], onDelete: Restrict)
+  dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
+
+  @@unique([user_id, file_id])
+  @@map("descansos_medicos")
 }
