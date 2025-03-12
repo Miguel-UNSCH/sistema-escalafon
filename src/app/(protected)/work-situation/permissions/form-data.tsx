@@ -39,7 +39,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchPerLicVacs }) => {
         let file_id = "";
 
         if (data.file) {
-          const uploadResponse = await uploadFile(data.file, "permisos_licencias_vacaciones");
+          const uploadResponse = await uploadFile(data.file, "data", "permisos_licencias_vacaciones");
           if (!uploadResponse.success || !uploadResponse.data) {
             toast.error(uploadResponse.message || "Error al subir el archivo.");
             return;

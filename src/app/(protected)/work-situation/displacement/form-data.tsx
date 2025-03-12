@@ -41,7 +41,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchDesplazamientos }) => {
         let file_id = "";
 
         if (data.file) {
-          const uploadResponse = await uploadFile(data.file, "desplazamientos");
+          const uploadResponse = await uploadFile(data.file, "data", "desplazamientos");
           if (!uploadResponse.success || !uploadResponse.data) {
             toast.error(uploadResponse.message || "Error al subir el archivo.");
             return;

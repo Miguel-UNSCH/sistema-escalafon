@@ -39,7 +39,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchEvaluations }) => {
         let file_id = "";
 
         if (data.file) {
-          const uploadResponse = await uploadFile(data.file, "evaluaciones");
+          const uploadResponse = await uploadFile(data.file, "data", "evaluaciones");
           if (!uploadResponse.success || !uploadResponse.data) {
             toast.error(uploadResponse.message || "Error al subir el archivo.");
             return;

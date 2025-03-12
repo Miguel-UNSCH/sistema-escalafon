@@ -40,7 +40,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchAscensos }) => {
         let file_id = "";
 
         if (data.file) {
-          const uploadResponse = await uploadFile(data.file, "ascensos");
+          const uploadResponse = await uploadFile(data.file, "data", "ascensos");
           if (!uploadResponse.success || !uploadResponse.data) {
             toast.error(uploadResponse.message || "Error al subir el archivo.");
             return;

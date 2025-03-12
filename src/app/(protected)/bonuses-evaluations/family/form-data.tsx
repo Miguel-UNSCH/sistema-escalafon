@@ -40,7 +40,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchBonuses }) => {
         let file_id = "";
 
         if (data.file) {
-          const uploadResponse = await uploadFile(data.file, "bonificaciones-familiares");
+          const uploadResponse = await uploadFile(data.file, "data", "bonificaciones-familiares");
           if (!uploadResponse.success || !uploadResponse.data) {
             toast.error(uploadResponse.message || "Error al subir el archivo.");
             return;

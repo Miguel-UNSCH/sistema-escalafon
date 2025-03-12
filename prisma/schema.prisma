@@ -646,3 +646,11 @@ model merito {
   @@unique([user_id, file_id])
   @@map("meritos")
 }
+
+/**
+ * demeritos
+ */
+
+/**
+ * acata_entrega
+ */
