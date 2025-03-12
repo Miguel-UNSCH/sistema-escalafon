@@ -1,16 +1,14 @@
 "use client";
-import { createDesplazamiento } from "@/actions/desplazamiento-action";
+import { createAscenso } from "@/actions/ascenso-action";
 import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
 import { DependenciaField } from "@/components/custom-fields/dependencia-field";
 import { InputField } from "@/components/custom-fields/input-field";
-import { SelectField } from "@/components/custom-fields/select-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { desplazamientoSchema, ZDesplazamientoS } from "@/lib/schemas/w-situation-schema";
+import { ascensoSchema, ZAscensoS } from "@/lib/schemas/w-situation-schema";
 import { uploadFile } from "@/service/file-service";
-import { tipoDesplazamientoOp } from "@/utils/options";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save } from "lucide-react";
 import React, { useTransition } from "react";
@@ -18,30 +16,31 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 type FormDataProps = {
-  fetchDesplazamientos: () => void;
+  fetchAscensos: () => void;
 };
 
-export const FormData: React.FC<FormDataProps> = ({ fetchDesplazamientos }) => {
+export const FormData: React.FC<FormDataProps> = ({ fetchAscensos }) => {
   const [isPending, startTransition] = useTransition();
   const defaultValues = {
-    tipo_desplazamiento: undefined,
+    resolucion_ascenso: "",
+    nivel_remunerativo: "",
+    cnp: 0,
     fecha: undefined,
-    tipo_file: "",
     current_cargo: { nombre: "" },
     new_cargo: { nombre: "" },
     current_dependencia: { nombre: "", codigo: "", direccion: "" },
     new_dependencia: { nombre: "", codigo: "", direccion: "" },
     file: undefined,
   };
-  const form = useForm<ZDesplazamientoS>({ resolver: zodResolver(desplazamientoSchema), defaultValues });
+  const form = useForm<ZAscensoS>({ resolver: zodResolver(ascensoSchema), defaultValues });
 
-  const onSubmit = async (data: ZDesplazamientoS) => {
+  const onSubmit = async (data: ZAscensoS) => {
     startTransition(async () => {
       try {
         let file_id = "";
 
         if (data.file) {
-          const uploadResponse = await uploadFile(data.file, "desplazamientos");
+          const uploadResponse = await uploadFile(data.file, "ascensos");
           if (!uploadResponse.success || !uploadResponse.data) {
             toast.error(uploadResponse.message || "Error al subir el archivo.");
             return;
@@ -49,17 +48,17 @@ export const FormData: React.FC<FormDataProps> = ({ fetchDesplazamientos }) => {
           file_id = uploadResponse.data.id;
         }
 
-        const result = await createDesplazamiento({ ...data, file_id });
+        const result = await createAscenso({ ...data, file_id });
 
         if (!result.success) toast.error(result.message);
         else {
-          toast.success("Desplazamiento registrado exitosamente.");
+          toast.success("Ascenso registrado exitosamente.");
           form.reset();
-          fetchDesplazamientos();
+          fetchAscensos();
         }
         // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
-        toast.error("Error al registrar el desplazamiento.");
+        toast.error("Error al registrar el ascenso.");
       }
     });
   };
@@ -69,10 +68,13 @@ export const FormData: React.FC<FormDataProps> = ({ fetchDesplazamientos }) => {
       <p className="font-primary font-semibold uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
-          <SelectField control={form.control} name="tipo_desplazamiento" label="Tipo de Desplazamiento" options={tipoDesplazamientoOp} />
+          <div className="gap-2 grid grid-cols-2">
+            <InputField control={form.control} name="resolucion_ascenso" label="Resolucion de Ascenso *" placeholder="Ingrese la resolucion de ascenso" />
+            <InputField control={form.control} name="cnp" label="CNP *" type="number" />
+          </div>
 
           <div className="gap-2 grid grid-cols-2">
-            <InputField control={form.control} name="tipo_file" label="Tipo de Documento" placeholder="Ingrese el tipo de documento" />
+            <InputField control={form.control} name="nivel_remunerativo" label="Nivel Remunerativo *" placeholder="Ingrese el nivel remunerativo" />
             <DateField control={form.control} name="fecha" label="Fecha" disabled={false} />
           </div>
 
@@ -95,7 +97,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchDesplazamientos }) => {
             </div>
           </div>
 
-          <UploadField control={form.control} name="file" label="Documento" allowedTypes={["pdf"]} />
+          <UploadField control={form.control} name="file" label="Documento *" allowedTypes={["pdf"]} />
 
           <div className="flex justify-end">
             <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">

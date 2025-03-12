@@ -4,13 +4,10 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { TableData } from "./table-data";
 import { FormData } from "./form-data";
-import { getDesplazamientos } from "@/actions/desplazamiento-action";
-import { Prisma } from "@prisma/client";
-
-export type DesplazamientoRecord = Array<Prisma.desplazamientoGetPayload<{ include: { current_cargo: true; current_dependencia: true; new_cargo: true; new_dependencia: true } }>>;
+import { desplazamientoRecord, getDesplazamientos } from "@/actions/desplazamiento-action";
 
 export const ContentData = () => {
-  const [desplazamientos, setDesplazamientos] = useState<DesplazamientoRecord>([]);
+  const [desplazamientos, setDesplazamientos] = useState<desplazamientoRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetchDesplazamientos = async () => {

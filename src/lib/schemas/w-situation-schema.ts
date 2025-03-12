@@ -73,3 +73,19 @@ export const per_lic_vacSchema = z.object({
   file: fileSchema,
 });
 export type ZPerLicVacS = z.infer<typeof per_lic_vacSchema>;
+
+export const ascensoSchema = z.object({
+  resolucion_ascenso: z.string(),
+  nivel_remunerativo: z.string(),
+  cnp: z.number(),
+  fecha: z
+    .string({ required_error: "Fecha de inicio es requerida" })
+    .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
+    .transform((date) => new Date(date)),
+  current_cargo: cargoSchema,
+  new_cargo: cargoSchema,
+  current_dependencia: dependenciaSchema,
+  new_dependencia: dependenciaSchema,
+  file: fileSchema,
+});
+export type ZAscensoS = z.infer<typeof ascensoSchema>;
