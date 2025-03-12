@@ -194,6 +194,7 @@ model Dependencia {
   merito               merito[]
   documentos_enviados  documento[]       @relation(name: "dependencia_emisor")
   documentos_recibidos documento[]       @relation(name: "dependencia_receptor")
+  demerito             demerito[]
 
   @@map("dependencias")
 }
@@ -219,6 +220,7 @@ model Cargo {
   merito               merito[]
   documentos_enviados  documento[]       @relation(name: "cargo_emisor")
   documentos_recibidos documento[]       @relation(name: "cargo_receptor")
+  demerito             demerito[]
 
   @@map("cargos")
 }
@@ -249,6 +251,7 @@ model File {
   evaluation         evaluation[]
   merito             merito[]
   documento          documento[]
+  demerito           demerito[]
 
   @@map("files")
 }
@@ -293,6 +296,7 @@ model User {
   merito               merito[]
   documentos_enviados  documento[]          @relation(name: "documento_emisor")
   documentos_recibidos documento[]          @relation(name: "documento_receptor")
+  demerito             demerito[]
 
   @@map("users")
 }
@@ -660,9 +664,24 @@ model merito {
   @@map("meritos")
 }
 
-/**
- * demeritos
- */
+model demerito {
+  id           String   @id @default(cuid())
+  fecha        DateTime
+  tipo_sancion String   @db.Citext
+
+  user_id        String
+  file_id        String
+  cargo_id       Int
+  dependencia_id Int
+
+  cargo       Cargo       @relation(fields: [cargo_id], references: [id], onDelete: Restrict)
+  dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
+  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  file        File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
+
+  @@unique([user_id, file_id])
+  @@map("demeritos")
+}
 
 model documento {
   id               String   @id @default(cuid())

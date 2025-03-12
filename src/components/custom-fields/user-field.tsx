@@ -89,6 +89,7 @@ export const UserField = ({ control, name, label, disabled = false }: UserFieldP
                 >
                   <span>{user.dni}</span>
                   <span>{user.name}</span>
+                  <span>{user.last_name}</span>
                 </li>
               ))}
             </ul>

@@ -1,6 +1,11 @@
 import { getMimeValues } from "@/utils";
 import { z } from "zod";
 
+export const userSchema = z.object({
+  name: z.string(),
+  dni: z.string(),
+});
+
 const passwordValidation = z
   .string()
   .min(8, "Debe tener al menos 8 caracteres")

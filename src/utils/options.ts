@@ -133,3 +133,10 @@ export const tipo_docOp = [
   { key: "ofi", value: "OFICIO" },
   { key: "act", value: "ACTA" },
 ];
+
+export const tipo_suspensionOp = [
+  { key: "nin", value: "NINGUNO" },
+  { key: "sgl", value: "SUSPENSIÓN DE LABOR SIN GOCE DE HABERES" },
+  { key: "amo", value: "AMONESTACIÓN" },
+  { key: "ppe", value: "PAPELETA DE ABANDONO" },
+];
