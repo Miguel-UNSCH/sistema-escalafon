@@ -179,6 +179,7 @@ model Dependencia {
   desplazamientosDesde desplazamiento[]  @relation(name: "dependencia_from")
   desplazamientosHacia desplazamiento[]  @relation(name: "dependencia_to")
   descanso_medico      descanso_medico[]
+  per_lic_vac          per_lic_vac[]
 
   @@map("dependencias")
 }
@@ -195,6 +196,7 @@ model Cargo {
   desplazamientosDesde desplazamiento[]  @relation(name: "cargo_from")
   desplazamientosHacia desplazamiento[]  @relation(name: "cargo_to")
   descanso_medico      descanso_medico[]
+  per_lic_vac          per_lic_vac[]
 
   @@map("cargos")
 }
@@ -218,6 +220,7 @@ model File {
   renuncia           renuncia[]
   Desplazamiento     desplazamiento[]
   descanso_medico    descanso_medico[]
+  per_lic_vac        per_lic_vac[]
 
   @@map("files")
 }
@@ -254,6 +257,7 @@ model User {
   renuncia            renuncia[]
   Desplazamiento      desplazamiento[]
   descanso_medico     descanso_medico[]
+  per_lic_vac         per_lic_vac[]
 
   @@map("users")
 }
@@ -498,4 +502,23 @@ model descanso_medico {
 
   @@unique([user_id, file_id])
   @@map("descansos_medicos")
+}
+
+model per_lic_vac {
+  id      String                      @id @default(cuid())
+  tipo    TipoPermisoLicenciaVacacion
+  periodo Json // {from: DateTime, to: DateTime}
+
+  user_id        String
+  file_id        String
+  cargo_id       Int
+  dependencia_id Int
+
+  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  file        File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
+  cargo       Cargo       @relation(fields: [cargo_id], references: [id], onDelete: Restrict)
+  dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
+
+  @@unique([user_id, file_id])
+  @@map("permisos_licencias_vacaciones")
 }
