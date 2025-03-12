@@ -6,11 +6,9 @@ import { auth } from "@/auth";
 import { prisma } from "@/config/prisma.config";
 import { ZExpS } from "@/lib/schemas/user-schema";
 
-export const getExperiences = async (): Promise<{
-  success: boolean;
-  message?: string;
-  data?: Array<Prisma.ExperienceGetPayload<{ include: { cargo: true; dependencia: true } }>>;
-}> => {
+export type expRecord = Prisma.ExperienceGetPayload<{ include: { cargo: true; dependencia: true } }>;
+
+export const getExperiences = async (): Promise<{ success: boolean; message?: string; data?: Array<expRecord> }> => {
   try {
     const session = await auth();
     if (!session?.user?.email) throw new Error("No autorizado");
@@ -18,7 +16,7 @@ export const getExperiences = async (): Promise<{
     const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (!user) throw new Error("Usuario no encontrado");
 
-    const experiencias: Array<Prisma.ExperienceGetPayload<{ include: { cargo: true; dependencia: true } }>> | null = await prisma.experience.findMany({
+    const experiencias: Array<expRecord> | null = await prisma.experience.findMany({
       where: { user_id: user.id },
       include: { cargo: true, dependencia: true },
     });

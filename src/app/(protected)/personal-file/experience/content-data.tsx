@@ -1,14 +1,13 @@
 "use client";
 
 import toast from "react-hot-toast";
-import { Prisma } from "@prisma/client";
 import React, { useEffect, useState } from "react";
 
 import { FormData } from "./form-data";
 import { TableData } from "./table-data";
-import { getExperiences } from "@/actions/exp-action";
+import { expRecord, getExperiences } from "@/actions/exp-action";
 
-export type ExperienceRecord = Omit<Prisma.ExperienceGetPayload<{ include: { cargo: true; dependencia: true } }>, "periodo"> & {
+export type ExperienceRecord = Omit<expRecord, "periodo"> & {
   periodo: { from: string; to: string };
 };
 

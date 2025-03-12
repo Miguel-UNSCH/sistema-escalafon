@@ -182,6 +182,7 @@ model Dependencia {
   ascensos_hacia       ascenso[]         @relation(name: "dependencia_ascenso_hacia")
   descanso_medico      descanso_medico[]
   per_lic_vac          per_lic_vac[]
+  bonus_personal       bonus_personal[]
 
   @@map("dependencias")
 }
@@ -201,6 +202,7 @@ model Cargo {
   ascensos_hacia       ascenso[]         @relation(name: "cargo_ascenso_hacia")
   descanso_medico      descanso_medico[]
   per_lic_vac          per_lic_vac[]
+  bonus_personal       bonus_personal[]
 
   @@map("cargos")
 }
@@ -226,6 +228,7 @@ model File {
   descanso_medico    descanso_medico[]
   per_lic_vac        per_lic_vac[]
   ascenso            ascenso[]
+  bonus_personal     bonus_personal[]
 
   @@map("files")
 }
@@ -264,6 +267,7 @@ model User {
   descanso_medico     descanso_medico[]
   per_lic_vac         per_lic_vac[]
   ascenso             ascenso[]
+  bonus_personal      bonus_personal[]
 
   @@map("users")
 }
@@ -531,8 +535,8 @@ model per_lic_vac {
 
 model ascenso {
   id                 String   @id @default(cuid())
-  resolucion_ascenso String
-  nivel_remunerativo String
+  resolucion_ascenso String   @db.Citext
+  nivel_remunerativo String   @db.Citext
   fecha              DateTime
   cnp                Int
 
@@ -552,4 +556,24 @@ model ascenso {
 
   @@unique([user_id, file_id])
   @@map("ascensos")
+}
+
+model bonus_personal {
+  id               String   @id @default(cuid())
+  tipo             String   @db.Citext
+  resolucion_bonus String   @db.Citext
+  fecha            DateTime
+
+  user_id        String
+  file_id        String
+  cargo_id       Int
+  dependencia_id Int
+
+  cargo       Cargo       @relation(fields: [cargo_id], references: [id], onDelete: Restrict)
+  dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
+  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  file        File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
+
+  @@unique([user_id, file_id])
+  @@map("bonuses_personal")
 }
