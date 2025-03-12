@@ -27,3 +27,15 @@ export const bonusFamiliarSchema = z.object({
   file: fileSchema,
 });
 export type ZBonusFamiliar = z.infer<typeof bonusFamiliarSchema>;
+
+export const evaluationSchema = z.object({
+  puntuacion: z.number(),
+  fecha: z
+    .string({ required_error: "Fecha es requerida" })
+    .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
+    .transform((date) => new Date(date)),
+  cargo: cargoSchema,
+  dependencia: dependenciaSchema,
+  file: fileSchema,
+});
+export type ZEvaluation = z.infer<typeof evaluationSchema>;
