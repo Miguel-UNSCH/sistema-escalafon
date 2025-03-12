@@ -185,6 +185,7 @@ model Dependencia {
   bonus_personal       bonus_personal[]
   bonus_family         bonus_family[]
   evaluation           evaluation[]
+  merito               merito[]
 
   @@map("dependencias")
 }
@@ -207,6 +208,7 @@ model Cargo {
   bonus_personal       bonus_personal[]
   bonus_family         bonus_family[]
   evaluation           evaluation[]
+  merito               merito[]
 
   @@map("cargos")
 }
@@ -235,6 +237,7 @@ model File {
   bonus_personal     bonus_personal[]
   bonus_family       bonus_family[]
   evaluation         evaluation[]
+  merito             merito[]
 
   @@map("files")
 }
@@ -276,6 +279,7 @@ model User {
   bonus_personal      bonus_personal[]
   bonus_family        bonus_family[]
   evaluation          evaluation[]
+  merito              merito[]
 
   @@map("users")
 }
@@ -623,4 +627,22 @@ model evaluation {
 
   @@unique([user_id, file_id])
   @@map("evaluations")
+}
+
+model merito {
+  id    String   @id @default(cuid())
+  fecha DateTime
+
+  user_id        String
+  file_id        String
+  cargo_id       Int
+  dependencia_id Int
+
+  cargo       Cargo       @relation(fields: [cargo_id], references: [id], onDelete: Restrict)
+  dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
+  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  file        File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
+
+  @@unique([user_id, file_id])
+  @@map("meritos")
 }
