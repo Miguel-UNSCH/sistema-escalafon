@@ -2,12 +2,17 @@
 
 import React from "react";
 import { FormData } from "./form-data";
+import { auth } from "@/auth";
 
-const page = () => {
+const page = async () => {
+  const session = await auth();
+
+  if (!session || !session?.user?.email) return <p>No autorizado!</p>;
+
   return (
     <div className="flex justify-center py-2 w-full">
       <div className="flex p-2 w-4/5">
-        <FormData />
+        <FormData session={session} />
       </div>
     </div>
   );

@@ -45,8 +45,8 @@ export const FormLogin = () => {
   };
 
   return (
-    <div className="flex flex-col items-center gap-4 w-1/4">
-      <p className="font-primary font-bold text-red text-2xl uppercase">Iniciar sesión</p>
+    <div className="flex flex-col items-center gap-8 w-1/4">
+      <p className="font-primary font-bold text-red text-2xl">Iniciar Sesión</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
           <InputField control={form.control} name="email" label="Email" placeholder="john_doe@gmail.com" />

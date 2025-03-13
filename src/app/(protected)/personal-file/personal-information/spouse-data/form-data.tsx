@@ -1,4 +1,3 @@
-// eslint-disable no-unused-vars
 "use client";
 
 import { Save } from "lucide-react";
@@ -16,10 +15,14 @@ import { SelectField } from "@/components/custom-fields/select-field";
 import { UbigeoField } from "@/components/custom-fields/ubigeo-field";
 import { conyugeSchema, ZConyuge } from "@/lib/schemas/personal-schema";
 import { createSpouse, getCurrentSpouse } from "@/actions/conyuge-action";
+import { getCurrentPersonal } from "@/actions/personal-action";
+import { Session } from "next-auth";
 
-export const FormData = () => {
+export const FormData = ({ session }: { session: Session }) => {
   const [isPending, startTransition] = useTransition();
   const [loading, setLoading] = useState<boolean>(true);
+  const [estadoCivil, setEstadoCivil] = useState<string | null>(null);
+  const [sexo, setSexo] = useState<string | null>(null);
 
   const form = useForm<ZConyuge>({
     resolver: zodResolver(conyugeSchema),
@@ -34,24 +37,44 @@ export const FormData = () => {
   });
 
   useEffect(() => {
-    const fetchSpouseData = async () => {
+    const fetchPersonalData = async () => {
       setLoading(true);
 
       try {
-        const response = await getCurrentSpouse();
-        if (response.success && response.data) {
-          if (response.success && response.data) form.reset(response.data);
-          toast.success("Datos del cónyuge cargados correctamente.");
-        }
-      } catch (e: unknown) {
-        toast.error("Error al cargar los datos del cónyuge.");
+        if (!session.user.email) throw new Error("No se encontró el email en la sesión.");
+
+        const response = await getCurrentPersonal(session.user.email);
+        if (!response.success || !response.data) throw new Error(response.message || "Error al obtener datos personales.");
+
+        setEstadoCivil(response.data.estado_civil);
+        setSexo(response.data.sexo);
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : "Error inesperado.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchSpouseData();
-  }, [form]);
+    fetchPersonalData();
+  }, [session]);
+
+  useEffect(() => {
+    if (estadoCivil === "c") {
+      const fetchSpouseData = async () => {
+        try {
+          const response = await getCurrentSpouse();
+          if (response.success && response.data) {
+            form.reset(response.data);
+          }
+          // eslint-disable-next-line no-unused-vars
+        } catch (e: unknown) {
+          toast.error("Error al cargar los datos del cónyuge.");
+        }
+      };
+
+      fetchSpouseData();
+    }
+  }, [estadoCivil, form]);
 
   const onSubmit = (data: ZConyuge) => {
     startTransition(async () => {
@@ -63,6 +86,7 @@ export const FormData = () => {
           form.reset();
           toast.success("Cónyuge registrado exitosamente.");
         }
+        // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
         toast.error("Error al registrar el cónyuge.");
       }
@@ -75,6 +99,11 @@ export const FormData = () => {
 
       {loading ? (
         <p className="text-subtext0 text-center">Cargando datos...</p>
+      ) : estadoCivil !== "c" ? (
+        <p className="font-semibold text-subtext0 text-lg text-center">
+          <span className="px-2">No puedes registrar un cónyuge porque no estas</span>
+          <span className="font-semibold text-maroon text-sm">{sexo ? (sexo === "m" ? "CASADO" : "CASADA") : "CASADO(A)"}</span>.
+        </p>
       ) : (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">

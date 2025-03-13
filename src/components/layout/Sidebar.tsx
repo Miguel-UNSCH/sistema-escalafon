@@ -17,7 +17,7 @@ export const Sidebar = ({ isOpen, isMobile, session }: { isOpen: boolean; isMobi
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
         ${isMobile ? "fixed" : "absolute"}
         inset-y-0 left-0 z-50 border-r border-crust border-dashed 
-        w-72 bg-base text-text transition-transform duration-300 ease-in-out h-full
+        w-80 bg-base text-text transition-transform duration-300 ease-in-out h-full
       `}
       >
         <div className="flex flex-col gap-6 py-4 pl-4 w-full h-full">

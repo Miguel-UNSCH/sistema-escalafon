@@ -17,11 +17,7 @@ import { SelectField } from "@/components/custom-fields/select-field";
 import { entidad_certificadoraOp, tDscapacidadOp } from "@/utils/options";
 import { disabilitySchema, ZDisabilityS } from "@/lib/schemas/user-schema";
 
-type FormDataProps = {
-  fetchDisabilities: () => void;
-};
-
-export const FormData: React.FC<FormDataProps> = ({ fetchDisabilities }) => {
+export const FormData: React.FC<{ fetchDisabilities: () => void }> = ({ fetchDisabilities }) => {
   const [isPending, startTransition] = useTransition();
   const defaultValues = { tipo: undefined, discapacidad: "", entidad_certificadora: undefined, fecha_certificacion: undefined, file: undefined };
   const form = useForm<ZDisabilityS>({ resolver: zodResolver(disabilitySchema), defaultValues });

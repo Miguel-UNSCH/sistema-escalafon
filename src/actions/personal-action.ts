@@ -1,25 +1,30 @@
-// eslint-disable no-console
 "use server";
 
 import { auth } from "@/auth";
 import { prisma } from "@/config/prisma.config";
 import { ZPersonal } from "@/lib/schemas/personal-schema";
+import { Prisma } from "@prisma/client";
 
-export const getCurrentPersonal = async (email: string) => {
+export type FullPersonal = Prisma.PersonalGetPayload<{
+  include: { dependencia: true; cargo: true; user: true; ubigeo: true };
+}>;
+export const getCurrentPersonal = async (email: string): Promise<{ success: boolean; message?: string; data?: FullPersonal }> => {
   try {
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) return null;
+    if (!user) throw new Error("Usuario no encontrado");
 
-    const personal = await prisma.personal.findUnique({ where: { user_id: user.id }, include: { dependencia: true, cargo: true, user: true, ubigeo: true } });
+    const personal: FullPersonal | null = await prisma.personal.findUnique({ where: { user_id: user.id }, include: { dependencia: true, cargo: true, user: true, ubigeo: true } });
+    if (!personal) throw new Error("Personal no encontrado");
 
-    return personal || null;
-  } catch (error) {
-    console.error("Error al obtener personal:", error);
-    return null;
+    return { success: true, data: personal };
+  } catch (error: unknown) {
+    let errorMessage = "Error al obtener al Personal.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
   }
 };
 
-export const createPersonal = async (data: ZPersonal) => {
+export const createPersonal = async (data: ZPersonal): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
     if (!session || !session?.user?.email) throw new Error("No autorizado");
@@ -48,7 +53,7 @@ export const createPersonal = async (data: ZPersonal) => {
         fecha_nacimiento: new Date(data.fecha_nacimiento).toISOString(),
         domicilio: data.domicilio.toUpperCase(),
         numero_contacto: data.numero_contacto,
-        unidad_estructurada: data.unidad_estructurada, //???
+        unidad_estructurada: data.unidad_estructurada,
         regimen_pensionario: data.regimen_pensionario,
         situacion_laboral: data.situacion_laboral,
         estado_civil: data.estado_civil,
@@ -60,8 +65,9 @@ export const createPersonal = async (data: ZPersonal) => {
     });
 
     return { success: true, message: "Personal creado exitosamente." };
-  } catch (error) {
-    console.error("Error al crear el Personal:", error);
-    return { success: false, message: "Error al crear al personal." };
+  } catch (error: unknown) {
+    let errorMessage = "Error al crear el Personal.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
   }
 };

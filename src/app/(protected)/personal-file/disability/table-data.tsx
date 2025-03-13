@@ -33,10 +33,10 @@ export const TableData: React.FC<TableDataProps> = ({ disabilities, loading }) =
           <tbody>
             {disabilities.map(({ id, tipo, discapacidad, entidad_certificadora, fecha_certificacion }) => (
               <tr key={id} className="hover:bg-crust text-subtext0 text-sm cursor-pointer" onClick={() => toast.success(`ID: ${id}`)}>
-                <td className="px-3 py-4">{tDscapacidadOp.find((item) => item.key === tipo)?.value || "UNKNOWN"}</td>
-                <td className="px-3 py-4">{discapacidad}</td>
-                <td className="px-3 py-4">{entidad_certificadoraOp.find((item) => item.key === entidad_certificadora)?.value || "UNKNOWN"}</td>
-                <td className="px-3 py-4">{new Date(fecha_certificacion || "").toLocaleDateString()}</td>
+                <td className="px-3 py-2">{tDscapacidadOp.find((item) => item.key === tipo)?.value || "UNKNOWN"}</td>
+                <td className="px-3 py-2">{discapacidad}</td>
+                <td className="px-3 py-2">{entidad_certificadoraOp.find((item) => item.key === entidad_certificadora)?.value || "UNKNOWN"}</td>
+                <td className="px-3 py-2">{new Date(fecha_certificacion || "").toLocaleDateString()}</td>
               </tr>
             ))}
           </tbody>

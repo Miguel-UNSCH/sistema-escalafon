@@ -19,11 +19,10 @@ import { personalSchema, ZPersonal } from "@/lib/schemas/personal-schema";
 import { estadoCivilOp, grupoSanguineoOp, regimenPensionarioOp, sexoOp, situacionLaboralOp } from "@/utils/options";
 import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DependenciaField } from "@/components/custom-fields/dependencia-field";
-import { Personal } from "@prisma/client";
+import toast from "react-hot-toast";
 
 export const FormData = ({ session }: { session: Session }) => {
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
   const form = useForm<ZPersonal>({
@@ -51,35 +50,48 @@ export const FormData = ({ session }: { session: Session }) => {
 
   useEffect(() => {
     const fetchPersonalData = async () => {
-      if (!session.user.email) return;
+      if (!session?.user?.email) return;
       setLoading(true);
 
       try {
-        const personal: Personal | null = await getCurrentPersonal(session.user.email);
-        if (personal) {
-          form.reset({ ...personal, licencia_conducir: personal.licencia_conducir || "" });
+        const response = await getCurrentPersonal(session.user.email);
+
+        if (response.success && response.data) {
+          const sanitizedData = {
+            ...response.data,
+            licencia_conducir: response.data.licencia_conducir || "",
+            dependencia: {
+              ...response.data.dependencia,
+              direccion: response.data.dependencia?.direccion ?? undefined,
+            },
+          };
+          form.reset(sanitizedData);
         }
-      } catch (err) {
-        console.error("Error al obtener datos de personal:", err);
+        // eslint-disable-next-line no-unused-vars
+      } catch (e: unknown) {
+        toast.error("Error al cargar los datos del personal.");
       } finally {
         setLoading(false);
       }
     };
 
     fetchPersonalData();
-  }, [session.user.email, form.reset]);
+  }, [session?.user?.email, form]);
 
   const onSubmit = (data: ZPersonal) => {
-    console.log("Datos enviados:", data);
-    setError("");
-
     startTransition(async () => {
-      const result = await createPersonal(data);
+      try {
+        const result = await createPersonal(data);
 
-      if (!result.success) {
-        setError(result.message);
-      } else {
-        form.reset();
+        if (!result.success) toast.error(result.message);
+        else {
+          form.reset();
+          toast.success("Cónyuge registrado exitosamente.");
+        }
+
+        // eslint-disable-next-line no-unused-vars
+      } catch (e: unknown) {
+        toast.error("Error al registrar el cónyuge.");
       }
     });
   };
@@ -137,7 +149,6 @@ export const FormData = ({ session }: { session: Session }) => {
             </div>
             <SelectField control={form.control} name="estado_civil" label="Estado civil *" options={estadoCivilOp} disabled={false} />
             <SwitchField control={form.control} name="discapacidad" label="Discapacidad *" description="Presenta algun tipo de discapacidad." disabled={false} />
-            {error && <p className="font-special text-red">{error}</p>}
             <div className="flex justify-end">
               <Button type="submit" onClick={() => console.log(form)} disabled={isPending} className="flex flex-row items-center gap-2">
                 <Save />

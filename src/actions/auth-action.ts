@@ -6,6 +6,7 @@ import { prisma } from "@/config/prisma.config";
 import { registerSchema, ZLoginS, ZRegisterS } from "@/lib/zod";
 import { User } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { AuthError } from "next-auth";
 
 export const loginAction = async (values: ZLoginS) => {
   try {
@@ -16,7 +17,10 @@ export const loginAction = async (values: ZLoginS) => {
 
     return { success: true, must_change_pwd: user.must_change_pwd, role: user.role };
   } catch (error) {
-    return { error: "Error en el servidor. Intente nuevamente más tarde." };
+    if (error instanceof AuthError) {
+      return { message: error.cause?.err?.message };
+    }
+    return { message: "error 500" };
   }
 };
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { Cargo } from "@prisma/client";
-import { Package, RefreshCcw, Save, Trash } from "lucide-react";
+import { Package, Save, Trash } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useEffect, useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -39,18 +39,14 @@ export const CargoComponent = () => {
   return (
     <div className="flex flex-row gap-2 py-4 w-full">
       <div className="flex flex-col gap-2 w-1/2">
-        <div className="flex flex-row justify-between items-center">
+        <div className="flex flex-row items-center gap-2">
           <p className="font-primary font-bold">Cargos</p>
-          <button onClick={handleRefresh} className="flex flex-row items-center gap-2 bg-teal hover:bg-green px-3 py-1 rounded-full text-sm text-base cursor-pointer">
-            <span>Actualizar</span>
-            <RefreshCcw size={12} />
-          </button>
         </div>
         <p>Buscar cargos por nombre o ID</p>
 
         <div className="relative sm:rounded-md overflow-x-auto">
           <table className="w-full text-text text-sm text-left rtl:text-right">
-            <thead className="top-0 z-10 sticky text-xs uppercase">
+            <thead className="top-0 z-10 sticky bg-mantle text-xs uppercase">
               <tr>
                 <th scope="col" className="px-6 py-3 text-sm">
                   N
@@ -114,10 +110,12 @@ export const CreateCargoComponent = ({ onCargoCreated }: { onCargoCreated: () =>
           <InputField control={form.control} name="nombre" label="Nombre del cargo" placeholder="Ejemplo: Gerente" />
 
           {error && <p className="font-special text-red">{error}</p>}
-          <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
-            <Package />
-            {isPending ? "Guardando..." : "Crear Cargo"}
-          </Button>
+          <div className="flex flex-row justify-end">
+            <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
+              <Package />
+              {isPending ? "Creando..." : "Crear Cargo"}
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

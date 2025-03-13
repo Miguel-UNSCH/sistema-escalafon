@@ -26,7 +26,7 @@ export default function RootLayout({
       <body className={clsx(inter.variable, poppins.variable, montserrat.variable, "antialiased h-screen bg-background text-text")}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <SessionProvider>
-            <main>
+            <main className="h-full">
               {children}
               <Toaster
                 position="bottom-right"

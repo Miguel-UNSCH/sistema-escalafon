@@ -52,8 +52,10 @@ export const createCargo = async (data: ZCargo): Promise<{ success: boolean; mes
     await prisma.cargo.create({ data: { nombre: nombreUpperCase } });
 
     return { success: true, message: "Cargo creado exitosamente." };
-  } catch (error) {
-    return { success: false, message: "Error al crear el cargo." };
+  } catch (error: unknown) {
+    let errorMessage = "Error al crear.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
   }
 };
 
