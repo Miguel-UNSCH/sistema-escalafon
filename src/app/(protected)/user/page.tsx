@@ -1,15 +1,12 @@
-"use client";
+"use server";
 
 import React from "react";
+import { ContentData } from "./content-data";
 
 const page = () => {
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-row justify-evenly">
-        <div>editar</div>
-        <div>agregar</div>
-      </div>
-      <div></div>
+    <div className="flex justify-center py-2 w-full">
+      <ContentData />
     </div>
   );
 };
