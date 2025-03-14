@@ -18,7 +18,6 @@ export const ContentData = () => {
       const response = await getChilds();
       if (response.success && response.data) {
         setChildren(response.data);
-        toast.success("Tabla actualizada correctamente.");
       } else toast.error(response.message || "No se pudieron obtener los hijos.");
 
       // eslint-disable-next-line no-unused-vars

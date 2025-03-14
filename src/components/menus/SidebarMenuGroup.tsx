@@ -86,7 +86,7 @@ interface SidebarMenuItemProps {
   item: MenuItem;
   openMenu: string | null;
   setOpenMenu: (menu: string | null) => void;
-  session: Session | null; // 🔥 Se recibe la sesión por props
+  session: Session | null;
 }
 
 const SidebarMenuGroup: React.FC<SidebarMenuGroupProps> = ({ title, adm = false, items, openMenu, setOpenMenu, session }) => {

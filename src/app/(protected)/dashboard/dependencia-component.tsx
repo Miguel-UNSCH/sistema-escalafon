@@ -39,10 +39,6 @@ export const DependenciaComponent = () => {
       <div className="flex flex-col gap-2 w-1/2">
         <div className="flex flex-row justify-between items-center">
           <p className="font-primary font-bold">Dependencias</p>
-          <button onClick={handleRefresh} className="flex flex-row items-center gap-2 bg-teal hover:bg-green px-3 py-1 rounded-full text-sm text-base cursor-pointer">
-            <span>Actualizar</span>
-            <RefreshCcw size={12} />
-          </button>
         </div>
 
         <p>Buscar dependencias por nombre o codigo</p>

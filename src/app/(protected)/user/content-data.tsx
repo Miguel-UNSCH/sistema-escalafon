@@ -22,7 +22,6 @@ export const ContentData = () => {
       const response = await getPerUsers();
       if (response.success && response.data) {
         setUsers(response.data);
-        toast.success(response.message || "Usuarios actualizados correctamente.");
       } else toast.error(response.message || "No se pudieron obtener los usuarios.");
 
       // eslint-disable-next-line no-unused-vars

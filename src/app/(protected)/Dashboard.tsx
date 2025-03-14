@@ -1,7 +1,7 @@
 "use client";
 
-import { Navbar } from "@/components/layout/NavBar";
-import { Sidebar } from "@/components/layout/Sidebar";
+import { Navbar } from "@/components/layout/nav-bar";
+import { Sidebar } from "@/components/layout/sidebar";
 import { useState, useEffect } from "react";
 import { ReactNode } from "react";
 import { Session } from "next-auth";
