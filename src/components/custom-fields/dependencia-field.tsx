@@ -1,9 +1,10 @@
+import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
-import { Control, useController } from "react-hook-form";
 import { Dependencia } from "@prisma/client";
+import { Control, useController } from "react-hook-form";
 
 import { Input } from "@/components/ui/input";
-import { getAllDependencias } from "@/actions/others-action";
+import { getDependencias } from "@/actions/others-action";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 
 export const DependenciaField = ({ control, name = "dependencia", disabled = false }: { control: Control<any>; name?: string; disabled?: boolean }) => {
@@ -25,11 +26,12 @@ export const DependenciaField = ({ control, name = "dependencia", disabled = fal
 
       setLoading(true);
       try {
-        const data: Dependencia[] | null = await getAllDependencias({ nombre: search });
-        if (data) setDependencias(data);
+        const response = await getDependencias(search);
+        if (response.success && response.data) {
+          setDependencias(response.data);
+        }
       } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error("Error al obtener dependencias:", error);
+        toast.error("Error al obtener dependencias.");
       } finally {
         setLoading(false);
       }

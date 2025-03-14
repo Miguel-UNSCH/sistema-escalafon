@@ -1,12 +1,10 @@
-// eslint-disable no-console
-/* eslint-disable no-unused-vars */
 "use server";
 
 import { prisma } from "@/config/prisma.config";
 import { ZCargo, ZDependencia, ZUbigeo } from "@/lib/schemas/others-schema";
 import { Cargo, Dependencia, Prisma, Ubigeo } from "@prisma/client";
 
-export async function getUbigeos(search?: string): Promise<{ success: boolean; message?: string; data?: Ubigeo[] }> {
+export const getUbigeos = async (search?: string): Promise<{ success: boolean; message?: string; data?: Ubigeo[] }> => {
   try {
     const searchFilter =
       search && search.trim() !== ""
@@ -34,6 +32,33 @@ export async function getUbigeos(search?: string): Promise<{ success: boolean; m
     if (error instanceof Error) errorMessage = error.message;
     return { success: false, message: errorMessage };
   }
+};
+
+export async function getUbigeosField({
+  departamento,
+  provincia,
+  distrito,
+}: {
+  departamento?: string;
+  provincia?: string;
+  distrito?: string;
+}): Promise<{ success: boolean; message?: string; data?: Ubigeo[] }> {
+  try {
+    const filters: any = {};
+
+    if (departamento) filters.departamento = departamento;
+    if (provincia) filters.provincia = provincia;
+    if (distrito) filters.distrito = distrito;
+
+    const ubigeos: Ubigeo[] | null = await prisma.ubigeo.findMany({ where: filters, orderBy: { inei: "asc" } });
+    if (!ubigeos) throw new Error("No se encontraron ubigeos.");
+
+    return { success: true, data: ubigeos };
+  } catch (error: unknown) {
+    let errorMessage = "Error al obtener los ubigeos.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
+  }
 }
 
 /** ---------------------------------------------------------------------------------------------------------------- */
@@ -50,15 +75,6 @@ export const getCargos = async (search?: string): Promise<{ success: boolean; me
     let errorMessage = "Error al obtener los cargos.";
     if (error instanceof Error) errorMessage = error.message;
     return { success: false, message: errorMessage };
-  }
-};
-
-export const getAllCargos = async (nombre?: string) => {
-  try {
-    const cargos: Cargo[] | null = await prisma.cargo.findMany({ where: nombre ? { nombre: { contains: nombre, mode: "insensitive" } } : undefined, orderBy: { nombre: "asc" } });
-    return cargos;
-  } catch (error) {
-    return null;
   }
 };
 
@@ -121,29 +137,6 @@ export const deleteCargo = async (id: number): Promise<{ success: boolean; messa
 };
 
 /** ---------------------------------------------------------------------------------------------------------------- */
-export const getAllDependencias = async (params?: { nombre?: string; codigo?: string }): Promise<Dependencia[] | null> => {
-  try {
-    const filters: any = {};
-
-    if (params?.nombre) {
-      filters.nombre = { contains: params.nombre, mode: "insensitive" };
-    }
-    if (params?.codigo) {
-      filters.codigo = { contains: params.codigo, mode: "insensitive" };
-    }
-
-    const dependencias = await prisma.dependencia.findMany({
-      where: Object.keys(filters).length ? filters : undefined,
-      orderBy: { nombre: "asc" },
-    });
-
-    return dependencias;
-  } catch (error) {
-    console.error("Error al obtener las dependencias:", error);
-    return null;
-  }
-};
-
 export const getDependencias = async (search?: string): Promise<{ success: boolean; message?: string; data?: Dependencia[] }> => {
   try {
     const dependencias: Dependencia[] | null = await prisma.dependencia.findMany({

@@ -1,5 +1,4 @@
-import { getUbigeos } from "@/actions/others-action";
-import { ZUbigeo } from "@/lib/schemas/others-schema";
+import { getUbigeosField } from "@/actions/others-action";
 import React, { useEffect, useState } from "react";
 import { Control, UseFormSetValue, UseFormWatch } from "react-hook-form";
 import { SelectField } from "./select-field";
@@ -24,9 +23,11 @@ export const UbigeoField = ({ control, isCompleteFromDB, setValue, watch }: Ubig
 
   useEffect(() => {
     const fetchDepartamentos = async () => {
-      const data: ZUbigeo[] = await getUbigeos({});
-      const uniqueDepartamentos = Array.from(new Set(data.map((ubi) => ubi.departamento)));
-      setDepartamentos(uniqueDepartamentos);
+      const response = await getUbigeosField({});
+      if (response.success && response.data) {
+        const uniqueDepartamentos = Array.from(new Set(response.data.map((ubi) => ubi.departamento)));
+        setDepartamentos(uniqueDepartamentos);
+      }
     };
     fetchDepartamentos();
   }, []);
@@ -34,14 +35,16 @@ export const UbigeoField = ({ control, isCompleteFromDB, setValue, watch }: Ubig
   useEffect(() => {
     const fetchProvincias = async () => {
       if (selectedDepartamento) {
-        const data: ZUbigeo[] = await getUbigeos({ departamento: selectedDepartamento });
-        const uniqueProvincias = Array.from(new Set(data.map((ubi) => ubi.provincia)));
-        setProvincias(uniqueProvincias);
-        setDistritos([]);
+        const response = await getUbigeosField({ departamento: selectedDepartamento });
+        if (response.success && response.data) {
+          const uniqueProvincias = Array.from(new Set(response.data.map((ubi) => ubi.provincia)));
+          setProvincias(uniqueProvincias);
+          setDistritos([]);
 
-        if (!uniqueProvincias.includes(selectedProvincia)) {
-          setValue("ubigeo.provincia", "");
-          setValue("ubigeo.distrito", "");
+          if (!uniqueProvincias.includes(selectedProvincia)) {
+            setValue("ubigeo.provincia", "");
+            setValue("ubigeo.distrito", "");
+          }
         }
       }
     };
@@ -51,12 +54,14 @@ export const UbigeoField = ({ control, isCompleteFromDB, setValue, watch }: Ubig
   useEffect(() => {
     const fetchDistritos = async () => {
       if (selectedDepartamento && selectedProvincia) {
-        const data: ZUbigeo[] = await getUbigeos({ departamento: selectedDepartamento, provincia: selectedProvincia });
-        const uniqueDistritos = Array.from(new Set(data.map((ubi) => ubi.distrito)));
-        setDistritos(uniqueDistritos);
+        const response = await getUbigeosField({ departamento: selectedDepartamento, provincia: selectedProvincia });
+        if (response.success && response.data) {
+          const uniqueDistritos = Array.from(new Set(response.data.map((ubi) => ubi.distrito)));
+          setDistritos(uniqueDistritos);
 
-        if (!uniqueDistritos.includes(selectedDistrito)) {
-          setValue("ubigeo.distrito", "");
+          if (!uniqueDistritos.includes(selectedDistrito)) {
+            setValue("ubigeo.distrito", "");
+          }
         }
       }
     };
@@ -66,10 +71,10 @@ export const UbigeoField = ({ control, isCompleteFromDB, setValue, watch }: Ubig
   useEffect(() => {
     const fetchUbigeoDetails = async () => {
       if (selectedDepartamento && selectedProvincia && selectedDistrito) {
-        const data = await getUbigeos({ departamento: selectedDepartamento, provincia: selectedProvincia, distrito: selectedDistrito });
-        if (data.length > 0) {
-          setValue("ubigeo.inei", data[0].inei);
-          setValue("ubigeo.reniec", data[0].reniec);
+        const response = await getUbigeosField({ departamento: selectedDepartamento, provincia: selectedProvincia, distrito: selectedDistrito });
+        if (response.success && response.data && response.data.length > 0) {
+          setValue("ubigeo.inei", response.data[0].inei);
+          setValue("ubigeo.reniec", response.data[0].reniec);
         }
       }
     };
@@ -79,12 +84,16 @@ export const UbigeoField = ({ control, isCompleteFromDB, setValue, watch }: Ubig
   useEffect(() => {
     const initializeUbigeo = async () => {
       if (selectedDepartamento && !provincias.length) {
-        const data: ZUbigeo[] = await getUbigeos({ departamento: selectedDepartamento });
-        setProvincias(Array.from(new Set(data.map((ubi) => ubi.provincia))));
+        const response = await getUbigeosField({ departamento: selectedDepartamento });
+        if (response.success && response.data) {
+          setProvincias(Array.from(new Set(response.data.map((ubi) => ubi.provincia))));
+        }
       }
       if (selectedProvincia && !distritos.length) {
-        const data: ZUbigeo[] = await getUbigeos({ departamento: selectedDepartamento, provincia: selectedProvincia });
-        setDistritos(Array.from(new Set(data.map((ubi) => ubi.distrito))));
+        const response = await getUbigeosField({ departamento: selectedDepartamento, provincia: selectedProvincia });
+        if (response.success && response.data) {
+          setDistritos(Array.from(new Set(response.data.map((ubi) => ubi.distrito))));
+        }
       }
     };
     initializeUbigeo();

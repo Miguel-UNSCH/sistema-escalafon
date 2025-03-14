@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import toast from "react-hot-toast";
+
+import { getCargos } from "@/actions/others-action";
 import { Input } from "@/components/ui/input";
-import { ZCargo } from "@/lib/schemas/others-schema";
-import { getAllCargos } from "@/actions/others-action";
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 
 export const CargoField = ({
   control,
@@ -31,13 +32,12 @@ export const CargoField = ({
       }
       setLoading(true);
       try {
-        const data = await getAllCargos(search);
-        if (!data) return;
-        const uniqueCargos: string[] = Array.from(new Set(data.map((cargo: ZCargo) => cargo.nombre)));
+        const response = await getCargos(search);
+        if (!response.success || !response.data) return;
+        const uniqueCargos: string[] = Array.from(new Set(response.data.map((cargo) => cargo.nombre)));
         setCargos(uniqueCargos);
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error("Error al obtener cargos:", error);
+      } catch (e: unknown) {
+        toast.error("Error al obtener los cargos.");
       } finally {
         setLoading(false);
       }
