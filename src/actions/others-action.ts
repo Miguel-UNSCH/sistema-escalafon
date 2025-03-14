@@ -8,7 +8,6 @@ import { Cargo, Dependencia, Prisma, Ubigeo } from "@prisma/client";
 
 export async function getUbigeos(search?: string): Promise<{ success: boolean; message?: string; data?: Ubigeo[] }> {
   try {
-    // Construct the search filter if search is provided
     const searchFilter =
       search && search.trim() !== ""
         ? {
@@ -22,7 +21,6 @@ export async function getUbigeos(search?: string): Promise<{ success: boolean; m
           }
         : {};
 
-    // Fetch ubigeos based on the constructed filter
     const ubigeos: Ubigeo[] = await prisma.ubigeo.findMany({
       where: searchFilter,
       orderBy: { inei: "asc" },
@@ -39,6 +37,22 @@ export async function getUbigeos(search?: string): Promise<{ success: boolean; m
 }
 
 /** ---------------------------------------------------------------------------------------------------------------- */
+export const getCargos = async (search?: string): Promise<{ success: boolean; message?: string; data?: Cargo[] }> => {
+  try {
+    const cargos: Cargo[] | null = await prisma.cargo.findMany({
+      where: { nombre: { contains: search, mode: Prisma.QueryMode.insensitive } },
+      orderBy: { nombre: "asc" },
+    });
+    if (!cargos.length) throw new Error("No se encontraron cargos.");
+
+    return { success: true, data: cargos };
+  } catch (error: unknown) {
+    let errorMessage = "Error al obtener los cargos.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
+  }
+};
+
 export const getAllCargos = async (nombre?: string) => {
   try {
     const cargos: Cargo[] | null = await prisma.cargo.findMany({ where: nombre ? { nombre: { contains: nombre, mode: "insensitive" } } : undefined, orderBy: { nombre: "asc" } });
@@ -84,8 +98,10 @@ export const patchCargo = async (id: number, nombre: string): Promise<{ success:
     await prisma.cargo.update({ where: { id }, data: { nombre: nombreUpperCase } });
 
     return { success: true, message: "Cargo actualizado correctamente." };
-  } catch (error) {
-    return { success: false, message: "Error al actualizar el cargo." };
+  } catch (error: unknown) {
+    let errorMessage = "Error al actualizar.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
   }
 };
 
@@ -97,11 +113,14 @@ export const deleteCargo = async (id: number): Promise<{ success: boolean; messa
     await prisma.cargo.delete({ where: { id } });
 
     return { success: true, message: "Cargo eliminado correctamente." };
-  } catch (error) {
-    return { success: false, message: "Error al eliminar el cargo." };
+  } catch (error: unknown) {
+    let errorMessage = "Error al elimar cargo.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
   }
 };
 
+/** ---------------------------------------------------------------------------------------------------------------- */
 export const getAllDependencias = async (params?: { nombre?: string; codigo?: string }): Promise<Dependencia[] | null> => {
   try {
     const filters: any = {};
@@ -122,6 +141,22 @@ export const getAllDependencias = async (params?: { nombre?: string; codigo?: st
   } catch (error) {
     console.error("Error al obtener las dependencias:", error);
     return null;
+  }
+};
+
+export const getDependencias = async (search?: string): Promise<{ success: boolean; message?: string; data?: Dependencia[] }> => {
+  try {
+    const dependencias: Dependencia[] | null = await prisma.dependencia.findMany({
+      where: { OR: [{ nombre: { contains: search, mode: Prisma.QueryMode.insensitive } }, { codigo: { contains: search, mode: Prisma.QueryMode.insensitive } }] },
+      orderBy: { nombre: "asc" },
+    });
+    if (!dependencias.length) throw new Error("No se encontraron dependencias.");
+
+    return { success: true, data: dependencias };
+  } catch (error: unknown) {
+    let errorMessage = "Error al obtener las dependencias.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
   }
 };
 
@@ -152,9 +187,10 @@ export const createDependencia = async (data: ZDependencia): Promise<{ success: 
     await prisma.dependencia.create({ data: newData });
 
     return { success: true, message: "Dependencia creada exitosamente." };
-  } catch (error) {
-    console.error("Error al crear la dependencia:", error);
-    return { success: false, message: "Error al crear la dependencia." };
+  } catch (error: unknown) {
+    let errorMessage = "Error al crear la dependencia.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
   }
 };
 
@@ -174,9 +210,10 @@ export const updateDependencia = async (id: number, data: ZDependencia): Promise
     await prisma.dependencia.update({ where: { id }, data: updatedData });
 
     return { success: true, message: "Dependencia actualizada correctamente." };
-  } catch (error) {
-    console.error(`Error al actualizar la dependencia con ID ${id}:`, error);
-    return { success: false, message: "Error al actualizar la dependencia." };
+  } catch (error: unknown) {
+    let errorMessage = "Error al actualizar la dependencia.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
   }
 };
 
@@ -188,8 +225,9 @@ export const deleteDependencia = async (id: number): Promise<{ success: boolean;
     await prisma.dependencia.delete({ where: { id } });
 
     return { success: true, message: "Dependencia eliminada correctamente." };
-  } catch (error) {
-    console.error(`Error al eliminar la dependencia con ID ${id}:`, error);
-    return { success: false, message: "Error al eliminar la dependencia." };
+  } catch (error: unknown) {
+    let errorMessage = "Error al elimar dependencia.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
   }
 };

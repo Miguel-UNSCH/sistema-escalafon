@@ -2,25 +2,11 @@
 
 import { getUbigeos } from "@/actions/others-action";
 import { Pagination } from "@/components/pagination";
-import { Input } from "@/components/ui/input";
 import { Ubigeo } from "@prisma/client";
-import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { debounce } from "lodash";
-
-const SearchField = ({ description, placeholder = "Buscar ...", onSearch }: { description: string; placeholder?: string; onSearch: (search: string) => void }) => {
-  return (
-    <div className="flex flex-col gap-2 pb-4 w-full">
-      <div className="relative w-full">
-        <Search className="top-1/2 left-3 absolute text-text -translate-y-1/2 transform" />
-        <Input className="bg-mantle pl-10 w-full text-text" placeholder={placeholder} onChange={(e) => onSearch(e.target.value)} />
-      </div>
-
-      <p className="font-special font-semibold text-xs italic">{description}</p>
-    </div>
-  );
-};
+import { SearchField } from "@/components/custom-fields/search-field";
 
 export const UbigeoComponent = () => {
   const [ubigeos, setUbigeos] = useState<Ubigeo[]>([]);
@@ -43,27 +29,28 @@ export const UbigeoComponent = () => {
     }
   };
 
-  const debouncedSearch = debounce((query: string) => {
+  const debouncedFnUbigeos = debounce(fnUbigeos, 500);
+
+  const handleSearch = (query: string) => {
     setSearch(query);
-    fnUbigeos(query);
-  }, 500);
+    debouncedFnUbigeos(query);
+  };
 
   useEffect(() => {
     fnUbigeos("");
   }, []);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-
   const headColum = ["inei", "reniec", "departamento", "provincia", "distrito"];
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const totalPages = Math.ceil(ubigeos.length / itemsPerPage);
   const currentUbigeos = ubigeos.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
     <div className="flex flex-col gap-2 w-full">
       <p className="font-primary font-bold">Ubigeos</p>
-      <SearchField description="Buscar ubigeos por INEI, RENIEC, departamento, provincia o distrito" onSearch={debouncedSearch} />
+      <SearchField description="Buscar ubigeos por INEI, RENIEC, departamento, provincia o distrito" value={search} onSearch={handleSearch} />
 
       {loading ? (
         <p className="py-4 text-subtext0 text-center">Cargando datos...</p>
@@ -84,11 +71,11 @@ export const UbigeoComponent = () => {
             <tbody>
               {currentUbigeos.map((ubigeo) => (
                 <tr key={ubigeo.inei} className="hover:bg-crust text-xs">
-                  <td className="px-6 py-2">{ubigeo.inei}</td>
-                  <th className="px-6 py-2">{ubigeo.reniec}</th>
-                  <td className="px-6 py-2">{ubigeo.departamento}</td>
-                  <td className="px-6 py-2">{ubigeo.provincia}</td>
-                  <td className="px-6 py-2">{ubigeo.distrito}</td>
+                  <td className="px-6 py-3">{ubigeo.inei}</td>
+                  <th className="px-6 py-3">{ubigeo.reniec}</th>
+                  <td className="px-6 py-3">{ubigeo.departamento}</td>
+                  <td className="px-6 py-3">{ubigeo.provincia}</td>
+                  <td className="px-6 py-3">{ubigeo.distrito}</td>
                 </tr>
               ))}
             </tbody>

@@ -11,76 +11,116 @@ import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/pagination";
 import { cargoSchema, ZCargo } from "@/lib/schemas/others-schema";
 import { InputField } from "@/components/custom-fields/input-field";
-import { createCargo, deleteCargo, getAllCargos, patchCargo } from "@/actions/others-action";
+import { createCargo, deleteCargo, getCargos, patchCargo } from "@/actions/others-action";
+import toast from "react-hot-toast";
+import { debounce } from "lodash";
+import { SearchField } from "@/components/custom-fields/search-field";
 
 export const CargoComponent = () => {
   const [cargos, setCargos] = useState<Cargo[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
   const [selectedCargo, setSelectedCargo] = useState<Cargo | null>(null);
-  const itemsPerPage = 10;
+  const [loading, setLoading] = useState<boolean>(true);
+  const [search, setSearch] = useState<string>("");
 
-  const fnCargos = async () => {
-    const data: Cargo[] | null = await getAllCargos();
-    if (data) setCargos(data);
+  const fnCargos = async (search: string) => {
+    setLoading(true);
+    try {
+      const response = await getCargos(search);
+      if (response.success && response.data) {
+        setCargos(response.data);
+      } else {
+        toast.error(response.message || "No se pudieron obtener los cargos.");
+      }
+    } catch (e: unknown) {
+      toast.error("Error al obtener los cargos.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const debouncedFnCargos = debounce(fnCargos, 500);
+
+  const handleSearch = (query: string) => {
+    setSearch(query);
+    debouncedFnCargos(query);
   };
 
   useEffect(() => {
-    fnCargos();
+    fnCargos("");
   }, []);
 
   const handleRefresh = () => {
-    fnCargos();
+    setSearch("");
+    fnCargos("");
     setSelectedCargo(null);
   };
 
+  const headColum = ["n", "nombre"];
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const totalPages = Math.ceil(cargos.length / itemsPerPage);
   const currentCargos = cargos.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
-    <div className="flex flex-row gap-2 py-4 w-full">
-      <div className="flex flex-col gap-2 w-1/2">
-        <div className="flex flex-row items-center gap-2">
-          <p className="font-primary font-bold">Cargos</p>
+    <div className="flex flex-col gap-2 py-4 w-full">
+      <p className="font-primary font-bold">Cargos</p>
+      <SearchField description="Buscar cargos por nombre" value={search} onSearch={handleSearch} />
+
+      <div className="flex flex-row gap-2 w-full">
+        <div className="flex flex-col gap-2 w-1/2">
+          {loading ? (
+            <p className="py-4 text-subtext0 text-center">Cargando datos...</p>
+          ) : cargos.length === 0 ? (
+            <p className="py-4 text-subtext0 text-center">Aún no existen registros.</p>
+          ) : (
+            <div className="relative sm:rounded-md overflow-x-auto">
+              <table className="w-full text-text text-sm text-left rtl:text-right">
+                <thead className="top-0 z-10 sticky bg-mantle text-xs uppercase">
+                  <tr>
+                    {headColum.map((head, i) => (
+                      <th scope="col" className="px-6 py-3 text-sm" key={i}>
+                        {head}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentCargos.map((cargo) => (
+                    <tr
+                      key={cargo.id}
+                      className={`hover:bg-crust text-xs cursor-pointer ${selectedCargo?.id === cargo.id ? "bg-crust" : ""}`}
+                      onClick={() => setSelectedCargo(cargo)}
+                    >
+                      <td className="px-6 py-3 rounded-s-md">{cargo.id}</td>
+                      <td className="px-6 py-3 rounded-e-md">{cargo.nombre}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} totalItems={cargos.length} />
         </div>
-        <p>Buscar cargos por nombre o ID</p>
 
-        <div className="relative sm:rounded-md overflow-x-auto">
-          <table className="w-full text-text text-sm text-left rtl:text-right">
-            <thead className="top-0 z-10 sticky bg-mantle text-xs uppercase">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-sm">
-                  N
-                </th>
-                <th scope="col" className="px-6 py-3 text-sm">
-                  Nombre
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentCargos.map((cargo) => (
-                <tr key={cargo.id} className="hover:bg-crust text-xs cursor-pointer" onClick={() => setSelectedCargo(cargo)}>
-                  <td className="px-6 py-4">{cargo.id}</td>
-                  <td className="px-6 py-4">{cargo.nombre}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="flex flex-col gap-5 p-4 w-1/2">
+          <CreateCargoComponent onCargoCreated={handleRefresh} setSelectedCargo={setSelectedCargo} />
+          {selectedCargo && <ModifyCargoComponent key={selectedCargo.id} cargo={selectedCargo} onUpdated={handleRefresh} setSelectedCargo={setSelectedCargo} />}
         </div>
-
-        <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} />
-      </div>
-
-      <div className="flex flex-col gap-5 p-4 w-1/2">
-        <CreateCargoComponent onCargoCreated={handleRefresh} />
-        {selectedCargo && <ModifyCargoComponent key={selectedCargo.id} cargo={selectedCargo} onUpdated={handleRefresh} />}
       </div>
     </div>
   );
 };
 
-export const CreateCargoComponent = ({ onCargoCreated }: { onCargoCreated: () => void }) => {
+export const CreateCargoComponent = ({
+  onCargoCreated,
+  setSelectedCargo,
+}: {
+  onCargoCreated: () => void;
+  setSelectedCargo: React.Dispatch<React.SetStateAction<Cargo | null>>;
+}) => {
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState("");
 
   const form = useForm<ZCargo>({
     resolver: zodResolver(cargoSchema),
@@ -88,16 +128,21 @@ export const CreateCargoComponent = ({ onCargoCreated }: { onCargoCreated: () =>
   });
 
   const onSubmit = (data: ZCargo) => {
-    setError("");
-
     startTransition(async () => {
-      const result = await createCargo(data);
+      try {
+        const result = await createCargo(data);
+        if (!result.success) {
+          toast.error(result.message);
+        } else {
+          toast.success("Cargo registrado exitosamente.");
+          form.reset();
+          onCargoCreated();
+          setSelectedCargo(null);
+        }
 
-      if (!result.success) {
-        setError(result.message);
-      } else {
-        form.reset();
-        onCargoCreated();
+        // eslint-disable-next-line no-unused-vars
+      } catch (e) {
+        toast.error("Error al registrar el cargo.");
       }
     });
   };
@@ -109,7 +154,6 @@ export const CreateCargoComponent = ({ onCargoCreated }: { onCargoCreated: () =>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
           <InputField control={form.control} name="nombre" label="Nombre del cargo" placeholder="Ejemplo: Gerente" />
 
-          {error && <p className="font-special text-red">{error}</p>}
           <div className="flex flex-row justify-end">
             <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
               <Package />
@@ -122,10 +166,16 @@ export const CreateCargoComponent = ({ onCargoCreated }: { onCargoCreated: () =>
   );
 };
 
-export const ModifyCargoComponent = ({ cargo, onUpdated }: { cargo: Cargo; onUpdated: () => void }) => {
+export const ModifyCargoComponent = ({
+  cargo,
+  onUpdated,
+  setSelectedCargo,
+}: {
+  cargo: Cargo;
+  onUpdated: () => void;
+  setSelectedCargo: React.Dispatch<React.SetStateAction<Cargo | null>>;
+}) => {
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
   const form = useForm<ZCargo>({
     resolver: zodResolver(cargoSchema),
@@ -133,38 +183,38 @@ export const ModifyCargoComponent = ({ cargo, onUpdated }: { cargo: Cargo; onUpd
   });
 
   const onUpdate = (data: ZCargo) => {
-    setError("");
-    setSuccess("");
-
     startTransition(async () => {
-      const result = await patchCargo(cargo.id, data.nombre);
-
-      if (!result.success) {
-        setError(result.message);
-      } else {
-        setSuccess("Cargo modificado con éxito.");
-        onUpdated();
+      try {
+        const response = await patchCargo(cargo.id, data.nombre);
+        if (!response.success) {
+          toast.error(response.message);
+        } else {
+          toast.success("Cargo actualizado exitosamente.");
+          onUpdated();
+          setSelectedCargo(null);
+          form.reset();
+        }
+      } catch (e) {
+        toast.error("Error al modificar el cargo.");
       }
-
-      setTimeout(() => setSuccess(""), 2000);
     });
   };
 
   const onDelete = () => {
-    setError("");
-    setSuccess("");
-
     startTransition(async () => {
-      const result = await deleteCargo(cargo.id);
-
-      if (!result.success) {
-        setError(result.message);
-      } else {
-        setSuccess("Cargo eliminado con éxito.");
-        onUpdated();
+      try {
+        const response = await deleteCargo(cargo.id);
+        if (!response.success) {
+          toast.error(response.message);
+        } else {
+          toast.success("Cargo eliminado exitosamente.");
+          onUpdated();
+          setSelectedCargo(null);
+          form.reset();
+        }
+      } catch (e) {
+        toast.error("Error al modificar el cargo.");
       }
-
-      setTimeout(() => setSuccess(""), 2000);
     });
   };
 
@@ -175,10 +225,7 @@ export const ModifyCargoComponent = ({ cargo, onUpdated }: { cargo: Cargo; onUpd
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-2">
           <InputField control={form.control} name="nombre" label="Nombre del Cargo" placeholder="Ejemplo: Gerente" />
 
-          {error && <p className="font-special text-red">{error}</p>}
-          {success && <p className="font-special text-green">{success}</p>}
-
-          <div className="flex gap-4">
+          <div className="flex justify-end gap-4">
             <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2 bg-blue">
               <Save size={16} />
               {isPending ? "Guardando..." : "Actualizar"}
