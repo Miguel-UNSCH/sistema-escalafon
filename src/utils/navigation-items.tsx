@@ -11,7 +11,7 @@ export const navigationItems: NavigationItems[] = [
   {
     title: "inicio",
     adm: true,
-    menuItem: [{ label: "dashboard", icon: <LayoutDashboard size={16} />, path: "/dashboard", submenus: [{ label: "registrar", path: "/dashboard" }] }],
+    menuItem: [{ label: "dashboard", icon: <LayoutDashboard size={16} />, path: "/dashboard", submenus: [{ label: "documentación", path: "/dashboard/doc" }] }],
   },
   { title: "gestión de usuarios", adm: true, menuItem: [{ label: "administrar usuario", icon: <UsersRound size={16} />, path: "/user" }] },
   {

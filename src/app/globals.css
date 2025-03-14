@@ -36,6 +36,7 @@
   --font-primary: var(--font-inter);
   --font-text: var(--font-poppins);
   --font-special: var(--font-montserrat);
+  --font-code: var(--font-jetbrains-mono);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);

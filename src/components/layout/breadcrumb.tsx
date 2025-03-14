@@ -12,10 +12,10 @@ export const Breadcrumbs: React.FC = () => {
   const findBreadcrumb = (path: string, items: BreadcrumbItem[] = breadcrumbsOp, basePath = ""): BreadcrumbItem[] => {
     for (const item of items) {
       const fullPath = `${basePath}${item.path}`;
-  
+
       if (path.startsWith(fullPath)) {
         if (path === fullPath) return [{ ...item, path: fullPath }];
-  
+
         if (item.items) {
           const subBreadcrumb = findBreadcrumb(path, item.items, fullPath);
           if (subBreadcrumb.length) return [{ ...item, path: fullPath }, ...subBreadcrumb];
@@ -53,7 +53,7 @@ const breadcrumbsOp: BreadcrumbItem[] = [
   {
     label: "Inicio",
     path: "/dashboard",
-    items: [{ label: "registrar", path: "" }],
+    items: [{ label: "documentación", path: "/doc" }],
   },
   {
     label: "Gestión de Usuarios",
