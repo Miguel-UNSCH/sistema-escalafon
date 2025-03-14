@@ -32,10 +32,10 @@ export const TableData: React.FC<TableDataProps> = ({ evaluations, loading }) =>
           <tbody>
             {evaluations.map(({ id, fecha, puntuacion, cargo, dependencia }) => (
               <tr key={id} className="hover:bg-crust text-subtext0 text-sm cursor-pointer" onClick={() => toast.success(`ID: ${id}`)}>
-                <td className="px-3 py-4">{new Date(fecha).toLocaleDateString()}</td>
-                <td className="px-3 py-4">{puntuacion}</td>
-                <td className="px-3 py-4">{cargo.nombre}</td>
-                <td className="px-3 py-4">{dependencia.nombre}</td>
+                <td className="px-3 py-3">{new Date(fecha).toLocaleDateString()}</td>
+                <td className="px-3 py-3">{puntuacion}</td>
+                <td className="px-3 py-3">{cargo.nombre}</td>
+                <td className="px-3 py-3">{dependencia.nombre}</td>
               </tr>
             ))}
           </tbody>

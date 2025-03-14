@@ -51,7 +51,7 @@ export const ContentData = () => {
             <thead className="top-0 z-10 sticky font-primary text-xs uppercase">
               <tr>
                 {theadContent.map((thead) => (
-                  <th scope="col" className="px-3 py-3 border-b-2 border-base text-sm" key={thead}>
+                  <th scope="col" className="px-3 py-4 border-b-2 border-base text-sm" key={thead}>
                     {thead}
                   </th>
                 ))}
@@ -60,12 +60,12 @@ export const ContentData = () => {
             <tbody className="font-text">
               {users.map(({ id, dni, name, last_name, personal, email }) => (
                 <tr key={id} className="hover:bg-crust text-subtext0 text-sm cursor-pointer" onClick={() => handleClick(id)}>
-                  <td className="px-3 py-2">{dni}</td>
-                  <td className="px-3 py-2">{name}</td>
-                  <td className="px-3 py-2">{last_name}</td>
-                  <td className="px-3 py-2">{personal?.cargo?.nombre || "N/A"}</td>
-                  <td className="px-3 py-2">{personal?.dependencia?.nombre || "N/A"}</td>
-                  <td className="px-3 py-2">{email}</td>
+                  <td className="px-3 py-3">{dni}</td>
+                  <td className="px-3 py-3">{name}</td>
+                  <td className="px-3 py-3">{last_name}</td>
+                  <td className="px-3 py-3">{personal?.cargo?.nombre || "N/A"}</td>
+                  <td className="px-3 py-3">{personal?.dependencia?.nombre || "N/A"}</td>
+                  <td className="px-3 py-3">{email}</td>
                 </tr>
               ))}
             </tbody>

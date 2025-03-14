@@ -9,15 +9,16 @@ export const Breadcrumbs: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const findBreadcrumb = (path: string, items: BreadcrumbItem[] = breadcrumbsOp): BreadcrumbItem[] => {
+  const findBreadcrumb = (path: string, items: BreadcrumbItem[] = breadcrumbsOp, basePath = ""): BreadcrumbItem[] => {
     for (const item of items) {
-      if (path.startsWith(item.path)) {
-        if (path === item.path) return [item];
-
+      const fullPath = `${basePath}${item.path}`;
+  
+      if (path.startsWith(fullPath)) {
+        if (path === fullPath) return [{ ...item, path: fullPath }];
+  
         if (item.items) {
-          const subPath = path.replace(item.path, "");
-          const subBreadcrumb = findBreadcrumb(subPath, item.items);
-          if (subBreadcrumb.length) return [item, ...subBreadcrumb];
+          const subBreadcrumb = findBreadcrumb(path, item.items, fullPath);
+          if (subBreadcrumb.length) return [{ ...item, path: fullPath }, ...subBreadcrumb];
         }
       }
     }
