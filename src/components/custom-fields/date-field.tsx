@@ -33,24 +33,24 @@ export const DateField = ({ control, name, label, disabled }: { control: any; na
               <FormControl>
                 <Button variant={"outline"} className="pl-3 font-normal text-left" disabled={disabled}>
                   {field.value ? format(new Date(field.value), "PPP") : <span>Seleccione la fecha</span>}
-                  <CalendarIcon className="opacity-50 ml-auto w-4 h-4" />
+                  <CalendarIcon className="opacity-50 ml-auto w-4 h-4 text-text" />
                 </Button>
               </FormControl>
             </PopoverTrigger>
             <PopoverContent className="p-0 w-auto" align="start">
-              <div className="flex justify-between items-center gap-2 px-3 py-2 border-b">
-                <select className="px-2 py-1 border rounded w-1/2 text-sm" value={currentMonth} onChange={(e) => setCurrentMonth(parseInt(e.target.value))}>
+              <div className="flex justify-between items-center gap-2 px-3 py-2">
+                <select className="bg-mantle px-2 py-1 w-1/2 text-sm" value={currentMonth} onChange={(e) => setCurrentMonth(parseInt(e.target.value))}>
                   {Array.from({ length: 12 }, (_, i) => (
                     <option key={i} value={i} className="px-1">
                       {format(new Date(2000, i), "MMMM")}
                     </option>
                   ))}
                 </select>
-                <select className="px-2 py-1 border rounded w-1/2 text-sm" value={currentYear} onChange={(e) => setCurrentYear(parseInt(e.target.value))}>
+                <select className="bg-mantle px-2 py-1 w-1/2 text-sm" value={currentYear} onChange={(e) => setCurrentYear(parseInt(e.target.value))}>
                   {Array.from({ length: 95 }, (_, i) => {
                     const year = new Date().getFullYear() - i;
                     return (
-                      <option key={year} value={year}>
+                      <option key={year} value={year} className="hover:bg-maroon">
                         {year}
                       </option>
                     );

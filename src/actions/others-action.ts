@@ -4,26 +4,41 @@
 
 import { prisma } from "@/config/prisma.config";
 import { ZCargo, ZDependencia, ZUbigeo } from "@/lib/schemas/others-schema";
-import { Cargo, Dependencia } from "@prisma/client";
+import { Cargo, Dependencia, Prisma, Ubigeo } from "@prisma/client";
 
-export async function getUbigeos({ departamento, provincia, distrito }: { departamento?: string; provincia?: string; distrito?: string }) {
+export async function getUbigeos(search?: string): Promise<{ success: boolean; message?: string; data?: Ubigeo[] }> {
   try {
-    const filters: any = {};
+    // Construct the search filter if search is provided
+    const searchFilter =
+      search && search.trim() !== ""
+        ? {
+            OR: [
+              { inei: { contains: search, mode: Prisma.QueryMode.insensitive } },
+              { reniec: { contains: search, mode: Prisma.QueryMode.insensitive } },
+              { departamento: { contains: search, mode: Prisma.QueryMode.insensitive } },
+              { provincia: { contains: search, mode: Prisma.QueryMode.insensitive } },
+              { distrito: { contains: search, mode: Prisma.QueryMode.insensitive } },
+            ],
+          }
+        : {};
 
-    if (departamento) filters.departamento = departamento;
-    if (provincia) filters.provincia = provincia;
-    if (distrito) filters.distrito = distrito;
+    // Fetch ubigeos based on the constructed filter
+    const ubigeos: Ubigeo[] = await prisma.ubigeo.findMany({
+      where: searchFilter,
+      orderBy: { inei: "asc" },
+    });
 
-    const ubigeos: ZUbigeo[] | null = await prisma.ubigeo.findMany({ where: filters, orderBy: { inei: "asc" } });
-    if (!ubigeos) throw new Error("No se encontraron ubigeos.");
+    if (!ubigeos.length) throw new Error("No se encontraron ubigeos.");
 
-    return ubigeos;
-  } catch (error) {
-    console.error("Error al obtener ubigeos:", error);
-    throw new Error("Error al obtener los ubigeos");
+    return { success: true, data: ubigeos };
+  } catch (error: unknown) {
+    let errorMessage = "Error al obtener los ubigeos.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
   }
 }
 
+/** ---------------------------------------------------------------------------------------------------------------- */
 export const getAllCargos = async (nombre?: string) => {
   try {
     const cargos: Cargo[] | null = await prisma.cargo.findMany({ where: nombre ? { nombre: { contains: nombre, mode: "insensitive" } } : undefined, orderBy: { nombre: "asc" } });

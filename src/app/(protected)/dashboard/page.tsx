@@ -2,56 +2,39 @@
 
 import { useState } from "react";
 import { Boxes, MapPin, Package, UserRoundPlus } from "lucide-react";
-import { UbigeoComponent } from "./ubigeo-component";
-import { CargoComponent } from "./cargo-component";
-import { DependenciaComponent } from "./dependencia-component";
+
 import { UserComponent } from "./user-component";
+import { CargoComponent } from "./cargo-component";
+import { UbigeoComponent } from "./ubigeo-component";
+import { DependenciaComponent } from "./dependencia-component";
+
+const tabs = [
+  { id: "ubigeo", label: "Ubigeo", icon: MapPin, component: UbigeoComponent },
+  { id: "cargo", label: "Cargo", icon: Package, component: CargoComponent },
+  { id: "dependencia", label: "Dependencia", icon: Boxes, component: DependenciaComponent },
+  { id: "user", label: "Usuario", icon: UserRoundPlus, component: UserComponent },
+];
 
 const Page = () => {
-  const [activeTab, setActiveTab] = useState("Ubigeo");
+  const [activeTab, setActiveTab] = useState(tabs[0].id);
 
   return (
     <div className="flex flex-col justify-center items-center w-full h-full">
       <div className="flex flex-row justify-center gap-5 w-4/5 text-text">
-        <div
-          onClick={() => setActiveTab("Ubigeo")}
-          className={`flex flex-row items-center gap-2 p-1 px-4 rounded-full cursor-pointer ${activeTab === "Ubigeo" ? "bg-red text-base" : "hover:bg-maroon hover:text-base"}`}
-        >
-          <MapPin size={16} />
-          <p className="font-inter font-semibold">Ubigeo</p>
-        </div>
-
-        <div
-          onClick={() => setActiveTab("Cargo")}
-          className={`flex flex-row items-center gap-2 p-1 px-4 rounded-full cursor-pointer ${activeTab === "Cargo" ? "bg-red text-base" : "hover:bg-maroon hover:text-base"}`}
-        >
-          <Package size={16} />
-          <p className="font-inter font-semibold text-lg">Cargo</p>
-        </div>
-
-        <div
-          onClick={() => setActiveTab("dep")}
-          className={`flex flex-row items-center gap-2 p-1 px-4 rounded-full cursor-pointer ${activeTab === "dep" ? "bg-red text-base" : "hover:bg-maroon hover:text-base"}`}
-        >
-          <Boxes size={16} />
-          <p className="font-inter font-semibold text-lg">Dependencia</p>
-        </div>
-
-        <div
-          onClick={() => setActiveTab("user")}
-          className={`flex flex-row items-center gap-2 p-1 px-4 rounded-full cursor-pointer ${activeTab === "user" ? "bg-red text-base" : "hover:bg-maroon hover:text-base"}`}
-        >
-          <UserRoundPlus size={16} />
-          <p className="font-inter font-semibold text-lg">Usuario</p>
-        </div>
+        {tabs.map((tab) => (
+          <div
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex flex-row items-center gap-2 py-1  px-5 rounded-full cursor-pointer 
+            ${activeTab === tab.id ? "bg-red text-base" : "hover:bg-maroon hover:text-base"}`}
+          >
+            <tab.icon size={16} />
+            <p className="font-inter font-semibold text-lg">{tab.label}</p>
+          </div>
+        ))}
       </div>
 
-      <div className="flex justify-center mt-4 w-4/5 h-full">
-        {activeTab === "Ubigeo" && <UbigeoComponent />}
-        {activeTab === "Cargo" && <CargoComponent />}
-        {activeTab === "dep" && <DependenciaComponent />}
-        {activeTab === "user" && <UserComponent />}
-      </div>
+      <div className="flex justify-center mt-4 w-4/5 h-full">{tabs.map((tab) => activeTab === tab.id && <tab.component key={tab.id} />)}</div>
     </div>
   );
 };
