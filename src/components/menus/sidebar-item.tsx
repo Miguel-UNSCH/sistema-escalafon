@@ -1,20 +1,32 @@
 import Link from "next/link";
 
 import { useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
 import { ChevronRight, Dot } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
 
 import { MenuItem } from "@/interfaces";
 import { Session } from "next-auth";
+import { admin_routes } from "@/utils/other";
 
 export const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item, parentPath, openMenu, setOpenMenu, session }) => {
   const router = useRouter();
   const pathname = usePathname();
-  const hasSubmenus = item.submenus && item.submenus.length > 0;
   const fullPath = `${parentPath}${item.path}`;
-  const isActive = fullPath === pathname;
+  const hasSubmenus = item.submenus && item.submenus.length > 0;
   const isSubmenuActive = item.submenus?.some((sub) => `${fullPath}${sub.path}` === pathname) ?? false;
   const isOpen = openMenu === item.label;
+
+  const isAdminRoute = (path: string) => admin_routes.some((route) => path.startsWith(route));
+
+  const isAdminOnly = isAdminRoute(fullPath);
+  const isActive = fullPath === pathname;
+
+  if (isAdminOnly && session?.user.role !== "admin") return null;
+
+  const filteredSubmenus = item.submenus?.filter((sub) => {
+    const subFullPath = `${fullPath}${sub.path}`;
+    return session?.user.role === "admin" || !isAdminRoute(subFullPath);
+  });
 
   useEffect(() => {
     if (isSubmenuActive) setOpenMenu(item.label);
@@ -49,7 +61,7 @@ export const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item, parentPa
 
           <div className={`overflow-hidden transition-[max-height] duration-300 ease-in-out ${isOpen ? "max-h-[500px]" : "max-h-0"}`}>
             <ul className="space-y-1 mt-1 ml-4">
-              {item.submenus!.map((sub, subIndex) => {
+              {filteredSubmenus?.map((sub, subIndex) => {
                 const subFullPath = `${fullPath}${sub.path}`;
                 const isSubItemActive = subFullPath === pathname;
                 return (

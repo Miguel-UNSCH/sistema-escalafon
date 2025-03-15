@@ -1,12 +1,19 @@
-import { MenuItem } from "@/interfaces";
 import { Session } from "next-auth";
+import { MenuItem } from "@/interfaces";
+import { admin_routes } from "@/utils/other";
 import { SidebarMenuItem } from "./sidebar-item";
 
-export const SidebarMenuGroup: React.FC<SidebarMenuGroupProps> = ({ title, parentPath, adm = false, items, openMenu, setOpenMenu, session }) => {
+export const SidebarMenuGroup: React.FC<SidebarMenuGroupProps> = ({ title, parentPath, items, openMenu, setOpenMenu, session }) => {
   if (!session) return <p className="px-6 py-2 text-text text-sm">Cargando menú...</p>;
 
-  const shouldRender = adm === true ? session.user.role === "admin" : true;
-  if (!shouldRender) return null;
+  const isAdminRoute = (path: string) => admin_routes.some((route) => path.startsWith(route));
+
+  const filteredItems = items.filter((item) => {
+    const fullPath = `${parentPath}${item.path}`;
+    return session?.user.role === "admin" || !isAdminRoute(fullPath);
+  });
+
+  if (filteredItems.length === 0) return null;
 
   return (
     <nav className="mt-4">
@@ -23,7 +30,6 @@ export const SidebarMenuGroup: React.FC<SidebarMenuGroupProps> = ({ title, paren
 interface SidebarMenuGroupProps {
   title: string;
   parentPath: string;
-  adm?: boolean;
   items: MenuItem[];
   openMenu: string | null;
   setOpenMenu: (menu: string | null) => void;

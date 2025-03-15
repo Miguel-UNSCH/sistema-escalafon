@@ -3,7 +3,6 @@ import { Banknote, BriefcaseBusiness, ChartColumn, File, IdCard, LayoutDashboard
 
 interface NavigationItems {
   title: string;
-  adm?: boolean;
   path: string;
   menuItem: MenuItem[];
 }
@@ -12,12 +11,10 @@ export const navigationItems: NavigationItems[] = [
   {
     title: "Inicio",
     path: "/dashboard",
-    adm: true,
     menuItem: [{ label: "Dashboard", icon: <LayoutDashboard size={16} />, path: "/", submenus: [{ label: "Documentación", path: "/doc" }] }],
   },
   {
     title: "Gestión de Usuarios",
-    adm: true,
     path: "/user",
     menuItem: [{ label: "Administrar Usuario", icon: <UsersRound size={16} />, path: "/" }],
   },
@@ -81,7 +78,7 @@ export const navigationItems: NavigationItems[] = [
     path: "/merits-demerits",
     menuItem: [
       { label: "Méritos", icon: <Trophy size={16} />, path: "/merits" },
-      { label: "Deméritos", adm: true, icon: <Trophy size={16} />, path: "/demerits" },
+      { label: "Deméritos", icon: <Trophy size={16} />, path: "/demerits" },
     ],
   },
   { title: "Documentos / Otros", path: "/documents", menuItem: [{ label: "Documentos", icon: <File size={16} />, path: "" }] },
@@ -94,5 +91,5 @@ export const navigationItems: NavigationItems[] = [
       { label: "Reportes Personalizados", icon: <ChartColumn size={16} />, path: "/defaults" },
     ],
   },
-  { title: "Mi Cuenta", path: "/settings", menuItem: [{ label: "Configuración", icon: <UserRound size={16} />, path: "/settings" }] },
+  { title: "Mi Cuenta", path: "/settings", menuItem: [{ label: "Configuración", icon: <UserRound size={16} />, path: "/" }] },
 ];

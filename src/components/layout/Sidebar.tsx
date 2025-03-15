@@ -36,16 +36,7 @@ export const Sidebar = ({ isOpen, isMobile, session }: { isOpen: boolean; isMobi
 
           <div className="mb-5 pr-2 h-full overflow-y-auto">
             {navigationItems.map((group, idx) => (
-              <SidebarMenuGroup
-                key={idx}
-                title={group.title}
-                parentPath={group.path}
-                adm={group.adm}
-                items={group.menuItem}
-                openMenu={openMenu}
-                setOpenMenu={setOpenMenu}
-                session={session}
-              />
+              <SidebarMenuGroup key={idx} title={group.title} parentPath={group.path} items={group.menuItem} openMenu={openMenu} setOpenMenu={setOpenMenu} session={session} />
             ))}
           </div>
         </div>
