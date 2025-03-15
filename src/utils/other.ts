@@ -66,7 +66,7 @@ export const breadcrumbs_options: BreadcrumbItem[] = [
           { label: "bonificación familiar", path: "/family" },
         ],
       },
-      { label: "ficha de evaluación", path: "/evaluations" },
+      { label: "evaluaciones", path: "/evaluations" },
     ],
   },
   {

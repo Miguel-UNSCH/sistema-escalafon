@@ -70,7 +70,7 @@ export const navigationItems: NavigationItems[] = [
           { label: "Bonificación Familiar", path: "/family" },
         ],
       },
-      { label: "Ficha de Evaluación", icon: <File size={16} />, path: "/evaluations" },
+      { label: "evaluaciones", icon: <File size={16} />, path: "/evaluations" },
     ],
   },
   {
