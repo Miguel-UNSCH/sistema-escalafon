@@ -1,36 +1,46 @@
 "use server";
 
-import { ContentPage } from "@/components/page-context";
 import React from "react";
 
+import { auth } from "@/auth";
+import { PageContent } from "@/components/page-context";
+
 const pageContent = {
-  title: "bonificaciones y evaluaciones",
+  title: "Bonificaciones y Evaluaciones",
   description: "En esta sección el usuario podrá registrar las bonificaciones y evaluaciones que realizó a lo largo de su vida.",
   sections: [
     {
-      title: "bonificaciones",
+      title: "Bonificaciones",
       description:
         "Responsible for organisation-wide matters. Such as setting the direction of the organisation, approving new ports, adding new maintainers, and cultivating a healthy community.",
       cards: [
-        { title: "Bonificación Personal", description: "Learn how to create full-stack web applications with the Next.js App Router." },
-        { title: "Bonificación Familiar", description: "Learn how to create full-stack web applications with the Next.js App Router." },
+        { title: "Bonificación Personal", description: "Learn how to create full-stack web applications with the Next.js App Router.", path: "/bonuses-evaluations/personal" },
+        { title: "Bonificación Familiar", description: "Learn how to create full-stack web applications with the Next.js App Router.", path: "/bonuses-evaluations/family" },
       ],
     },
     {
-      title: "evaluaciones",
+      title: "Evaluaciones",
       description:
         "Responsible for organisation-wide matters. Such as setting the direction of the organisation, approving new ports, adding new maintainers, and cultivating a healthy community.",
-      cards: [{ title: "Ficha de Evaluación", description: "Learn how to create full-stack web applications with the Next.js App Router." }],
+      cards: [
+        { title: "Ficha de Evaluación", description: "Learn how to create full-stack web applications with the Next.js App Router.", path: "/bonuses-evaluations/evaluations" },
+      ],
     },
   ],
 };
 
-const page = () => {
+const Page = async () => {
+  const session = await auth();
+
+  if (!session) {
+    return <div>Not authenticated</div>;
+  }
+
   return (
     <div className="flex justify-center py-2 w-full">
-      <ContentPage content={pageContent} />
+      <PageContent content={pageContent} session={session} />
     </div>
   );
 };
 
-export default page;
+export default Page;
