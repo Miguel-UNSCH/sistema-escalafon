@@ -1,62 +1,19 @@
-import { Dot, File, Folder, Grid2x2Check, Lightbulb } from "lucide-react";
-import React, { ReactNode } from "react";
+"use client";
 
-const NotesList = ({ notes }: { notes: string[] }) => (
-  <ul className="space-y-2 text-subtext1 text-sm">
-    {notes.map((note, index) => (
-      <li key={index} className="flex flex-row items-center">
-        <Dot /> {note}
-      </li>
-    ))}
-  </ul>
-);
-
-const Table = ({ headers, rows }: { headers: string[]; rows: (string | ReactNode)[][] }) => (
-  <table className="w-auto text-sm">
-    <thead className="bg-surface0">
-      <tr>
-        {headers.map((header, index) => (
-          <th key={index} className="p-2 border text-left">
-            {header}
-          </th>
-        ))}
-      </tr>
-    </thead>
-    <tbody>
-      {rows.map((row, rowIndex) => (
-        <tr key={rowIndex}>
-          {row.map((cell, cellIndex) => (
-            <td key={cellIndex} className="p-2 py-1 border">
-              {cell}
-            </td>
-          ))}
-        </tr>
-      ))}
-    </tbody>
-  </table>
-);
+import { Code, File, Folder, Grid2x2Check, Lightbulb } from "lucide-react";
+import React, { useState } from "react";
+import { NotesList, Table } from "./other";
+import { DependenciaDoc } from "./dependencia-doc";
+import { CargoDoc } from "./cargo-doc";
+import { UserDoc } from "./user-doc";
 
 export const DocComponent = () => {
-  const excelUserHeaders = ["Nombre de la columna", "Tipo de dato", "Descripción"];
-  const excelUserRows = [
-    ["Nombres", <span className="bg-crust px-1 rounded-sm font-code text-xs">`string`</span>, "Nombre completo del personal."],
-    ["Apellidos", <span className="bg-crust px-1 rounded-sm font-code text-xs">`string`</span>, "Apellidos completos."],
-    ["Dni", <span className="bg-crust px-1 rounded-sm font-code text-xs">`string`</span>, "Documento de identidad (8 dígitos)."],
-    ["Email", <span className="bg-crust px-1 rounded-sm font-code text-xs">`string`</span>, "Correo electrónico válido."],
-  ];
-  const users = [
-    {
-      nombres: "Juan",
-      apellidos: "Pérez",
-      dni: "12345678",
-      email: "juan.perez@example.com",
-    },
-    {
-      nombres: "María",
-      apellidos: "González",
-      dni: "87654321",
-      email: "maria.gonzalez@example.com",
-    },
+  const [activeTab, setActiveTab] = useState("usuarios");
+
+  const tabs = [
+    { id: "usuarios", label: "Usuarios", component: <UserDoc />, hoverClass: "border-red text-red" },
+    { id: "cargos", label: "Cargos", component: <CargoDoc />, hoverClass: "border-green text-green" },
+    { id: "dependencias", label: "Dependencias", component: <DependenciaDoc />, hoverClass: "border-peach text-peach" },
   ];
 
   return (
@@ -95,24 +52,31 @@ export const DocComponent = () => {
           <File size={16} /> <p>Estructura de los Archivos</p>
         </h3>
 
+        <div className="flex flex-col gap-2 bg-mantle pb-4 border-2 border-surface0 rounded-md">
+          <div className="flex border-surface0 border-b-2 font-primary capitalize">
+            <div className="flex flex-row items-center gap-5 p-4">
+              <Code />
+              {tabs.map((tab) => (
+                <p
+                  key={tab.id}
+                  className={`border-b-2 font-semibold cursor-pointer transition-colors 
+                ${activeTab === tab.id ? tab.hoverClass : "border-transparent"}`}
+                  onClick={() => setActiveTab(tab.id)}
+                >
+                  {tab.label}
+                </p>
+              ))}
+            </div>
+          </div>
+
+          <div>{tabs.find((tab) => tab.id === activeTab)?.component}</div>
+        </div>
+
         <div className="flex flex-col gap-2 px-4">
-          <div className="flex flex-col gap-2">
-            <h4 className="flex flex-row items-center gap-0.5 font-primary font-semibold text-[1rem] text-sm">Plantilla para Excel</h4>
-            <p className="font-special font-semibold text-subtext0 text-xs italic">El archivo Excel debe contener las siguientes columnas:</p>
-
-            <Table headers={excelUserHeaders} rows={excelUserRows} />
-            <p className="font-code hover:font-semibold text-lavender text-sm italic cursor-pointer">Descargar plantilla Excel</p>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <h4 className="flex flex-row items-center gap-0.5 font-primary font-semibold text-[1rem] text-sm">Ejemplo de JSON</h4>
-            <p className="font-special font-semibold text-subtext0 text-xs italic">Si se usa JSON, debe seguir la siguiente estructura:</p>
-            <pre className="bg-crust p-4 rounded-md text-text">{JSON.stringify(users, null, 2)}</pre>
-            <p className="font-primary font-semibold text-subtext0 text-sm">Notas Importantes:</p>
-            <NotesList
-              notes={["Formato válido: .xlsx o .json.", "Tamaño dentro del límite permitido.", "JSON mal formado generará errores.", "Excel debe contener la estructura correcta."]}
-            />
-          </div>
+          <p className="font-primary font-semibold text-subtext0 text-sm">Notas Importantes:</p>
+          <NotesList
+            notes={["Formato válido: .xlsx o .json.", "Tamaño dentro del límite permitido.", "JSON mal formado generará errores.", "Excel debe contener la estructura correcta."]}
+          />
         </div>
       </section>
 
