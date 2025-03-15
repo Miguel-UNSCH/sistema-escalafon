@@ -1,10 +1,10 @@
 import { useState } from "react";
-import SidebarMenuGroup from "../menus/SidebarMenuGroup";
 import Link from "next/link";
 import { navigationItems } from "@/utils/navigation-items";
 import Image from "next/image";
 import logo from "@/assets/logo_gobierno_regional_claro.webp";
 import { Session } from "next-auth";
+import { SidebarMenuGroup } from "@/components/menus/sidebar-group";
 
 export const Sidebar = ({ isOpen, isMobile, session }: { isOpen: boolean; isMobile: boolean; onClose: () => void; session: Session | null }) => {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
@@ -34,9 +34,18 @@ export const Sidebar = ({ isOpen, isMobile, session }: { isOpen: boolean; isMobi
             </Link>
           </div>
 
-          <div className={`pr-2 h-full overflow-y-auto mb-5`}>
+          <div className="mb-5 pr-2 h-full overflow-y-auto">
             {navigationItems.map((group, idx) => (
-              <SidebarMenuGroup key={idx} title={group.title} adm={group.adm} items={group.menuItem} openMenu={openMenu} setOpenMenu={setOpenMenu} session={session} />
+              <SidebarMenuGroup
+                key={idx}
+                title={group.title}
+                parentPath={group.path}
+                adm={group.adm}
+                items={group.menuItem}
+                openMenu={openMenu}
+                setOpenMenu={setOpenMenu}
+                session={session}
+              />
             ))}
           </div>
         </div>

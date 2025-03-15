@@ -4,83 +4,95 @@ import { Banknote, BriefcaseBusiness, ChartColumn, File, IdCard, LayoutDashboard
 interface NavigationItems {
   title: string;
   adm?: boolean;
+  path: string;
   menuItem: MenuItem[];
 }
 
 export const navigationItems: NavigationItems[] = [
   {
-    title: "inicio",
+    title: "Inicio",
+    path: "/dashboard",
     adm: true,
-    menuItem: [{ label: "dashboard", icon: <LayoutDashboard size={16} />, path: "/dashboard", submenus: [{ label: "documentación", path: "/dashboard/doc" }] }],
+    menuItem: [{ label: "Dashboard", icon: <LayoutDashboard size={16} />, path: "/", submenus: [{ label: "Documentación", path: "/doc" }] }],
   },
-  { title: "gestión de usuarios", adm: true, menuItem: [{ label: "administrar usuario", icon: <UsersRound size={16} />, path: "/user" }] },
   {
-    title: "ficha personal",
+    title: "Gestión de Usuarios",
+    adm: true,
+    path: "/user",
+    menuItem: [{ label: "Administrar Usuario", icon: <UsersRound size={16} />, path: "/" }],
+  },
+  {
+    title: "Ficha Personal",
+    path: "/personal-file",
     menuItem: [
       {
-        label: "información personal",
+        label: "Información Personal",
         icon: <UserRoundCog size={16} />,
-        path: "/personal-file/personal-information",
+        path: "/personal-information",
         submenus: [
-          { label: "datos personales", path: "/personal-file/personal-information/personal-data" },
-          { label: "datos del cónyuge", path: "/personal-file/personal-information/spouse-data" },
-          { label: "datos de los hijos", path: "/personal-file/personal-information/children-data" },
+          { label: "Datos Personales", path: "/personal-data" },
+          { label: "Datos del Cónyuge", path: "/spouse-data" },
+          { label: "Datos de los Hijos", path: "/children-data" },
         ],
       },
       {
-        label: "estudios y capacitación",
+        label: "Estudios y Capacitación",
         icon: <BriefcaseBusiness size={16} />,
-        path: "/personal-file/studies-training",
+        path: "/studies-training",
         submenus: [
-          { label: "estudios", path: "/personal-file/studies-training/studies" },
-          { label: "capacitación", path: "/personal-file/studies-training/training" },
+          { label: "Estudios", path: "/studies" },
+          { label: "Capacitación", path: "/training" },
         ],
       },
-      { label: "experiencia laboral", icon: <BriefcaseBusiness size={16} />, path: "/personal-file/experience" },
-      { label: "discapacidad", icon: <IdCard size={16} />, path: "/personal-file/disability" },
+      { label: "Experiencia Laboral", icon: <BriefcaseBusiness size={16} />, path: "/experience" },
+      { label: "Discapacidad", icon: <IdCard size={16} />, path: "/disability" },
     ],
   },
   {
-    title: "situación laboral",
+    title: "Situación Laboral",
+    path: "/work-situation",
     menuItem: [
-      { label: "contratos y nombramiento", icon: <BriefcaseBusiness size={16} />, path: "/work-situation/contracts" },
-      { label: "renuncia", icon: <LogOut size={16} />, path: "/work-situation/renunciation" },
-      { label: "desplazamiento", icon: <BriefcaseBusiness size={16} />, path: "/work-situation/displacement" },
-      { label: "descanso médico", icon: <File size={16} />, path: "/work-situation/medical-rest" },
-      { label: "permisos / licencias", icon: <File size={16} />, path: "/work-situation/permissions" },
-      { label: "ascensos", icon: <Trophy size={16} />, path: "/work-situation/promotions" },
+      { label: "Contratos y Nombramiento", icon: <BriefcaseBusiness size={16} />, path: "/contracts" },
+      { label: "Renuncia", icon: <LogOut size={16} />, path: "/renunciation" },
+      { label: "Desplazamiento", icon: <BriefcaseBusiness size={16} />, path: "/displacement" },
+      { label: "Descanso Médico", icon: <File size={16} />, path: "/medical-rest" },
+      { label: "Permisos / Licencias", icon: <File size={16} />, path: "/permissions" },
+      { label: "Ascensos", icon: <Trophy size={16} />, path: "/promotions" },
     ],
   },
   {
-    title: "bonificaciones y evaluaciones",
+    title: "Bonificaciones y Evaluaciones",
+    path: "/bonuses-evaluations",
     menuItem: [
       {
-        label: "bonificaciones",
+        label: "Bonificaciones",
         icon: <Banknote size={16} />,
-        path: "/bonuses-evaluations",
+        path: "/",
         submenus: [
-          { label: "bonificación personal", path: "/bonuses-evaluations/personal" },
-          { label: "bonificación familiar", path: "/bonuses-evaluations/family" },
+          { label: "Bonificación Personal", path: "/personal" },
+          { label: "Bonificación Familiar", path: "/family" },
         ],
       },
-      { label: "ficha de evaluación", icon: <File size={16} />, path: "/bonuses-evaluations/evaluations" },
+      { label: "Ficha de Evaluación", icon: <File size={16} />, path: "/evaluations" },
     ],
   },
   {
-    title: "méritos y deméritos",
+    title: "Méritos y Deméritos",
+    path: "/merits-demerits",
     menuItem: [
-      { label: "méritos", icon: <Trophy size={16} />, path: "/merits-demerits/merits" },
-      { label: "deméritos", adm: true, icon: <Trophy size={16} />, path: "/merits-demerits/demerits" },
+      { label: "Méritos", icon: <Trophy size={16} />, path: "/merits" },
+      { label: "Deméritos", adm: true, icon: <Trophy size={16} />, path: "/demerits" },
     ],
   },
-  { title: "documentos / otros", menuItem: [{ label: "documentos", icon: <File size={16} />, path: "/documents" }] },
+  { title: "Documentos / Otros", path: "/documents", menuItem: [{ label: "Documentos", icon: <File size={16} />, path: "" }] },
   {
-    title: "reportes",
+    title: "Reportes",
+    path: "/reports",
     menuItem: [
-      { label: "reportes mensuales", icon: <ChartColumn size={16} />, path: "/reports/monthly" },
-      { label: "reportes anuales", icon: <ChartColumn size={16} />, path: "/reports/annual" },
-      { label: "reportes personalizados", icon: <ChartColumn size={16} />, path: "/reports/defaults" },
+      { label: "Reportes Mensuales", icon: <ChartColumn size={16} />, path: "/monthly" },
+      { label: "Reportes Anuales", icon: <ChartColumn size={16} />, path: "/annual" },
+      { label: "Reportes Personalizados", icon: <ChartColumn size={16} />, path: "/defaults" },
     ],
   },
-  { title: "mi cuenta", menuItem: [{ label: "configuracion", icon: <UserRound size={16} />, path: "/settings" }] },
+  { title: "Mi Cuenta", path: "/settings", menuItem: [{ label: "Configuración", icon: <UserRound size={16} />, path: "/settings" }] },
 ];
