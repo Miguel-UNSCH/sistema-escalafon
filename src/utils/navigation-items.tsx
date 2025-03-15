@@ -74,7 +74,7 @@ export const navigationItems: NavigationItems[] = [
     ],
   },
   {
-    title: "Méritos y Deméritos",
+    title: "méritos y deméritos",
     path: "/merits-demerits",
     menuItem: [
       { label: "Méritos", icon: <Trophy size={16} />, path: "/merits" },
@@ -83,12 +83,12 @@ export const navigationItems: NavigationItems[] = [
   },
   { title: "Documentos / Otros", path: "/documents", menuItem: [{ label: "Documentos", icon: <File size={16} />, path: "" }] },
   {
-    title: "Reportes",
+    title: "reportes",
     path: "/reports",
     menuItem: [
-      { label: "Reportes Mensuales", icon: <ChartColumn size={16} />, path: "/monthly" },
-      { label: "Reportes Anuales", icon: <ChartColumn size={16} />, path: "/annual" },
-      { label: "Reportes Personalizados", icon: <ChartColumn size={16} />, path: "/defaults" },
+      { label: "reportes mensuales", icon: <ChartColumn size={16} />, path: "/monthly" },
+      { label: "reportes anuales", icon: <ChartColumn size={16} />, path: "/annual" },
+      { label: "reportes personalizados", icon: <ChartColumn size={16} />, path: "/defaults" },
     ],
   },
   { title: "Mi Cuenta", path: "/settings", menuItem: [{ label: "Configuración", icon: <UserRound size={16} />, path: "/" }] },

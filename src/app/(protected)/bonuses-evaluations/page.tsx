@@ -38,7 +38,7 @@ const Page = async () => {
 
   return (
     <div className="flex justify-center py-2 w-full">
-      <PageContent content={pageContent} session={session} />
+      <PageContent content={pageContent} session={session} color="green" />
     </div>
   );
 };

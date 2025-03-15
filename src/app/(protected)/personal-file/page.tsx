@@ -1,10 +1,41 @@
 "use server";
 
-import { auth } from "@/auth";
 import React from "react";
-import { UploadFile } from "./upload-file";
 
-export default async function Page() {
+import { auth } from "@/auth";
+import { PageContent } from "@/components/page-context";
+
+const pageContent = {
+  title: "ficha personal",
+  description: "En esta sección el usuario podrá registrar las bonificaciones y evaluaciones que realizó a lo largo de su vida.",
+  sections: [
+    {
+      title: "secciones",
+      description:
+        "Responsible for organisation-wide matters. Such as setting the direction of the organisation, approving new ports, adding new maintainers, and cultivating a healthy community.",
+      cards: [
+        { title: "información personal", description: "Learn how to create full-stack web applications with the Next.js App Router.", path: "/personal-file/personal-information" },
+        {
+          title: "estudios y capacitación",
+          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          path: "/personal-file/studies-training",
+        },
+        {
+          title: "experiencia laboral",
+          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          path: "/personal-file/experience",
+        },
+        {
+          title: "discapacidad",
+          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          path: "/personal-file/disability",
+        },
+      ],
+    },
+  ],
+};
+
+const Page = async () => {
   const session = await auth();
 
   if (!session) {
@@ -12,9 +43,10 @@ export default async function Page() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-5 p-2 font-primary">
-      <UploadFile />
-      <pre className="bg-crust p-4 rounded-md">{JSON.stringify(session, null, 2)}</pre>
+    <div className="flex justify-center py-2 w-full">
+      <PageContent content={pageContent} session={session} color="green" />
     </div>
   );
-}
+};
+
+export default Page;
