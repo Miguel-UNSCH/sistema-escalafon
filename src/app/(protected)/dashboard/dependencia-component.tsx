@@ -3,10 +3,12 @@
 import { getDependencias } from "@/actions/others-action";
 import { SearchField } from "@/components/custom-fields/search-field";
 import { CreateDependencia } from "@/components/others/create-dependencia";
+import { CreateEntity } from "@/components/others/create-entity";
 import { ModifyDependencia } from "@/components/others/modify-dependencia";
 import { Pagination } from "@/components/pagination";
 import { Dependencia } from "@prisma/client";
 import { debounce } from "lodash";
+import { Boxes } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -102,6 +104,8 @@ export const DependenciaComponent = () => {
           )}
         </div>
       </div>
+
+      <CreateEntity title="registrar varias dependencias" icon={<Boxes />} buttonText="crear dependencias" />
     </div>
   );
 };
