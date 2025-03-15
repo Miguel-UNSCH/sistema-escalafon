@@ -43,11 +43,13 @@ export const DataDoc = ({
   tableHeaders,
   tableRows,
   jsonData,
+  filePath,
 }: {
   description: string;
   tableHeaders: string[];
   tableRows: (string | ReactNode)[][];
   jsonData: object[];
+  filePath: string;
 }) => {
   return (
     <div className="flex flex-col gap-5">
@@ -56,7 +58,9 @@ export const DataDoc = ({
         <p className="font-special font-semibold text-subtext0 text-xs italic">{description}</p>
 
         <Table headers={tableHeaders} rows={tableRows} />
-        <p className="font-code hover:font-bold text-lavender text-xs italic cursor-pointer">Descargar plantilla Excel</p>
+        <a href={`/templates/${filePath}.xlsx`} download className="font-special hover:font-bold text-mauve text-xs cursor-pointer">
+          Descargar plantilla Excel
+        </a>
       </div>
 
       <div className="flex flex-col gap-2 px-4">

@@ -17,6 +17,7 @@ export const DependenciaDoc = () => {
         { nombre: "CONSEJO REGIONAL", codigo: "CR", direccion: "Jr. 9 de Diciembre N° 184" },
         { nombre: "VICEGOBERNACION REGIONAL", codigo: "VGR", direccion: "Jr. 9 de Diciembre N° 184" },
       ]}
+      filePath="dependencias"
     />
   );
 };

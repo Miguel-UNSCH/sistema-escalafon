@@ -17,6 +17,7 @@ export const UserDoc = () => {
         { nombres: "Juan", apellidos: "Pérez", dni: "12345678", email: "juan.perez@example.com" },
         { nombres: "María", apellidos: "González", dni: "87654321", email: "maria.gonzalez@example.com" },
       ]}
+      filePath="users"
     />
   );
 };
