@@ -1,7 +1,49 @@
 import { Dot, File, Folder, Grid2x2Check, Lightbulb } from "lucide-react";
-import React from "react";
+import React, { ReactNode } from "react";
+
+const NotesList = ({ notes }: { notes: string[] }) => (
+  <ul className="space-y-2 text-subtext1 text-sm">
+    {notes.map((note, index) => (
+      <li key={index} className="flex flex-row items-center">
+        <Dot /> {note}
+      </li>
+    ))}
+  </ul>
+);
+
+const Table = ({ headers, rows }: { headers: string[]; rows: (string | ReactNode)[][] }) => (
+  <table className="w-auto text-sm">
+    <thead className="bg-surface0">
+      <tr>
+        {headers.map((header, index) => (
+          <th key={index} className="p-2 border text-left">
+            {header}
+          </th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row, rowIndex) => (
+        <tr key={rowIndex}>
+          {row.map((cell, cellIndex) => (
+            <td key={cellIndex} className="p-2 py-1 border">
+              {cell}
+            </td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+);
 
 export const DocComponent = () => {
+  const excelUserHeaders = ["Nombre de la columna", "Tipo de dato", "Descripción"];
+  const excelUserRows = [
+    ["Nombres", <span className="bg-crust px-1 rounded-sm font-code text-xs">`string`</span>, "Nombre completo del personal."],
+    ["Apellidos", <span className="bg-crust px-1 rounded-sm font-code text-xs">`string`</span>, "Apellidos completos."],
+    ["Dni", <span className="bg-crust px-1 rounded-sm font-code text-xs">`string`</span>, "Documento de identidad (8 dígitos)."],
+    ["Email", <span className="bg-crust px-1 rounded-sm font-code text-xs">`string`</span>, "Correo electrónico válido."],
+  ];
   const users = [
     {
       nombres: "Juan",
@@ -19,7 +61,7 @@ export const DocComponent = () => {
 
   return (
     <div className="p-6 w-full">
-      <h2 className="flex items-center gap-2 mb-4 font-semibold text-2xl">Documentación de Subida Masiva</h2>
+      <h2 className="flex items-center gap-2 mb-4 font-black text-lavender text-2xl">Documentación de Subida Masiva</h2>
 
       <section className="flex flex-col gap-2 mb-6">
         <h3 className="flex flex-row items-center gap-0.5 font-primary font-medium text-lg">
@@ -27,44 +69,23 @@ export const DocComponent = () => {
         </h3>
 
         <div className="flex flex-col gap-2 px-4">
-          <table className="w-auto text-sm">
-            <thead className="bg-surface0">
-              <tr>
-                <th className="p-2 border text-left">Formato</th>
-                <th className="p-2 border text-left">Extensión</th>
-                <th className="p-2 border text-left">Tamaño Máximo</th>
-                <th className="p-2 border text-left">Descripción</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="p-2 py-1 border">Excel</td>
-                <td className="p-2 py-1 border">.xlsx</td>
-                <td className="p-2 py-1 border">10MB</td>
-                <td className="p-2 py-1 border">Estructura tabular con múltiples filas y columnas.</td>
-              </tr>
-              <tr>
-                <td className="p-2 py-1 border">JSON</td>
-                <td className="p-2 py-1 border">.json</td>
-                <td className="p-2 py-1 border">5MB</td>
-                <td className="p-2 py-1 border">Representación en formato clave-valor.</td>
-              </tr>
-            </tbody>
-          </table>
+          <Table
+            headers={["Formato", "Extensión", "Tamaño Máximo", "Descripción"]}
+            rows={[
+              ["Excel", <span className="bg-crust px-1 rounded-sm font-code text-xs">.xlsx</span>, "10MB", "Estructura tabular con múltiples filas y columnas."],
+              ["JSON", <span className="bg-crust px-1 rounded-sm font-code text-xs">.json</span>, "5MB", "Representación en formato clave-valor."],
+            ]}
+          />
 
           <div>
             <p className="font-primary font-semibold text-subtext0 text-sm">Notas Importantes:</p>
-            <ul className="space-y-2 text-subtext1 text-sm">
-              <li className="flex flex-row items-center">
-                <Dot /> El archivo debe respetar la estructura definida en las plantillas.
-              </li>
-              <li className="flex flex-row items-center">
-                <Dot /> No se aceptan archivos de Excel en formato antiguo (.xls).
-              </li>
-              <li className="flex flex-row items-center">
-                <Dot /> JSON debe estar bien formado (sin errores de sintaxis).
-              </li>
-            </ul>
+            <NotesList
+              notes={[
+                "El archivo debe respetar la estructura definida en las plantillas.",
+                "No se aceptan archivos de Excel en formato antiguo (.xls).",
+                "JSON debe estar bien formado (sin errores de sintaxis).",
+              ]}
+            />
           </div>
         </div>
       </section>
@@ -79,38 +100,8 @@ export const DocComponent = () => {
             <h4 className="flex flex-row items-center gap-0.5 font-primary font-semibold text-[1rem] text-sm">Plantilla para Excel</h4>
             <p className="font-special font-semibold text-subtext0 text-xs italic">El archivo Excel debe contener las siguientes columnas:</p>
 
-            <table className="w-auto text-sm">
-              <thead className="bg-surface0">
-                <tr>
-                  <th className="p-2 border text-left">Nombre de la columna</th>
-                  <th className="p-2 border text-left">Tipo de dato</th>
-                  <th className="p-2 border text-left">Descripción</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="p-2 py-1 border">nombres</td>
-                  <td className="p-2 py-1 border">string</td>
-                  <td className="p-2 py-1 border">Nombre completo del personal.</td>
-                </tr>
-                <tr>
-                  <td className="p-2 py-1 border">apellidos</td>
-                  <td className="p-2 py-1 border">string</td>
-                  <td className="p-2 py-1 border">Apellidos completos.</td>
-                </tr>
-                <tr>
-                  <td className="p-2 py-1 border">dni</td>
-                  <td className="p-2 py-1 border">string</td>
-                  <td className="p-2 py-1 border">Documento de identidad (8 dígitos).</td>
-                </tr>
-                <tr>
-                  <td className="p-2 py-1 border">email</td>
-                  <td className="p-2 py-1 border">string</td>
-                  <td className="p-2 py-1 border">Correo electrónico válido.</td>
-                </tr>
-              </tbody>
-            </table>
-            <p className="font-code hover:font-semibold text-lavender text-sm cursor-pointer">Descargar plantilla Excel</p>
+            <Table headers={excelUserHeaders} rows={excelUserRows} />
+            <p className="font-code hover:font-semibold text-lavender text-sm italic cursor-pointer">Descargar plantilla Excel</p>
           </div>
 
           <div className="flex flex-col gap-2">
@@ -118,17 +109,9 @@ export const DocComponent = () => {
             <p className="font-special font-semibold text-subtext0 text-xs italic">Si se usa JSON, debe seguir la siguiente estructura:</p>
             <pre className="bg-crust p-4 rounded-md text-text">{JSON.stringify(users, null, 2)}</pre>
             <p className="font-primary font-semibold text-subtext0 text-sm">Notas Importantes:</p>
-            <ul className="space-y-2 font-text text-subtext1 text-sm">
-              <li className="flex flex-row items-center">
-                <Dot /> JSON debe ser un array de objetos.
-              </li>
-              <li className="flex flex-row items-center">
-                <Dot /> Cada campo debe tener el formato correcto, sin valores nulos.
-              </li>
-              <li className="flex flex-row items-center">
-                <Dot /> JSON debe estar bien formado (sin errores de sintaxis).
-              </li>
-            </ul>
+            <NotesList
+              notes={["Formato válido: .xlsx o .json.", "Tamaño dentro del límite permitido.", "JSON mal formado generará errores.", "Excel debe contener la estructura correcta."]}
+            />
           </div>
         </div>
       </section>
@@ -139,20 +122,9 @@ export const DocComponent = () => {
         </h3>
 
         <div className="flex flex-col gap-2 px-4">
-          <ul className="space-y-2 font-text text-text-subtext1 text-sm">
-            <li className="flex flex-row items-center">
-              <Dot /> Formato válido: `.xlsx` o `.json`.
-            </li>
-            <li className="flex flex-row items-center">
-              <Dot /> Tamaño dentro del límite permitido.
-            </li>
-            <li className="flex flex-row items-center">
-              <Dot /> JSON mal formado generará errores.
-            </li>
-            <li className="flex flex-row items-center">
-              <Dot /> Excel debe contener la estructura correcta.
-            </li>
-          </ul>
+          <NotesList
+            notes={["Formato válido: .xlsx o .json.", "Tamaño dentro del límite permitido.", "JSON mal formado generará errores.", "Excel debe contener la estructura correcta."]}
+          />
         </div>
       </section>
 
@@ -162,17 +134,13 @@ export const DocComponent = () => {
         </h3>
 
         <div className="flex flex-col gap-2 px-4">
-          <ul className="space-y-2 font-text text-subtext1 text-sm">
-            <li className="flex flex-row items-center">
-              <Dot /> Usa la plantilla proporcionada para evitar errores.
-            </li>
-            <li className="flex flex-row items-center">
-              <Dot /> Revisa que los datos sean correctos antes de subir.
-            </li>
-            <li className="flex flex-row items-center">
-              <Dot /> Evita caracteres especiales en los nombres (`@`, `#`, etc.).
-            </li>
-          </ul>
+          <NotesList
+            notes={[
+              "Usa la plantilla proporcionada para evitar errores.",
+              "Revisa que los datos sean correctos antes de subir.",
+              "Evita caracteres especiales en los nombres (@, #, etc.).",
+            ]}
+          />
         </div>
       </section>
     </div>
