@@ -45,7 +45,7 @@ export const CreateEntity = ({ title, icon, buttonText }: CreateEntityProps) => 
 
         if (file_id) {
           try {
-            const response = await processFile(file_id);
+            const response = await processFile(file_id, "cargo");
 
             if (response.success) {
               toast.success(response.message);
