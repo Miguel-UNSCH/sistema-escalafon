@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { uploadSchema, ZUploadS } from "@/lib/zod";
 import { uploadFile } from "@/service/file-service";
 import { UploadField } from "../custom-fields/upload-file";
+import { processFile } from "@/actions/process-file";
 
 type CreateEntityProps = {
   title: string;
@@ -39,10 +40,22 @@ export const CreateEntity = ({ title, icon, buttonText }: CreateEntityProps) => 
             toast.error(uploadResponse.message || "Error al subir el archivo.");
             return;
           }
-          file_id = uploadResponse.data.id; // cm8bqycpy0007t84ot1d06qo8
+          file_id = uploadResponse.data.id;
         }
 
-        console.log(file_id);
+        if (file_id) {
+          try {
+            const response = await processFile(file_id);
+
+            if (response.success) {
+              toast.success(response.message);
+            } else {
+              toast.error(response.message);
+            }
+          } catch (e: unknown) {
+            toast.error("Error al procesar el archivo.");
+          }
+        }
       } catch (e: unknown) {
         toast.error("Error al subir el archivo.");
       }
