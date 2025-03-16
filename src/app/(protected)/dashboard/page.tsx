@@ -19,22 +19,22 @@ const Page = () => {
   const [activeTab, setActiveTab] = useState(tabs[0].id);
 
   return (
-    <div className="flex flex-col justify-center items-center w-full h-full">
-      <div className="flex flex-row justify-center gap-5 w-4/5 text-text">
+    <div className="flex flex-col justify-center items-center mb-5 w-full h-full">
+      <div className="flex lg:flex-row flex-col justify-center gap-2 lg:gap-5 w-full lg:w-4/5 text-text">
         {tabs.map((tab) => (
           <div
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex flex-row items-center gap-2 py-1  px-5 rounded-full cursor-pointer 
-            ${activeTab === tab.id ? "bg-red text-base" : "hover:bg-maroon hover:text-base"}`}
+            className={`flex items-center gap-2 py-2 px-3 lg:px-5 rounded-full cursor-pointer transition 
+            ${activeTab === tab.id ? "bg-red text-text" : "hover:bg-maroon hover:text-text"}`}
           >
-            <tab.icon size={16} />
-            <p className="font-inter font-semibold text-lg">{tab.label}</p>
+            <tab.icon size={20} />
+            <p className="font-inter font-semibold text-sm lg:text-lg">{tab.label}</p>
           </div>
         ))}
       </div>
 
-      <div className="flex justify-center mt-4 w-4/5 h-full">{tabs.map((tab) => activeTab === tab.id && <tab.component key={tab.id} />)}</div>
+      <div className="flex justify-center mt-4 w-full lg:w-4/5 min-h-[300px]">{tabs.map((tab) => activeTab === tab.id && <tab.component key={tab.id} />)}</div>
     </div>
   );
 };

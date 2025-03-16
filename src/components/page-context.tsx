@@ -23,7 +23,7 @@ export interface PageContent {
 
 export const PageContent = ({ content, session, color }: { content: PageContent; session: Session; color: string }) => {
   return (
-    <div className="flex flex-col gap-5 p-2 w-4/5">
+    <div className="flex flex-col gap-5 p-2 px-4 w-full max-w-4xl">
       <h2 className={`font-primary font-black text-${color} text-3xl tracking-tigh capitalize`}>
         <TextAnimate textList={[content.title]} />
       </h2>
@@ -42,7 +42,8 @@ export const PageContent = ({ content, session, color }: { content: PageContent;
               </h3>
               <p className="px-2 font-text text-subtext0 text-sm">{section.description}</p>
 
-              <div className="gap-4 grid grid-cols-3">
+              {/* Grid responsivo */}
+              <div className="gap-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 {section.cards.map((card, cardIndex) => {
                   const isCardAdminOnly = admin_routes.some((route) => card.path.startsWith(route));
                   if (isCardAdminOnly && session.user.role !== "admin") return null;

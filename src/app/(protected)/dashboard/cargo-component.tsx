@@ -61,49 +61,51 @@ export const CargoComponent = () => {
 
   return (
     <div className="flex flex-col gap-2 py-4 w-full">
-      <p className="font-primary font-bold">Cargos</p>
+      <p className="font-primary font-bold text-lg md:text-xl">Cargos</p>
       <SearchField description="Buscar cargos por nombre" value={search} onSearch={handleSearch} />
 
-      <div className="flex flex-row gap-2 w-full">
-        <div className="flex flex-col gap-2 w-1/2">
-          {loading ? (
-            <p className="py-4 text-subtext0 text-center">Cargando datos...</p>
-          ) : cargos.length === 0 ? (
-            <p className="py-4 text-subtext0 text-center">Aún no existen registros.</p>
-          ) : (
-            <div className="relative sm:rounded-md overflow-x-auto">
-              <table className="w-full text-text text-sm text-left rtl:text-right">
-                <thead className="top-0 z-10 sticky bg-mantle text-xs uppercase">
-                  <tr>
-                    {headColum.map((head, i) => (
-                      <th scope="col" className="px-6 py-3 text-sm" key={i}>
-                        {head}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentCargos.map((cargo) => (
-                    <tr
-                      key={cargo.id}
-                      className={`hover:bg-crust text-xs cursor-pointer ${selectedCargo?.id === cargo.id ? "bg-crust" : ""}`}
-                      onClick={() => setSelectedCargo(cargo)}
-                    >
-                      <td className="px-6 py-3 rounded-s-md">{cargo.id}</td>
-                      <td className="px-6 py-3 rounded-e-md">{cargo.nombre}</td>
+      <div className="flex md:flex-row flex-col gap-2 w-full">
+        <div className="flex xl:flex-row flex-col gap-2 w-full">
+          <div className="flex flex-col gap-2 border-2 border-mantle rounded-md w-full xl:w-1/2">
+            {loading ? (
+              <p className="py-4 text-subtext0 text-center">Cargando datos...</p>
+            ) : cargos.length === 0 ? (
+              <p className="py-4 text-subtext0 text-center">Aún no existen registros.</p>
+            ) : (
+              <div className="relative sm:rounded-md overflow-x-auto">
+                <table className="w-full text-text text-sm text-left rtl:text-right">
+                  <thead className="top-0 z-10 sticky bg-mantle text-xs uppercase">
+                    <tr>
+                      {headColum.map((head, i) => (
+                        <th scope="col" className="px-4 lg:px-6 py-3 text-xs lg:text-sm" key={i}>
+                          {head}
+                        </th>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                  </thead>
+                  <tbody>
+                    {currentCargos.map((cargo) => (
+                      <tr
+                        key={cargo.id}
+                        className={`hover:bg-crust text-xs cursor-pointer ${selectedCargo?.id === cargo.id ? "bg-maroon text-base hover:text-text" : ""}`}
+                        onClick={() => setSelectedCargo(cargo)}
+                      >
+                        <td className="px-4 lg:px-6 py-3 rounded-s-md">{cargo.id}</td>
+                        <td className="px-4 lg:px-6 py-3 rounded-e-md">{cargo.nombre}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
 
-          <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} totalItems={cargos.length} />
-        </div>
+            <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} totalItems={cargos.length} />
+          </div>
 
-        <div className="flex flex-col gap-5 p-4 w-1/2">
-          <CreateCargoComponent onCargoCreated={handleRefresh} setSelectedCargo={setSelectedCargo} />
-          {selectedCargo && <ModifyCargoComponent key={selectedCargo.id} cargo={selectedCargo} onUpdated={handleRefresh} setSelectedCargo={setSelectedCargo} />}
+          <div className="flex flex-col gap-5 p-4 w-full xl:w-1/2">
+            <CreateCargoComponent onCargoCreated={handleRefresh} setSelectedCargo={setSelectedCargo} />
+            {selectedCargo && <ModifyCargoComponent key={selectedCargo.id} cargo={selectedCargo} onUpdated={handleRefresh} setSelectedCargo={setSelectedCargo} />}
+          </div>
         </div>
       </div>
 

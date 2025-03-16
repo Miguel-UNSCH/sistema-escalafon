@@ -6,7 +6,7 @@ import { auth } from "@/auth";
 import { PageContent } from "@/components/page-context";
 
 const pageContent = {
-  title: "información personal",
+  title: "estudios y capacitación",
   description: "En esta sección el usuario podrá registrar las bonificaciones y evaluaciones que realizó a lo largo de su vida.",
   sections: [
     {

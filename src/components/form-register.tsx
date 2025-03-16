@@ -44,7 +44,7 @@ export const RegisterForm = () => {
   };
 
   return (
-    <div className="flex flex-col gap-2 w-1/3">
+    <div className="flex flex-col gap-2 px-2 md:px-2 w-full xl:w-2/3">
       <p className="py-2 font-primary font-semibold text-text text-center uppercase">Registrar nuevo usuario</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

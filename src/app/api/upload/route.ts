@@ -26,7 +26,7 @@ export const POST = async (req: Request) => {
     const extension = path.extname(originalName);
     const name = path.basename(originalName, extension);
 
-    let storagePath = path.join(process.cwd(), "files", category);
+    let storagePath = path.join(process.cwd(), "src/files", category);
     if (category === "data") storagePath = path.join(storagePath, user_id, subfolder);
 
     await fs.mkdir(storagePath, { recursive: true });
@@ -34,7 +34,7 @@ export const POST = async (req: Request) => {
     const newFile = await prisma.file.create({
       data: {
         name,
-        path: `files/${category}${category === "data" ? `/${user_id}/${subfolder}` : ""}`,
+        path: `src/files/${category}${category === "data" ? `/${user_id}/${subfolder}` : ""}`,
         size: file.size,
         extension,
         uploaded_by_id: user_id,

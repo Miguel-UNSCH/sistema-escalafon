@@ -48,3 +48,8 @@ export const fileSchema = z
   .refine((file) => getMimeValues().includes(file.type), {
     message: "Solo se permiten archivos PDF, DOCX, XLSX o JSON.",
   });
+
+export const uploadSchema = z.object({
+  file: fileSchema,
+});
+export type ZUploadS = z.infer<typeof uploadSchema>;

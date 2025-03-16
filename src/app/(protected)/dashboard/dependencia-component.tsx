@@ -60,48 +60,54 @@ export const DependenciaComponent = () => {
 
   return (
     <div className="flex flex-col gap-2 py-4 w-full">
-      <p className="font-primary font-bold">Dependencias</p>
+      <p className="font-primary font-bold text-lg md:text-xl">Dependencias</p>
       <SearchField description="Buscar cargos por nombre o codigo" value={search} onSearch={handleSearch} />
 
-      <div className="flex flex-row gapp-2 w-full">
-        <div className="flex flex-col gap-2 w-2/3">
-          {loading ? (
-            <p className="py-4 text-subtext0 text-center">Cargando datos...</p>
-          ) : dependencias.length === 0 ? (
-            <p className="py-4 text-subtext0 text-center">Aún no existen registros.</p>
-          ) : (
-            <div className="relative sm:rounded-md overflow-x-auto">
-              <table className="w-full text-text text-sm text-left rtl:text-right">
-                <thead className="top-0 z-10 sticky bg-mantle text-xs uppercase">
-                  <tr>
-                    {theadContent.map((thead) => (
-                      <th scope="col" className="px-3 py-3 text-sm" key={thead}>
-                        {thead}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {currentDependencias.map((dependencia) => (
-                    <tr key={dependencia.id} className="hover:bg-crust text-xs cursor-pointer" onClick={() => setSelectedDependencia(dependencia)}>
-                      <td className="px-3 py-3">{dependencia.nombre}</td>
-                      <td className="px-3 py-3">{dependencia.codigo}</td>
-                      <td className="px-3 py-3">{dependencia.direccion}</td>
+      <div className="flex md:flex-row flex-col gap-2 w-full">
+        <div className="flex xl:flex-row flex-col gap-2 w-full">
+          <div className="flex flex-col gap-2 border-2 border-mantle rounded-md w-full xl:w-1/2">
+            {loading ? (
+              <p className="py-4 text-subtext0 text-center">Cargando datos...</p>
+            ) : dependencias.length === 0 ? (
+              <p className="py-4 text-subtext0 text-center">Aún no existen registros.</p>
+            ) : (
+              <div className="relative sm:rounded-md overflow-x-auto">
+                <table className="w-full text-text text-sm text-left rtl:text-right">
+                  <thead className="top-0 z-10 sticky bg-mantle text-xs uppercase">
+                    <tr>
+                      {theadContent.map((thead) => (
+                        <th scope="col" className="px-4 lg:px-6 py-3 text-xs lg:text-sm" key={thead}>
+                          {thead}
+                        </th>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+                  </thead>
+                  <tbody>
+                    {currentDependencias.map((dependencia) => (
+                      <tr
+                        key={dependencia.id}
+                        className={`hover:bg-crust text-xs cursor-pointer ${selectedDependencia?.id === dependencia.id ? "bg-maroon text-base hover:text-text" : ""}`}
+                        onClick={() => setSelectedDependencia(dependencia)}
+                      >
+                        <td className="px-4 lg:px-6 py-3 rounded-s-md">{dependencia.nombre}</td>
+                        <td className="px-4 lg:px-6 py-3 rounded-none">{dependencia.codigo}</td>
+                        <td className="px-4 lg:px-6 py-3 rounded-e-md">{dependencia.direccion}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
 
-          <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} totalItems={dependencias.length} />
-        </div>
+            <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} totalItems={dependencias.length} />
+          </div>
 
-        <div className="flex flex-col gap-5 p-4 w-1/3">
-          <CreateDependencia onDependenciaCreated={handleRefresh} setSelectedDependencia={setSelectedDependencia} />
-          {selectedDependencia && (
-            <ModifyDependencia key={selectedDependencia.id} dependencia={selectedDependencia} onUpdated={handleRefresh} setSelectedDependencia={setSelectedDependencia} />
-          )}
+          <div className="flex flex-col gap-5 p-4 w-full xl:w-1/2">
+            <CreateDependencia onDependenciaCreated={handleRefresh} setSelectedDependencia={setSelectedDependencia} />
+            {selectedDependencia && (
+              <ModifyDependencia key={selectedDependencia.id} dependencia={selectedDependencia} onUpdated={handleRefresh} setSelectedDependencia={setSelectedDependencia} />
+            )}
+          </div>
         </div>
       </div>
 

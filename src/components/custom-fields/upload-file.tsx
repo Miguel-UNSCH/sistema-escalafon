@@ -13,9 +13,18 @@ interface UploadFieldProps {
   disabled?: boolean;
   onFileSelect?: (file: File | null) => void;
   allowedTypes?: string[];
+  showFileName?: boolean;
 }
 
-export const UploadField = ({ control, name, label, disabled = false, onFileSelect, allowedTypes = ["pdf", "doc", "docx", "xls", "xlsx", "json"] }: UploadFieldProps) => {
+export const UploadField = ({
+  control,
+  name,
+  label,
+  disabled = false,
+  onFileSelect,
+  allowedTypes = ["pdf", "doc", "docx", "xls", "xlsx", "json"],
+  showFileName = true,
+}: UploadFieldProps) => {
   const [fileName, setFileName] = useState<string | null>(null);
 
   const generateAcceptString = () => {
@@ -62,7 +71,7 @@ export const UploadField = ({ control, name, label, disabled = false, onFileSele
               {...rest}
             />
           </FormControl>
-          {fileName && <p className="mt-1 text-subtext0 text-sm">Archivo seleccionado: {fileName}</p>}
+          {showFileName && fileName && <p className="mt-1 text-subtext0 text-sm">Archivo seleccionado: {fileName}</p>}
           <FormMessage />
         </FormItem>
       )}
