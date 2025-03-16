@@ -12,15 +12,16 @@ import { Button } from "@/components/ui/button";
 import { uploadSchema, ZUploadS } from "@/lib/zod";
 import { uploadFile } from "@/service/file-service";
 import { UploadField } from "../custom-fields/upload-file";
-import { processFile } from "@/actions/process-file";
+import { ModelType, processFile } from "@/actions/process-file";
 
 type CreateEntityProps = {
   title: string;
   icon: ReactNode;
   buttonText: string;
+  model: ModelType;
 };
 
-export const CreateEntity = ({ title, icon, buttonText }: CreateEntityProps) => {
+export const CreateEntity = ({ title, icon, buttonText, model }: CreateEntityProps) => {
   const [isPending, startTransition] = useTransition();
   const form = useForm<ZUploadS>({
     resolver: zodResolver(uploadSchema),
@@ -45,11 +46,12 @@ export const CreateEntity = ({ title, icon, buttonText }: CreateEntityProps) => 
 
         if (file_id) {
           try {
-            const response = await processFile(file_id, "cargo");
+            const response = await processFile(file_id, model);
 
             if (response.success) {
               toast.success(response.message);
             } else {
+              console.log(response.message);
               toast.error(response.message);
             }
           } catch (e: unknown) {

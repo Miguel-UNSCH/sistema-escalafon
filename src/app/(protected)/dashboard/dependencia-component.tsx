@@ -111,7 +111,7 @@ export const DependenciaComponent = () => {
         </div>
       </div>
 
-      <CreateEntity title="registrar varias dependencias" icon={<Boxes />} buttonText="crear dependencias" />
+      <CreateEntity title="registrar varias dependencias" icon={<Boxes />} buttonText="crear dependencias" model="dependencia" />
     </div>
   );
 };

@@ -109,7 +109,7 @@ export const CargoComponent = () => {
         </div>
       </div>
 
-      <CreateEntity title="registrar varios cargos" icon={<Package />} buttonText="crear cargos" />
+      <CreateEntity title="registrar varios cargos" icon={<Package />} buttonText="crear cargos" model="cargo" />
     </div>
   );
 };

@@ -5,8 +5,7 @@ import path from "path";
 import fs from "fs/promises";
 import { prisma } from "@/config/prisma.config";
 
-// Definir los tipos esperados
-type ModelType = "cargo" | "usuario" | "dependencia";
+export type ModelType = "cargo" | "usuario" | "dependencia";
 
 interface CargoInput {
   nombre: string;
@@ -62,7 +61,7 @@ export const processFile = async (fileId: string, model: ModelType) => {
           last_name: record.last_name?.toUpperCase() || "",
           email: record.email?.toUpperCase() || "",
           password: record.password || "default_password",
-          dni: record.dni || "",
+          dni: record.dni.toString() || "",
         })
       );
     } else if (model === "dependencia") {
