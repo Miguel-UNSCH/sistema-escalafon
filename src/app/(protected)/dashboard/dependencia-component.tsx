@@ -5,11 +5,11 @@ import { SearchField } from "@/components/custom-fields/search-field";
 import { CreateDependencia } from "@/components/others/create-dependencia";
 import { CreateEntity } from "@/components/others/create-entity";
 import { ModifyDependencia } from "@/components/others/modify-dependencia";
-import { Pagination } from "@/components/pagination";
+import { Table } from "@/components/others/table-dependencia";
 import { Dependencia } from "@prisma/client";
 import { debounce } from "lodash";
 import { Boxes } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import toast from "react-hot-toast";
 
 export const DependenciaComponent = () => {
@@ -18,100 +18,56 @@ export const DependenciaComponent = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [search, setSearch] = useState<string>("");
 
-  const fnDependencias = async (search: string) => {
+  const fetchDependencias = async (query: string) => {
     setLoading(true);
     try {
-      const response = await getDependencias(search);
+      const response = await getDependencias(query);
       if (response.success && response.data) {
         setDependencias(response.data);
       } else {
         toast.error(response.message || "No se pudieron obtener las dependencias.");
       }
-    } catch (error) {
+    } catch {
       toast.error("Error al obtener las dependencias.");
     } finally {
       setLoading(false);
     }
   };
 
-  const debouncedFnDependencias = debounce(fnDependencias, 500);
+  const debouncedFetchDependencias = useCallback(debounce(fetchDependencias, 500), []);
 
   const handleSearch = (query: string) => {
     setSearch(query);
-    debouncedFnDependencias(query);
+    debouncedFetchDependencias(query);
   };
 
   useEffect(() => {
-    fnDependencias("");
+    fetchDependencias("");
   }, []);
 
   const handleRefresh = () => {
     setSearch("");
-    fnDependencias("");
+    fetchDependencias("");
     setSelectedDependencia(null);
   };
-
-  const theadContent = ["nombre", "codigo", "direccion"];
-
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const itemsPerPage = 10;
-  const totalPages = Math.ceil(dependencias.length / itemsPerPage);
-  const currentDependencias = dependencias.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
     <div className="flex flex-col gap-2 py-4 w-full">
       <p className="font-primary font-bold text-lg md:text-xl">Dependencias</p>
-      <SearchField description="Buscar cargos por nombre o codigo" value={search} onSearch={handleSearch} />
+      <SearchField description="Buscar dependencias por nombre o código" value={search} onSearch={handleSearch} />
 
-      <div className="flex md:flex-row flex-col gap-2 w-full">
-        <div className="flex xl:flex-row flex-col gap-2 w-full">
-          <div className="flex flex-col gap-2 border-2 border-mantle rounded-md w-full xl:w-1/2">
-            {loading ? (
-              <p className="py-4 text-subtext0 text-center">Cargando datos...</p>
-            ) : dependencias.length === 0 ? (
-              <p className="py-4 text-subtext0 text-center">Aún no existen registros.</p>
-            ) : (
-              <div className="relative sm:rounded-md overflow-x-auto">
-                <table className="w-full text-text text-sm text-left rtl:text-right">
-                  <thead className="top-0 z-10 sticky bg-mantle text-xs uppercase">
-                    <tr>
-                      {theadContent.map((thead) => (
-                        <th scope="col" className="px-4 lg:px-6 py-3 text-xs lg:text-sm" key={thead}>
-                          {thead}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {currentDependencias.map((dependencia) => (
-                      <tr
-                        key={dependencia.id}
-                        className={`hover:bg-crust text-xs cursor-pointer ${selectedDependencia?.id === dependencia.id ? "bg-maroon text-base hover:text-text" : ""}`}
-                        onClick={() => setSelectedDependencia(dependencia)}
-                      >
-                        <td className="px-4 lg:px-6 py-3 rounded-s-md">{dependencia.nombre}</td>
-                        <td className="px-4 lg:px-6 py-3 rounded-none">{dependencia.codigo}</td>
-                        <td className="px-4 lg:px-6 py-3 rounded-e-md">{dependencia.direccion}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
+      <div className="flex xl:flex-row flex-col gap-2 w-full">
+        <Table loading={loading} dependencias={dependencias} selectedDependencia={selectedDependencia} setSelectedDependencia={setSelectedDependencia} />
 
-            <Pagination currentPage={currentPage} totalPages={totalPages} setCurrentPage={setCurrentPage} totalItems={dependencias.length} />
-          </div>
-
-          <div className="flex flex-col gap-5 p-4 w-full xl:w-1/2">
-            <CreateDependencia onDependenciaCreated={handleRefresh} setSelectedDependencia={setSelectedDependencia} />
-            {selectedDependencia && (
-              <ModifyDependencia key={selectedDependencia.id} dependencia={selectedDependencia} onUpdated={handleRefresh} setSelectedDependencia={setSelectedDependencia} />
-            )}
-          </div>
+        <div className="flex flex-col gap-5 p-4 w-full xl:w-1/2">
+          <CreateDependencia onDependenciaCreated={handleRefresh} setSelectedDependencia={setSelectedDependencia} />
+          {selectedDependencia && (
+            <ModifyDependencia key={selectedDependencia.id} dependencia={selectedDependencia} onUpdated={handleRefresh} setSelectedDependencia={setSelectedDependencia} />
+          )}
         </div>
       </div>
 
-      <CreateEntity title="registrar varias dependencias" icon={<Boxes />} buttonText="crear dependencias" model="dependencia" />
+      <CreateEntity title="Registrar varias dependencias" icon={<Boxes />} buttonText="Crear Dependencias" model="dependencia" />
     </div>
   );
 };

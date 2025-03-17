@@ -74,7 +74,6 @@ export const createPersonal = async (data: ZPersonal): Promise<{ success: boolea
 
 export const updatePersonal = async (data: ZPersonal & Personal): Promise<{ success: boolean; message: string }> => {
   try {
-    console.log(data);
     const session = await auth();
     if (!session || !session?.user?.email) throw new Error("No autorizado");
 

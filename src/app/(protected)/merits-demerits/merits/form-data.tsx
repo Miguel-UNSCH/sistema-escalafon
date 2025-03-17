@@ -62,7 +62,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchMeritos }) => {
 
   return (
     <div className="flex flex-col gap-5 w-full">
-      <p className="font-primary font-semibold uppercase">Registrar</p>
+      <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <DateField control={form.control} name="fecha" label="Fecha de la bonificacion" disabled={false} />

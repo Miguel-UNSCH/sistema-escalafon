@@ -15,7 +15,7 @@ export const Pagination = ({
   setCurrentPage: Dispatch<SetStateAction<number>>;
 }) => {
   return (
-    <nav className="flex flex-wrap justify-between items-center p-4">
+    <nav className="flex flex-wrap justify-between items-center p-4 border-mantle border-t-2">
       <span className="flex gap-2 text-subtext0 text-sm">
         Mostrando
         <span className="font-semibold text-subtext1">

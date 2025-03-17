@@ -3,7 +3,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/config/prisma.config";
 import { ZDemerito, ZMerito } from "@/lib/schemas/m-d-schema";
-import { Prisma, User } from "@prisma/client";
+import { demerito, merito, Prisma, User } from "@prisma/client";
 
 export type meritoRecord = Prisma.meritoGetPayload<{ include: { cargo: true; dependencia: true } }>;
 export type demeritoRecord = Prisma.demeritoGetPayload<{ include: { cargo: true; dependencia: true; user: true } }>;
@@ -47,8 +47,42 @@ export const getDemeritos = async (): Promise<{ success: boolean; message?: stri
   }
 };
 
-// export const getMerito = async (id: string): Promise<{ success: boolean; message?: string; data?: merito }> => {};
-// export const getDemerito = async (id: string): Promise<{ success: boolean; message?: string; data?: demerito }> => {};
+export const getMerito = async (id: string): Promise<{ success: boolean; message?: string; data?: merito }> => {
+  try {
+    const session = await auth();
+    if (!session?.user?.email) throw new Error("No autorizado");
+
+    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    if (!user) throw new Error("Usuario no encontrado");
+
+    const response: merito | null = await prisma.merito.findUnique({ where: { id } });
+    if (!response) throw new Error("Merito no encontrado");
+
+    return { success: true, message: "Merito encontrado", data: response };
+  } catch (error: unknown) {
+    let errorMessage = "Error al obtener el bono personal";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
+  }
+};
+export const getDemerito = async (id: string): Promise<{ success: boolean; message?: string; data?: demerito }> => {
+  try {
+    const session = await auth();
+    if (!session?.user?.email) throw new Error("No autorizado");
+
+    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    if (!user) throw new Error("Usuario no encontrado");
+
+    const response: demerito | null = await prisma.demerito.findUnique({ where: { id } });
+    if (!response) throw new Error("Demerito no encontrado");
+
+    return { success: true, message: "Demerito encontrado", data: response };
+  } catch (error: unknown) {
+    let errorMessage = "Error al obtener el bono personal";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
+  }
+};
 
 export const createMerito = async (data: ZMerito & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
