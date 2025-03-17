@@ -1,6 +1,6 @@
 "use client";
 
-import { createMerito } from "@/actions/m-d-action";
+import { createMerito, meritoRecord } from "@/actions/m-d-action";
 import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
 import { DependenciaField } from "@/components/custom-fields/dependencia-field";
@@ -15,11 +15,12 @@ import React, { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-type FormDataProps = {
-  fetchMeritos: () => void;
+type CreateProps = {
+  onMeritoCreated: () => void;
+  setSelectedMerito: React.Dispatch<React.SetStateAction<meritoRecord | null>>;
 };
 
-export const FormData: React.FC<FormDataProps> = ({ fetchMeritos }) => {
+export const Create: React.FC<CreateProps> = ({ onMeritoCreated, setSelectedMerito }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
@@ -51,7 +52,8 @@ export const FormData: React.FC<FormDataProps> = ({ fetchMeritos }) => {
         else {
           toast.success("Mérito registrado exitosamente.");
           form.reset();
-          fetchMeritos();
+          onMeritoCreated();
+          setSelectedMerito(null);
         }
         // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
