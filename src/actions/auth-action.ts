@@ -37,6 +37,7 @@ export const registerAction = async (values: ZRegisterS) => {
       data: {
         name: data.name.toUpperCase(),
         last_name: data.lastName.toUpperCase(),
+        modification_end_time: new Date(Date.now() + 1 * 60 * 1000),
         dni: data.dni,
         email: data.email.toUpperCase(),
         password,

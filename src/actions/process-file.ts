@@ -17,6 +17,7 @@ interface UsuarioInput {
   email: string;
   password: string;
   dni: string;
+  modification_end_time: Date;
 }
 
 interface DependenciaInput {
@@ -62,6 +63,7 @@ export const processFile = async (fileId: string, model: ModelType) => {
           email: record.email?.toUpperCase() || "",
           password: record.password || "default_password",
           dni: record.dni.toString() || "",
+          modification_end_time: new Date(Date.now() + 1 * 60 * 1000), // 🔹 Agregado aquí
         })
       );
     } else if (model === "dependencia") {
@@ -79,6 +81,7 @@ export const processFile = async (fileId: string, model: ModelType) => {
     if (model === "cargo") {
       await prisma.cargo.createMany({ data: formattedRecords, skipDuplicates: true });
     } else if (model === "usuario") {
+      console.log({ data: { ...formattedRecords, modification_end_time: new Date(Date.now() + 1 * 60 * 1000) }, skipDuplicates: true });
       await prisma.user.createMany({ data: formattedRecords, skipDuplicates: true });
     } else if (model === "dependencia") {
       await prisma.dependencia.createMany({ data: formattedRecords, skipDuplicates: true });
