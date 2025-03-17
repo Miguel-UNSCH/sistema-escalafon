@@ -1,4 +1,3 @@
-// eslint-disable no-console
 "use client";
 
 import React, { useEffect, useState, useTransition } from "react";
@@ -9,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Session } from "next-auth";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { createPersonal, getCurrentPersonal } from "@/actions/personal-action";
+import { createPersonal, getCurrentPersonal, updatePersonal } from "@/actions/personal-action";
 import { DateField } from "@/components/custom-fields/date-field";
 import { InputField } from "@/components/custom-fields/input-field";
 import { SelectField } from "@/components/custom-fields/select-field";
@@ -20,9 +19,11 @@ import { estadoCivilOp, grupoSanguineoOp, regimenPensionarioOp, sexoOp, situacio
 import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DependenciaField } from "@/components/custom-fields/dependencia-field";
 import toast from "react-hot-toast";
+import { Personal } from "@prisma/client";
 
 export const FormData = ({ session }: { session: Session }) => {
   const [isPending, startTransition] = useTransition();
+  const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const form = useForm<ZPersonal>({
@@ -57,9 +58,12 @@ export const FormData = ({ session }: { session: Session }) => {
         const response = await getCurrentPersonal(session.user.email);
 
         if (response.success && response.data) {
+          setIsEditing(true);
           const sanitizedData = {
             ...response.data,
             licencia_conducir: response.data.licencia_conducir || "",
+            fecha_ingreso: response.data.fecha_ingreso.toISOString(),
+            fecha_nacimiento: response.data.fecha_nacimiento.toISOString(),
             dependencia: {
               ...response.data.dependencia,
               direccion: response.data.dependencia?.direccion ?? undefined,
@@ -67,7 +71,6 @@ export const FormData = ({ session }: { session: Session }) => {
           };
           form.reset(sanitizedData);
         }
-        // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
         toast.error("Error al cargar los datos del personal.");
       } finally {
@@ -81,17 +84,15 @@ export const FormData = ({ session }: { session: Session }) => {
   const onSubmit = (data: ZPersonal) => {
     startTransition(async () => {
       try {
-        const result = await createPersonal(data);
+        const result = isEditing ? await updatePersonal(data as ZPersonal & Personal) : await createPersonal(data);
 
-        if (!result.success) toast.error(result.message);
-        else {
-          form.reset();
-          toast.success("Cónyuge registrado exitosamente.");
+        if (!result.success) {
+          toast.error(result.message);
+        } else {
+          toast.success(isEditing ? "Personal actualizado exitosamente." : "Personal registrado exitosamente.");
         }
-
-        // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
-        toast.error("Error al registrar el cónyuge.");
+        toast.error("Error al procesar la información.");
       }
     });
   };
@@ -150,9 +151,9 @@ export const FormData = ({ session }: { session: Session }) => {
             <SelectField control={form.control} name="estado_civil" label="Estado civil *" options={estadoCivilOp} disabled={false} />
             <SwitchField control={form.control} name="discapacidad" label="Discapacidad *" description="Presenta algun tipo de discapacidad." disabled={false} />
             <div className="flex justify-end">
-              <Button type="submit" onClick={() => console.log(form)} disabled={isPending} className="flex flex-row items-center gap-2">
+              <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
                 <Save />
-                {isPending ? "Guardando..." : "Registrar"}
+                {isPending ? "Guardando..." : isEditing ? "Actualizar" : "Registrar"}
               </Button>
             </div>
           </form>
