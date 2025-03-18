@@ -52,7 +52,7 @@ export const createRenuncia = async (data: ZRenunciaS & { file_id: string }): Pr
       data: {
         user_id: user.id,
         motivo: data.motivo.toUpperCase(),
-        fecha: new Date(data.fecha).toISOString(),
+        fecha: data.fecha,
         cargo_id: cargo.id,
         dependencia_id: dependencia.id,
         file_id: file.id,

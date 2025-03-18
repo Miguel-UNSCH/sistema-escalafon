@@ -2,22 +2,22 @@
 
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { TableData } from "./table-data";
-import { FormData } from "./form-data";
 import { evaluationRecord, getEvaluations } from "@/actions/evaluation-action";
+import { Table } from "./table-data";
+import { Create } from "./form-data";
+import { Modify } from "./modify-data";
 
 export const ContentData = () => {
   const [evaluations, setEvaluations] = useState<evaluationRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedEvaluation, setSelectedEvaluation] = useState<evaluationRecord | null>(null);
 
-  const fetchEvaluations = async () => {
+  const fnEvaluations = async () => {
     setLoading(true);
     try {
       const response = await getEvaluations();
-      if (response.success && response.data) {
-        setEvaluations(response.data);
-        toast.success("Tabla actualizada correctamente.");
-      } else toast.error(response.message || "No se pudieron obtener las evaluaciones.");
+      if (response.success && response.data) setEvaluations(response.data);
+      else toast.error(response.message || "No se pudieron obtener las evaluaciones.");
 
       // eslint-disable-next-line no-unused-vars
     } catch (e: unknown) {
@@ -28,14 +28,25 @@ export const ContentData = () => {
   };
 
   useEffect(() => {
-    fetchEvaluations();
+    fnEvaluations();
   }, []);
 
+  const handleRefresh = () => {
+    fnEvaluations();
+    setSelectedEvaluation(null);
+  };
+
   return (
-    <div className="flex flex-col gap-5 p-2 w-4/5">
+    <div className="flex flex-col gap-5 mx-auto p-2 w-full max-w-5xl">
       <p className="font-primary font-semibold text-2xl text-center uppercase">Evaluaciones</p>
-      <TableData evaluations={evaluations} loading={loading} />
-      <FormData fetchEvaluations={fetchEvaluations} />
+      {evaluations.length ? (
+        <Table items={evaluations} loading={loading} selectedItem={selectedEvaluation} setSelectedItem={setSelectedEvaluation} />
+      ) : (
+        <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
+      )}
+
+      {selectedEvaluation && <Modify item={selectedEvaluation} onUpdated={handleRefresh} setSelectedItem={setSelectedEvaluation} />}
+      <Create onCreated={handleRefresh} setSelectedItem={setSelectedEvaluation} />
     </div>
   );
 };

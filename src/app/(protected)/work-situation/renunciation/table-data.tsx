@@ -1,6 +1,5 @@
 "use client";
 
-import toast from "react-hot-toast";
 import React, { useEffect, useMemo, useState } from "react";
 import { getFile } from "@/actions/file-action";
 import { Pagination } from "@/components/pagination";
