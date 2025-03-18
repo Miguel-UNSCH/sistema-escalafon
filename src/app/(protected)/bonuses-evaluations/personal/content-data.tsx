@@ -2,22 +2,22 @@
 
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { TableData } from "./table-data";
-import { FormData } from "./form-data";
 import { bonusPersonalRecord, getBonusesPer } from "@/actions/bonus_per-action";
+import { Table } from "./table-data";
+import { Create } from "./form-data";
+import { Modify } from "./modify-data";
 
 export const ContentData = () => {
   const [bonuses, setBonuses] = useState<bonusPersonalRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedBonus, setSelectedBonus] = useState<bonusPersonalRecord | null>(null);
 
-  const fetchBonuses = async () => {
+  const fnBonuses = async () => {
     setLoading(true);
     try {
       const response = await getBonusesPer();
-      if (response.success && response.data) {
-        setBonuses(response.data);
-        toast.success("Tabla actualizada correctamente.");
-      } else toast.error(response.message || "No se pudieron obtener los bonos personales.");
+      if (response.success && response.data) setBonuses(response.data);
+      else toast.error(response.message || "No se pudieron obtener los bonos personales.");
 
       // eslint-disable-next-line no-unused-vars
     } catch (e: unknown) {
@@ -28,14 +28,25 @@ export const ContentData = () => {
   };
 
   useEffect(() => {
-    fetchBonuses();
+    fnBonuses();
   }, []);
 
+  const handleRefresh = () => {
+    fnBonuses();
+    setSelectedBonus(null);
+  };
+
   return (
-    <div className="flex flex-col gap-5 p-2 w-4/5">
-      <p className="font-primary font-semibold text-2xl text-center uppercase">Bonificación Personal</p>
-      <TableData bonuses={bonuses} loading={loading} />
-      <FormData fetchBonuses={fetchBonuses} />
+    <div className="flex flex-col gap-5 mx-auto p-2 w-full max-w-5xl">
+      <p className="font-primary font-semibold text-2xl text-center uppercase">Bonificacion Personal</p>
+      {bonuses.length ? (
+        <Table items={bonuses} loading={loading} selectedItem={selectedBonus} setSelectedItem={setSelectedBonus} />
+      ) : (
+        <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
+      )}
+
+      {selectedBonus && <Modify item={selectedBonus} onUpdated={handleRefresh} setSelectedItem={setSelectedBonus} />}
+      <Create onCreated={handleRefresh} setSelectedItem={setSelectedBonus} />
     </div>
   );
 };

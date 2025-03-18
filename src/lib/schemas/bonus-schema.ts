@@ -11,7 +11,7 @@ export const bonusPersonalSchema = z.object({
     .transform((date) => new Date(date)),
   cargo: cargoSchema,
   dependencia: dependenciaSchema,
-  file: fileSchema,
+  file: fileSchema.optional(),
 });
 export type ZBonusPersonal = z.infer<typeof bonusPersonalSchema>;
 

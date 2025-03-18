@@ -38,7 +38,7 @@ export const ContentData = () => {
 
   return (
     <div className="flex flex-col gap-5 mx-auto p-2 w-full max-w-5xl">
-      <p className="font-primary font-semibold text-2xl text-center uppercase">Evaluaciones</p>
+      <p className="font-primary font-semibold text-2xl text-center uppercase">Bonificacion Familiar</p>
       {bonuses.length ? (
         <Table items={bonuses} loading={loading} selectedItem={selectedBonus} setSelectedItem={setSelectedBonus} />
       ) : (
