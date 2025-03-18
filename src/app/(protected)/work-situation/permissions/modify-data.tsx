@@ -1,25 +1,27 @@
 "use client";
 
-import { bonusPersonalRecord, deleteBonusPer, updateBonusPer } from "@/actions/bonus_per-action";
+import { PerLicVacRecord } from "./content-data";
 import { getFile } from "@/actions/file-action";
 import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
 import { DependenciaField } from "@/components/custom-fields/dependencia-field";
-import { InputField } from "@/components/custom-fields/input-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import { bonusPersonalSchema, ZBonusPersonal } from "@/lib/schemas/bonus-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Download, Save, Trash } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { per_lic_vacSchema, ZPerLicVacS } from "@/lib/schemas/w-situation-schema";
+import { deletePerLicVac, updatePerLicVac } from "@/actions/per-lic-vac-action";
+import { tipoPermisoLicenciaVacacionOp } from "@/utils/options";
+import { SelectField } from "@/components/custom-fields/select-field";
 
 type ModifyProps = {
-  item: bonusPersonalRecord;
+  item: PerLicVacRecord;
   onUpdated: () => void;
-  setSelectedItem: React.Dispatch<React.SetStateAction<bonusPersonalRecord | null>>;
+  setSelectedItem: React.Dispatch<React.SetStateAction<PerLicVacRecord | null>>;
 };
 
 export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem }) => {
@@ -37,23 +39,22 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
 
   const defaultValues = {
     tipo: item.tipo,
-    resolucion_bonus: item.resolucion_bonus,
-    fecha: item.fecha.toISOString().split("")[0],
+    periodo: { from: item.periodo.from, to: item.periodo.from },
     cargo: { nombre: item.cargo.nombre },
     dependencia: { nombre: item.dependencia.nombre, codigo: item.dependencia.codigo, direccion: item.dependencia.direccion },
     file: undefined,
   };
 
-  const form = useForm<ZBonusPersonal>({ resolver: zodResolver(bonusPersonalSchema), defaultValues: defaultValues as any });
+  const form = useForm<ZPerLicVacS>({ resolver: zodResolver(per_lic_vacSchema), defaultValues: defaultValues as any });
 
-  const onUpdate = async (data: ZBonusPersonal) => {
+  const onUpdate = async (data: ZPerLicVacS) => {
     startTransition(async () => {
       try {
         const updateData = { ...data };
 
         if (isChangingFile && data.file) updateData.file = data.file;
 
-        const response = await updateBonusPer(item.id, updateData);
+        const response = await updatePerLicVac(item.id, updateData);
         if (!response.success) toast.error(response.message);
         else {
           toast.success("Actualizacion exitosa.");
@@ -70,7 +71,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
   const onDelete = () => {
     startTransition(async () => {
       try {
-        const response = await deleteBonusPer(item.id, item.file_id);
+        const response = await deletePerLicVac(item.id, item.file_id);
         if (!response.success) toast.error(response.message);
         else {
           toast.success("Eliminacion exitosa.");
@@ -89,10 +90,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
       <p className="font-primary font-bold text-mauve text-xl uppercase">Modificar Merito</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
-          <InputField control={form.control} name="tipo" label="Tipo *" placeholder="Ingrese el tipo de bonificacion familiar" />
-          <InputField control={form.control} name="resolucion_bonus" label="Resolucion Bonus *" placeholder="Ingrese la resolucion" />
-
-          <DateField control={form.control} name="fecha" label="Fecha de la bonificacion" disabled={false} />
+          <SelectField control={form.control} name="tipo" label="Tipo de Permiso / Licencia / Vacacion *" options={tipoPermisoLicenciaVacacionOp} />
 
           <CargoField control={form.control} name="cargo.nombre" />
 
@@ -101,6 +99,11 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
             <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
               <DependenciaField control={form.control} />
             </div>
+          </div>
+
+          <div className="gap-4 grid grid-cols-2">
+            <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={false} />
+            <DateField control={form.control} name="periodo.to" label="Fecha de culminacion" disabled={false} />
           </div>
 
           {fileUrl && !isChangingFile ? (

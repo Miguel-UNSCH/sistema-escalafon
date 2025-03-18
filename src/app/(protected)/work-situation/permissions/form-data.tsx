@@ -16,13 +16,19 @@ import { Save } from "lucide-react";
 import React, { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { PerLicVacRecord } from "./content-data";
 
 type FormDataProps = {
   fetchPerLicVacs: () => void;
 };
+type CreateProps = {
+  onCreated: () => void;
+  setSelectedItem: React.Dispatch<React.SetStateAction<PerLicVacRecord | null>>;
+};
 
-export const FormData: React.FC<FormDataProps> = ({ fetchPerLicVacs }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) => {
   const [isPending, startTransition] = useTransition();
+
   const defaultValues = {
     tipo: undefined,
     periodo: { from: undefined, to: undefined },
@@ -53,7 +59,8 @@ export const FormData: React.FC<FormDataProps> = ({ fetchPerLicVacs }) => {
         else {
           toast.success("Registro guardado exitosamente.");
           form.reset();
-          fetchPerLicVacs();
+          onCreated();
+          setSelectedItem(null);
         }
         // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
@@ -64,7 +71,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchPerLicVacs }) => {
 
   return (
     <div className="flex flex-col gap-5 w-full">
-      <p className="font-primary font-semibold uppercase">Registrar</p>
+      <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <SelectField control={form.control} name="tipo" label="Tipo de Permiso / Licencia / Vacacion *" options={tipoPermisoLicenciaVacacionOp} />
@@ -73,7 +80,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchPerLicVacs }) => {
 
           <div className="flex flex-col gap-2">
             <p className="font-primary font-semibold text-md">Dependencia</p>
-            <div className="gap-2 grid grid-cols-3">
+            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
               <DependenciaField control={form.control} />
             </div>
           </div>

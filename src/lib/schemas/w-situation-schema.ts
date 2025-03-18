@@ -70,7 +70,7 @@ export const per_lic_vacSchema = z.object({
   periodo: periodoSchema,
   cargo: cargoSchema,
   dependencia: dependenciaSchema,
-  file: fileSchema,
+  file: fileSchema.optional(),
 });
 export type ZPerLicVacS = z.infer<typeof per_lic_vacSchema>;
 
