@@ -3,7 +3,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/config/prisma.config";
 import { ZDemerito, ZMerito } from "@/lib/schemas/m-d-schema";
-import { demerito, merito, Prisma, User } from "@prisma/client";
+import { Prisma, User } from "@prisma/client";
 import fs from "fs/promises";
 import path from "path";
 
@@ -44,43 +44,6 @@ export const getDemeritos = async (): Promise<{ success: boolean; message?: stri
     return { success: true, message: `Se encontraron ${response.length + 1} elementos`, data: response };
   } catch (error: unknown) {
     let errorMessage = "Error al obtener los bonos familiares";
-    if (error instanceof Error) errorMessage = error.message;
-    return { success: false, message: errorMessage };
-  }
-};
-
-export const getMerito = async (id: string): Promise<{ success: boolean; message?: string; data?: merito }> => {
-  try {
-    const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
-
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
-    if (!user) throw new Error("Usuario no encontrado");
-
-    const response: merito | null = await prisma.merito.findUnique({ where: { id } });
-    if (!response) throw new Error("Merito no encontrado");
-
-    return { success: true, message: "Merito encontrado", data: response };
-  } catch (error: unknown) {
-    let errorMessage = "Error al obtener el bono personal";
-    if (error instanceof Error) errorMessage = error.message;
-    return { success: false, message: errorMessage };
-  }
-};
-export const getDemerito = async (id: string): Promise<{ success: boolean; message?: string; data?: demerito }> => {
-  try {
-    const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
-
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
-    if (!user) throw new Error("Usuario no encontrado");
-
-    const response: demerito | null = await prisma.demerito.findUnique({ where: { id } });
-    if (!response) throw new Error("Demerito no encontrado");
-
-    return { success: true, message: "Demerito encontrado", data: response };
-  } catch (error: unknown) {
-    let errorMessage = "Error al obtener el bono personal";
     if (error instanceof Error) errorMessage = error.message;
     return { success: false, message: errorMessage };
   }
@@ -160,10 +123,7 @@ export const createDemerito = async (data: ZDemerito & { file_id: string }): Pro
 
 export const updateMerito = async (id: string, data: ZMerito & { file?: File | null; file_id?: string }): Promise<{ success: boolean; message: string }> => {
   try {
-    const currentMerito = await prisma.merito.findUnique({
-      where: { id },
-      include: { file: true },
-    });
+    const currentMerito = await prisma.merito.findUnique({ where: { id }, include: { file: true } });
     if (!currentMerito || !currentMerito.file) throw new Error("Mérito o archivo no encontrado");
 
     const cargo = await prisma.cargo.findUnique({ where: { nombre: data.cargo.nombre } });

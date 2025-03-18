@@ -37,7 +37,7 @@ export const renunciaSchema = z.object({
     .transform((date) => new Date(date)),
   cargo: cargoSchema,
   dependencia: dependenciaSchema,
-  file: fileSchema,
+  file: fileSchema.optional(),
 });
 export type ZRenunciaS = z.infer<typeof renunciaSchema>;
 

@@ -503,7 +503,7 @@ model renuncia {
 
   cargo       Cargo       @relation(fields: [cargo_id], references: [id], onDelete: Restrict)
   dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
-  file        File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
+  file        File        @relation(fields: [file_id], references: [id])
   user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@unique([user_id, file_id])
