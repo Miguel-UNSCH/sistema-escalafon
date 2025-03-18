@@ -5,8 +5,8 @@ import { prisma } from "@/config/prisma.config";
 import { ZAscensoS } from "@/lib/schemas/w-situation-schema";
 import { Prisma, User } from "@prisma/client";
 
-export type ascensoRecord = Prisma.ascensoGetPayload<{ include: { current_cargo: true; current_dependencia: true; new_cargo: true; new_dependencia: true } }>;
-export const getAscensos = async (): Promise<{ success: boolean; message?: string; data?: Array<ascensoRecord> }> => {
+export type ascensoRecord = Prisma.ascensoGetPayload<{ include: { current_cargo: true; current_dependencia: true; new_cargo: true; new_dependencia: true; file: true } }>;
+export const getAscensos = async (): Promise<{ success: boolean; message?: string; data?: ascensoRecord[] }> => {
   try {
     const session = await auth();
     if (!session?.user?.email) throw new Error("No autorizado");
@@ -16,19 +16,17 @@ export const getAscensos = async (): Promise<{ success: boolean; message?: strin
 
     const response: ascensoRecord[] | null = await prisma.ascenso.findMany({
       where: { user_id: user.id },
-      include: { current_cargo: true, current_dependencia: true, new_cargo: true, new_dependencia: true },
+      include: { current_cargo: true, current_dependencia: true, new_cargo: true, new_dependencia: true, file: true },
     });
     if (!response) throw new Error("No hay ascensos registrados");
 
-    return { success: true, message: `Se encontraron ${response.length} elementos`, data: response };
+    return { success: true, data: response };
   } catch (error: unknown) {
     let errorMessage = "Error al obtener los ascensos";
     if (error instanceof Error) errorMessage = error.message;
     return { success: false, message: errorMessage };
   }
 };
-
-// export const getAscenso = async (id: string): Promise<{ success: boolean; message?: string; data?: ascenso }> => {};
 
 export const createAscenso = async (data: ZAscensoS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {

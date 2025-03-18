@@ -18,9 +18,6 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { PerLicVacRecord } from "./content-data";
 
-type FormDataProps = {
-  fetchPerLicVacs: () => void;
-};
 type CreateProps = {
   onCreated: () => void;
   setSelectedItem: React.Dispatch<React.SetStateAction<PerLicVacRecord | null>>;

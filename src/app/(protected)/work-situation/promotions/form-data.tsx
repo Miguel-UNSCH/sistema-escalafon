@@ -1,5 +1,5 @@
 "use client";
-import { createAscenso } from "@/actions/ascenso-action";
+import { ascensoRecord, createAscenso } from "@/actions/ascenso-action";
 import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
 import { DependenciaField } from "@/components/custom-fields/dependencia-field";
@@ -15,12 +15,14 @@ import React, { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-type FormDataProps = {
-  fetchAscensos: () => void;
+type CreateProps = {
+  onCreated: () => void;
+  setSelectedItem: React.Dispatch<React.SetStateAction<ascensoRecord | null>>;
 };
 
-export const FormData: React.FC<FormDataProps> = ({ fetchAscensos }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) => {
   const [isPending, startTransition] = useTransition();
+
   const defaultValues = {
     resolucion_ascenso: "",
     nivel_remunerativo: "",
@@ -54,7 +56,8 @@ export const FormData: React.FC<FormDataProps> = ({ fetchAscensos }) => {
         else {
           toast.success("Ascenso registrado exitosamente.");
           form.reset();
-          fetchAscensos();
+          onCreated();
+          setSelectedItem(null);
         }
         // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
@@ -65,7 +68,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchAscensos }) => {
 
   return (
     <div className="flex flex-col gap-5 w-full">
-      <p className="font-primary font-semibold uppercase">Registrar</p>
+      <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <div className="gap-2 grid grid-cols-2">
@@ -85,14 +88,14 @@ export const FormData: React.FC<FormDataProps> = ({ fetchAscensos }) => {
 
           <div className="flex flex-col gap-2">
             <p className="font-primary font-semibold text-md">Dependencia Actual</p>
-            <div className="gap-2 grid grid-cols-3">
+            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
               <DependenciaField control={form.control} name="current_dependencia" />
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
             <p className="font-primary font-semibold text-md">Nueva Dependencia</p>
-            <div className="gap-2 grid grid-cols-3">
+            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
               <DependenciaField control={form.control} name="new_dependencia" />
             </div>
           </div>
