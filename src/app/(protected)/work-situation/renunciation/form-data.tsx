@@ -1,6 +1,6 @@
 "use client";
 
-import { createRenuncia } from "@/actions/renuncia-action";
+import { createRenuncia, renunciaRecord } from "@/actions/renuncia-action";
 import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
 import { DependenciaField } from "@/components/custom-fields/dependencia-field";
@@ -16,11 +16,12 @@ import React, { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-type FormDataProps = {
-  fetchRenuncias: () => void;
+type CreateProps = {
+  onRenunciaCreated: () => void;
+  setSelectedRenuncia: React.Dispatch<React.SetStateAction<renunciaRecord | null>>;
 };
 
-export const FormData: React.FC<FormDataProps> = ({ fetchRenuncias }) => {
+export const Create: React.FC<CreateProps> = ({ onRenunciaCreated, setSelectedRenuncia }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
@@ -53,7 +54,8 @@ export const FormData: React.FC<FormDataProps> = ({ fetchRenuncias }) => {
         else {
           toast.success("Renuncia registrada exitosamente.");
           form.reset();
-          fetchRenuncias();
+          onRenunciaCreated();
+          setSelectedRenuncia(null);
         }
         // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
@@ -64,17 +66,18 @@ export const FormData: React.FC<FormDataProps> = ({ fetchRenuncias }) => {
 
   return (
     <div className="flex flex-col gap-5 w-full">
+      <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <InputField control={form.control} name="motivo" label="Motivo de Renuncia*" placeholder="Ingrese la resolucion del motivo de la renuncia" />
 
-          <DateField control={form.control} name="fecha" label="Fecha de la Renuncia" disabled={false} />
+          <DateField control={form.control} name="fecha" label="Fecha de la bonificacion" disabled={false} />
 
           <CargoField control={form.control} name="cargo.nombre" />
 
           <div className="flex flex-col gap-2">
             <p className="font-primary font-semibold text-md">Dependencia</p>
-            <div className="gap-2 grid grid-cols-3">
+            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
               <DependenciaField control={form.control} />
             </div>
           </div>

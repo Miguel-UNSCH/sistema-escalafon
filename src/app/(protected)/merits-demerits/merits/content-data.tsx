@@ -16,11 +16,8 @@ export const ContentData = () => {
     setLoading(true);
     try {
       const response = await getMeritos();
-      if (response.success && response.data) {
-        setMeritos(response.data);
-      } else {
-        toast.error(response.message || "No se pudieron obtener los méritos.");
-      }
+      if (response.success && response.data) setMeritos(response.data);
+      else toast.error(response.message || "No se pudieron obtener los méritos.");
     } catch {
       toast.error("Error al obtener los méritos.");
     } finally {

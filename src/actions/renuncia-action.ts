@@ -7,7 +7,9 @@ import { Prisma, renuncia, User } from "@prisma/client";
 import fs from "fs/promises";
 import path from "path";
 
-export const getRenuncias = async (): Promise<{ success: boolean; message?: string; data?: renuncia[] }> => {
+export type renunciaRecord = Prisma.renunciaGetPayload<{ include: { cargo: true; dependencia: true; file: true } }>;
+
+export const getRenuncias = async (): Promise<{ success: boolean; message?: string; data?: renunciaRecord[] }> => {
   try {
     const session = await auth();
     if (!session?.user?.email) throw new Error("No autorizado");
@@ -15,13 +17,13 @@ export const getRenuncias = async (): Promise<{ success: boolean; message?: stri
     const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (!user) throw new Error("Usuario no encontrado");
 
-    const renuncias: Array<Prisma.renunciaGetPayload<{ include: { cargo: true; dependencia: true } }>> | null = await prisma.renuncia.findMany({
+    const renuncias: renunciaRecord[] | null = await prisma.renuncia.findMany({
       where: { user_id: user.id },
-      include: { cargo: true, dependencia: true },
+      include: { cargo: true, dependencia: true, file: true },
     });
     if (!renuncias) throw new Error("No hay renuncias registradas.");
 
-    return { success: true, message: `Se encontraron ${renuncias.length + 1} elementos`, data: renuncias };
+    return { success: true, data: renuncias };
   } catch (error: unknown) {
     let errorMessage = "Error al obtener las renuncias.";
     if (error instanceof Error) errorMessage = error.message;

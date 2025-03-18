@@ -1,45 +1,93 @@
 "use client";
 
 import toast from "react-hot-toast";
-import React from "react";
-import { RenunciaRecord } from "./content-data";
+import React, { useEffect, useMemo, useState } from "react";
+import { getFile } from "@/actions/file-action";
+import { Pagination } from "@/components/pagination";
+import { renunciaRecord } from "@/actions/renuncia-action";
 
-type TableDataProps = {
-  renuncias: RenunciaRecord[];
+type TableProps = {
+  renuncias: renunciaRecord[];
   loading: boolean;
+  selectedRenuncia: renunciaRecord | null;
+  setSelectedRenuncia: React.Dispatch<React.SetStateAction<renunciaRecord | null>>;
 };
 
-export const TableData: React.FC<TableDataProps> = ({ renuncias, loading }) => {
-  const theadContent = ["Motivo", "Fecha", "Cargo", "Dependencia"];
+export const Table: React.FC<TableProps> = ({ renuncias, loading, selectedRenuncia, setSelectedRenuncia }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const tableHeaders = ["N", "Motivo", "Fecha", "Cargo", "Dependencia", "Archivo"];
+
+  const [fileUrls, setFileUrls] = useState<{ [key: string]: string | null }>({});
+
+  useEffect(() => {
+    renuncias.forEach(async (merito) => {
+      if (merito.file?.id && !fileUrls[merito.file.id]) {
+        try {
+          const url = await getFile(merito.file.id);
+          setFileUrls((prev) => ({ ...prev, [merito.file.id]: url }));
+        } catch {
+          setFileUrls((prev) => ({ ...prev, [merito.file.id]: null }));
+        }
+      }
+    });
+  }, [renuncias]);
+
+  const paginatedMeritos = useMemo(() => renuncias.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [renuncias, currentPage]);
 
   return (
-    <div className="relative bg-mantle sm:rounded-md overflow-x-auto">
+    <div className="flex flex-col gap-2 border-2 border-mantle rounded-md w-full">
       {loading ? (
         <p className="py-4 text-subtext0 text-center">Cargando datos...</p>
       ) : renuncias.length === 0 ? (
         <p className="py-4 text-subtext0 text-center">Aún no existen registros.</p>
       ) : (
-        <table className="w-full text-text text-sm text-left rtl:text-right">
-          <thead className="top-0 z-10 sticky text-xs uppercase">
-            <tr>
-              {theadContent.map((thead) => (
-                <th scope="col" className="px-3 py-3 border-b-2 border-base text-sm" key={thead}>
-                  {thead}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {renuncias.map(({ id, motivo, fecha, cargo, dependencia }) => (
-              <tr key={id} className="hover:bg-crust text-subtext0 text-sm cursor-pointer" onClick={() => toast.success(`ID: ${id}`)}>
-                <td className="px-3 py-4">{motivo}</td>
-                <td className="px-3 py-4">{new Date(fecha).toLocaleDateString()}</td>
-                <td className="px-3 py-4">{cargo.nombre}</td>
-                <td className="px-3 py-4">{dependencia.nombre}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <>
+          <div className="relative sm:rounded-md overflow-x-auto">
+            <table className="w-full text-text text-sm text-left">
+              <thead className="top-0 z-10 sticky bg-mantle text-xs uppercase">
+                <tr>
+                  {tableHeaders.map((header, index) => (
+                    <th key={index} className="px-4 lg:px-6 py-3 text-xs lg:text-sm">
+                      {header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedMeritos.map((renuncia, index) => (
+                  <tr
+                    key={renuncia.id}
+                    className={`hover:bg-crust text-xs cursor-pointer ${selectedRenuncia?.id === renuncia.id ? "bg-maroon text-base hover:text-text" : ""}`}
+                    onClick={() => setSelectedRenuncia(renuncia)}
+                  >
+                    <td className="px-4 lg:px-6 py-3 rounded-s-md">{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                    <td className="px-4 lg:px-6 py-3">{renuncia.motivo}</td>
+                    <td className="px-4 lg:px-6 py-3">{new Date(renuncia.fecha).toLocaleDateString()}</td>
+                    <td className="px-4 lg:px-6 py-3">{renuncia.cargo.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{renuncia.dependencia.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3 rounded-e-md">
+                      {fileUrls[renuncia.file.id] ? (
+                        <a
+                          href={fileUrls[renuncia.file.id] || ""}
+                          download
+                          className="hover:border-text hover:border-b-2 font-code font-semibold text-xs"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {renuncia.file.name}
+                        </a>
+                      ) : (
+                        <span className="text-text">Cargando...</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <Pagination currentPage={currentPage} totalPages={Math.ceil(renuncias.length / itemsPerPage)} setCurrentPage={setCurrentPage} totalItems={renuncias.length} />
+        </>
       )}
     </div>
   );

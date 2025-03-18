@@ -17,15 +17,13 @@ import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
 import { getFile } from "@/actions/file-action";
 
-export const Modify = ({
-  merito,
-  onUpdated,
-  setSelectedMerito,
-}: {
+type ModifyProps = {
   merito: meritoRecord;
   onUpdated: () => void;
   setSelectedMerito: React.Dispatch<React.SetStateAction<meritoRecord | null>>;
-}) => {
+};
+
+export const Modify: React.FC<ModifyProps> = ({ merito, onUpdated, setSelectedMerito }) => {
   const [isPending, startTransition] = useTransition();
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [isChangingFile, setIsChangingFile] = useState(false);
@@ -54,7 +52,6 @@ export const Modify = ({
         if (isChangingFile && data.file) updateData.file = data.file;
 
         const response = await updateMerito(merito.id, updateData);
-
         if (!response.success) toast.error(response.message);
         else {
           toast.success("Mérito actualizado exitosamente.");
@@ -80,7 +77,7 @@ export const Modify = ({
           form.reset();
         }
       } catch (e) {
-        toast.error("Error al modificar el cargo.");
+        toast.error("Error al modificar el Renucnia.");
       }
     });
   };
