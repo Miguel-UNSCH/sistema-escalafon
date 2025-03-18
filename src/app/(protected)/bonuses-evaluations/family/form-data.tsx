@@ -1,6 +1,6 @@
 "use client";
 
-import { createBonusFam } from "@/actions/bonus-fam-action";
+import { bonusFamiliarRecord, createBonusFam } from "@/actions/bonus-fam-action";
 import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
 import { DependenciaField } from "@/components/custom-fields/dependencia-field";
@@ -16,11 +16,11 @@ import React, { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-type FormDataProps = {
-  fetchBonuses: () => void;
+type CreateProps = {
+  onCreated: () => void;
+  setSelectedItem: React.Dispatch<React.SetStateAction<bonusFamiliarRecord | null>>;
 };
-
-export const FormData: React.FC<FormDataProps> = ({ fetchBonuses }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
@@ -54,7 +54,8 @@ export const FormData: React.FC<FormDataProps> = ({ fetchBonuses }) => {
         else {
           toast.success("Bonificación familiar registrada exitosamente.");
           form.reset();
-          fetchBonuses();
+          onCreated();
+          setSelectedItem(null);
         }
         // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
@@ -65,6 +66,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchBonuses }) => {
 
   return (
     <div className="flex flex-col gap-5 w-full">
+      <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <InputField control={form.control} name="tipo" label="Tipo *" placeholder="Ingrese el tipo de bonificacion familiar" />
@@ -76,7 +78,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchBonuses }) => {
 
           <div className="flex flex-col gap-2">
             <p className="font-primary font-semibold text-md">Dependencia</p>
-            <div className="gap-2 grid grid-cols-3">
+            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
               <DependenciaField control={form.control} />
             </div>
           </div>

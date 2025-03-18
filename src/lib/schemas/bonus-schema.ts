@@ -24,7 +24,7 @@ export const bonusFamiliarSchema = z.object({
     .transform((date) => new Date(date)),
   cargo: cargoSchema,
   dependencia: dependenciaSchema,
-  file: fileSchema,
+  file: fileSchema.optional(),
 });
 export type ZBonusFamiliar = z.infer<typeof bonusFamiliarSchema>;
 
