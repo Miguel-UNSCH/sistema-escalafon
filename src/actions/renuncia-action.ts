@@ -3,7 +3,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/config/prisma.config";
 import { ZRenunciaS } from "@/lib/schemas/w-situation-schema";
-import { Prisma, renuncia, User } from "@prisma/client";
+import { Prisma, User } from "@prisma/client";
 import fs from "fs/promises";
 import path from "path";
 

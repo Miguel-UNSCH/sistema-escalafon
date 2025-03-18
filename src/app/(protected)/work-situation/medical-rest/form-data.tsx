@@ -1,4 +1,5 @@
 "use client";
+
 import { createDesanso } from "@/actions/descanso-action";
 import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
@@ -15,13 +16,16 @@ import { Save } from "lucide-react";
 import React, { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { DescansoMedicoRecord } from "./content-data";
 
-type FormDataProps = {
-  fetchDescansos: () => void;
+type CreateProps = {
+  onMedicalCreated: () => void;
+  setSelectedMedical: React.Dispatch<React.SetStateAction<DescansoMedicoRecord | null>>;
 };
 
-export const FormData: React.FC<FormDataProps> = ({ fetchDescansos }) => {
+export const Create: React.FC<CreateProps> = ({ onMedicalCreated, setSelectedMedical }) => {
   const [isPending, startTransition] = useTransition();
+
   const defaultValues = {
     tipo_descanso: undefined,
     periodo: { from: undefined, to: undefined },
@@ -47,12 +51,12 @@ export const FormData: React.FC<FormDataProps> = ({ fetchDescansos }) => {
         }
 
         const result = await createDesanso({ ...data, file_id });
-
         if (!result.success) toast.error(result.message);
         else {
           toast.success("Descanso médico registrado exitosamente.");
           form.reset();
-          fetchDescansos();
+          onMedicalCreated();
+          setSelectedMedical(null);
         }
         // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
@@ -63,15 +67,16 @@ export const FormData: React.FC<FormDataProps> = ({ fetchDescansos }) => {
 
   return (
     <div className="flex flex-col gap-5 w-full">
-      <p className="font-primary font-semibold uppercase">Registrar</p>
+      <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <SelectField control={form.control} name="tipo_descanso" label="Tipo de Descanso" options={tipoDescansoOp} />
+
           <CargoField control={form.control} name="cargo.nombre" />
 
           <div className="flex flex-col gap-2">
             <p className="font-primary font-semibold text-md">Dependencia</p>
-            <div className="gap-2 grid grid-cols-3">
+            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
               <DependenciaField control={form.control} />
             </div>
           </div>

@@ -1,66 +1,67 @@
-"use client";
-
+import { useEffect, useState, useTransition } from "react";
+import { DescansoMedicoRecord } from "./content-data";
 import { getFile } from "@/actions/file-action";
-import { deleteRenuncia, renunciaRecord, updateRenuncia } from "@/actions/renuncia-action";
+import { descansoMedicoSchema, ZDesMedS } from "@/lib/schemas/w-situation-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { deleteDescanso, updateDescanso } from "@/actions/descanso-action";
+import toast from "react-hot-toast";
+import { Form } from "@/components/ui/form";
+import { SelectField } from "@/components/custom-fields/select-field";
 import { CargoField } from "@/components/custom-fields/cargo-field";
-import { DateField } from "@/components/custom-fields/date-field";
 import { DependenciaField } from "@/components/custom-fields/dependencia-field";
-import { InputField } from "@/components/custom-fields/input-field";
+import { DateField } from "@/components/custom-fields/date-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
 import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
-import { renunciaSchema, ZRenunciaS } from "@/lib/schemas/w-situation-schema";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Download, Save, Trash } from "lucide-react";
-import { useEffect, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
+import { tipoDescansoOp } from "@/utils/options";
 
 type ModifyProps = {
-  renuncia: renunciaRecord;
+  medical: DescansoMedicoRecord;
   onUpdated: () => void;
-  setSelectedRenuncia: React.Dispatch<React.SetStateAction<renunciaRecord | null>>;
+  setSelectedMedical: React.Dispatch<React.SetStateAction<DescansoMedicoRecord | null>>;
 };
 
-export const Modify: React.FC<ModifyProps> = ({ renuncia, onUpdated, setSelectedRenuncia }) => {
+export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedMedical }) => {
   const [isPending, startTransition] = useTransition();
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [isChangingFile, setIsChangingFile] = useState(false);
 
   useEffect(() => {
-    if (renuncia.file?.id) {
-      getFile(renuncia.file.id)
+    if (medical.file?.id) {
+      getFile(medical.file.id)
         .then(setFileUrl)
         .catch(() => setFileUrl(null));
     }
-  }, [renuncia.file?.id]);
+  }, [medical.file?.id]);
 
   const defaultValues = {
-    motivo: renuncia.motivo,
-    fecha: renuncia.fecha.toISOString().split("T")[0],
-    cargo: { nombre: renuncia.cargo.nombre },
-    dependencia: { nombre: renuncia.dependencia.nombre, codigo: renuncia.dependencia.codigo, direccion: renuncia.dependencia.direccion || "" },
+    tipo_descanso: medical.tipo_descanso,
+    periodo: { from: medical.periodo.from, to: medical.periodo.from },
+    cargo: { nombre: medical.cargo.nombre },
+    dependencia: { nombre: medical.dependencia.nombre, codigo: medical.dependencia.codigo, direccion: medical.dependencia.direccion },
     file: undefined,
   };
-  const form = useForm<ZRenunciaS>({ resolver: zodResolver(renunciaSchema), defaultValues: defaultValues as any });
 
-  const onUpdate = async (data: ZRenunciaS) => {
+  const form = useForm<ZDesMedS>({ resolver: zodResolver(descansoMedicoSchema), defaultValues: defaultValues as any });
+
+  const onUpdate = async (data: ZDesMedS) => {
     startTransition(async () => {
       try {
         const updateData = { ...data };
 
         if (isChangingFile && data.file) updateData.file = data.file;
 
-        const response = await updateRenuncia(renuncia.id, updateData);
+        const response = await updateDescanso(medical.id, updateData);
         if (!response.success) toast.error(response.message);
         else {
-          toast.success("Renuncia actualizada exitosamente.");
+          toast.success("Descanso actualizado exitosamente.");
           onUpdated();
-          setSelectedRenuncia(null);
+          setSelectedMedical(null);
           form.reset();
         }
       } catch (e: unknown) {
-        toast.error("Error al modificar la Renuncia.");
+        toast.error("Error al modificar el descanso.");
       }
     });
   };
@@ -68,16 +69,16 @@ export const Modify: React.FC<ModifyProps> = ({ renuncia, onUpdated, setSelected
   const onDelete = () => {
     startTransition(async () => {
       try {
-        const response = await deleteRenuncia(renuncia.id, renuncia.file_id);
+        const response = await deleteDescanso(medical.id, medical.file_id);
         if (!response.success) toast.error(response.message);
         else {
-          toast.success("Renuncia eliminado exitosamente.");
+          toast.success("Descanso eliminado exitosamente.");
           onUpdated();
-          setSelectedRenuncia(null);
+          setSelectedMedical(null);
           form.reset();
         }
       } catch (e) {
-        toast.error("Error al modificar la Renuncia.");
+        toast.error("Error al modificar el Descanso.");
       }
     });
   };
@@ -87,9 +88,7 @@ export const Modify: React.FC<ModifyProps> = ({ renuncia, onUpdated, setSelected
       <p className="font-primary font-bold text-mauve text-xl uppercase">Modificar Merito</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
-          <InputField control={form.control} name="motivo" label="Motivo de Renuncia*" placeholder="Ingrese la resolucion del motivo de la renuncia" />
-
-          <DateField control={form.control} name="fecha" label="Fecha de la bonificacion" disabled={false} />
+          <SelectField control={form.control} name="tipo_descanso" label="Tipo de Descanso" options={tipoDescansoOp} />
 
           <CargoField control={form.control} name="cargo.nombre" />
 
@@ -100,11 +99,16 @@ export const Modify: React.FC<ModifyProps> = ({ renuncia, onUpdated, setSelected
             </div>
           </div>
 
+          <div className="gap-4 grid grid-cols-2">
+            <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={false} />
+            <DateField control={form.control} name="periodo.to" label="Fecha de culminacion" disabled={false} />
+          </div>
+
           {fileUrl && !isChangingFile ? (
             <div className="flex md:flex-row flex-col items-center gap-4 md:text-left text-center">
               <div className="flex flex-row items-center gap-2 w-full">
                 <p className="text-left text-nowrap">Archivo actual</p>
-                <p className="bg-mantle p-4 py-3 rounded-md w-full">{renuncia.file?.name}</p>
+                <p className="bg-mantle p-4 py-3 rounded-md w-full">{medical.file?.name}</p>
               </div>
               <div className="flex md:flex-row flex-col gap-2 w-full md:w-auto">
                 <Button variant="outline" asChild>
@@ -129,7 +133,7 @@ export const Modify: React.FC<ModifyProps> = ({ renuncia, onUpdated, setSelected
           )}
 
           <div className="flex sm:flex-row flex-col justify-end gap-4">
-            <Button variant="outline" onClick={() => setSelectedRenuncia(null)}>
+            <Button variant="outline" onClick={() => setSelectedMedical(null)}>
               cancelar
             </Button>
             <Button onClick={onDelete} type="button" disabled={isPending} className="flex flex-row items-center gap-2 bg-maroon">

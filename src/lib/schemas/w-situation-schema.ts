@@ -61,7 +61,7 @@ export const descansoMedicoSchema = z.object({
   periodo: periodoSchema,
   cargo: cargoSchema,
   dependencia: dependenciaSchema,
-  file: fileSchema,
+  file: fileSchema.optional(),
 });
 export type ZDesMedS = z.infer<typeof descansoMedicoSchema>;
 

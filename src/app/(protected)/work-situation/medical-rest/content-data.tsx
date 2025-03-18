@@ -2,28 +2,25 @@
 
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { TableData } from "./table-data";
-import { FormData } from "./form-data";
-import { getDescansos } from "@/actions/descanso-action";
-import { Prisma } from "@prisma/client";
+import { Create } from "./form-data";
+import { descanso_medicoRecord, getDescansos } from "@/actions/descanso-action";
+import { Table } from "./table-data";
+import { Modify } from "./modify-data";
 
-export type DescansoMedicoRecord = Omit<Prisma.descanso_medicoGetPayload<{ include: { cargo: true; dependencia: true } }>, "periodo"> & {
+export type DescansoMedicoRecord = Omit<descanso_medicoRecord, "periodo"> & {
   periodo: { from: string; to: string };
 };
 export const ContentData = () => {
-  const [descansos, setDescansos] = useState<DescansoMedicoRecord[]>([]);
+  const [medicals, setMedicals] = useState<DescansoMedicoRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedMedical, setSelectedMedical] = useState<DescansoMedicoRecord | null>(null);
 
-  const fetchDescansos = async () => {
+  const fnDescansos = async () => {
     setLoading(true);
     try {
       const response = await getDescansos();
-      if (response.success && response.data) {
-        setDescansos(response.data as DescansoMedicoRecord[]);
-        toast.success("Tabla actualizada correctamente.");
-      } else toast.error(response.message || "No se pudieron obtener los descansos médicos.");
-
-      // eslint-disable-next-line no-unused-vars
+      if (response.success && response.data) setMedicals(response.data as DescansoMedicoRecord[]);
+      else toast.error(response.message || "No se pudieron obtener los descansos médicos.");
     } catch (e: unknown) {
       toast.error("Error al obtener los descansos médicos.");
     } finally {
@@ -32,14 +29,25 @@ export const ContentData = () => {
   };
 
   useEffect(() => {
-    fetchDescansos();
+    fnDescansos();
   }, []);
 
+  const handleRefresh = () => {
+    fnDescansos();
+    setSelectedMedical(null);
+  };
+
   return (
-    <div className="flex flex-col gap-5 p-2 w-4/5">
-      <p className="font-primary font-semibold text-2xl text-center uppercase">Descanso Médico</p>
-      <TableData descansos={descansos} loading={loading} />
-      <FormData fetchDescansos={fetchDescansos} />
+    <div className="flex flex-col gap-5 mx-auto p-2 w-full max-w-5xl">
+      <p className="font-primary font-semibold text-2xl text-center uppercase">Descansos</p>
+      {medicals.length ? (
+        <Table medicals={medicals} loading={loading} selectedMedical={selectedMedical} setSelectedMedical={setSelectedMedical} />
+      ) : (
+        <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
+      )}
+
+      {selectedMedical && <Modify medical={selectedMedical} onUpdated={handleRefresh} setSelectedMedical={setSelectedMedical} />}
+      <Create onMedicalCreated={handleRefresh} setSelectedMedical={setSelectedMedical} />
     </div>
   );
 };

@@ -36,7 +36,7 @@ export const ContentData = () => {
 
   return (
     <div className="flex flex-col gap-5 mx-auto p-2 w-full max-w-5xl">
-      <p className="font-primary font-semibold text-2xl text-center uppercase">Méritos</p>
+      <p className="font-primary font-semibold text-2xl text-center uppercase">Renuncias</p>
       {renuncias.length ? (
         <Table renuncias={renuncias} loading={loading} selectedRenuncia={selectedRenuncia} setSelectedRenuncia={setSelectedRenuncia} />
       ) : (
