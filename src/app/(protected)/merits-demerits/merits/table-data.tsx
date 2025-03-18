@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Pagination } from "@/components/pagination";
 import toast from "react-hot-toast";
 import { meritoRecord } from "@/actions/m-d-action";
+import { getFile } from "@/actions/file-action";
 
 type TableDataProps = {
   meritos: meritoRecord[];
@@ -15,6 +16,22 @@ type TableDataProps = {
 export const Table: React.FC<TableDataProps> = ({ meritos, loading, selectedMerito, setSelectedMerito }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const tableHeaders = ["N", "Fecha", "Cargo", "Dependencia", "Archivo"];
+
+  const [fileUrls, setFileUrls] = useState<{ [key: string]: string | null }>({});
+
+  useEffect(() => {
+    meritos.forEach(async (merito) => {
+      if (merito.file?.id && !fileUrls[merito.file.id]) {
+        try {
+          const url = await getFile(merito.file.id);
+          setFileUrls((prev) => ({ ...prev, [merito.file.id]: url }));
+        } catch {
+          setFileUrls((prev) => ({ ...prev, [merito.file.id]: null }));
+        }
+      }
+    });
+  }, [meritos]);
 
   const paginatedMeritos = useMemo(() => meritos.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [meritos, currentPage]);
 
@@ -30,10 +47,11 @@ export const Table: React.FC<TableDataProps> = ({ meritos, loading, selectedMeri
             <table className="w-full text-text text-sm text-left">
               <thead className="top-0 z-10 sticky bg-mantle text-xs uppercase">
                 <tr>
-                  <th className="px-4 lg:px-6 py-3 text-xs lg:text-sm">N</th>
-                  <th className="px-4 lg:px-6 py-3 text-xs lg:text-sm">Fecha</th>
-                  <th className="px-4 lg:px-6 py-3 text-xs lg:text-sm">Cargo</th>
-                  <th className="px-4 lg:px-6 py-3 text-xs lg:text-sm">Dependencia</th>
+                  {tableHeaders.map((header, index) => (
+                    <th key={index} className="px-4 lg:px-6 py-3 text-xs lg:text-sm">
+                      {header}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
@@ -46,7 +64,21 @@ export const Table: React.FC<TableDataProps> = ({ meritos, loading, selectedMeri
                     <td className="px-4 lg:px-6 py-3 rounded-s-md">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td className="px-4 lg:px-6 py-3">{new Date(merito.fecha).toLocaleDateString()}</td>
                     <td className="px-4 lg:px-6 py-3">{merito.cargo.nombre}</td>
-                    <td className="px-4 lg:px-6 py-3 rounded-e-md">{merito.dependencia.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{merito.dependencia.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3 rounded-e-md">
+                      {fileUrls[merito.file.id] ? (
+                        <a
+                          href={fileUrls[merito.file.id] || ""}
+                          download
+                          className="hover:border-text hover:border-b-2 font-code font-semibold text-xs"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {merito.file.name}
+                        </a>
+                      ) : (
+                        <span className="text-text">Cargando...</span>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>

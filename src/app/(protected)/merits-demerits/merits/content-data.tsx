@@ -38,12 +38,12 @@ export const ContentData = () => {
   };
 
   return (
-    <div className="flex flex-col gap-5 p-2 w-4/5">
+    <div className="flex flex-col gap-5 mx-auto p-2 w-full max-w-5xl">
       <p className="font-primary font-semibold text-2xl text-center uppercase">Méritos</p>
       {meritos.length ? (
         <Table meritos={meritos} loading={loading} selectedMerito={selectedMerito} setSelectedMerito={setSelectedMerito} />
       ) : (
-        <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender">No hay resgistros</div>
+        <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
       )}
 
       {selectedMerito && <Modify merito={selectedMerito} onUpdated={handleRefresh} setSelectedMerito={setSelectedMerito} />}

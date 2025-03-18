@@ -15,8 +15,7 @@ import { UploadField } from "@/components/custom-fields/upload-file";
 import { DependenciaField } from "@/components/custom-fields/dependencia-field";
 import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
-import { getFile, updateFile } from "@/actions/file-action";
-import { uploadFile } from "@/service/file-service";
+import { getFile } from "@/actions/file-action";
 
 export const Modify = ({
   merito,
@@ -73,9 +72,8 @@ export const Modify = ({
     startTransition(async () => {
       try {
         const response = await deleteMerito(merito.id, merito.file_id);
-        if (!response.success) {
-          toast.error(response.message);
-        } else {
+        if (!response.success) toast.error(response.message);
+        else {
           toast.success("Merito eliminado exitosamente.");
           onUpdated();
           setSelectedMerito(null);
@@ -98,16 +96,18 @@ export const Modify = ({
 
           <div className="flex flex-col gap-2">
             <p className="font-primary font-semibold text-md">Dependencia</p>
-            <div className="gap-2 grid grid-cols-3">
+            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
               <DependenciaField control={form.control} />
             </div>
           </div>
 
           {fileUrl && !isChangingFile ? (
-            <div className="flex flex-row items-center gap-4">
-              <p className="text-nowrap">Archivo actual</p>
-              <p className="bg-mantle p-4 py-3 rounded-md w-full">{merito.file?.name}</p>
-              <div className="flex flex-row gap-2">
+            <div className="flex md:flex-row flex-col items-center gap-4 md:text-left text-center">
+              <div className="flex flex-row items-center gap-2 w-full">
+                <p className="text-left text-nowrap">Archivo actual</p>
+                <p className="bg-mantle p-4 py-3 rounded-md w-full">{merito.file?.name}</p>
+              </div>
+              <div className="flex md:flex-row flex-col gap-2 w-full md:w-auto">
                 <Button variant="outline" asChild>
                   <a href={fileUrl} download target="_blank">
                     <Download size={16} /> Descargar
@@ -119,7 +119,7 @@ export const Modify = ({
               </div>
             </div>
           ) : (
-            <div className="flex flex-row items-end gap-2 w-full">
+            <div className="flex md:flex-row flex-col items-end gap-2 w-full">
               <div className="w-full">
                 <UploadField control={form.control} name="file" label="Subir nuevo archivo" allowedTypes={["pdf"]} />
               </div>
@@ -129,7 +129,7 @@ export const Modify = ({
             </div>
           )}
 
-          <div className="flex justify-end gap-4">
+          <div className="flex sm:flex-row flex-col justify-end gap-4">
             <Button variant="outline" onClick={() => setSelectedMerito(null)}>
               cancelar
             </Button>

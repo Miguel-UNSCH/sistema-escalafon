@@ -55,7 +55,6 @@ export const Create: React.FC<CreateProps> = ({ onMeritoCreated, setSelectedMeri
           onMeritoCreated();
           setSelectedMerito(null);
         }
-        // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
         toast.error("Error al registrar el mérito.");
       }
@@ -73,7 +72,7 @@ export const Create: React.FC<CreateProps> = ({ onMeritoCreated, setSelectedMeri
 
           <div className="flex flex-col gap-2">
             <p className="font-primary font-semibold text-md">Dependencia</p>
-            <div className="gap-2 grid grid-cols-3">
+            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
               <DependenciaField control={form.control} />
             </div>
           </div>
