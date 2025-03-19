@@ -1,6 +1,6 @@
 "use client";
 
-import { ascensoRecord } from "@/actions/ascenso-action";
+import { ascensoRecord, deleteAscenso, updateAscenso } from "@/actions/ascenso-action";
 import { getFile } from "@/actions/file-action";
 import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
@@ -17,6 +17,7 @@ import { ascensoSchema, per_lic_vacSchema, ZAscensoS, ZPerLicVacS } from "@/lib/
 import { deletePerLicVac, updatePerLicVac } from "@/actions/per-lic-vac-action";
 import { tipoPermisoLicenciaVacacionOp } from "@/utils/options";
 import { SelectField } from "@/components/custom-fields/select-field";
+import { InputField } from "@/components/custom-fields/input-field";
 
 type ModifyProps = {
   item: ascensoRecord;
@@ -41,7 +42,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
     resolucion_ascenso: item.resolucion_ascenso,
     nivel_remunerativo: item.nivel_remunerativo,
     cnp: item.cnp,
-    fecha: undefined,
+    fecha: item.fecha.toISOString(),
     current_cargo: { nombre: item.current_cargo.nombre },
     new_cargo: { nombre: item.new_cargo.nombre },
     current_dependencia: { nombre: item.current_dependencia.nombre, codigo: item.current_dependencia.codigo, direccion: item.current_dependencia.direccion },
@@ -58,7 +59,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
 
         if (isChangingFile && data.file) updateData.file = data.file;
 
-        const response = await updatePerLicVac(item.id, updateData);
+        const response = await updateAscenso(item.id, updateData);
         if (!response.success) toast.error(response.message);
         else {
           toast.success("Actualizacion exitosa.");
@@ -75,7 +76,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
   const onDelete = () => {
     startTransition(async () => {
       try {
-        const response = await deletePerLicVac(item.id, item.file_id);
+        const response = await deleteAscenso(item.id, item.file_id);
         if (!response.success) toast.error(response.message);
         else {
           toast.success("Eliminacion exitosa.");
@@ -94,20 +95,33 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
       <p className="font-primary font-bold text-mauve text-xl uppercase">Modificar Merito</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
-          <SelectField control={form.control} name="tipo" label="Tipo de Permiso / Licencia / Vacacion *" options={tipoPermisoLicenciaVacacionOp} />
+          <div className="gap-2 grid grid-cols-2">
+            <InputField control={form.control} name="resolucion_ascenso" label="Resolucion de Ascenso *" placeholder="Ingrese la resolucion de ascenso" />
+            <InputField control={form.control} name="cnp" label="CNP *" type="number" />
+          </div>
 
-          <CargoField control={form.control} name="cargo.nombre" />
+          <div className="gap-2 grid grid-cols-2">
+            <InputField control={form.control} name="nivel_remunerativo" label="Nivel Remunerativo *" placeholder="Ingrese el nivel remunerativo" />
+            <DateField control={form.control} name="fecha" label="Fecha" disabled={false} />
+          </div>
+
+          <div className="gap-2 grid grid-cols-2">
+            <CargoField control={form.control} name="current_cargo.nombre" placeholder="Cargo Actual *" />
+            <CargoField control={form.control} name="new_cargo.nombre" placeholder="Nuevo Cargo *" />
+          </div>
 
           <div className="flex flex-col gap-2">
-            <p className="font-primary font-semibold text-md">Dependencia</p>
+            <p className="font-primary font-semibold text-md">Dependencia Actual</p>
             <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
-              <DependenciaField control={form.control} />
+              <DependenciaField control={form.control} name="current_dependencia" />
             </div>
           </div>
 
-          <div className="gap-4 grid grid-cols-2">
-            <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={false} />
-            <DateField control={form.control} name="periodo.to" label="Fecha de culminacion" disabled={false} />
+          <div className="flex flex-col gap-2">
+            <p className="font-primary font-semibold text-md">Nueva Dependencia</p>
+            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
+              <DependenciaField control={form.control} name="new_dependencia" />
+            </div>
           </div>
 
           {fileUrl && !isChangingFile ? (

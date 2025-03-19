@@ -86,6 +86,6 @@ export const ascensoSchema = z.object({
   new_cargo: cargoSchema,
   current_dependencia: dependenciaSchema,
   new_dependencia: dependenciaSchema,
-  file: fileSchema,
+  file: fileSchema.optional(),
 });
 export type ZAscensoS = z.infer<typeof ascensoSchema>;
