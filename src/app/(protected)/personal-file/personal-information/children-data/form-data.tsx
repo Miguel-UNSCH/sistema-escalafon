@@ -9,18 +9,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { gradoInstruccionOp } from "@/utils/options";
-import { createChild } from "@/actions/children-action";
+import { childrenRecord, createChild } from "@/actions/children-action";
 import { DateField } from "@/components/custom-fields/date-field";
 import { InputField } from "@/components/custom-fields/input-field";
 import { SelectField } from "@/components/custom-fields/select-field";
 import { UbigeoField } from "@/components/custom-fields/ubigeo-field";
 import { childrenSchema, ZChildren } from "@/lib/schemas/personal-schema";
+import { Children } from "@prisma/client";
 
-type FormDataProps = {
-  fetchChildren: () => void;
+type CreateProps = {
+  onCreated: () => void;
+  setSelectedItem: React.Dispatch<React.SetStateAction<childrenRecord | null>>;
 };
 
-export const FormData: React.FC<FormDataProps> = ({ fetchChildren }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) => {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<ZChildren>({
@@ -42,8 +44,8 @@ export const FormData: React.FC<FormDataProps> = ({ fetchChildren }) => {
         if (!result.success) toast.error(result.message);
         else {
           toast.success("Hijo registrado exitosamente.");
-          form.reset();
-          fetchChildren();
+          onCreated();
+          setSelectedItem(null);
         }
         // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
@@ -54,8 +56,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchChildren }) => {
 
   return (
     <div className="flex flex-col gap-5 w-full">
-      <p className="font-primary font-semibold uppercase">Registrar</p>
-
+      <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <div className="gap-2 grid grid-cols-2">
@@ -80,7 +81,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchChildren }) => {
           <div className="flex justify-end">
             <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
               <Save />
-              {isPending ? "Guardando..." : "Registrar"}
+              {isPending ? "Guardando..." : "Guardar"}
             </Button>
           </div>
         </form>

@@ -17,9 +17,8 @@ export const ContentData = () => {
     setLoading(true);
     try {
       const response = await getContracts();
-      if (response.success && response.data) {
-        setItems(response.data);
-      } else toast.error(response.message || "No se pudieron obtener los contratos.");
+      if (response.success && response.data) setItems(response.data);
+      else toast.error(response.message || "No se pudieron obtener los contratos.");
 
       // eslint-disable-next-line no-unused-vars
     } catch (e: unknown) {

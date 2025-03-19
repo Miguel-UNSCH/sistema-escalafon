@@ -33,7 +33,6 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
         .catch(() => setFileUrl(null));
     }
   }, [item.file?.id]);
-  // tipo: undefined, discapacidad: "", entidad_certificadora: undefined, fecha_certificacion: undefined, file: undefined
 
   const defaultValues = {
     tipo: item.tipo,
