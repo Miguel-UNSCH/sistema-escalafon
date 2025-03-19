@@ -16,12 +16,14 @@ import { CargoField } from "@/components/custom-fields/cargo-field";
 import { InputField } from "@/components/custom-fields/input-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
 import { DependenciaField } from "@/components/custom-fields/dependencia-field";
+import { ExperienceRecord } from "./content-data";
 
-type FormDataProps = {
-  fetchExperiences: () => void;
+type CreateProps = {
+  onCreated: () => void;
+  setSelectedItem: React.Dispatch<React.SetStateAction<ExperienceRecord | null>>;
 };
 
-export const FormData: React.FC<FormDataProps> = ({ fetchExperiences }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) => {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<ZExpS>({
@@ -56,7 +58,8 @@ export const FormData: React.FC<FormDataProps> = ({ fetchExperiences }) => {
         } else {
           toast.success("Experiencia registrada exitosamente.");
           form.reset();
-          fetchExperiences();
+          onCreated();
+          setSelectedItem(null);
         }
         // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
@@ -67,7 +70,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchExperiences }) => {
 
   return (
     <div className="flex flex-col gap-5 w-full">
-      <p className="font-primary font-semibold uppercase">Registrar</p>
+      <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <InputField control={form.control} name="centro_labor" label="Centro de Labor *" placeholder="Ingrese el centro de labor" />
@@ -75,7 +78,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchExperiences }) => {
 
           <div className="flex flex-col gap-2">
             <p className="font-primary font-semibold text-md">Dependencia</p>
-            <div className="gap-2 grid grid-cols-3">
+            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
               <DependenciaField control={form.control} />
             </div>
           </div>
@@ -90,7 +93,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchExperiences }) => {
           <div className="flex justify-end">
             <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
               <Save />
-              {isPending ? "Guardando..." : "Registrar"}
+              {isPending ? "Guardando..." : "Guardar"}
             </Button>
           </div>
         </form>

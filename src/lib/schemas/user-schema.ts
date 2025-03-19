@@ -28,7 +28,7 @@ export const expSchema = z.object({
   periodo: periodoSchema,
   cargo: cargoSchema,
   dependencia: dependenciaSchema,
-  file: fileSchema,
+  file: fileSchema.optional(),
 });
 export type ZExpS = z.infer<typeof expSchema>;
 
