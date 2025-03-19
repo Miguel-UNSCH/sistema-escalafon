@@ -36,8 +36,6 @@ export const Table: React.FC<TableProps> = ({ items, loading, selectedItem, setS
 
   const paginatedItems = useMemo(() => items.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [items, currentPage]);
 
-  const theadContent = ["Nivel", "Institución", "Carrera/Especialidad", "Periodo"];
-
   return (
     <div className="flex flex-col gap-2 border-2 border-mantle rounded-md w-full">
       {loading ? (

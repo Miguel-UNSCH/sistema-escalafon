@@ -14,12 +14,14 @@ import { createCapacitacion } from "@/actions/capacitacion-action";
 import { InputField } from "@/components/custom-fields/input-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
 import { capacitacionSchema, ZCapacitacionS } from "@/lib/schemas/user-schema";
+import { CapacitacionRecord } from "./content-data";
 
-type FormDataProps = {
-  fetchCapacitaciones: () => void;
+type CreateProps = {
+  onCreated: () => void;
+  setSelectedItem: React.Dispatch<React.SetStateAction<CapacitacionRecord | null>>;
 };
 
-export const FormData: React.FC<FormDataProps> = ({ fetchCapacitaciones }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) => {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<ZCapacitacionS>({
@@ -54,7 +56,8 @@ export const FormData: React.FC<FormDataProps> = ({ fetchCapacitaciones }) => {
         else {
           toast.success("Capacitación registrada exitosamente.");
           form.reset();
-          fetchCapacitaciones();
+          onCreated();
+          setSelectedItem(null);
         }
         // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
@@ -65,7 +68,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchCapacitaciones }) => {
 
   return (
     <div className="flex flex-col gap-5 w-full">
-      <p className="font-primary font-semibold uppercase">Registrar</p>
+      <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <div className="gap-4 grid grid-cols-2">
@@ -88,7 +91,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchCapacitaciones }) => {
           <div className="flex justify-end">
             <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
               <Save />
-              {isPending ? "Guardando..." : "Registrar"}
+              {isPending ? "Guardando..." : "Guardar"}
             </Button>
           </div>
         </form>

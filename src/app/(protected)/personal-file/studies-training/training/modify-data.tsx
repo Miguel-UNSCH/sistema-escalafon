@@ -12,16 +12,14 @@ import React from "react";
 import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { estudiosSchema, ZEstudioS } from "@/lib/schemas/user-schema";
-import { StudyRecord } from "./content-data";
-import { deleteStudy, updateStudy } from "@/actions/studies-action";
-import { SelectField } from "@/components/custom-fields/select-field";
-import { nivelEducativoOp } from "@/utils/options";
+import { capacitacionSchema, ZCapacitacionS } from "@/lib/schemas/user-schema";
+import { CapacitacionRecord } from "./content-data";
+import { deleteCapacitacion, updateCapacitacion } from "@/actions/capacitacion-action";
 
 type ModifyProps = {
-  item: StudyRecord;
+  item: CapacitacionRecord;
   onUpdated: () => void;
-  setSelectedItem: React.Dispatch<React.SetStateAction<StudyRecord | null>>;
+  setSelectedItem: React.Dispatch<React.SetStateAction<CapacitacionRecord | null>>;
 };
 
 export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem }) => {
@@ -38,25 +36,24 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
   }, [item.file?.id]);
 
   const defaultValues = {
-    institucion: item.institucion,
-    carrera: item.carrera,
+    centro_capacitacion: item.centro_capacitacion,
+    materia: item.materia,
+    especialidad: item.especialidad,
+    horas_lectivas: item.horas_lectivas,
     periodo: { from: item.periodo.from, to: item.periodo.to },
     file: undefined,
-    nivel: item.nivel,
   };
 
-  const form = useForm<ZEstudioS>({ resolver: zodResolver(estudiosSchema), defaultValues: defaultValues as any });
-  const nivelSeleccionado = form.watch("nivel");
-  const requiereCarrera = ["t", "u", "m", "d", "e"].includes(nivelSeleccionado || "");
+  const form = useForm<ZCapacitacionS>({ resolver: zodResolver(capacitacionSchema), defaultValues: defaultValues as any });
 
-  const onUpdate = async (data: ZEstudioS) => {
+  const onUpdate = async (data: ZCapacitacionS) => {
     startTransition(async () => {
       try {
         const updateData = { ...data };
 
         if (isChangingFile && data.file) updateData.file = data.file;
 
-        const response = await updateStudy(item.id, updateData);
+        const response = await updateCapacitacion(item.id, updateData);
         if (!response.success) toast.error(response.message);
         else {
           toast.success("Actualizacion exitosa.");
@@ -73,7 +70,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
   const onDelete = () => {
     startTransition(async () => {
       try {
-        const response = await deleteStudy(item.id, item.file_id);
+        const response = await deleteCapacitacion(item.id, item.file_id);
         if (!response.success) toast.error(response.message);
         else {
           toast.success("Eliminacion exitosa.");
@@ -89,14 +86,17 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
 
   return (
     <div className="flex flex-col gap-5 w-full font-text">
-      <p className="font-primary font-bold text-mauve text-xl uppercase">Modificar Experiencia</p>
+      <p className="font-primary font-bold text-mauve text-xl uppercase">Modificar Capacitacion</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
-          <SelectField control={form.control} name="nivel" label="Formacion Academica *" options={nivelEducativoOp} />
+          <div className="gap-4 grid grid-cols-2">
+            <InputField control={form.control} name="centro_capacitacion" label="Centro de Capacitación *" placeholder="Ingrese el nombre del centro de capacitación" />
+            <InputField control={form.control} name="materia" label="Materia *" placeholder="Ingrese la materia" />
+          </div>
 
-          <div className="gap-2 grid grid-cols-2">
-            <InputField control={form.control} name="institucion" label="Nombre de la Institucion *" placeholder="Ingrese el nombre de la institucion" />
-            <InputField control={form.control} name="carrera" label="Carrera/Especialidad *" placeholder="Ingrese el nombre de la carrera" disabled={!requiereCarrera} />
+          <div className="gap-4 grid grid-cols-2">
+            <InputField control={form.control} name="especialidad" label="Especialidad *" placeholder="Ingrese la especialidad" />
+            <InputField control={form.control} name="horas_lectivas" label="Horas Lectivas *" type="number" placeholder="Ingrese las horas lectivas" />
           </div>
 
           <div className="gap-4 grid grid-cols-2">
