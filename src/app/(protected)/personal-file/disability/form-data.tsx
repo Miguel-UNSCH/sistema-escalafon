@@ -9,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { uploadFile } from "@/service/file-service";
-import { createDisability } from "@/actions/disability-action";
+import { createDisability, discapacidadRecord } from "@/actions/disability-action";
 import { DateField } from "@/components/custom-fields/date-field";
 import { InputField } from "@/components/custom-fields/input-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
@@ -17,8 +17,14 @@ import { SelectField } from "@/components/custom-fields/select-field";
 import { entidad_certificadoraOp, tDscapacidadOp } from "@/utils/options";
 import { disabilitySchema, ZDisabilityS } from "@/lib/schemas/user-schema";
 
-export const FormData: React.FC<{ fetchDisabilities: () => void }> = ({ fetchDisabilities }) => {
+type CreateProps = {
+  onCreated: () => void;
+  setSelectedItem: React.Dispatch<React.SetStateAction<discapacidadRecord | null>>;
+};
+
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) => {
   const [isPending, startTransition] = useTransition();
+
   const defaultValues = { tipo: undefined, discapacidad: "", entidad_certificadora: undefined, fecha_certificacion: undefined, file: undefined };
   const form = useForm<ZDisabilityS>({ resolver: zodResolver(disabilitySchema), defaultValues });
 
@@ -42,7 +48,8 @@ export const FormData: React.FC<{ fetchDisabilities: () => void }> = ({ fetchDis
         else {
           toast.success("Discapacidad registrada exitosamente.");
           form.reset(defaultValues);
-          fetchDisabilities();
+          onCreated();
+          setSelectedItem(null);
         }
         // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
@@ -53,8 +60,7 @@ export const FormData: React.FC<{ fetchDisabilities: () => void }> = ({ fetchDis
 
   return (
     <div className="flex flex-col gap-5 w-full">
-      <p className="font-primary font-semibold uppercase">Registrar</p>
-
+      <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <SelectField control={form.control} name="tipo" label="Tipo *" options={tDscapacidadOp} />
@@ -66,10 +72,11 @@ export const FormData: React.FC<{ fetchDisabilities: () => void }> = ({ fetchDis
           </div>
 
           <UploadField control={form.control} name="file" label="Documento" allowedTypes={["pdf"]} />
+
           <div className="flex justify-end">
             <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
               <Save />
-              {isPending ? "Guardando..." : "Registrar"}
+              {isPending ? "Guardando..." : "Guardar"}
             </Button>
           </div>
         </form>

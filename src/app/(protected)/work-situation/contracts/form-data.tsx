@@ -46,6 +46,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) =>
       dependencia: { nombre: "", codigo: "", direccion: "" },
     },
   });
+
   const onSubmit = async (data: ZContratoS) => {
     startTransition(async () => {
       try {

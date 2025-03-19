@@ -1,46 +1,93 @@
 "use client";
 
-import toast from "react-hot-toast";
-import React from "react";
-import { discapacidad } from "@prisma/client";
+import React, { useEffect, useMemo, useState } from "react";
+import { discapacidadRecord } from "@/actions/disability-action";
+import { getFile } from "@/actions/file-action";
+import { Pagination } from "@/components/pagination";
 import { entidad_certificadoraOp, tDscapacidadOp } from "@/utils/options";
 
-type TableDataProps = {
-  disabilities: discapacidad[];
+type TableProps = {
+  items: discapacidadRecord[];
   loading: boolean;
+  selectedItem: discapacidadRecord | null;
+  setSelectedItem: React.Dispatch<React.SetStateAction<discapacidadRecord | null>>;
 };
 
-export const TableData: React.FC<TableDataProps> = ({ disabilities, loading }) => {
-  const theadContent = ["Tipo", "Discapacidad", "Entidad Certificadora", "Fecha"];
+export const Table: React.FC<TableProps> = ({ items, loading, selectedItem, setSelectedItem }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  const tableHeaders = ["N", "Tipo", "Discapacidad", "Entidad Certificadora", "Fecha", "Archivo"];
+
+  const [fileUrls, setFileUrls] = useState<{ [key: string]: string | null }>({});
+
+  useEffect(() => {
+    items.forEach(async (item) => {
+      if (item.file?.id && !fileUrls[item.file.id]) {
+        try {
+          const url = await getFile(item.file.id);
+          setFileUrls((prev) => ({ ...prev, [item.file.id]: url }));
+        } catch {
+          setFileUrls((prev) => ({ ...prev, [item.file.id]: null }));
+        }
+      }
+    });
+  }, [items]);
+
+  const paginatedItems = useMemo(() => items.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [items, currentPage]);
 
   return (
-    <div className="relative bg-mantle sm:rounded-md overflow-x-auto">
+    <div className="flex flex-col gap-2 border-2 border-mantle rounded-md w-full">
       {loading ? (
         <p className="py-4 text-subtext0 text-center">Cargando datos...</p>
-      ) : disabilities.length === 0 ? (
+      ) : items.length === 0 ? (
         <p className="py-4 text-subtext0 text-center">Aún no existen registros.</p>
       ) : (
-        <table className="w-full text-text text-sm text-left rtl:text-right">
-          <thead className="top-0 z-10 sticky text-xs uppercase">
-            <tr>
-              {theadContent.map((thead) => (
-                <th scope="col" className="px-3 py-3 border-b-2 border-base text-sm" key={thead}>
-                  {thead}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {disabilities.map(({ id, tipo, discapacidad, entidad_certificadora, fecha_certificacion }) => (
-              <tr key={id} className="hover:bg-crust text-subtext0 text-sm cursor-pointer" onClick={() => toast.success(`ID: ${id}`)}>
-                <td className="px-3 py-2">{tDscapacidadOp.find((item) => item.key === tipo)?.value || "UNKNOWN"}</td>
-                <td className="px-3 py-2">{discapacidad}</td>
-                <td className="px-3 py-2">{entidad_certificadoraOp.find((item) => item.key === entidad_certificadora)?.value || "UNKNOWN"}</td>
-                <td className="px-3 py-2">{new Date(fecha_certificacion || "").toLocaleDateString()}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <>
+          <div className="relative sm:rounded-md overflow-x-auto">
+            <table className="w-full text-text text-sm text-left">
+              <thead className="top-0 z-10 sticky bg-mantle text-xs uppercase">
+                <tr>
+                  {tableHeaders.map((header, index) => (
+                    <th key={index} className="px-4 lg:px-6 py-3 text-xs lg:text-sm">
+                      {header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {paginatedItems.map((item, index) => (
+                  <tr
+                    key={item.id}
+                    className={`hover:bg-crust text-xs cursor-pointer ${selectedItem?.id === item.id ? "bg-maroon text-base hover:text-text" : ""}`}
+                    onClick={() => setSelectedItem(item)}
+                  >
+                    <td className="px-4 lg:px-6 py-3 rounded-s-md">{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                    <td className="px-4 lg:px-6 py-3">{tDscapacidadOp.find((i) => i.key === item.tipo)?.value || "N/A"}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.discapacidad}</td>
+                    <td className="px-4 lg:px-6 py-3">{entidad_certificadoraOp.find((i) => i.key === item.entidad_certificadora)?.value || "N/A"}</td>
+                    <td className="px-4 lg:px-6 py-3">{new Date(item.fecha_certificacion || "").toLocaleDateString()}</td>
+                    <td className="px-4 lg:px-6 py-3 rounded-e-md">
+                      {fileUrls[item.file.id] ? (
+                        <a
+                          href={fileUrls[item.file.id] || ""}
+                          download
+                          className="hover:border-text hover:border-b-2 font-code font-semibold text-xs"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          {item.file.name}
+                        </a>
+                      ) : (
+                        <span className="text-text">Cargando...</span>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <Pagination currentPage={currentPage} totalPages={Math.ceil(items.length / itemsPerPage)} setCurrentPage={setCurrentPage} totalItems={items.length} />
+        </>
       )}
     </div>
   );

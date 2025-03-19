@@ -40,6 +40,6 @@ export const disabilitySchema = z.object({
     .string({ required_error: "Fecha de certificacion es requerida" })
     .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
     .transform((date) => new Date(date)),
-  file: fileSchema,
+  file: fileSchema.optional(),
 });
 export type ZDisabilityS = z.infer<typeof disabilitySchema>;
