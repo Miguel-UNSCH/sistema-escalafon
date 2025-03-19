@@ -52,7 +52,7 @@ export const desplazamientoSchema = z.object({
   new_cargo: cargoSchema,
   current_dependencia: dependenciaSchema,
   new_dependencia: dependenciaSchema,
-  file: fileSchema,
+  file: fileSchema.optional(),
 });
 export type ZDesplazamientoS = z.infer<typeof desplazamientoSchema>;
 

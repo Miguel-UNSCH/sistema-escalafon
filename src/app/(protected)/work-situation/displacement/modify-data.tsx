@@ -1,6 +1,5 @@
 "use client";
 
-import { ascensoRecord, deleteAscenso, updateAscenso } from "@/actions/ascenso-action";
 import { getFile } from "@/actions/file-action";
 import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
@@ -13,13 +12,16 @@ import { Download, Save, Trash } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { ascensoSchema, ZAscensoS } from "@/lib/schemas/w-situation-schema";
+import { desplazamientoSchema, ZDesplazamientoS } from "@/lib/schemas/w-situation-schema";
+import { deleteDesplazamiento, desplazamientoRecord, updateDesplazamiento } from "@/actions/desplazamiento-action";
+import { SelectField } from "@/components/custom-fields/select-field";
+import { tipoDesplazamientoOp } from "@/utils/options";
 import { InputField } from "@/components/custom-fields/input-field";
 
 type ModifyProps = {
-  item: ascensoRecord;
+  item: desplazamientoRecord;
   onUpdated: () => void;
-  setSelectedItem: React.Dispatch<React.SetStateAction<ascensoRecord | null>>;
+  setSelectedItem: React.Dispatch<React.SetStateAction<desplazamientoRecord | null>>;
 };
 
 export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem }) => {
@@ -36,9 +38,8 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
   }, [item.file?.id]);
 
   const defaultValues = {
-    resolucion_ascenso: item.resolucion_ascenso,
-    nivel_remunerativo: item.nivel_remunerativo,
-    cnp: item.cnp,
+    tipo_desplazamiento: item.tipo_desplazamiento,
+    tipo_file: item.tipo_file,
     fecha: item.fecha.toISOString(),
     current_cargo: { nombre: item.current_cargo.nombre },
     new_cargo: { nombre: item.new_cargo.nombre },
@@ -47,16 +48,16 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
     file: undefined,
   };
 
-  const form = useForm<ZAscensoS>({ resolver: zodResolver(ascensoSchema), defaultValues: defaultValues as any });
+  const form = useForm<ZDesplazamientoS>({ resolver: zodResolver(desplazamientoSchema), defaultValues: defaultValues as any });
 
-  const onUpdate = async (data: ZAscensoS) => {
+  const onUpdate = async (data: ZDesplazamientoS) => {
     startTransition(async () => {
       try {
         const updateData = { ...data };
 
         if (isChangingFile && data.file) updateData.file = data.file;
 
-        const response = await updateAscenso(item.id, updateData);
+        const response = await updateDesplazamiento(item.id, updateData);
         if (!response.success) toast.error(response.message);
         else {
           toast.success("Actualizacion exitosa.");
@@ -73,7 +74,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
   const onDelete = () => {
     startTransition(async () => {
       try {
-        const response = await deleteAscenso(item.id, item.file_id);
+        const response = await deleteDesplazamiento(item.id, item.file_id);
         if (!response.success) toast.error(response.message);
         else {
           toast.success("Eliminacion exitosa.");
@@ -92,13 +93,10 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
       <p className="font-primary font-bold text-mauve text-xl uppercase">Modificar Merito</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
-          <div className="gap-2 grid grid-cols-2">
-            <InputField control={form.control} name="resolucion_ascenso" label="Resolucion de Ascenso *" placeholder="Ingrese la resolucion de ascenso" />
-            <InputField control={form.control} name="cnp" label="CNP *" type="number" />
-          </div>
+          <SelectField control={form.control} name="tipo_desplazamiento" label="Tipo de Desplazamiento" options={tipoDesplazamientoOp} />
 
           <div className="gap-2 grid grid-cols-2">
-            <InputField control={form.control} name="nivel_remunerativo" label="Nivel Remunerativo *" placeholder="Ingrese el nivel remunerativo" />
+            <InputField control={form.control} name="tipo_file" label="Tipo de Documento" placeholder="Ingrese el tipo de documento" />
             <DateField control={form.control} name="fecha" label="Fecha" disabled={false} />
           </div>
 

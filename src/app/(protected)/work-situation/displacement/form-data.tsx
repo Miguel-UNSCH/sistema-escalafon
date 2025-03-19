@@ -1,5 +1,5 @@
 "use client";
-import { createDesplazamiento } from "@/actions/desplazamiento-action";
+import { createDesplazamiento, desplazamientoRecord } from "@/actions/desplazamiento-action";
 import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
 import { DependenciaField } from "@/components/custom-fields/dependencia-field";
@@ -17,12 +17,13 @@ import React, { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-type FormDataProps = {
-  fetchDesplazamientos: () => void;
+type CreateProps = {
+  onCreated: () => void;
+  setSelectedItem: React.Dispatch<React.SetStateAction<desplazamientoRecord | null>>;
 };
-
-export const FormData: React.FC<FormDataProps> = ({ fetchDesplazamientos }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) => {
   const [isPending, startTransition] = useTransition();
+
   const defaultValues = {
     tipo_desplazamiento: undefined,
     fecha: undefined,
@@ -55,7 +56,8 @@ export const FormData: React.FC<FormDataProps> = ({ fetchDesplazamientos }) => {
         else {
           toast.success("Desplazamiento registrado exitosamente.");
           form.reset();
-          fetchDesplazamientos();
+          onCreated();
+          setSelectedItem(null);
         }
         // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
@@ -66,7 +68,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchDesplazamientos }) => {
 
   return (
     <div className="flex flex-col gap-5 w-full">
-      <p className="font-primary font-semibold uppercase">Registrar</p>
+      <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <SelectField control={form.control} name="tipo_desplazamiento" label="Tipo de Desplazamiento" options={tipoDesplazamientoOp} />
@@ -83,14 +85,14 @@ export const FormData: React.FC<FormDataProps> = ({ fetchDesplazamientos }) => {
 
           <div className="flex flex-col gap-2">
             <p className="font-primary font-semibold text-md">Dependencia Actual</p>
-            <div className="gap-2 grid grid-cols-3">
+            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
               <DependenciaField control={form.control} name="current_dependencia" />
             </div>
           </div>
 
           <div className="flex flex-col gap-2">
             <p className="font-primary font-semibold text-md">Nueva Dependencia</p>
-            <div className="gap-2 grid grid-cols-3">
+            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
               <DependenciaField control={form.control} name="new_dependencia" />
             </div>
           </div>
