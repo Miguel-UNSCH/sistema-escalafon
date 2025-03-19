@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import toast from "react-hot-toast";
 
 import { ExperienceRecord } from "./content-data";
 import { getFile } from "@/actions/file-action";

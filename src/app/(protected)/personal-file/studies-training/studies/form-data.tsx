@@ -16,12 +16,14 @@ import { InputField } from "@/components/custom-fields/input-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
 import { estudiosSchema, ZEstudioS } from "@/lib/schemas/user-schema";
 import { SelectField } from "@/components/custom-fields/select-field";
+import { StudyRecord } from "./content-data";
 
-type FormDataProps = {
-  fetchFormAc: () => void;
+type CreateProps = {
+  onCreated: () => void;
+  setSelectedItem: React.Dispatch<React.SetStateAction<StudyRecord | null>>;
 };
 
-export const FormData: React.FC<FormDataProps> = ({ fetchFormAc }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) => {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<ZEstudioS>({
@@ -58,7 +60,8 @@ export const FormData: React.FC<FormDataProps> = ({ fetchFormAc }) => {
         else {
           toast.success("Estudio registrado exitosamente.");
           form.reset();
-          fetchFormAc();
+          onCreated();
+          setSelectedItem(null);
         }
         // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
@@ -69,7 +72,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchFormAc }) => {
 
   return (
     <div className="flex flex-col gap-5 w-full">
-      <p className="font-primary font-semibold uppercase">Registrar</p>
+      <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <SelectField control={form.control} name="nivel" label="Formacion Academica *" options={nivelEducativoOp} />
@@ -89,7 +92,7 @@ export const FormData: React.FC<FormDataProps> = ({ fetchFormAc }) => {
           <div className="flex justify-end">
             <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
               <Save />
-              {isPending ? "Guardando..." : "Registrar"}
+              {isPending ? "Guardando..." : "Guardar"}
             </Button>
           </div>
         </form>
