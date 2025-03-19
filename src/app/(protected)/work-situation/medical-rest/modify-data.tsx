@@ -85,7 +85,7 @@ export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedM
 
   return (
     <div className="flex flex-col gap-5 w-full font-text">
-      <p className="font-primary font-bold text-mauve text-xl uppercase">Modificar Merito</p>
+      <p className="font-primary font-bold text-mauve text-xl uppercase">Modificar Descanso Medico</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
           <SelectField control={form.control} name="tipo_descanso" label="Tipo de Descanso" options={tipoDescansoOp} />

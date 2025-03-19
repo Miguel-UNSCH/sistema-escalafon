@@ -62,8 +62,8 @@ export const ContentData = ({ session }: { session: Session }) => {
       <div>
         <h2 className="py-2 font-primary font-bold text-peach text-2xl">Cambiar contrasenia</h2>
         <div className="flex flex-col gap-4">
-          <p>contrasenia actual</p>
-          <p>nueva contrasenia</p>
+          <p>contraseña actual</p>
+          <p>nueva contraseña</p>
         </div>
       </div>
 

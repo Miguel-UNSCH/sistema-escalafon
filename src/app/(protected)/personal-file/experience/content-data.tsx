@@ -43,7 +43,7 @@ export const ContentData = () => {
 
   return (
     <div className="flex flex-col gap-5 mx-auto p-2 w-full max-w-5xl">
-      <p className="font-primary font-semibold text-2xl text-center uppercase">Contratos y Nombramientos</p>
+      <p className="font-primary font-semibold text-2xl text-center uppercase">Experiencia Laboral</p>
       {items.length ? (
         <Table items={items} loading={loading} selectedItem={selectedItem} setSelectedItem={setSelectedItem} />
       ) : (

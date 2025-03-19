@@ -89,7 +89,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
 
   return (
     <div className="flex flex-col gap-5 w-full font-text">
-      <p className="font-primary font-bold text-mauve text-xl uppercase">Modificar Experiencia</p>
+      <p className="font-primary font-bold text-mauve text-xl uppercase">Modificar estudios</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
           <SelectField control={form.control} name="nivel" label="Formacion Academica *" options={nivelEducativoOp} />
