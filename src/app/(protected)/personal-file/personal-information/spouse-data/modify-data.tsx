@@ -4,7 +4,7 @@ import { useTransition } from "react";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Save } from "lucide-react";
+import { Save, Edit, Trash } from "lucide-react";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { gradoInstruccionOp } from "@/utils/options";
@@ -13,45 +13,66 @@ import { InputField } from "@/components/custom-fields/input-field";
 import { SelectField } from "@/components/custom-fields/select-field";
 import { UbigeoField } from "@/components/custom-fields/ubigeo-field";
 import { conyugeSchema, ZConyuge } from "@/lib/schemas/personal-schema";
-import { createSpouse } from "@/actions/conyuge-action";
+import { updateSpouse, deleteSpouse, spouseRecord } from "@/actions/conyuge-action";
 
-export const CreateData = ({ onRefresh }: { onRefresh: () => void }) => {
+export const ModifyData = ({ spouseData, onRefresh }: { spouseData: spouseRecord; onRefresh: () => void }) => {
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<ZConyuge>({
-    resolver: zodResolver(conyugeSchema),
-    defaultValues: {
-      nombres: "",
-      apellidos: "",
-      dni: "",
-      fecha_nacimiento: undefined,
-      ubigeo: { inei: "", reniec: "", departamento: "", provincia: "", distrito: "" },
-      grado_instruccion: undefined,
+  const defaultValues = {
+    nombres: spouseData.nombres,
+    apellidos: spouseData.apellidos,
+    dni: spouseData.dni,
+    fecha_nacimiento: spouseData.fecha_nacimiento.toISOString(),
+    ubigeo: {
+      inei: spouseData.ubigeo.inei,
+      reniec: spouseData.ubigeo.reniec,
+      departamento: spouseData.ubigeo.departamento,
+      provincia: spouseData.ubigeo.provincia,
+      distrito: spouseData.ubigeo.distrito,
     },
-  });
+    grado_instruccion: spouseData.grado_instruccion,
+  };
 
-  const onSubmit = (data: ZConyuge) => {
+  const form = useForm<ZConyuge>({ resolver: zodResolver(conyugeSchema), defaultValues: defaultValues as any });
+
+  const handleSubmit = (data: ZConyuge) => {
     startTransition(async () => {
       try {
-        const result = await createSpouse(data);
+        const result = await updateSpouse(data);
+        if (!result.success) {
+          toast.error(result.message);
+        } else {
+          toast.success("Cónyuge actualizado exitosamente.");
+          onRefresh();
+        }
+      } catch (e) {
+        toast.error("Error al actualizar los datos del cónyuge.");
+      }
+    });
+  };
+
+  const handleDelete = () => {
+    startTransition(async () => {
+      try {
+        const result = await deleteSpouse();
         if (!result.success) {
           toast.error(result.message);
         } else {
           form.reset();
-          toast.success("Cónyuge registrado exitosamente.");
+          toast.success("Cónyuge eliminado exitosamente.");
           onRefresh();
         }
       } catch (e) {
-        toast.error("Error al registrar el cónyuge.");
+        toast.error("Error al eliminar el cónyuge.");
       }
     });
   };
 
   return (
     <div className="flex flex-col gap-5 w-full">
-      <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
+      <p className="font-primary font-bold text-mauve text-xl uppercase">Modificar o Eliminar</p>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8 pb-5">
           <div className="gap-2 grid grid-cols-2">
             <InputField control={form.control} name="nombres" label="Nombres *" placeholder="Ingrese sus nombres" />
             <InputField control={form.control} name="apellidos" label="Apellidos *" placeholder="Ingrese sus apellidos" />
@@ -71,10 +92,12 @@ export const CreateData = ({ onRefresh }: { onRefresh: () => void }) => {
 
           <SelectField control={form.control} name="grado_instruccion" label="Grado de Instrucción *" options={gradoInstruccionOp} disabled={false} />
 
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-3">
+            <Button onClick={handleDelete}>
+              <Trash /> Eliminar
+            </Button>
             <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
-              <Save />
-              {isPending ? "Guardando..." : "Guardar"}
+              <Edit /> {isPending ? "Guardando..." : "Modificar"}
             </Button>
           </div>
         </form>

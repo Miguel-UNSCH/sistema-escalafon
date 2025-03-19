@@ -3,9 +3,11 @@
 import { auth } from "@/auth";
 import { prisma } from "@/config/prisma.config";
 import { ZConyuge } from "@/lib/schemas/personal-schema";
-import { Conyuge, Personal, Ubigeo, User } from "@prisma/client";
+import { Conyuge, Personal, Prisma, Ubigeo, User } from "@prisma/client";
 
-export const getCurrentSpouse = async (): Promise<{ success: boolean; message?: string; data?: Conyuge }> => {
+export type spouseRecord = Prisma.ConyugeGetPayload<{ include: { ubigeo: true } }>;
+
+export const getCurrentSpouse = async (): Promise<{ success: boolean; message?: string; data?: spouseRecord }> => {
   try {
     const session = await auth();
     if (!session?.user?.email) throw new Error("No autorizado");
@@ -16,15 +18,13 @@ export const getCurrentSpouse = async (): Promise<{ success: boolean; message?: 
     const personal: Personal | null = await prisma.personal.findUnique({ where: { user_id: user.id } });
     if (!personal) throw new Error("Personal no encontrado");
 
-    const spouse: Conyuge | null = await prisma.conyuge.findUnique({ where: { personal_id: personal.id }, include: { ubigeo: true } });
+    const spouse: spouseRecord | null = await prisma.conyuge.findUnique({ where: { personal_id: personal.id }, include: { ubigeo: true } });
     if (!spouse) throw new Error(`Couldn not find spouse for personal with id ${personal.id}`);
 
     return { success: true, data: spouse };
   } catch (error: unknown) {
     let errorMessage = "Error al obtener cónyuge.";
-
     if (error instanceof Error) errorMessage = error.message;
-
     return { success: false, message: errorMessage };
   }
 };
@@ -59,9 +59,68 @@ export const createSpouse = async (data: ZConyuge): Promise<{ success: boolean; 
     return { success: true, message: "Conyuge creado exitosamente." };
   } catch (error: unknown) {
     let errorMessage = "Error al crear conyuge.";
-
     if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
+  }
+};
 
+export const updateSpouse = async (data: ZConyuge): Promise<{ success: boolean; message: string }> => {
+  try {
+    const session = await auth();
+    if (!session?.user?.email) throw new Error("No autorizado");
+
+    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    if (!user) throw new Error("Usuario no encontrado");
+
+    const personal: Personal | null = await prisma.personal.findUnique({ where: { user_id: user.id } });
+    if (!personal) throw new Error("Personal no encontrado");
+
+    const spouse: Conyuge | null = await prisma.conyuge.findUnique({ where: { personal_id: personal.id } });
+    if (!spouse) throw new Error("Cónyuge no encontrado");
+
+    const ubigeo: Ubigeo | null = await prisma.ubigeo.findUnique({ where: { inei: data.ubigeo.inei } });
+    if (!ubigeo) throw new Error("El ubigeo proporcionado no existe.");
+
+    await prisma.conyuge.update({
+      where: { id: spouse.id },
+      data: {
+        nombres: data.nombres.toUpperCase(),
+        apellidos: data.apellidos.toUpperCase(),
+        dni: data.dni,
+        fecha_nacimiento: new Date(data.fecha_nacimiento).toISOString(),
+        ubigeo_id: ubigeo.id,
+        grado_instruccion: data.grado_instruccion,
+      },
+    });
+
+    return { success: true, message: "Cónyuge actualizado exitosamente." };
+  } catch (error: unknown) {
+    let errorMessage = "Error al actualizar cónyuge.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
+  }
+};
+
+export const deleteSpouse = async (): Promise<{ success: boolean; message: string }> => {
+  try {
+    const session = await auth();
+    if (!session?.user?.email) throw new Error("No autorizado");
+
+    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    if (!user) throw new Error("Usuario no encontrado");
+
+    const personal: Personal | null = await prisma.personal.findUnique({ where: { user_id: user.id } });
+    if (!personal) throw new Error("Personal no encontrado");
+
+    const spouse: Conyuge | null = await prisma.conyuge.findUnique({ where: { personal_id: personal.id } });
+    if (!spouse) throw new Error("Cónyuge no encontrado");
+
+    await prisma.conyuge.delete({ where: { id: spouse.id } });
+
+    return { success: true, message: "Cónyuge eliminado exitosamente." };
+  } catch (error: unknown) {
+    let errorMessage = "Error al eliminar cónyuge.";
+    if (error instanceof Error) errorMessage = error.message;
     return { success: false, message: errorMessage };
   }
 };
