@@ -23,7 +23,7 @@ export const contratoSchema = z.object({
     .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
     .transform((date) => new Date(date))
     .optional(),
-  file: fileSchema,
+  file: fileSchema.optional(),
   cargo: cargoSchema,
   dependencia: dependenciaSchema,
 });
