@@ -16,7 +16,7 @@ export const SwitchField: React.FC<SwitchFieldProps> = ({ control, name, label, 
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="flex flex-row justify-between items-center p-4 border border-transparent hover:border-red rounded-lg">
+        <FormItem className="flex flex-row justify-between items-center bg-mantle p-4 border border-transparent hover:border-red rounded-lg">
           <div className="space-y-0.5">
             <FormLabel className="text-text">{label}</FormLabel>
             {description && <FormDescription>{description}</FormDescription>}

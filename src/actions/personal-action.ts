@@ -3,9 +3,9 @@
 import { auth } from "@/auth";
 import { prisma } from "@/config/prisma.config";
 import { ZPersonal } from "@/lib/schemas/personal-schema";
-import { Personal, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
-export type personalRecord = Prisma.PersonalGetPayload<{ include: { dependencia: true; cargo: true; user: true; ubigeo: true } }>;
+export type personalRecord = Prisma.PersonalGetPayload<{ include: { user: true; ubigeo: true } }>;
 
 export const getCurrentPersonal = async (email: string): Promise<{ success: boolean; message?: string; data?: personalRecord }> => {
   try {
@@ -14,7 +14,7 @@ export const getCurrentPersonal = async (email: string): Promise<{ success: bool
 
     const personal: personalRecord | null = await prisma.personal.findUnique({
       where: { user_id: user.id },
-      include: { dependencia: true, cargo: true, user: true, ubigeo: true },
+      include: { user: true, ubigeo: true },
     });
     if (!personal) throw new Error("Personal no encontrado");
 
@@ -37,12 +37,6 @@ export const createPersonal = async (data: ZPersonal): Promise<{ success: boolea
     const ubigeo = await prisma.ubigeo.findFirst({ where: { inei: data.ubigeo.inei } });
     if (!ubigeo) throw new Error("El ubigeo proporcionado no existe.");
 
-    const cargo = await prisma.cargo.findUnique({ where: { nombre: data.cargo.nombre } });
-    if (!cargo) throw new Error("El cargo especificado no existe.");
-
-    const dependencia = await prisma.dependencia.findUnique({ where: { codigo: data.dependencia.codigo } });
-    if (!dependencia) throw new Error("La dependencia especificada no existe.");
-
     await prisma.personal.create({
       data: {
         user_id: currentUser.id,
@@ -55,14 +49,9 @@ export const createPersonal = async (data: ZPersonal): Promise<{ success: boolea
         fecha_nacimiento: new Date(data.fecha_nacimiento).toISOString(),
         domicilio: data.domicilio.toUpperCase(),
         numero_contacto: data.numero_contacto,
-        unidad_estructurada: data.unidad_estructurada,
-        regimen_pensionario: data.regimen_pensionario,
-        situacion_laboral: data.situacion_laboral,
         estado_civil: data.estado_civil,
         discapacidad: data.discapacidad,
         numero_hijos: data.numero_hijos,
-        cargo_id: cargo.id,
-        dependencia_id: dependencia.id,
         ubigeo_id: ubigeo.id,
       },
     });
@@ -80,12 +69,6 @@ export const updatePersonal = async (id: string, data: ZPersonal): Promise<{ suc
     const ubigeo = await prisma.ubigeo.findFirst({ where: { inei: data.ubigeo.inei } });
     if (!ubigeo) throw new Error("El ubigeo proporcionado no existe.");
 
-    const cargo = await prisma.cargo.findUnique({ where: { nombre: data.cargo.nombre } });
-    if (!cargo) throw new Error("El cargo especificado no existe.");
-
-    const dependencia = await prisma.dependencia.findUnique({ where: { codigo: data.dependencia.codigo } });
-    if (!dependencia) throw new Error("La dependencia especificada no existe.");
-
     await prisma.personal.update({
       where: { id },
       data: {
@@ -98,14 +81,9 @@ export const updatePersonal = async (id: string, data: ZPersonal): Promise<{ suc
         fecha_nacimiento: new Date(data.fecha_nacimiento).toISOString(),
         domicilio: data.domicilio.toUpperCase(),
         numero_contacto: data.numero_contacto,
-        unidad_estructurada: data.unidad_estructurada,
-        regimen_pensionario: data.regimen_pensionario,
-        situacion_laboral: data.situacion_laboral,
         estado_civil: data.estado_civil,
         numero_hijos: data.numero_hijos,
         discapacidad: data.discapacidad,
-        cargo_id: cargo.id,
-        dependencia_id: dependencia.id,
         ubigeo_id: ubigeo.id,
       },
     });

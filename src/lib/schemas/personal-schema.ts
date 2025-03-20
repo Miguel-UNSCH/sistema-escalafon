@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { cargoSchema, dependenciaSchema, UbigeoSchema } from "./others-schema";
-import { EstadoCivil, GradoInstruccion, GrupoSanguineo, RegimenPensionario, Sexo, SituacionLaboral } from "./enums";
+import { UbigeoSchema } from "./others-schema";
+import { EstadoCivil, GradoInstruccion, GrupoSanguineo, Sexo } from "./enums";
 
 export const personalSchema = z.object({
   sexo: Sexo,
@@ -18,15 +18,10 @@ export const personalSchema = z.object({
     .transform((date) => new Date(date)),
   domicilio: z.string({ required_error: "Domicilio es requerido" }),
   numero_contacto: z.string({ required_error: "Celular es requerido" }),
-  unidad_estructurada: z.string({ required_error: "Unidad estructurada es requerida" }),
-  regimen_pensionario: RegimenPensionario,
-  situacion_laboral: SituacionLaboral,
   estado_civil: EstadoCivil,
   discapacidad: z.boolean({ required_error: "Discapacidad es requerida" }),
   numero_hijos: z.number({ required_error: "Número de hijos es requerido" }),
 
-  cargo: cargoSchema,
-  dependencia: dependenciaSchema,
   ubigeo: UbigeoSchema,
 });
 export type ZPersonal = z.infer<typeof personalSchema>;

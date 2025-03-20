@@ -177,7 +177,7 @@ model Dependencia {
   direccion String? @db.Citext
   codigo    String  @unique @db.Citext
 
-  personal   Personal[]
+  cargos     CargoDependencia[]
   experience Experience[]
   contrato   Contrato[]
   renuncia   renuncia[]
@@ -203,10 +203,10 @@ model Cargo {
   id     Int    @id @default(autoincrement())
   nombre String @unique @db.Citext
 
-  personal   Personal[]
-  experience Experience[]
-  contrato   Contrato[]
-  renuncia   renuncia[]
+  dependencias CargoDependencia[]
+  experience   Experience[]
+  contrato     Contrato[]
+  renuncia     renuncia[]
 
   desplazamientosDesde desplazamiento[]  @relation(name: "cargo_from")
   desplazamientosHacia desplazamiento[]  @relation(name: "cargo_to")
@@ -223,6 +223,17 @@ model Cargo {
   demerito             demerito[]
 
   @@map("cargos")
+}
+
+model CargoDependencia {
+  cargoId       Int
+  dependenciaId Int
+
+  cargo       Cargo       @relation(fields: [cargoId], references: [id])
+  dependencia Dependencia @relation(fields: [dependenciaId], references: [id])
+
+  @@id([cargoId, dependenciaId])
+  @@map("cargos_dependencias")
 }
 
 model File {
@@ -312,33 +323,26 @@ model User {
 }
 
 model Personal {
-  id                  String             @id @default(cuid())
-  sexo                Sexo
-  grupo_sanguineo     GrupoSanguineo
-  n_autogenerado      String
-  licencia_conducir   String?            @db.Citext
-  fecha_ingreso       DateTime
-  anios_servicio      Int
-  fecha_nacimiento    DateTime
-  domicilio           String             @db.Citext
-  numero_contacto     String
-  unidad_estructurada String             @db.Citext
-  regimen_pensionario RegimenPensionario
-  situacion_laboral   SituacionLaboral
-  estado_civil        EstadoCivil
-  numero_hijos        Int                @default(0)
-  discapacidad        Boolean            @default(false)
+  id                String         @id @default(cuid())
+  sexo              Sexo
+  grupo_sanguineo   GrupoSanguineo
+  n_autogenerado    String
+  licencia_conducir String?        @db.Citext
+  fecha_ingreso     DateTime
+  anios_servicio    Int
+  fecha_nacimiento  DateTime
+  domicilio         String         @db.Citext
+  numero_contacto   String
+  estado_civil      EstadoCivil
+  numero_hijos      Int            @default(0)
+  discapacidad      Boolean        @default(false)
 
-  cargo_id       Int
-  dependencia_id Int
-  ubigeo_id      Int
-  user_id        String  @unique
-  conyuge_id     String?
+  ubigeo_id  Int
+  user_id    String  @unique
+  conyuge_id String?
 
-  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  cargo       Cargo       @relation(fields: [cargo_id], references: [id], onDelete: Restrict)
-  dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
-  ubigeo      Ubigeo      @relation(fields: [ubigeo_id], references: [id], onDelete: Restrict)
+  user   User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  ubigeo Ubigeo @relation(fields: [ubigeo_id], references: [id], onDelete: Restrict)
 
   conyuge  Conyuge?
   children PersonalChildren[]
