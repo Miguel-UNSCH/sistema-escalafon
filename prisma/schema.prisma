@@ -326,6 +326,7 @@ model Personal {
   regimen_pensionario RegimenPensionario
   situacion_laboral   SituacionLaboral
   estado_civil        EstadoCivil
+  numero_hijos        Int                @default(0)
   discapacidad        Boolean            @default(false)
 
   cargo_id       Int

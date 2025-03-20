@@ -5,15 +5,17 @@ import { prisma } from "@/config/prisma.config";
 import { ZPersonal } from "@/lib/schemas/personal-schema";
 import { Personal, Prisma } from "@prisma/client";
 
-export type FullPersonal = Prisma.PersonalGetPayload<{
-  include: { dependencia: true; cargo: true; user: true; ubigeo: true };
-}>;
-export const getCurrentPersonal = async (email: string): Promise<{ success: boolean; message?: string; data?: FullPersonal }> => {
+export type personalRecord = Prisma.PersonalGetPayload<{ include: { dependencia: true; cargo: true; user: true; ubigeo: true } }>;
+
+export const getCurrentPersonal = async (email: string): Promise<{ success: boolean; message?: string; data?: personalRecord }> => {
   try {
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) throw new Error("Usuario no encontrado");
 
-    const personal: FullPersonal | null = await prisma.personal.findUnique({ where: { user_id: user.id }, include: { dependencia: true, cargo: true, user: true, ubigeo: true } });
+    const personal: personalRecord | null = await prisma.personal.findUnique({
+      where: { user_id: user.id },
+      include: { dependencia: true, cargo: true, user: true, ubigeo: true },
+    });
     if (!personal) throw new Error("Personal no encontrado");
 
     return { success: true, data: personal };
@@ -58,6 +60,7 @@ export const createPersonal = async (data: ZPersonal): Promise<{ success: boolea
         situacion_laboral: data.situacion_laboral,
         estado_civil: data.estado_civil,
         discapacidad: data.discapacidad,
+        numero_hijos: data.numero_hijos,
         cargo_id: cargo.id,
         dependencia_id: dependencia.id,
         ubigeo_id: ubigeo.id,
@@ -72,17 +75,8 @@ export const createPersonal = async (data: ZPersonal): Promise<{ success: boolea
   }
 };
 
-export const updatePersonal = async (data: ZPersonal & Personal): Promise<{ success: boolean; message: string }> => {
+export const updatePersonal = async (id: string, data: ZPersonal): Promise<{ success: boolean; message: string }> => {
   try {
-    const session = await auth();
-    if (!session || !session?.user?.email) throw new Error("No autorizado");
-
-    const currentUser = await prisma.user.findUnique({ where: { email: session.user.email } });
-    if (!currentUser) throw new Error("Usuario no encontrado");
-
-    const existingPersonal = await prisma.personal.findUnique({ where: { user_id: currentUser.id } });
-    if (!existingPersonal) throw new Error("El personal especificado no existe.");
-
     const ubigeo = await prisma.ubigeo.findFirst({ where: { inei: data.ubigeo.inei } });
     if (!ubigeo) throw new Error("El ubigeo proporcionado no existe.");
 
@@ -93,7 +87,7 @@ export const updatePersonal = async (data: ZPersonal & Personal): Promise<{ succ
     if (!dependencia) throw new Error("La dependencia especificada no existe.");
 
     await prisma.personal.update({
-      where: { id: existingPersonal.id },
+      where: { id },
       data: {
         sexo: data.sexo,
         grupo_sanguineo: data.grupo_sanguineo,
@@ -108,6 +102,7 @@ export const updatePersonal = async (data: ZPersonal & Personal): Promise<{ succ
         regimen_pensionario: data.regimen_pensionario,
         situacion_laboral: data.situacion_laboral,
         estado_civil: data.estado_civil,
+        numero_hijos: data.numero_hijos,
         discapacidad: data.discapacidad,
         cargo_id: cargo.id,
         dependencia_id: dependencia.id,
@@ -118,6 +113,21 @@ export const updatePersonal = async (data: ZPersonal & Personal): Promise<{ succ
     return { success: true, message: "Personal actualizado exitosamente." };
   } catch (error: unknown) {
     let errorMessage = "Error al actualizar el Personal.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
+  }
+};
+
+export const deletePersonal = async (id: string): Promise<{ success: boolean; message: string }> => {
+  try {
+    const currentPeronal = await prisma.personal.findUnique({ where: { id } });
+    if (!currentPeronal) throw new Error("El personal especificado no existe.");
+
+    await prisma.personal.delete({ where: { id } });
+
+    return { success: true, message: "Personal eliminado exitosamente." };
+  } catch (error: unknown) {
+    let errorMessage = "Error al eliminar el Personal.";
     if (error instanceof Error) errorMessage = error.message;
     return { success: false, message: errorMessage };
   }

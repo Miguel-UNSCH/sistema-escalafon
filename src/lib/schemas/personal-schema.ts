@@ -23,6 +23,7 @@ export const personalSchema = z.object({
   situacion_laboral: SituacionLaboral,
   estado_civil: EstadoCivil,
   discapacidad: z.boolean({ required_error: "Discapacidad es requerida" }),
+  numero_hijos: z.number({ required_error: "Número de hijos es requerido" }),
 
   cargo: cargoSchema,
   dependencia: dependenciaSchema,

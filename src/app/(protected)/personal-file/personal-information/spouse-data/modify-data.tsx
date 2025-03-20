@@ -32,7 +32,6 @@ export const ModifyData = ({ spouseData, onRefresh }: { spouseData: spouseRecord
     },
     grado_instruccion: spouseData.grado_instruccion,
   };
-
   const form = useForm<ZConyuge>({ resolver: zodResolver(conyugeSchema), defaultValues: defaultValues as any });
 
   const handleSubmit = (data: ZConyuge) => {
