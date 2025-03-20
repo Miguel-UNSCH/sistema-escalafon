@@ -426,14 +426,19 @@ model FormacionAcademica {
   @@map("estudios")
 }
 
+enum TipoCapacitacion {
+  c
+}
+
 model Capacitacion {
-  id                  String @id @default(cuid())
-  centro_capacitacion String @db.Citext
-  materia             String @db.Citext
-  especialidad        String @db.Citext
+  id                  String           @id @default(cuid())
+  tipe                TipoCapacitacion @default(c)
+  centro_capacitacion String           @db.Citext
+  materia             String           @db.Citext
+  especialidad        String           @db.Citext
   periodo             Json // {from: DateTime, to: DateTime}
   horas_lectivas      Int
-  tipo                String @default("certificado")
+  tipo                String           @default("certificado")
 
   file_id String
   user_id String

@@ -39,6 +39,7 @@ export const createCapacitacion = async (data: ZCapacitacionS & { file_id: strin
     await prisma.capacitacion.create({
       data: {
         user_id: user.id,
+        tipe: data.tipe,
         centro_capacitacion: data.centro_capacitacion.toUpperCase(),
         materia: data.materia.toUpperCase(),
         especialidad: data.especialidad?.toUpperCase(),
@@ -72,6 +73,7 @@ export const updateCapacitacion = async (id: string, data: ZCapacitacionS & { fi
     await prisma.capacitacion.update({
       where: { id },
       data: {
+        tipe: data.tipe,
         centro_capacitacion: data.centro_capacitacion.toUpperCase(),
         materia: data.materia.toUpperCase(),
         especialidad: data.especialidad?.toUpperCase(),

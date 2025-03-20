@@ -122,6 +122,8 @@ export const tDscapacidadOp = [
   { key: "mul", value: "MULTIPLE" },
 ];
 
+export const tCapacitacionOp = [{ key: "c", value: "CERTIFICADO" }];
+
 export const entidad_certificadoraOp = [
   { key: "min", value: "MINSA" },
   { key: "ess", value: "ESSALUD" },

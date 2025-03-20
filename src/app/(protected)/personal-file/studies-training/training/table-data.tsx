@@ -5,6 +5,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { CapacitacionRecord } from "./content-data";
 import { getFile } from "@/actions/file-action";
 import { Pagination } from "@/components/pagination";
+import { tCapacitacionOp } from "@/utils/options";
 
 type TableProps = {
   items: CapacitacionRecord[];
@@ -16,7 +17,7 @@ type TableProps = {
 export const Table: React.FC<TableProps> = ({ items, loading, selectedItem, setSelectedItem }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const tableHeaders = ["N", "Centro de Capacitación", "Materia", "Especialidad", "Horas Lectivas", "Periodo", "Archivo"];
+  const tableHeaders = ["N", "Tipo", "Centro de Capacitación", "Materia", "Especialidad", "Horas Lectivas", "Periodo", "Archivo"];
 
   const [fileUrls, setFileUrls] = useState<{ [key: string]: string | null }>({});
 
@@ -62,6 +63,7 @@ export const Table: React.FC<TableProps> = ({ items, loading, selectedItem, setS
                     onClick={() => setSelectedItem(item)}
                   >
                     <td className="px-4 lg:px-6 py-3 rounded-s-md">{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                    <td className="px-4 lg:px-6 py-3">{tCapacitacionOp.find((i) => i.key === item.tipe)?.value}</td>
                     <td className="px-4 lg:px-6 py-3">{item.centro_capacitacion}</td>
                     <td className="px-4 lg:px-6 py-3">{item.materia}</td>
                     <td className="px-4 lg:px-6 py-3">{item.especialidad || "N/A"}</td>

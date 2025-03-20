@@ -15,6 +15,8 @@ import { InputField } from "@/components/custom-fields/input-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
 import { capacitacionSchema, ZCapacitacionS } from "@/lib/schemas/user-schema";
 import { CapacitacionRecord } from "./content-data";
+import { SelectField } from "@/components/custom-fields/select-field";
+import { tCapacitacionOp } from "@/utils/options";
 
 type CreateProps = {
   onCreated: () => void;
@@ -27,6 +29,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) =>
   const form = useForm<ZCapacitacionS>({
     resolver: zodResolver(capacitacionSchema),
     defaultValues: {
+      tipe: undefined,
       centro_capacitacion: "",
       materia: "",
       especialidad: "",
@@ -71,6 +74,8 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) =>
       <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
+          <SelectField control={form.control} label="Tipo de Capacitacion *" name="tipe" options={tCapacitacionOp} />
+
           <div className="gap-4 grid grid-cols-2">
             <InputField control={form.control} name="centro_capacitacion" label="Centro de Capacitación *" placeholder="Ingrese el nombre del centro de capacitación" />
             <InputField control={form.control} name="materia" label="Materia *" placeholder="Ingrese la materia" />

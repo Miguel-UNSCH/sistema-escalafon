@@ -15,6 +15,8 @@ import toast from "react-hot-toast";
 import { capacitacionSchema, ZCapacitacionS } from "@/lib/schemas/user-schema";
 import { CapacitacionRecord } from "./content-data";
 import { deleteCapacitacion, updateCapacitacion } from "@/actions/capacitacion-action";
+import { tCapacitacionOp } from "@/utils/options";
+import { SelectField } from "@/components/custom-fields/select-field";
 
 type ModifyProps = {
   item: CapacitacionRecord;
@@ -37,6 +39,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
 
   const defaultValues = {
     centro_capacitacion: item.centro_capacitacion,
+    tipe: item.tipe,
     materia: item.materia,
     especialidad: item.especialidad,
     horas_lectivas: item.horas_lectivas,
@@ -89,6 +92,8 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
       <p className="font-primary font-bold text-mauve text-xl uppercase">Modificar Capacitacion</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
+          <SelectField control={form.control} label="Tipo de Capacitacion *" name="tipe" options={tCapacitacionOp} />
+
           <div className="gap-4 grid grid-cols-2">
             <InputField control={form.control} name="centro_capacitacion" label="Centro de Capacitación *" placeholder="Ingrese el nombre del centro de capacitación" />
             <InputField control={form.control} name="materia" label="Materia *" placeholder="Ingrese la materia" />
