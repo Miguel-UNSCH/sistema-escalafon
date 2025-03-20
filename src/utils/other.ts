@@ -60,7 +60,7 @@ export const breadcrumbs_options: BreadcrumbItem[] = [
     items: [
       {
         label: "bonificaciones",
-        path: "",
+        path: "/bonuses",
         items: [
           { label: "bonificación personal", path: "/personal" },
           { label: "bonificación familiar", path: "/family" },

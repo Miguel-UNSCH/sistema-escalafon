@@ -215,3 +215,33 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Estilo general del scrollbar */
+::-webkit-scrollbar {
+  width: 10px; /* Ancho de la barra de desplazamiento */
+  height: 12px; /* Altura de la barra de desplazamiento para scroll horizontal */
+}
+
+/* Estilo del "track" (fondo de la barra) */
+::-webkit-scrollbar-track {
+  background: var(--ctp-mantle); /* Color de fondo */
+  border-radius: 10px; /* Bordes redondeados */
+}
+
+/* Estilo del "thumb" (el indicador deslizante) */
+::-webkit-scrollbar-thumb {
+  background: var(--ctp-surface0); /* Color del thumb */
+  border-radius: 10px; /* Bordes redondeados */
+  border: 2px solid var(--ctp-mantle); /* Espacio entre el thumb y el track */
+}
+
+/* Hover en el thumb */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ctp-red); /* Color más claro al pasar el mouse */
+}
+
+/* Para navegadores Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ctp-surface0) var(--ctp-mantle); /* Color del thumb y track */
+}

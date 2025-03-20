@@ -6,7 +6,7 @@ import { auth } from "@/auth";
 import { PageContent } from "@/components/page-context";
 
 const pageContent = {
-  title: "Bonificaciones y Evaluaciones",
+  title: "Bonificaciones",
   description: "En esta sección el usuario podrá registrar las bonificaciones y evaluaciones que realizó a lo largo de su vida.",
   sections: [
     {
@@ -14,8 +14,16 @@ const pageContent = {
       description:
         "Responsible for organisation-wide matters. Such as setting the direction of the organisation, approving new ports, adding new maintainers, and cultivating a healthy community.",
       cards: [
-        { title: "Bonificaciones", description: "Learn how to create full-stack web applications with the Next.js App Router.", path: "/bonuses-evaluations/bonuses" },
-        { title: "Evaluaciones", description: "Learn how to create full-stack web applications with the Next.js App Router.", path: "/bonuses-evaluations/evaluations" },
+        {
+          title: "Bonificación Personal",
+          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          path: "/bonuses-evaluations/bonuses/personal",
+        },
+        {
+          title: "Bonificación Familiar",
+          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          path: "/bonuses-evaluations/bonuses/family",
+        },
       ],
     },
   ],

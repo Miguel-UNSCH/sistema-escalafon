@@ -64,7 +64,7 @@ export const navigationItems: NavigationItems[] = [
       {
         label: "Bonificaciones",
         icon: <Banknote size={16} />,
-        path: "/",
+        path: "/bonuses",
         submenus: [
           { label: "Bonificación Personal", path: "/personal" },
           { label: "Bonificación Familiar", path: "/family" },
