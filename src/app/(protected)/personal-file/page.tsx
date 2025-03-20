@@ -6,28 +6,31 @@ import { auth } from "@/auth";
 import { PageContent } from "@/components/page-context";
 
 const pageContent = {
-  title: "ficha personal",
-  description: "En esta sección el usuario podrá registrar las bonificaciones y evaluaciones que realizó a lo largo de su vida.",
+  title: "Ficha Personal",
+  description: "Administra tu información personal y profesional para fines escalafonarios en el Gobierno Regional de Ayacucho.",
   sections: [
     {
-      title: "secciones",
-      description:
-        "Responsible for organisation-wide matters. Such as setting the direction of the organisation, approving new ports, adding new maintainers, and cultivating a healthy community.",
+      title: "Datos Personales y Profesionales",
+      description: "Completa y actualiza tu información personal, académica y laboral según los requisitos escalafonarios.",
       cards: [
-        { title: "información personal", description: "Learn how to create full-stack web applications with the Next.js App Router.", path: "/personal-file/personal-information" },
         {
-          title: "estudios y capacitación",
-          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          title: "Información Personal",
+          description: "Registra y actualiza tus datos personales básicos y familiares.",
+          path: "/personal-file/personal-information",
+        },
+        {
+          title: "Estudios y Capacitación",
+          description: "Administra tus registros académicos, títulos y capacitaciones obtenidas.",
           path: "/personal-file/studies-training",
         },
         {
-          title: "experiencia laboral",
-          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          title: "Experiencia Laboral",
+          description: "Registra tu trayectoria y experiencia laboral en instituciones públicas y privadas.",
           path: "/personal-file/experience",
         },
         {
-          title: "discapacidad",
-          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          title: "Discapacidad",
+          description: "Declara y gestiona información relacionada con condiciones de discapacidad según corresponda.",
           path: "/personal-file/disability",
         },
       ],

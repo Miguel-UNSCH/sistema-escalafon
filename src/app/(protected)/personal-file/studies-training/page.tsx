@@ -6,22 +6,21 @@ import { auth } from "@/auth";
 import { PageContent } from "@/components/page-context";
 
 const pageContent = {
-  title: "estudios y capacitación",
-  description: "En esta sección el usuario podrá registrar las bonificaciones y evaluaciones que realizó a lo largo de su vida.",
+  title: "Estudios y Capacitación",
+  description: "Registra tus estudios académicos y capacitaciones para mantener actualizado tu escalafón en el Gobierno Regional de Ayacucho.",
   sections: [
     {
-      title: "secciones",
-      description:
-        "Responsible for organisation-wide matters. Such as setting the direction of the organisation, approving new ports, adding new maintainers, and cultivating a healthy community.",
+      title: "Formación Académica y Profesional",
+      description: "Administra y actualiza la información sobre tus estudios superiores, grados académicos y cursos realizados.",
       cards: [
         {
-          title: "estudios",
-          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          title: "Estudios",
+          description: "Registra tu formación académica oficial, títulos y grados obtenidos.",
           path: "/personal-file/studies-training/studies",
         },
         {
-          title: "capacitación",
-          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          title: "Capacitación",
+          description: "Registra los cursos, seminarios o capacitaciones realizadas durante tu trayectoria laboral.",
           path: "/personal-file/studies-training/training",
         },
       ],

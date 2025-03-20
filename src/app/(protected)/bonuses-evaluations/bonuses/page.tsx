@@ -7,21 +7,20 @@ import { PageContent } from "@/components/page-context";
 
 const pageContent = {
   title: "Bonificaciones",
-  description: "En esta sección el usuario podrá registrar las bonificaciones y evaluaciones que realizó a lo largo de su vida.",
+  description: "Registra aquí tus bonificaciones personales y familiares para fines de escalafón laboral.",
   sections: [
     {
-      title: "secciones",
-      description:
-        "Responsible for organisation-wide matters. Such as setting the direction of the organisation, approving new ports, adding new maintainers, and cultivating a healthy community.",
+      title: "Tipos de Bonificaciones",
+      description: "Selecciona y registra las bonificaciones correspondientes para mantener actualizado tu escalafón en el Gobierno Regional de Ayacucho.",
       cards: [
         {
           title: "Bonificación Personal",
-          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          description: "Registra las bonificaciones personales obtenidas por desempeño laboral o méritos específicos.",
           path: "/bonuses-evaluations/bonuses/personal",
         },
         {
           title: "Bonificación Familiar",
-          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          description: "Registra bonificaciones relacionadas con cargas familiares según las normas vigentes.",
           path: "/bonuses-evaluations/bonuses/family",
         },
       ],

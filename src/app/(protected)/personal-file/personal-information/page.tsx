@@ -6,27 +6,26 @@ import { auth } from "@/auth";
 import { PageContent } from "@/components/page-context";
 
 const pageContent = {
-  title: "información personal",
-  description: "En esta sección el usuario podrá registrar las bonificaciones y evaluaciones que realizó a lo largo de su vida.",
+  title: "Información Personal",
+  description: "Completa y actualiza tus datos personales y familiares para efectos del registro escalafonario del Gobierno Regional de Ayacucho.",
   sections: [
     {
-      title: "secciones",
-      description:
-        "Responsible for organisation-wide matters. Such as setting the direction of the organisation, approving new ports, adding new maintainers, and cultivating a healthy community.",
+      title: "Datos Familiares y Personales",
+      description: "Gestiona información básica relacionada contigo y tu grupo familiar directo, según las normativas del escalafón.",
       cards: [
         {
-          title: "datos personales",
-          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          title: "Datos Personales",
+          description: "Registra tus datos personales básicos, domicilio y datos de contacto.",
           path: "/personal-file/personal-information/personal-data",
         },
         {
-          title: "datos del cónyuge",
-          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          title: "Datos del Cónyuge",
+          description: "Administra la información personal de tu cónyuge o pareja reconocida.",
           path: "/personal-file/personal-information/spouse-data",
         },
         {
-          title: "datos de los hijos",
-          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          title: "Datos de los Hijos",
+          description: "Registra la información personal relevante de tus hijos o dependientes directos.",
           path: "/personal-file/personal-information/children-data",
         },
       ],

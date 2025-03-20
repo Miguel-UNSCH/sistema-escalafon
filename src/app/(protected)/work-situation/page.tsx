@@ -6,42 +6,41 @@ import { auth } from "@/auth";
 import { PageContent } from "@/components/page-context";
 
 const pageContent = {
-  title: "situación laboral",
-  description: "En esta sección el usuario podrá registrar las bonificaciones y evaluaciones que realizó a lo largo de su vida.",
+  title: "Situación Laboral",
+  description: "Registra y actualiza tu situación laboral para efectos del escalafón en el Gobierno Regional de Ayacucho.",
   sections: [
     {
-      title: "secciones",
-      description:
-        "Responsible for organisation-wide matters. Such as setting the direction of the organisation, approving new ports, adding new maintainers, and cultivating a healthy community.",
+      title: "Gestión Laboral",
+      description: "Selecciona la categoría correspondiente para gestionar información sobre tu trayectoria y condición laboral.",
       cards: [
         {
-          title: "contratos y nombramiento",
-          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          title: "Contratos y Nombramiento",
+          description: "Gestiona información sobre contratos y nombramiento en tu carrera pública.",
           path: "/work-situation/contracts",
         },
         {
-          title: "renuncia",
-          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          title: "Renuncia",
+          description: "Registra o consulta información relacionada con renuncias laborales.",
           path: "/work-situation/renunciation",
         },
         {
-          title: "desplazamiento",
-          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          title: "Desplazamiento",
+          description: "Gestiona información sobre desplazamientos o transferencias laborales realizadas.",
           path: "/work-situation/displacement",
         },
         {
-          title: "descanso médico",
-          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          title: "Descanso Médico",
+          description: "Registra periodos de descanso médico o incapacidad laboral temporal.",
           path: "/work-situation/medical-rest",
         },
         {
-          title: "permisos / licencias",
-          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          title: "Permisos / Licencias",
+          description: "Administra tus solicitudes de permisos o licencias aprobadas.",
           path: "/work-situation/permissions",
         },
         {
-          title: "ascensos",
-          description: "Learn how to create full-stack web applications with the Next.js App Router.",
+          title: "Ascensos",
+          description: "Consulta y actualiza información sobre tus ascensos laborales.",
           path: "/work-situation/promotions",
         },
       ],
