@@ -177,10 +177,9 @@ model Dependencia {
   direccion String? @db.Citext
   codigo    String  @unique @db.Citext
 
-  cargos     CargoDependencia[]
-  experience Experience[]
-  contrato   Contrato[]
-  renuncia   renuncia[]
+  cargos   CargoDependencia[]
+  contrato Contrato[]
+  renuncia renuncia[]
 
   desplazamientosDesde desplazamiento[]  @relation(name: "dependencia_from")
   desplazamientosHacia desplazamiento[]  @relation(name: "dependencia_to")
@@ -204,7 +203,6 @@ model Cargo {
   nombre String @unique @db.Citext
 
   dependencias CargoDependencia[]
-  experience   Experience[]
   contrato     Contrato[]
   renuncia     renuncia[]
 
@@ -226,14 +224,29 @@ model Cargo {
 }
 
 model CargoDependencia {
+  id            Int @id @default(autoincrement())
   cargoId       Int
   dependenciaId Int
 
-  cargo       Cargo       @relation(fields: [cargoId], references: [id])
-  dependencia Dependencia @relation(fields: [dependenciaId], references: [id])
+  cargo       Cargo                     @relation(fields: [cargoId], references: [id])
+  dependencia Dependencia               @relation(fields: [dependenciaId], references: [id])
+  usuarios    UsuarioCargoDependencia[]
 
-  @@id([cargoId, dependenciaId])
+  @@unique([cargoId, dependenciaId])
   @@map("cargos_dependencias")
+}
+
+model UsuarioCargoDependencia {
+  id                 Int    @id @default(autoincrement())
+  userId             String
+  cargoDependenciaId Int
+
+  user             User             @relation(fields: [userId], references: [id])
+  cargoDependencia CargoDependencia @relation(fields: [cargoDependenciaId], references: [id])
+  Experience       Experience[]
+
+  @@unique([userId, cargoDependenciaId])
+  @@map("usuario_cargo_dependencias")
 }
 
 model File {
@@ -298,26 +311,26 @@ model User {
   dni                   String   @unique
   role                  Role     @default(personal)
 
-  uploaded_files       File[]               @relation(name: "file_uploaded_by")
-  accessible_files     FileAccess[]
-  personal             Personal?
-  formacion_academica  FormacionAcademica[]
-  capacitacion         Capacitacion[]
-  experience           Experience[]
-  contrato             Contrato[]
-  Discapacidad         discapacidad[]
-  renuncia             renuncia[]
-  Desplazamiento       desplazamiento[]
-  descanso_medico      descanso_medico[]
-  per_lic_vac          per_lic_vac[]
-  ascenso              ascenso[]
-  bonus_personal       bonus_personal[]
-  bonus_family         bonus_family[]
-  evaluation           evaluation[]
-  merito               merito[]
-  documentos_enviados  documento[]          @relation(name: "documento_emisor")
-  documentos_recibidos documento[]          @relation(name: "documento_receptor")
-  demerito             demerito[]
+  uploaded_files          File[]                    @relation(name: "file_uploaded_by")
+  accessible_files        FileAccess[]
+  personal                Personal?
+  formacion_academica     FormacionAcademica[]
+  capacitacion            Capacitacion[]
+  contrato                Contrato[]
+  Discapacidad            discapacidad[]
+  renuncia                renuncia[]
+  Desplazamiento          desplazamiento[]
+  descanso_medico         descanso_medico[]
+  per_lic_vac             per_lic_vac[]
+  ascenso                 ascenso[]
+  bonus_personal          bonus_personal[]
+  bonus_family            bonus_family[]
+  evaluation              evaluation[]
+  merito                  merito[]
+  documentos_enviados     documento[]               @relation(name: "documento_emisor")
+  documentos_recibidos    documento[]               @relation(name: "documento_receptor")
+  demerito                demerito[]
+  UsuarioCargoDependencia UsuarioCargoDependencia[]
 
   @@map("users")
 }
@@ -459,17 +472,13 @@ model Experience {
   centro_labor String @db.Citext
   periodo      Json // {from: DateTime, to: DateTime}
 
-  user_id        String
-  file_id        String
-  cargo_id       Int
-  dependencia_id Int
+  usuarioCargoDependenciaId Int
+  usuarioCargoDependencia   UsuarioCargoDependencia @relation(fields: [usuarioCargoDependenciaId], references: [id], onDelete: Cascade)
 
-  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  file        File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
-  cargo       Cargo       @relation(fields: [cargo_id], references: [id], onDelete: Restrict)
-  dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
+  file_id String
+  file    File   @relation(fields: [file_id], references: [id], onDelete: Restrict)
 
-  @@unique([user_id, file_id])
+  @@unique([usuarioCargoDependenciaId, file_id])
   @@map("experiencias")
 }
 

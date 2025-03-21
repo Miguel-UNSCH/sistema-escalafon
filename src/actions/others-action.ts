@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/config/prisma.config";
-import { ZCargo, ZDependencia, ZUbigeo } from "@/lib/schemas/others-schema";
+import { ZCargo, ZDependencia } from "@/lib/schemas/others-schema";
 import { Cargo, Dependencia, Prisma, Ubigeo } from "@prisma/client";
 
 export const getUbigeos = async (search?: string): Promise<{ success: boolean; message?: string; data?: Ubigeo[] }> => {
@@ -75,15 +75,6 @@ export const getCargos = async (search?: string): Promise<{ success: boolean; me
     let errorMessage = "Error al obtener los cargos.";
     if (error instanceof Error) errorMessage = error.message;
     return { success: false, message: errorMessage };
-  }
-};
-
-export const getCargo = async (id: number): Promise<Cargo | null> => {
-  try {
-    const currentCargo: Cargo | null = await prisma.cargo.findUnique({ where: { id } });
-    return currentCargo;
-  } catch (error) {
-    return null;
   }
 };
 
@@ -161,6 +152,7 @@ export type cargoDependenciaRecord = {
   cargos: Cargo[];
 };
 
+export type cargoDependenciaR = Prisma.CargoDependenciaGetPayload<{ include: { dependencia: true; cargo: true } }>;
 export const getCargosDependencias = async (search?: string): Promise<{ success: boolean; message?: string; data?: cargoDependenciaRecord[] }> => {
   try {
     const dependencias = await prisma.dependencia.findMany({
@@ -202,7 +194,6 @@ export const createCargoDependencia = async (dependencia_id: number, cargo_name:
   } catch (error: unknown) {
     let errorMessage = "Error al crear la relación.";
     if (error instanceof Error) errorMessage = error.message;
-
     return { success: false, message: errorMessage };
   }
 };
@@ -212,7 +203,7 @@ export const deleteCargoDependencia = async (dependencia_id: number, cargo_id: n
     const relation = await prisma.cargoDependencia.findUnique({ where: { cargoId_dependenciaId: { cargoId: cargo_id, dependenciaId: dependencia_id } } });
     if (!relation) throw new Error("La relación especificada no existe.");
 
-    await prisma.cargoDependencia.delete({ where: { cargoId_dependenciaId: { cargoId: cargo_id, dependenciaId: dependencia_id } } });
+    await prisma.cargoDependencia.delete({ where: { id: relation.id } });
 
     return { success: true, message: "Relación eliminada exitosamente." };
   } catch (error: unknown) {

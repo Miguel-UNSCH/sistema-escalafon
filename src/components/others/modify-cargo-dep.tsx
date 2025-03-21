@@ -1,10 +1,8 @@
-import { cargoDependenciaRecord, createCargoDependencia, deleteCargoDependencia, deleteDependencia, updateDependencia } from "@/actions/others-action";
-import { InputField } from "@/components/custom-fields/input-field";
+import { cargoDependenciaRecord, createCargoDependencia, deleteCargoDependencia } from "@/actions/others-action";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dependencia } from "@prisma/client";
-import { Save, Trash, X } from "lucide-react";
+import { Save, X } from "lucide-react";
 import React, { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -46,7 +44,8 @@ export const ModifyDependencia = ({
           setSelectedDependencia(null);
           form.reset();
         }
-      } catch (e) {
+        // eslint-disable-next-line no-unused-vars
+      } catch (e: unknown) {
         toast.error("Error al agregar el cargo.");
       }
     });
@@ -63,7 +62,8 @@ export const ModifyDependencia = ({
           onUpdated();
           setSelectedDependencia(null);
         }
-      } catch (e) {
+        // eslint-disable-next-line no-unused-vars
+      } catch (e: unknown) {
         toast.error("Error al quitar el cargo.");
       }
     });
