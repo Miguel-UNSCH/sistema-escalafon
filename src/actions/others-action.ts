@@ -153,13 +153,72 @@ export const getDependencias = async (search?: string): Promise<{ success: boole
   }
 };
 
-export const getDependencia = async (id: number) => {
+export type cargoDependenciaRecord = {
+  id: number;
+  nombre: string;
+  direccion: string | null;
+  codigo: string;
+  cargos: Cargo[];
+};
+
+export const getCargosDependencias = async (search?: string): Promise<{ success: boolean; message?: string; data?: cargoDependenciaRecord[] }> => {
   try {
-    const dependencia = await prisma.dependencia.findUnique({ where: { id } });
-    return dependencia;
+    const dependencias = await prisma.dependencia.findMany({
+      where: { nombre: { contains: search, mode: "insensitive" } },
+      include: { cargos: { include: { cargo: true } } },
+    });
+    if (!dependencias.length) throw new Error("No se encontraron dependencias.");
+
+    const response = dependencias.map((dependencia) => ({
+      id: dependencia.id,
+      nombre: dependencia.nombre,
+      direccion: dependencia.direccion,
+      codigo: dependencia.codigo,
+      cargos: dependencia.cargos.map((cargoDep) => cargoDep.cargo),
+    }));
+
+    return { success: true, data: response };
   } catch (error) {
-    console.error(`Error al obtener la dependencia con ID ${id}:`, error);
-    return null;
+    let errorMessage = "Error al obtener las dependencias con cargos.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
+  }
+};
+
+export const createCargoDependencia = async (dependencia_id: number, cargo_name: string): Promise<{ success: boolean; message: string }> => {
+  try {
+    const dependencia = await prisma.dependencia.findUnique({ where: { id: dependencia_id } });
+    if (!dependencia) throw new Error("La dependencia no existe.");
+
+    const cargo = await prisma.cargo.findUnique({ where: { nombre: cargo_name } });
+    if (!cargo) throw new Error("El cargo no existe.");
+
+    const existingRelation = await prisma.cargoDependencia.findFirst({ where: { dependenciaId: dependencia.id, cargoId: cargo.id } });
+    if (existingRelation) throw new Error("El cargo ya se encuentra agregado a esta dependencia.");
+
+    await prisma.cargoDependencia.create({ data: { dependenciaId: dependencia.id, cargoId: cargo.id } });
+
+    return { success: true, message: "Relación creada exitosamente." };
+  } catch (error: unknown) {
+    let errorMessage = "Error al crear la relación.";
+    if (error instanceof Error) errorMessage = error.message;
+
+    return { success: false, message: errorMessage };
+  }
+};
+
+export const deleteCargoDependencia = async (dependencia_id: number, cargo_id: number): Promise<{ success: boolean; message: string }> => {
+  try {
+    const relation = await prisma.cargoDependencia.findUnique({ where: { cargoId_dependenciaId: { cargoId: cargo_id, dependenciaId: dependencia_id } } });
+    if (!relation) throw new Error("La relación especificada no existe.");
+
+    await prisma.cargoDependencia.delete({ where: { cargoId_dependenciaId: { cargoId: cargo_id, dependenciaId: dependencia_id } } });
+
+    return { success: true, message: "Relación eliminada exitosamente." };
+  } catch (error: unknown) {
+    let errorMessage = "Error al eliminar la relación.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
   }
 };
 

@@ -24,8 +24,6 @@ export const ContentData = () => {
       if (response.success && response.data) {
         setUsers(response.data);
       } else toast.error(response.message || "No se pudieron obtener los usuarios.");
-
-      // eslint-disable-next-line no-unused-vars
     } catch (e: unknown) {
       toast.error("Error al obtener los usuarios.");
     } finally {
