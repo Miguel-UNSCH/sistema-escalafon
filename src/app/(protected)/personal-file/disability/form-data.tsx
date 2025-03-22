@@ -20,12 +20,21 @@ import { disabilitySchema, ZDisabilityS } from "@/lib/schemas/user-schema";
 type CreateProps = {
   onCreated: () => void;
   setSelectedItem: React.Dispatch<React.SetStateAction<discapacidadRecord | null>>;
+  onCancel?: () => void;
+  showCancel?: boolean;
 };
 
-export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel }) => {
   const [isPending, startTransition] = useTransition();
 
-  const defaultValues = { tipo: undefined, discapacidad: "", entidad_certificadora: undefined, fecha_certificacion: undefined, file: undefined };
+  const defaultValues = {
+    tipo: undefined,
+    discapacidad: "",
+    entidad_certificadora: undefined,
+    fecha_certificacion: undefined,
+    file: undefined,
+  };
+
   const form = useForm<ZDisabilityS>({ resolver: zodResolver(disabilitySchema), defaultValues });
 
   const onSubmit = async (data: ZDisabilityS) => {
@@ -51,8 +60,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) =>
           onCreated();
           setSelectedItem(null);
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al registrar la discapacidad.");
       }
     });
@@ -73,7 +81,12 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) =>
 
           <UploadField control={form.control} name="file" label="Documento" allowedTypes={["pdf"]} />
 
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
+            {showCancel && onCancel && (
+              <Button type="button" variant="outline" onClick={onCancel}>
+                Cancelar
+              </Button>
+            )}
             <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
               <Save />
               {isPending ? "Guardando..." : "Guardar"}
