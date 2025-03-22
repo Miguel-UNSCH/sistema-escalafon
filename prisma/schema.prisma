@@ -331,6 +331,7 @@ model User {
   documentos_recibidos    documento[]               @relation(name: "documento_receptor")
   demerito                demerito[]
   UsuarioCargoDependencia UsuarioCargoDependencia[]
+  experience              Experience[]
 
   @@map("users")
 }
@@ -473,10 +474,12 @@ model Experience {
   periodo      Json // {from: DateTime, to: DateTime}
 
   usuarioCargoDependenciaId Int
-  usuarioCargoDependencia   UsuarioCargoDependencia @relation(fields: [usuarioCargoDependenciaId], references: [id], onDelete: Cascade)
+  user_id                   String
+  file_id                   String
 
-  file_id String
-  file    File   @relation(fields: [file_id], references: [id], onDelete: Restrict)
+  usuarioCargoDependencia UsuarioCargoDependencia @relation(fields: [usuarioCargoDependenciaId], references: [id], onDelete: Cascade)
+  user                    User                    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  file                    File                    @relation(fields: [file_id], references: [id], onDelete: Restrict)
 
   @@unique([usuarioCargoDependenciaId, file_id])
   @@map("experiencias")

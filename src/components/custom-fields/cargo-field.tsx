@@ -36,6 +36,7 @@ export const CargoField = ({
         if (!response.success || !response.data) return;
         const uniqueCargos: string[] = Array.from(new Set(response.data.map((cargo) => cargo.nombre)));
         setCargos(uniqueCargos);
+        // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
         toast.error("Error al obtener los cargos.");
       } finally {

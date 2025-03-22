@@ -1,9 +1,8 @@
+// eslint-disable no-unused-vars
 "use client";
 
 import { getFile } from "@/actions/file-action";
-import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
-import { DependenciaField } from "@/components/custom-fields/dependencia-field";
 import { InputField } from "@/components/custom-fields/input-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
 import { Button } from "@/components/ui/button";
@@ -17,6 +16,7 @@ import toast from "react-hot-toast";
 import { ExperienceRecord } from "./content-data";
 import { expSchema, ZExpS } from "@/lib/schemas/user-schema";
 import { deleteExp, updateExp } from "@/actions/exp-action";
+import { CargoIdDependenciaField, DependenciaIdField } from "@/components/custom-fields/cargos-dependencia";
 
 type ModifyProps = {
   item: ExperienceRecord;
@@ -39,13 +39,17 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
 
   const defaultValues = {
     centro_labor: item.centro_labor,
-    periodo: { from: item.periodo.from, to: item.periodo.to },
-    cargo: { nombre: item.cargo.nombre },
-    dependencia: { nombre: item.dependencia.nombre, codigo: item.dependencia.codigo, direccion: item.dependencia.direccion },
+    periodo: { from: new Date(item.periodo.from), to: new Date(item.periodo.to) },
+    cargo_id: item.usuarioCargoDependencia.cargoDependencia.cargo.id.toString(),
+    dependencia_id: item.usuarioCargoDependencia.cargoDependencia.dependencia.id.toString(),
     file: undefined,
   };
 
-  const form = useForm<ZExpS>({ resolver: zodResolver(expSchema), defaultValues: defaultValues as any });
+  const form = useForm<ZExpS>({ resolver: zodResolver(expSchema), defaultValues });
+
+  useEffect(() => {
+    form.reset(defaultValues);
+  }, [item, form]);
 
   const onUpdate = async (data: ZExpS) => {
     startTransition(async () => {
@@ -91,14 +95,10 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
           <InputField control={form.control} name="centro_labor" label="Centro de Labor *" placeholder="Ingrese el centro de labor" />
-          <CargoField control={form.control} name="cargo.nombre" />
 
-          <div className="flex flex-col gap-2">
-            <p className="font-primary font-semibold text-md">Dependencia</p>
-            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
-              <DependenciaField control={form.control} />
-            </div>
-          </div>
+          <DependenciaIdField control={form.control} name="dependencia_id" label="Dependencia *" />
+
+          <CargoIdDependenciaField control={form.control} name="cargo_id" dependencia_id={form.watch("dependencia_id")} />
 
           <div className="gap-4 grid grid-cols-2">
             <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={false} />
@@ -113,6 +113,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
               </div>
               <div className="flex md:flex-row flex-col gap-2 w-full md:w-auto">
                 <Button variant="outline" asChild>
+                  {/* eslint-disable-next-line jsx-no-target-blank */}
                   <a href={fileUrl} download target="_blank">
                     <Download size={16} /> Descargar
                   </a>
