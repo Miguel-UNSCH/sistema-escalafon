@@ -9,8 +9,8 @@ export const bonusPersonalSchema = z.object({
     .string({ required_error: "Fecha es requerida" })
     .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
     .transform((date) => new Date(date)),
-  cargo: cargoSchema,
-  dependencia: dependenciaSchema,
+  cargo_id: z.string(),
+  dependencia_id: z.string(),
   file: fileSchema.optional(),
 });
 export type ZBonusPersonal = z.infer<typeof bonusPersonalSchema>;
@@ -22,8 +22,8 @@ export const bonusFamiliarSchema = z.object({
     .string({ required_error: "Fecha es requerida" })
     .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
     .transform((date) => new Date(date)),
-  cargo: cargoSchema,
-  dependencia: dependenciaSchema,
+  cargo_id: z.string(),
+  dependencia_id: z.string(),
   file: fileSchema.optional(),
 });
 export type ZBonusFamiliar = z.infer<typeof bonusFamiliarSchema>;
