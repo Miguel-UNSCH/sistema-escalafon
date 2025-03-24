@@ -123,6 +123,7 @@ export const updateBonusFam = async (id: string, data: Partial<ZBonusFamiliar> &
       });
       if (!usuarioCargoDependencia) throw new Error("No existe la relación entre el usuario y el cargo-dependencia seleccionado.");
     }
+
     await prisma.bonus_family.update({
       where: { id },
       data: {
