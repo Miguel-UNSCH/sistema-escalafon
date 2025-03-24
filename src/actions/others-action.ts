@@ -228,7 +228,6 @@ export type cargoDependenciaRecord = {
   cargos: Cargo[];
 };
 
-export type cargoDependenciaR = Prisma.CargoDependenciaGetPayload<{ include: { dependencia: true; cargo: true } }>;
 export const getCargosDependencias = async (search?: string): Promise<{ success: boolean; message?: string; data?: cargoDependenciaRecord[] }> => {
   try {
     const dependencias = await prisma.dependencia.findMany({
@@ -248,6 +247,137 @@ export const getCargosDependencias = async (search?: string): Promise<{ success:
     return { success: true, data: response };
   } catch (error) {
     let errorMessage = "Error al obtener las dependencias con cargos.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
+  }
+};
+
+export const getCargosDependenciasUser = async (id: string): Promise<{ success: boolean; message?: string; data?: cargoDependenciaRecord[] }> => {
+  try {
+    const current_user = await prisma.user.findUnique({ where: { id } });
+    if (!current_user) throw new Error("No se encontró el usuario.");
+
+    const relaciones = await prisma.usuarioCargoDependencia.findMany({
+      where: { userId: id },
+      include: {
+        cargoDependencia: {
+          include: {
+            cargo: true,
+            dependencia: true,
+          },
+        },
+      },
+    });
+
+    if (!relaciones.length) throw new Error("No se encontraron dependencias asociadas a este usuario.");
+
+    // Agrupar por dependencia
+    const dependenciaMap = new Map<number, cargoDependenciaRecord>();
+
+    for (const rel of relaciones) {
+      const dep = rel.cargoDependencia.dependencia;
+      const cargo = rel.cargoDependencia.cargo;
+
+      if (!dependenciaMap.has(dep.id)) {
+        dependenciaMap.set(dep.id, {
+          id: dep.id,
+          nombre: dep.nombre,
+          direccion: dep.direccion,
+          codigo: dep.codigo,
+          cargos: [cargo],
+        });
+      } else {
+        const existing = dependenciaMap.get(dep.id)!;
+        // Evitar cargos duplicados (opcional)
+        if (!existing.cargos.some((c) => c.id === cargo.id)) {
+          existing.cargos.push(cargo);
+        }
+      }
+    }
+
+    return {
+      success: true,
+      data: Array.from(dependenciaMap.values()),
+    };
+  } catch (error: unknown) {
+    let errorMessage = "Error al obtener las dependencias con cargos.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
+  }
+};
+
+export const getDependenciasUser = async (userId: string, search?: string): Promise<{ success: boolean; message?: string; data?: Dependencia[] }> => {
+  try {
+    const current_user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!current_user) throw new Error("No se encontró el usuario.");
+
+    const relaciones = await prisma.usuarioCargoDependencia.findMany({
+      where: { userId },
+      include: {
+        cargoDependencia: {
+          include: { dependencia: true },
+        },
+      },
+    });
+
+    if (!relaciones.length) throw new Error("No se encontraron dependencias asociadas al usuario.");
+
+    // Agrupar dependencias por ID y aplicar filtro por búsqueda
+    const dependenciaMap = new Map<number, Dependencia>();
+
+    for (const rel of relaciones) {
+      const dep = rel.cargoDependencia.dependencia;
+
+      const matchesSearch = !search || dep.nombre.toLowerCase().includes(search.toLowerCase()) || dep.codigo.toLowerCase().includes(search.toLowerCase());
+
+      if (matchesSearch && !dependenciaMap.has(dep.id)) {
+        dependenciaMap.set(dep.id, dep);
+      }
+    }
+
+    const result = Array.from(dependenciaMap.values());
+
+    if (!result.length) throw new Error("No se encontraron dependencias que coincidan con la búsqueda.");
+
+    return { success: true, data: result };
+  } catch (error: unknown) {
+    let errorMessage = "Error al obtener las dependencias del usuario.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
+  }
+};
+
+export const getCargosUser = async (userId: string, dependenciaId: number): Promise<{ success: boolean; message?: string; data?: Cargo[] }> => {
+  try {
+    const relaciones = await prisma.usuarioCargoDependencia.findMany({
+      where: { userId },
+      include: {
+        cargoDependencia: {
+          include: {
+            dependencia: true,
+            cargo: true,
+          },
+        },
+      },
+    });
+
+    if (!relaciones.length) {
+      throw new Error("El usuario no tiene cargos registrados.");
+    }
+
+    // Filtrar las relaciones que coincidan con la dependencia dada
+    const cargosFiltrados = relaciones.filter((rel) => rel.cargoDependencia.dependencia.id === dependenciaId).map((rel) => rel.cargoDependencia.cargo);
+
+    if (!cargosFiltrados.length) {
+      throw new Error("El usuario no tiene cargos en la dependencia indicada.");
+    }
+
+    return {
+      success: true,
+      data: cargosFiltrados,
+    };
+  } catch (error: unknown) {
+    let errorMessage = "Error al obtener los cargos del usuario en la dependencia.";
     if (error instanceof Error) errorMessage = error.message;
     return { success: false, message: errorMessage };
   }

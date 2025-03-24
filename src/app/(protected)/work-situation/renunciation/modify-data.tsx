@@ -2,11 +2,10 @@
 
 import { getFile } from "@/actions/file-action";
 import { deleteRenuncia, renunciaRecord, updateRenuncia } from "@/actions/renuncia-action";
-import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
-import { DependenciaField } from "@/components/custom-fields/dependencia-field";
 import { InputField } from "@/components/custom-fields/input-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
+import { CargosUserField, DependenciasUserField } from "@/components/custom-fields/user-cargos-dependencia";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { renunciaSchema, ZRenunciaS } from "@/lib/schemas/w-situation-schema";
@@ -37,12 +36,16 @@ export const Modify: React.FC<ModifyProps> = ({ renuncia, onUpdated, setSelected
 
   const defaultValues = {
     motivo: renuncia.motivo,
-    fecha: renuncia.fecha.toISOString().split("T")[0],
-    cargo: { nombre: renuncia.cargo.nombre },
-    dependencia: { nombre: renuncia.dependencia.nombre, codigo: renuncia.dependencia.codigo, direccion: renuncia.dependencia.direccion || "" },
+    fecha: new Date(renuncia.fecha),
+    cargo_id: renuncia.usuarioCargoDependencia.cargoDependencia.cargo.id.toString(),
+    dependencia_id: renuncia.usuarioCargoDependencia.cargoDependencia.dependencia.id.toString(),
     file: undefined,
   };
   const form = useForm<ZRenunciaS>({ resolver: zodResolver(renunciaSchema), defaultValues: defaultValues as any });
+
+  useEffect(() => {
+    form.reset(defaultValues);
+  }, [renuncia, form]);
 
   const onUpdate = async (data: ZRenunciaS) => {
     startTransition(async () => {
@@ -59,6 +62,7 @@ export const Modify: React.FC<ModifyProps> = ({ renuncia, onUpdated, setSelected
           setSelectedRenuncia(null);
           form.reset();
         }
+        // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
         toast.error("Error al modificar la Renuncia.");
       }
@@ -76,7 +80,8 @@ export const Modify: React.FC<ModifyProps> = ({ renuncia, onUpdated, setSelected
           setSelectedRenuncia(null);
           form.reset();
         }
-      } catch (e) {
+        // eslint-disable-next-line no-unused-vars
+      } catch (e: unknown) {
         toast.error("Error al modificar la Renuncia.");
       }
     });
@@ -91,14 +96,8 @@ export const Modify: React.FC<ModifyProps> = ({ renuncia, onUpdated, setSelected
 
           <DateField control={form.control} name="fecha" label="Fecha de la bonificacion" disabled={false} />
 
-          <CargoField control={form.control} name="cargo.nombre" />
-
-          <div className="flex flex-col gap-2">
-            <p className="font-primary font-semibold text-md">Dependencia</p>
-            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
-              <DependenciaField control={form.control} />
-            </div>
-          </div>
+          <DependenciasUserField control={form.control} name="dependencia_id" user_id="cm8hfj7mu0000t88wdvgnkkbo" label="Dependencia *" />
+          <CargosUserField control={form.control} name="cargo_id" user_id="cm8hfj7mu0000t88wdvgnkkbo" dependencia_id={form.watch("dependencia_id")} />
 
           {fileUrl && !isChangingFile ? (
             <div className="flex md:flex-row flex-col items-center gap-4 md:text-left text-center">
@@ -108,6 +107,7 @@ export const Modify: React.FC<ModifyProps> = ({ renuncia, onUpdated, setSelected
               </div>
               <div className="flex md:flex-row flex-col gap-2 w-full md:w-auto">
                 <Button variant="outline" asChild>
+                  {/* eslint-disable-next-line jsx-no-target-blank */}
                   <a href={fileUrl} download target="_blank">
                     <Download size={16} /> Descargar
                   </a>

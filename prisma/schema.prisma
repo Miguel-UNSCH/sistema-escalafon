@@ -179,7 +179,6 @@ model Dependencia {
 
   cargos   CargoDependencia[]
   contrato Contrato[]
-  renuncia renuncia[]
 
   desplazamientosDesde desplazamiento[]  @relation(name: "dependencia_from")
   desplazamientosHacia desplazamiento[]  @relation(name: "dependencia_to")
@@ -204,7 +203,6 @@ model Cargo {
 
   dependencias CargoDependencia[]
   contrato     Contrato[]
-  renuncia     renuncia[]
 
   desplazamientosDesde desplazamiento[]  @relation(name: "cargo_from")
   desplazamientosHacia desplazamiento[]  @relation(name: "cargo_to")
@@ -243,7 +241,8 @@ model UsuarioCargoDependencia {
 
   user             User             @relation(fields: [userId], references: [id])
   cargoDependencia CargoDependencia @relation(fields: [cargoDependenciaId], references: [id])
-  Experience       Experience[]
+  experience       Experience[]
+  renuncia         renuncia[]
 
   @@unique([userId, cargoDependenciaId])
   @@map("usuario_cargo_dependencias")
@@ -518,15 +517,14 @@ model renuncia {
   motivo String   @db.Citext
   fecha  DateTime
 
-  cargo_id       Int
-  dependencia_id Int
-  file_id        String
-  user_id        String
+  usuarioCargoDependenciaId Int
+  file_id                   String
+  user_id                   String
 
-  cargo       Cargo       @relation(fields: [cargo_id], references: [id], onDelete: Restrict)
-  dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
-  file        File        @relation(fields: [file_id], references: [id])
-  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  usuarioCargoDependencia UsuarioCargoDependencia @relation(fields: [usuarioCargoDependenciaId], references: [id], onDelete: Cascade)
+
+  file File @relation(fields: [file_id], references: [id])
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@unique([user_id, file_id])
   @@map("renuncias")

@@ -35,8 +35,8 @@ export const renunciaSchema = z.object({
     .string({ required_error: "Fecha de inicio es requerida" })
     .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
     .transform((date) => new Date(date)),
-  cargo: cargoSchema,
-  dependencia: dependenciaSchema,
+  cargo_id: z.string(),
+  dependencia_id: z.string(),
   file: fileSchema.optional(),
 });
 export type ZRenunciaS = z.infer<typeof renunciaSchema>;

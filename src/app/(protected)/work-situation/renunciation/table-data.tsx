@@ -63,8 +63,8 @@ export const Table: React.FC<TableProps> = ({ renuncias, loading, selectedRenunc
                     <td className="px-4 lg:px-6 py-3 rounded-s-md">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td className="px-4 lg:px-6 py-3">{renuncia.motivo}</td>
                     <td className="px-4 lg:px-6 py-3">{new Date(renuncia.fecha).toLocaleDateString()}</td>
-                    <td className="px-4 lg:px-6 py-3">{renuncia.cargo.nombre}</td>
-                    <td className="px-4 lg:px-6 py-3">{renuncia.dependencia.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{renuncia.usuarioCargoDependencia.cargoDependencia.cargo.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{renuncia.usuarioCargoDependencia.cargoDependencia.dependencia.nombre}</td>
                     <td className="px-4 lg:px-6 py-3 rounded-e-md">
                       {fileUrls[renuncia.file.id] ? (
                         <a
