@@ -2,7 +2,7 @@
 "use server";
 
 import { prisma } from "@/config/prisma.config";
-import { registerSchema, ZLoginS, ZRegisterS } from "@/lib/zod";
+import { ChangePwd, changePwdSchema, cPwdSchema, registerSchema, ZLoginS, ZRegisterS } from "@/lib/zod";
 import { User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
@@ -111,6 +111,37 @@ export const patchPassword = async (email: string, newPassword: string) => {
 
     return { success: true, message: "Contraseña actualizada exitosamente." };
   } catch (error: unknown) {
+    return { error: "Error en el servidor. Intente nuevamente más tarde." };
+  }
+};
+
+export const patchPwd = async (userId: string, data: ChangePwd): Promise<{ success?: boolean; message?: string; error?: string }> => {
+  try {
+    // Validar datos con Zod
+    const validatedData = cPwdSchema.parse(data);
+
+    // Buscar el usuario por id
+    const existingUser: User | null = await prisma.user.findUnique({ where: { id: userId } });
+    if (!existingUser) return { error: "Usuario no encontrado." };
+
+    // Comparar la contraseña actual con la almacenada
+    const isMatch = await bcrypt.compare(validatedData.current_pwd, existingUser.password);
+    if (!isMatch) return { error: "La contraseña actual es incorrecta." };
+
+    // Hashear la nueva contraseña
+    const hashedPassword = await bcrypt.hash(validatedData.new_pwd, 10);
+
+    // Actualizar el usuario: se cambia la contraseña y se desactiva el flag de cambio obligatorio
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword, must_change_pwd: 0 },
+    });
+
+    return { success: true, message: "Contraseña actualizada exitosamente." };
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      return { error: error.errors[0].message };
+    }
     return { error: "Error en el servidor. Intente nuevamente más tarde." };
   }
 };

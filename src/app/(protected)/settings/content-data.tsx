@@ -6,6 +6,7 @@ import { Session } from "next-auth";
 import { User } from "@prisma/client";
 import toast from "react-hot-toast";
 import { getUser } from "@/actions/user-actions";
+import { ModifyPwd } from "./modify-pwd";
 
 export const ContentData = ({ session }: { session: Session }) => {
   const [user, setUser] = useState<User>();
@@ -59,13 +60,7 @@ export const ContentData = ({ session }: { session: Session }) => {
         </div>
       )}
 
-      <div>
-        <h2 className="py-2 font-primary font-bold text-peach text-2xl">Cambiar contraseña</h2>
-        <div className="flex flex-col gap-4">
-          <p>contraseña actual</p>
-          <p>nueva contraseña</p>
-        </div>
-      </div>
+      <ModifyPwd userId={session.user.id} />
 
       {session.user.role === "admin" && (
         <div>
