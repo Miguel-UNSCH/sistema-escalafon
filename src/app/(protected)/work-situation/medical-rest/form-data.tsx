@@ -23,9 +23,10 @@ type CreateProps = {
   setSelectedMedical: React.Dispatch<React.SetStateAction<DescansoMedicoRecord | null>>;
   onCancel?: () => void;
   showCancel?: boolean;
+  user_id: string;
 };
 
-export const Create: React.FC<CreateProps> = ({ onMedicalCreated, setSelectedMedical, onCancel, showCancel }) => {
+export const Create: React.FC<CreateProps> = ({ onMedicalCreated, setSelectedMedical, onCancel, showCancel, user_id }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
@@ -76,8 +77,8 @@ export const Create: React.FC<CreateProps> = ({ onMedicalCreated, setSelectedMed
           <SelectField control={form.control} name="tipo_descanso" label="Tipo de Descanso" options={tipoDescansoOp} />
           <InputField control={form.control} name="detalle" label="Detalle *" placeholder="Detalle" />
 
-          <DependenciasUserField control={form.control} name="dependencia_id" user_id="cm8hfj7mu0000t88wdvgnkkbo" label="Dependencia *" />
-          <CargosUserField control={form.control} name="cargo_id" user_id="cm8hfj7mu0000t88wdvgnkkbo" dependencia_id={form.watch("dependencia_id")} />
+          <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" />
+          <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} />
 
           <div className="gap-4 grid grid-cols-2">
             <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={false} />

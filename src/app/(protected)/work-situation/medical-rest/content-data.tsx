@@ -6,12 +6,13 @@ import { Create } from "./form-data";
 import { descanso_medicoRecord, getDescansos } from "@/actions/descanso-action";
 import { Table } from "./table-data";
 import { Modify } from "./modify-data";
+import { Session } from "next-auth";
 
 export type DescansoMedicoRecord = Omit<descanso_medicoRecord, "periodo"> & {
   periodo: { from: string; to: string };
 };
 
-export const ContentData = () => {
+export const ContentData = ({ session }: { session: Session }) => {
   const [medicals, setMedicals] = useState<DescansoMedicoRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedMedical, setSelectedMedical] = useState<DescansoMedicoRecord | null>(null);
@@ -54,7 +55,7 @@ export const ContentData = () => {
         <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
       )}
 
-      {selectedMedical && <Modify medical={selectedMedical} onUpdated={handleRefresh} setSelectedMedical={setSelectedMedical} />}
+      {selectedMedical && <Modify medical={selectedMedical} onUpdated={handleRefresh} setSelectedMedical={setSelectedMedical} user_id={session.user.id} />}
 
       {!showCreate && medicals.length > 0 && (
         <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
@@ -65,7 +66,15 @@ export const ContentData = () => {
         </div>
       )}
 
-      {showCreate && <Create onMedicalCreated={handleRefresh} setSelectedMedical={setSelectedMedical} onCancel={() => setShowCreate(false)} showCancel={medicals.length > 0} />}
+      {showCreate && (
+        <Create
+          onMedicalCreated={handleRefresh}
+          setSelectedMedical={setSelectedMedical}
+          onCancel={() => setShowCreate(false)}
+          showCancel={medicals.length > 0}
+          user_id={session.user.id}
+        />
+      )}
     </div>
   );
 };

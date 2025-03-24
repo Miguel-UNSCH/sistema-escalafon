@@ -18,7 +18,7 @@ export const ContentData = ({ session }: { session: Session }) => {
   const [disability, setDisability] = useState<boolean | null>(null);
   const [personalData, setPersonalData] = useState<Personal | null>(null);
   const [selectedItem, setSelectedItem] = useState<discapacidadRecord | null>(null);
-  const [showCreate, setShowCreate] = useState<boolean>(false);
+  const [showCreate, setShowCreate] = useState<boolean>(false); // auto-show si está vacío
   const router = useRouter();
 
   useEffect(() => {

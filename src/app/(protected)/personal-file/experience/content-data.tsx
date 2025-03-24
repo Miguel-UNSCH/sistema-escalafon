@@ -38,6 +38,11 @@ export const ContentData = ({ session }: { session: Session }) => {
   };
 
   useEffect(() => {
+    if (items.length === 0) setShowCreate(true);
+    else setShowCreate(false);
+  }, [items]);
+
+  useEffect(() => {
     fnExperiences();
   }, []);
 
@@ -57,7 +62,7 @@ export const ContentData = ({ session }: { session: Session }) => {
         <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
       )}
 
-      {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} />}
+      {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} user_id={session.user.id} />}
 
       {!showCreate && items.length > 0 && (
         <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">

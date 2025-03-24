@@ -6,12 +6,13 @@ import { getPerLicVacs, perLicRecord } from "@/actions/per-lic-vac-action";
 import { Table } from "./table-data";
 import { Create } from "./form-data";
 import { Modify } from "./modify-data";
+import { Session } from "next-auth";
 
 export type PerLicVacRecord = Omit<perLicRecord, "periodo"> & {
   periodo: { from: string; to: string };
 };
 
-export const ContentData = () => {
+export const ContentData = ({ session }: { session: Session }) => {
   const [items, setItems] = useState<PerLicVacRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItem, setSelectedItem] = useState<PerLicVacRecord | null>(null);
@@ -56,7 +57,7 @@ export const ContentData = () => {
         <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
       )}
 
-      {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} />}
+      {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} user_id={session.user.id} />}
 
       {!showCreate && items.length > 0 && (
         <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
@@ -67,7 +68,9 @@ export const ContentData = () => {
         </div>
       )}
 
-      {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} />}
+      {showCreate && (
+        <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} user_id={session.user.id} />
+      )}
     </div>
   );
 };

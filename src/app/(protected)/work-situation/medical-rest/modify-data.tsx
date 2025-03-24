@@ -22,9 +22,10 @@ type ModifyProps = {
   medical: DescansoMedicoRecord;
   onUpdated: () => void;
   setSelectedMedical: React.Dispatch<React.SetStateAction<DescansoMedicoRecord | null>>;
+  user_id: string;
 };
 
-export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedMedical }) => {
+export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedMedical, user_id }) => {
   const [isPending, startTransition] = useTransition();
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [isChangingFile, setIsChangingFile] = useState(false);
@@ -101,8 +102,8 @@ export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedM
 
           <InputField control={form.control} name="detalle" label="Detalle *" placeholder="Detalle" />
 
-          <DependenciasUserField control={form.control} name="dependencia_id" user_id="cm8hfj7mu0000t88wdvgnkkbo" label="Dependencia *" />
-          <CargosUserField control={form.control} name="cargo_id" user_id="cm8hfj7mu0000t88wdvgnkkbo" dependencia_id={form.watch("dependencia_id")} />
+          <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" />
+          <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} />
 
           <div className="gap-4 grid grid-cols-2">
             <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={false} />

@@ -20,9 +20,10 @@ type CreateProps = {
   setSelectedRenuncia: React.Dispatch<React.SetStateAction<renunciaRecord | null>>;
   onCancel?: () => void;
   showCancel?: boolean;
+  user_id: string;
 };
 
-export const Create: React.FC<CreateProps> = ({ onRenunciaCreated, setSelectedRenuncia, onCancel, showCancel }) => {
+export const Create: React.FC<CreateProps> = ({ onRenunciaCreated, setSelectedRenuncia, onCancel, showCancel, user_id }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
@@ -74,8 +75,8 @@ export const Create: React.FC<CreateProps> = ({ onRenunciaCreated, setSelectedRe
 
           <DateField control={form.control} name="fecha" label="Fecha de la bonificacion" disabled={false} />
 
-          <DependenciasUserField control={form.control} name="dependencia_id" user_id="cm8hfj7mu0000t88wdvgnkkbo" label="Dependencia *" />
-          <CargosUserField control={form.control} name="cargo_id" user_id="cm8hfj7mu0000t88wdvgnkkbo" dependencia_id={form.watch("dependencia_id")} />
+          <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" />
+          <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} />
 
           <UploadField control={form.control} name="file" label="Documento *" allowedTypes={["pdf"]} />
 

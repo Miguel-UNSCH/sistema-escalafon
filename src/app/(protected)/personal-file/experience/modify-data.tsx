@@ -22,13 +22,13 @@ type ModifyProps = {
   item: ExperienceRecord;
   onUpdated: () => void;
   setSelectedItem: React.Dispatch<React.SetStateAction<ExperienceRecord | null>>;
+  user_id: string;
 };
 
-export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem }) => {
+export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem, user_id }) => {
   const [isPending, startTransition] = useTransition();
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [isChangingFile, setIsChangingFile] = useState(false);
-
   useEffect(() => {
     if (item.file?.id) {
       getFile(item.file.id)

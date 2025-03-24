@@ -19,9 +19,10 @@ type ModifyProps = {
   renuncia: renunciaRecord;
   onUpdated: () => void;
   setSelectedRenuncia: React.Dispatch<React.SetStateAction<renunciaRecord | null>>;
+  user_id: string;
 };
 
-export const Modify: React.FC<ModifyProps> = ({ renuncia, onUpdated, setSelectedRenuncia }) => {
+export const Modify: React.FC<ModifyProps> = ({ renuncia, onUpdated, setSelectedRenuncia, user_id }) => {
   const [isPending, startTransition] = useTransition();
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [isChangingFile, setIsChangingFile] = useState(false);
@@ -96,8 +97,8 @@ export const Modify: React.FC<ModifyProps> = ({ renuncia, onUpdated, setSelected
 
           <DateField control={form.control} name="fecha" label="Fecha de la bonificacion" disabled={false} />
 
-          <DependenciasUserField control={form.control} name="dependencia_id" user_id="cm8hfj7mu0000t88wdvgnkkbo" label="Dependencia *" />
-          <CargosUserField control={form.control} name="cargo_id" user_id="cm8hfj7mu0000t88wdvgnkkbo" dependencia_id={form.watch("dependencia_id")} />
+          <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" />
+          <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} />
 
           {fileUrl && !isChangingFile ? (
             <div className="flex md:flex-row flex-col items-center gap-4 md:text-left text-center">
