@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState, useTransition } from "react";
 import { DescansoMedicoRecord } from "./content-data";
 import { getFile } from "@/actions/file-action";
@@ -8,13 +10,13 @@ import { deleteDescanso, updateDescanso } from "@/actions/descanso-action";
 import toast from "react-hot-toast";
 import { Form } from "@/components/ui/form";
 import { SelectField } from "@/components/custom-fields/select-field";
-import { CargoField } from "@/components/custom-fields/cargo-field";
-import { DependenciaField } from "@/components/custom-fields/dependencia-field";
 import { DateField } from "@/components/custom-fields/date-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
 import { Button } from "@/components/ui/button";
 import { Download, Save, Trash } from "lucide-react";
 import { tipoDescansoOp } from "@/utils/options";
+import { InputField } from "@/components/custom-fields/input-field";
+import { CargosUserField, DependenciasUserField } from "@/components/custom-fields/user-cargos-dependencia";
 
 type ModifyProps = {
   medical: DescansoMedicoRecord;
@@ -37,13 +39,18 @@ export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedM
 
   const defaultValues = {
     tipo_descanso: medical.tipo_descanso,
-    periodo: { from: medical.periodo.from, to: medical.periodo.from },
-    cargo: { nombre: medical.cargo.nombre },
-    dependencia: { nombre: medical.dependencia.nombre, codigo: medical.dependencia.codigo, direccion: medical.dependencia.direccion },
+    detalle: medical.detalle,
+    periodo: { from: new Date(medical.periodo.from), to: new Date(medical.periodo.to) },
+    cargo_id: medical.usuarioCargoDependencia.cargoDependencia.cargo.id.toString(),
+    dependencia_id: medical.usuarioCargoDependencia.cargoDependencia.dependencia.id.toString(),
     file: undefined,
   };
 
   const form = useForm<ZDesMedS>({ resolver: zodResolver(descansoMedicoSchema), defaultValues: defaultValues as any });
+
+  useEffect(() => {
+    form.reset(defaultValues as any);
+  }, [medical, form]);
 
   const onUpdate = async (data: ZDesMedS) => {
     startTransition(async () => {
@@ -60,6 +67,7 @@ export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedM
           setSelectedMedical(null);
           form.reset();
         }
+        // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
         toast.error("Error al modificar el descanso.");
       }
@@ -77,7 +85,8 @@ export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedM
           setSelectedMedical(null);
           form.reset();
         }
-      } catch (e) {
+        // eslint-disable-next-line no-unused-vars
+      } catch (e: unknown) {
         toast.error("Error al modificar el Descanso.");
       }
     });
@@ -90,14 +99,10 @@ export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedM
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
           <SelectField control={form.control} name="tipo_descanso" label="Tipo de Descanso" options={tipoDescansoOp} />
 
-          <CargoField control={form.control} name="cargo.nombre" />
+          <InputField control={form.control} name="detalle" label="Detalle *" placeholder="Detalle" />
 
-          <div className="flex flex-col gap-2">
-            <p className="font-primary font-semibold text-md">Dependencia</p>
-            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
-              <DependenciaField control={form.control} />
-            </div>
-          </div>
+          <DependenciasUserField control={form.control} name="dependencia_id" user_id="cm8hfj7mu0000t88wdvgnkkbo" label="Dependencia *" />
+          <CargosUserField control={form.control} name="cargo_id" user_id="cm8hfj7mu0000t88wdvgnkkbo" dependencia_id={form.watch("dependencia_id")} />
 
           <div className="gap-4 grid grid-cols-2">
             <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={false} />
@@ -112,6 +117,7 @@ export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedM
               </div>
               <div className="flex md:flex-row flex-col gap-2 w-full md:w-auto">
                 <Button variant="outline" asChild>
+                  {/*  eslint-disable-next-line jsx-no-target-blank */}
                   <a href={fileUrl} download target="_blank">
                     <Download size={16} /> Descargar
                   </a>

@@ -36,7 +36,7 @@ export const Modify: React.FC<ModifyProps> = ({ renuncia, onUpdated, setSelected
 
   const defaultValues = {
     motivo: renuncia.motivo,
-    fecha: new Date(renuncia.fecha),
+    fecha: renuncia.fecha.toString(),
     cargo_id: renuncia.usuarioCargoDependencia.cargoDependencia.cargo.id.toString(),
     dependencia_id: renuncia.usuarioCargoDependencia.cargoDependencia.dependencia.id.toString(),
     file: undefined,
@@ -44,7 +44,7 @@ export const Modify: React.FC<ModifyProps> = ({ renuncia, onUpdated, setSelected
   const form = useForm<ZRenunciaS>({ resolver: zodResolver(renunciaSchema), defaultValues: defaultValues as any });
 
   useEffect(() => {
-    form.reset(defaultValues);
+    form.reset(defaultValues as any);
   }, [renuncia, form]);
 
   const onUpdate = async (data: ZRenunciaS) => {

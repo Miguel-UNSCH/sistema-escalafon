@@ -58,9 +58,10 @@ export type ZDesplazamientoS = z.infer<typeof desplazamientoSchema>;
 
 export const descansoMedicoSchema = z.object({
   tipo_descanso: TipoDescanso,
+  detalle: z.string(),
   periodo: periodoSchema,
-  cargo: cargoSchema,
-  dependencia: dependenciaSchema,
+  cargo_id: z.string(),
+  dependencia_id: z.string(),
   file: fileSchema.optional(),
 });
 export type ZDesMedS = z.infer<typeof descansoMedicoSchema>;
