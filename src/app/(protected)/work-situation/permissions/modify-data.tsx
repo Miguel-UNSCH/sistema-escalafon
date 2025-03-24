@@ -2,9 +2,7 @@
 
 import { PerLicVacRecord } from "./content-data";
 import { getFile } from "@/actions/file-action";
-import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
-import { DependenciaField } from "@/components/custom-fields/dependencia-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -17,6 +15,8 @@ import { per_lic_vacSchema, ZPerLicVacS } from "@/lib/schemas/w-situation-schema
 import { deletePerLicVac, updatePerLicVac } from "@/actions/per-lic-vac-action";
 import { tipoPermisoLicenciaVacacionOp } from "@/utils/options";
 import { SelectField } from "@/components/custom-fields/select-field";
+import { InputField } from "@/components/custom-fields/input-field";
+import { CargosUserField, DependenciasUserField } from "@/components/custom-fields/user-cargos-dependencia";
 
 type ModifyProps = {
   item: PerLicVacRecord;
@@ -39,9 +39,10 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
 
   const defaultValues = {
     tipo: item.tipo,
-    periodo: { from: item.periodo.from, to: item.periodo.from },
-    cargo: { nombre: item.cargo.nombre },
-    dependencia: { nombre: item.dependencia.nombre, codigo: item.dependencia.codigo, direccion: item.dependencia.direccion },
+    detalle: item.detalle,
+    periodo: { from: new Date(item.periodo.from), to: new Date(item.periodo.to) },
+    cargo_id: item.usuarioCargoDependencia.cargoDependencia.cargo.id.toString(),
+    dependencia_id: item.usuarioCargoDependencia.cargoDependencia.dependencia.id.toString(),
     file: undefined,
   };
 
@@ -62,6 +63,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
+        // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
         toast.error("Error al modificar.");
       }
@@ -79,7 +81,8 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
-      } catch (e) {
+        // eslint-disable-next-line no-unused-vars
+      } catch (e: unknown) {
         toast.error("Error al eliminar.");
       }
     });
@@ -91,15 +94,10 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
           <SelectField control={form.control} name="tipo" label="Tipo de Permiso / Licencia / Vacacion *" options={tipoPermisoLicenciaVacacionOp} />
+          <InputField control={form.control} name="detalle" label="Detalle *" placeholder="Detalle" />
 
-          <CargoField control={form.control} name="cargo.nombre" />
-
-          <div className="flex flex-col gap-2">
-            <p className="font-primary font-semibold text-md">Dependencia</p>
-            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
-              <DependenciaField control={form.control} />
-            </div>
-          </div>
+          <DependenciasUserField control={form.control} name="dependencia_id" user_id="cm8hfj7mu0000t88wdvgnkkbo" label="Dependencia *" />
+          <CargosUserField control={form.control} name="cargo_id" user_id="cm8hfj7mu0000t88wdvgnkkbo" dependencia_id={form.watch("dependencia_id")} />
 
           <div className="gap-4 grid grid-cols-2">
             <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={false} />
@@ -114,6 +112,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
               </div>
               <div className="flex md:flex-row flex-col gap-2 w-full md:w-auto">
                 <Button variant="outline" asChild>
+                  {/* eslint-disable-next-line jsx-no-target-blank */}
                   <a href={fileUrl} download target="_blank">
                     <Download size={16} /> Descargar
                   </a>

@@ -184,7 +184,6 @@ model Dependencia {
   desplazamientosHacia desplazamiento[] @relation(name: "dependencia_to")
   ascensos_desde       ascenso[]        @relation(name: "dependencia_ascenso_desde")
   ascensos_hacia       ascenso[]        @relation(name: "dependencia_ascenso_hacia")
-  per_lic_vac          per_lic_vac[]
   bonus_personal       bonus_personal[]
   bonus_family         bonus_family[]
   evaluation           evaluation[]
@@ -207,7 +206,6 @@ model Cargo {
   desplazamientosHacia desplazamiento[] @relation(name: "cargo_to")
   ascensos_desde       ascenso[]        @relation(name: "cargo_ascenso_desde")
   ascensos_hacia       ascenso[]        @relation(name: "cargo_ascenso_hacia")
-  per_lic_vac          per_lic_vac[]
   bonus_personal       bonus_personal[]
   bonus_family         bonus_family[]
   evaluation           evaluation[]
@@ -242,6 +240,7 @@ model UsuarioCargoDependencia {
   experience       Experience[]
   renuncia         renuncia[]
   descanso_medico  descanso_medico[]
+  per_lic_vac      per_lic_vac[]
 
   @@unique([userId, cargoDependenciaId])
   @@map("usuario_cargo_dependencias")
@@ -574,18 +573,18 @@ model descanso_medico {
 
 model per_lic_vac {
   id      String                      @id @default(cuid())
+  detalle String                      @db.Citext
   tipo    TipoPermisoLicenciaVacacion
   periodo Json // {from: DateTime, to: DateTime}
 
-  user_id        String
-  file_id        String
-  cargo_id       Int
-  dependencia_id Int
+  user_id                   String
+  file_id                   String
+  usuarioCargoDependenciaId Int
 
-  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  file        File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
-  cargo       Cargo       @relation(fields: [cargo_id], references: [id], onDelete: Restrict)
-  dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
+  usuarioCargoDependencia UsuarioCargoDependencia @relation(fields: [usuarioCargoDependenciaId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  file File @relation(fields: [file_id], references: [id], onDelete: Restrict)
 
   @@unique([user_id, file_id])
   @@map("permisos_licencias_vacaciones")

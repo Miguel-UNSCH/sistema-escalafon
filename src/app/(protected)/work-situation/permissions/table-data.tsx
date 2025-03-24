@@ -16,7 +16,7 @@ type TableProps = {
 export const Table: React.FC<TableProps> = ({ items, loading, selectedItem, setSelectedItem }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const tableHeaders = ["N", "Tipo", "Cargo", "Dependencia", "Periodo", "Archivo"];
+  const tableHeaders = ["N", "Tipo", "Detalle", "Cargo", "Dependencia", "Periodo", "Archivo"];
 
   const [fileUrls, setFileUrls] = useState<{ [key: string]: string | null }>({});
 
@@ -63,8 +63,9 @@ export const Table: React.FC<TableProps> = ({ items, loading, selectedItem, setS
                   >
                     <td className="px-4 lg:px-6 py-3 rounded-s-md">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td className="px-4 lg:px-6 py-3">{tipoPermisoLicenciaVacacionOp.find((i) => i.key === item.tipo)?.value || "N/A"}</td>
-                    <td className="px-4 lg:px-6 py-3">{item.cargo.nombre}</td>
-                    <td className="px-4 lg:px-6 py-3">{item.dependencia.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.detalle}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.usuarioCargoDependencia.cargoDependencia.cargo.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.usuarioCargoDependencia.cargoDependencia.dependencia.nombre}</td>
                     <td className="px-4 lg:px-6 py-3">{`${new Date(item.periodo?.from).toLocaleDateString()} - ${new Date(item.periodo.to).toLocaleDateString()}`}</td>
                     <td className="px-4 lg:px-6 py-3 rounded-e-md">
                       {fileUrls[item.file.id] ? (

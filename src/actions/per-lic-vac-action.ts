@@ -7,7 +7,21 @@ import { Prisma, User } from "@prisma/client";
 import fs from "fs/promises";
 import path from "path";
 
-export type perLicRecord = Prisma.per_lic_vacGetPayload<{ include: { cargo: true; dependencia: true; file: true } }>;
+export type perLicRecord = Prisma.per_lic_vacGetPayload<{
+  include: {
+    file: true;
+    usuarioCargoDependencia: {
+      include: {
+        cargoDependencia: {
+          include: {
+            cargo: true;
+            dependencia: true;
+          };
+        };
+      };
+    };
+  };
+}>;
 export const getPerLicVacs = async (): Promise<{
   success: boolean;
   message?: string;
@@ -22,7 +36,19 @@ export const getPerLicVacs = async (): Promise<{
 
     const response: perLicRecord[] | null = await prisma.per_lic_vac.findMany({
       where: { user_id: user.id },
-      include: { cargo: true, dependencia: true, file: true },
+      include: {
+        file: true,
+        usuarioCargoDependencia: {
+          include: {
+            cargoDependencia: {
+              include: {
+                cargo: true,
+                dependencia: true,
+              },
+            },
+          },
+        },
+      },
     });
     if (!response) throw new Error("No hay permisos, licencias o vacaciones disponibles");
 
@@ -39,23 +65,48 @@ export const createPerLicVac = async (data: ZPerLicVacS & { file_id: string }): 
     const session = await auth();
     if (!session?.user?.email) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (!user) throw new Error("Usuario no encontrado");
 
-    const cargo = await prisma.cargo.findUnique({ where: { nombre: data.cargo.nombre } });
+    const cargo = await prisma.cargo.findUnique({ where: { id: Number(data.cargo_id) } });
     if (!cargo) throw new Error("Cargo no encontrado");
 
-    const dependencia = await prisma.dependencia.findUnique({ where: { codigo: data.dependencia.codigo } });
+    const dependencia = await prisma.dependencia.findUnique({ where: { id: Number(data.dependencia_id) } });
     if (!dependencia) throw new Error("Dependencia no encontrada");
+
+    const cargoDependencia = await prisma.cargoDependencia.findUnique({
+      where: {
+        cargoId_dependenciaId: {
+          cargoId: cargo.id,
+          dependenciaId: dependencia.id,
+        },
+      },
+    });
+
+    if (!cargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia seleccionada.");
+
+    const usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
+      where: {
+        userId_cargoDependenciaId: {
+          userId: user.id,
+          cargoDependenciaId: cargoDependencia.id,
+        },
+      },
+    });
+
+    if (!usuarioCargoDependencia) throw new Error("El usuario no tiene asignado ese cargo en la dependencia seleccionada.");
+
+    const file = await prisma.file.findUnique({ where: { id: data.file_id } });
+    if (!file) throw new Error("Archivo no encontrado");
 
     await prisma.per_lic_vac.create({
       data: {
         user_id: user.id,
         tipo: data.tipo,
-        cargo_id: cargo.id,
-        dependencia_id: dependencia.id,
+        detalle: data.detalle.toUpperCase(),
         periodo: { from: new Date(data.periodo.from).toISOString(), to: new Date(data.periodo.to).toISOString() },
         file_id: data.file_id,
+        usuarioCargoDependenciaId: usuarioCargoDependencia.id,
       },
     });
 
@@ -69,14 +120,34 @@ export const createPerLicVac = async (data: ZPerLicVacS & { file_id: string }): 
 
 export const updatePerLicVac = async (id: string, data: ZPerLicVacS & { file?: File | null; file_id?: string }): Promise<{ success: boolean; message: string }> => {
   try {
-    const current_model = await prisma.per_lic_vac.findUnique({ where: { id }, include: { file: true } });
-    if (!current_model) throw new Error("Permiso, licencia o vacación no encontrada");
+    const session = await auth();
+    if (!session?.user?.email) throw new Error("No autorizado");
 
-    const cargo = await prisma.cargo.findUnique({ where: { nombre: data.cargo.nombre } });
+    const user = await prisma.user.findUnique({ where: { email: session.user.email } });
+    if (!user) throw new Error("Usuario no encontrado");
+
+    const current_model = await prisma.per_lic_vac.findUnique({ where: { id }, include: { file: true } });
+    if (!current_model) throw new Error("permiso no encontrado");
+
+    const cargo = await prisma.cargo.findUnique({ where: { id: Number(data.cargo_id) } });
     if (!cargo) throw new Error("Cargo no encontrado");
 
-    const dependencia = await prisma.dependencia.findUnique({ where: { codigo: data.dependencia.codigo } });
+    const dependencia = await prisma.dependencia.findUnique({ where: { id: Number(data.dependencia_id) } });
     if (!dependencia) throw new Error("Dependencia no encontrada");
+
+    const cargoDependencia = await prisma.cargoDependencia.findUnique({
+      where: {
+        cargoId_dependenciaId: { cargoId: cargo.id, dependenciaId: dependencia.id },
+      },
+    });
+    if (!cargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia seleccionada.");
+
+    const usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
+      where: {
+        userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: cargoDependencia.id },
+      },
+    });
+    if (!usuarioCargoDependencia) throw new Error("No existe la relación entre el usuario y el cargo-dependencia seleccionado.");
 
     if (data.file) {
       const filePath = path.resolve(process.cwd(), current_model.file.path, `${current_model.file.id}${current_model.file.extension}`);
@@ -90,9 +161,10 @@ export const updatePerLicVac = async (id: string, data: ZPerLicVacS & { file?: F
       where: { id },
       data: {
         tipo: data.tipo,
-        cargo_id: cargo.id,
-        dependencia_id: dependencia.id,
+        detalle: data.detalle.toUpperCase(),
         periodo: { from: new Date(data.periodo.from).toISOString(), to: new Date(data.periodo.to).toISOString() },
+        usuarioCargoDependenciaId: usuarioCargoDependencia.id,
+        ...(data.file_id && { file_id: data.file_id }),
       },
     });
 
@@ -117,8 +189,10 @@ export const deletePerLicVac = async (id: string, file_id: string): Promise<{ su
     try {
       await fs.access(filePath);
       await fs.unlink(filePath);
+      // eslint-disable-next-line no-console
       console.log("Archivo eliminado correctamente.");
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.warn("Advertencia: No se pudo eliminar el archivo físico:", err);
     }
 

@@ -68,9 +68,10 @@ export type ZDesMedS = z.infer<typeof descansoMedicoSchema>;
 
 export const per_lic_vacSchema = z.object({
   tipo: TipoPermisoLicenciaVacacion,
+  detalle: z.string(),
   periodo: periodoSchema,
-  cargo: cargoSchema,
-  dependencia: dependenciaSchema,
+  cargo_id: z.string(),
+  dependencia_id: z.string(),
   file: fileSchema.optional(),
 });
 export type ZPerLicVacS = z.infer<typeof per_lic_vacSchema>;
