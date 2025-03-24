@@ -182,8 +182,7 @@ model Dependencia {
 
   desplazamientosDesde desplazamiento[] @relation(name: "dependencia_from")
   desplazamientosHacia desplazamiento[] @relation(name: "dependencia_to")
-  ascensos_desde       ascenso[]        @relation(name: "dependencia_ascenso_desde")
-  ascensos_hacia       ascenso[]        @relation(name: "dependencia_ascenso_hacia")
+
   bonus_personal       bonus_personal[]
   bonus_family         bonus_family[]
   evaluation           evaluation[]
@@ -204,8 +203,6 @@ model Cargo {
 
   desplazamientosDesde desplazamiento[] @relation(name: "cargo_from")
   desplazamientosHacia desplazamiento[] @relation(name: "cargo_to")
-  ascensos_desde       ascenso[]        @relation(name: "cargo_ascenso_desde")
-  ascensos_hacia       ascenso[]        @relation(name: "cargo_ascenso_hacia")
   bonus_personal       bonus_personal[]
   bonus_family         bonus_family[]
   evaluation           evaluation[]
@@ -241,6 +238,8 @@ model UsuarioCargoDependencia {
   renuncia         renuncia[]
   descanso_medico  descanso_medico[]
   per_lic_vac      per_lic_vac[]
+  current_ascenso  ascenso[]         @relation(name: "current_ucd")
+  new_ascenso      ascenso[]         @relation(name: "new_ucd")
 
   @@unique([userId, cargoDependenciaId])
   @@map("usuario_cargo_dependencias")
@@ -609,19 +608,15 @@ model ascenso {
   fecha              DateTime
   cnp                Int
 
-  user_id                String
-  file_id                String
-  current_cargo_id       Int
-  new_cargo_id           Int
-  current_dependencia_id Int
-  new_dependencia_id     Int
+  user_id      String
+  file_id      String
+  currentUCDId Int
+  newUCDId     Int
 
-  current_cargo       Cargo       @relation(name: "cargo_ascenso_desde", fields: [current_cargo_id], references: [id], onDelete: Restrict)
-  new_cargo           Cargo       @relation(name: "cargo_ascenso_hacia", fields: [new_cargo_id], references: [id], onDelete: Restrict)
-  current_dependencia Dependencia @relation(name: "dependencia_ascenso_desde", fields: [current_dependencia_id], references: [id], onDelete: Restrict)
-  new_dependencia     Dependencia @relation(name: "dependencia_ascenso_hacia", fields: [new_dependencia_id], references: [id], onDelete: Restrict)
-  user                User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  file                File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
+  currentUCD UsuarioCargoDependencia @relation(name: "current_ucd", fields: [currentUCDId], references: [id], onDelete: Cascade)
+  newUCD     UsuarioCargoDependencia @relation(name: "new_ucd", fields: [newUCDId], references: [id], onDelete: Cascade)
+  user       User                    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  file       File                    @relation(fields: [file_id], references: [id], onDelete: Restrict)
 
   @@unique([user_id, file_id])
   @@map("ascensos")

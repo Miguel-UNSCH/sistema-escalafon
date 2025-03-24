@@ -84,10 +84,10 @@ export const ascensoSchema = z.object({
     .string({ required_error: "Fecha de inicio es requerida" })
     .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
     .transform((date) => new Date(date)),
-  current_cargo: cargoSchema,
-  new_cargo: cargoSchema,
-  current_dependencia: dependenciaSchema,
-  new_dependencia: dependenciaSchema,
+  current_cargo_id: z.string(),
+  new_cargo_id: z.string(),
+  current_dependencia_id: z.string(),
+  new_dependencia_id: z.string(),
   file: fileSchema.optional(),
 });
 export type ZAscensoS = z.infer<typeof ascensoSchema>;

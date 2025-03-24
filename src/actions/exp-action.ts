@@ -30,9 +30,7 @@ export const getExperiences = async (): Promise<{ success: boolean; message?: st
     return { success: true, data: experiencias };
   } catch (error: unknown) {
     let errorMessage = "Error al obtener las experiencias.";
-
     if (error instanceof Error) errorMessage = error.message;
-
     return { success: false, message: errorMessage };
   }
 };

@@ -2,9 +2,7 @@
 
 import { ascensoRecord, deleteAscenso, updateAscenso } from "@/actions/ascenso-action";
 import { getFile } from "@/actions/file-action";
-import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
-import { DependenciaField } from "@/components/custom-fields/dependencia-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -15,6 +13,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { ascensoSchema, ZAscensoS } from "@/lib/schemas/w-situation-schema";
 import { InputField } from "@/components/custom-fields/input-field";
+import { CargoIdDependenciaField, DependenciaIdField } from "@/components/custom-fields/cargos-dependencia";
 
 type ModifyProps = {
   item: ascensoRecord;
@@ -39,15 +38,19 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
     resolucion_ascenso: item.resolucion_ascenso,
     nivel_remunerativo: item.nivel_remunerativo,
     cnp: item.cnp,
-    fecha: item.fecha.toISOString(),
-    current_cargo: { nombre: item.current_cargo.nombre },
-    new_cargo: { nombre: item.new_cargo.nombre },
-    current_dependencia: { nombre: item.current_dependencia.nombre, codigo: item.current_dependencia.codigo, direccion: item.current_dependencia.direccion },
-    new_dependencia: { nombre: item.new_dependencia.nombre, codigo: item.new_dependencia.codigo, direccion: item.new_dependencia.direccion },
+    fecha: item.fecha.toString(),
+    current_cargo_id: item.currentUCD.cargoDependencia.cargo.id.toString(),
+    new_cargo_id: item.newUCD.cargoDependencia.cargo.id.toString(),
+    current_dependencia_id: item.currentUCD.cargoDependencia.dependencia.id.toString(),
+    new_dependencia_id: item.newUCD.cargoDependencia.dependencia.id.toString(),
     file: undefined,
   };
 
   const form = useForm<ZAscensoS>({ resolver: zodResolver(ascensoSchema), defaultValues: defaultValues as any });
+
+  useEffect(() => {
+    form.reset(defaultValues as any);
+  }, [item, form]);
 
   const onUpdate = async (data: ZAscensoS) => {
     startTransition(async () => {
@@ -64,6 +67,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
+        // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
         toast.error("Error al modificar.");
       }
@@ -81,7 +85,8 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
-      } catch (e) {
+        // eslint-disable-next-line no-unused-vars
+      } catch (e: unknown) {
         toast.error("Error al eliminar.");
       }
     });
@@ -102,24 +107,11 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
             <DateField control={form.control} name="fecha" label="Fecha" disabled={false} />
           </div>
 
-          <div className="gap-2 grid grid-cols-2">
-            <CargoField control={form.control} name="current_cargo.nombre" placeholder="Cargo Actual *" />
-            <CargoField control={form.control} name="new_cargo.nombre" placeholder="Nuevo Cargo *" />
-          </div>
+          <DependenciaIdField control={form.control} name="current_dependencia_id" label="Dependencia Actual *" />
+          <CargoIdDependenciaField control={form.control} name="current_cargo_id" dependencia_id={form.watch("current_dependencia_id")} label="Cargo Actual *" />
 
-          <div className="flex flex-col gap-2">
-            <p className="font-primary font-semibold text-md">Dependencia Actual</p>
-            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
-              <DependenciaField control={form.control} name="current_dependencia" />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <p className="font-primary font-semibold text-md">Nueva Dependencia</p>
-            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
-              <DependenciaField control={form.control} name="new_dependencia" />
-            </div>
-          </div>
+          <DependenciaIdField control={form.control} name="new_dependencia_id" label="Nueva Dependencia *" />
+          <CargoIdDependenciaField control={form.control} name="new_cargo_id" dependencia_id={form.watch("new_dependencia_id")} label="Nuevo Cargo *" />
 
           {fileUrl && !isChangingFile ? (
             <div className="flex md:flex-row flex-col items-center gap-4 md:text-left text-center">
@@ -129,6 +121,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
               </div>
               <div className="flex md:flex-row flex-col gap-2 w-full md:w-auto">
                 <Button variant="outline" asChild>
+                  {/* eslint-disable-next-line jsx-no-target-blank */}
                   <a href={fileUrl} download target="_blank">
                     <Download size={16} /> Descargar
                   </a>
