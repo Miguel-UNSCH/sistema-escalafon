@@ -180,9 +180,6 @@ model Dependencia {
   cargos   CargoDependencia[]
   contrato Contrato[]
 
-  desplazamientosDesde desplazamiento[] @relation(name: "dependencia_from")
-  desplazamientosHacia desplazamiento[] @relation(name: "dependencia_to")
-
   bonus_personal       bonus_personal[]
   bonus_family         bonus_family[]
   evaluation           evaluation[]
@@ -201,8 +198,6 @@ model Cargo {
   dependencias CargoDependencia[]
   contrato     Contrato[]
 
-  desplazamientosDesde desplazamiento[] @relation(name: "cargo_from")
-  desplazamientosHacia desplazamiento[] @relation(name: "cargo_to")
   bonus_personal       bonus_personal[]
   bonus_family         bonus_family[]
   evaluation           evaluation[]
@@ -219,9 +214,10 @@ model CargoDependencia {
   cargoId       Int
   dependenciaId Int
 
-  cargo       Cargo                     @relation(fields: [cargoId], references: [id])
-  dependencia Dependencia               @relation(fields: [dependenciaId], references: [id])
-  usuarios    UsuarioCargoDependencia[]
+  cargo       Cargo       @relation(fields: [cargoId], references: [id])
+  dependencia Dependencia @relation(fields: [dependenciaId], references: [id])
+
+  usuarios UsuarioCargoDependencia[]
 
   @@unique([cargoId, dependenciaId])
   @@map("cargos_dependencias")
@@ -232,14 +228,17 @@ model UsuarioCargoDependencia {
   userId             String
   cargoDependenciaId Int
 
-  user             User              @relation(fields: [userId], references: [id])
-  cargoDependencia CargoDependencia  @relation(fields: [cargoDependenciaId], references: [id])
-  experience       Experience[]
-  renuncia         renuncia[]
-  descanso_medico  descanso_medico[]
-  per_lic_vac      per_lic_vac[]
-  current_ascenso  ascenso[]         @relation(name: "current_ucd")
-  new_ascenso      ascenso[]         @relation(name: "new_ucd")
+  experience             Experience[]
+  renuncia               renuncia[]
+  descanso_medico        descanso_medico[]
+  per_lic_vac            per_lic_vac[]
+  current_ascenso        ascenso[]         @relation(name: "current_ucd")
+  new_ascenso            ascenso[]         @relation(name: "new_ucd")
+  current_desplazamiento desplazamiento[]  @relation(name: "current_ucd")
+  new_desplazamiento     desplazamiento[]  @relation(name: "new_ucd")
+
+  user             User             @relation(fields: [userId], references: [id])
+  cargoDependencia CargoDependencia @relation(fields: [cargoDependenciaId], references: [id])
 
   @@unique([userId, cargoDependenciaId])
   @@map("usuario_cargo_dependencias")
@@ -545,19 +544,15 @@ model desplazamiento {
   fecha               DateTime
   tipo_file           String
 
-  current_cargo_id       Int
-  new_cargo_id           Int
-  current_dependencia_id Int
-  new_dependencia_id     Int
-  file_id                String
-  user_id                String
+  file_id      String
+  user_id      String
+  currentUCDId Int
+  newUCDId     Int
 
-  current_cargo       Cargo       @relation(name: "cargo_from", fields: [current_cargo_id], references: [id], onDelete: Restrict)
-  new_cargo           Cargo       @relation(name: "cargo_to", fields: [new_cargo_id], references: [id], onDelete: Restrict)
-  current_dependencia Dependencia @relation(name: "dependencia_from", fields: [current_dependencia_id], references: [id], onDelete: Restrict)
-  new_dependencia     Dependencia @relation(name: "dependencia_to", fields: [new_dependencia_id], references: [id], onDelete: Restrict)
-  file                File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
-  user                User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  currentUCD UsuarioCargoDependencia @relation(name: "current_ucd", fields: [currentUCDId], references: [id], onDelete: Cascade)
+  newUCD     UsuarioCargoDependencia @relation(name: "new_ucd", fields: [newUCDId], references: [id], onDelete: Cascade)
+  file       File                    @relation(fields: [file_id], references: [id], onDelete: Restrict)
+  user       User                    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@unique([user_id, file_id])
   @@map("desplazamientos")

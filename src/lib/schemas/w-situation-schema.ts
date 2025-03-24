@@ -48,10 +48,10 @@ export const desplazamientoSchema = z.object({
     .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
     .transform((date) => new Date(date)),
   tipo_file: z.string(),
-  current_cargo: cargoSchema,
-  new_cargo: cargoSchema,
-  current_dependencia: dependenciaSchema,
-  new_dependencia: dependenciaSchema,
+  current_cargo_id: z.string(),
+  new_cargo_id: z.string(),
+  current_dependencia_id: z.string(),
+  new_dependencia_id: z.string(),
   file: fileSchema.optional(),
 });
 export type ZDesplazamientoS = z.infer<typeof desplazamientoSchema>;

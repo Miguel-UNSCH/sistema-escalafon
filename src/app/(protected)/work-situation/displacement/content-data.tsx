@@ -11,6 +11,7 @@ export const ContentData = () => {
   const [items, setItems] = useState<desplazamientoRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItem, setSelectedItem] = useState<desplazamientoRecord | null>(null);
+  const [showCreate, setShowCreate] = useState<boolean>(false);
 
   const fnDesplazamientos = async () => {
     setLoading(true);
@@ -18,6 +19,7 @@ export const ContentData = () => {
       const response = await getDesplazamientos();
       if (response.success && response.data) {
         setItems(response.data);
+        if (response.data.length === 0) setShowCreate(true);
       } else toast.error(response.message || "No se pudieron obtener los desplazamientos.");
 
       // eslint-disable-next-line no-unused-vars
@@ -35,6 +37,7 @@ export const ContentData = () => {
   const handleRefresh = () => {
     fnDesplazamientos();
     setSelectedItem(null);
+    setShowCreate(false);
   };
 
   return (
@@ -47,7 +50,7 @@ export const ContentData = () => {
       )}
 
       {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} />}
-      <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} />
+      {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} />}
     </div>
   );
 };
