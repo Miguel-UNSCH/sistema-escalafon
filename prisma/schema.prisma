@@ -180,11 +180,10 @@ model Dependencia {
   cargos   CargoDependencia[]
   contrato Contrato[]
 
-  bonus_family         bonus_family[]
   evaluation           evaluation[]
   merito               merito[]
-  documentos_enviados  documento[]    @relation(name: "dependencia_emisor")
-  documentos_recibidos documento[]    @relation(name: "dependencia_receptor")
+  documentos_enviados  documento[]  @relation(name: "dependencia_emisor")
+  documentos_recibidos documento[]  @relation(name: "dependencia_receptor")
   demerito             demerito[]
 
   @@map("dependencias")
@@ -197,11 +196,10 @@ model Cargo {
   dependencias CargoDependencia[]
   contrato     Contrato[]
 
-  bonus_family         bonus_family[]
   evaluation           evaluation[]
   merito               merito[]
-  documentos_enviados  documento[]    @relation(name: "cargo_emisor")
-  documentos_recibidos documento[]    @relation(name: "cargo_receptor")
+  documentos_enviados  documento[]  @relation(name: "cargo_emisor")
+  documentos_recibidos documento[]  @relation(name: "cargo_receptor")
   demerito             demerito[]
 
   @@map("cargos")
@@ -235,6 +233,7 @@ model UsuarioCargoDependencia {
   new_ascenso            ascenso[]         @relation(name: "new_ucd")
   current_desplazamiento desplazamiento[]  @relation(name: "current_ucd")
   new_desplazamiento     desplazamiento[]  @relation(name: "new_ucd")
+  bonus_family           bonus_family[]
 
   user             User             @relation(fields: [userId], references: [id])
   cargoDependencia CargoDependencia @relation(fields: [cargoDependenciaId], references: [id])
@@ -641,15 +640,14 @@ model bonus_family {
   resolucion_bonus String   @db.Citext
   fecha            DateTime
 
-  user_id        String
-  file_id        String
-  cargo_id       Int
-  dependencia_id Int
+  user_id                   String
+  file_id                   String
+  usuarioCargoDependenciaId Int
 
-  cargo       Cargo       @relation(fields: [cargo_id], references: [id], onDelete: Restrict)
-  dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
-  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  file        File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
+  usuarioCargoDependencia UsuarioCargoDependencia @relation(fields: [usuarioCargoDependenciaId], references: [id], onDelete: Cascade)
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  file File @relation(fields: [file_id], references: [id], onDelete: Restrict)
 
   @@unique([user_id, file_id])
   @@map("bonuses_family")

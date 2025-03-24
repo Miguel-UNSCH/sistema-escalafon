@@ -1,10 +1,9 @@
 import { bonusFamiliarRecord, deleteBonusFam, updateBonusFam } from "@/actions/bonus-fam-action";
 import { getFile } from "@/actions/file-action";
-import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
-import { DependenciaField } from "@/components/custom-fields/dependencia-field";
 import { InputField } from "@/components/custom-fields/input-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
+import { CargosUserField, DependenciasUserField } from "@/components/custom-fields/user-cargos-dependencia";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { bonusFamiliarSchema, ZBonusFamiliar } from "@/lib/schemas/bonus-schema";
@@ -18,9 +17,10 @@ type ModifyProps = {
   item: bonusFamiliarRecord;
   onUpdated: () => void;
   setSelectedItem: React.Dispatch<React.SetStateAction<bonusFamiliarRecord | null>>;
+  user_id: string;
 };
 
-export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem }) => {
+export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem, user_id }) => {
   const [isPending, startTransition] = useTransition();
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [isChangingFile, setIsChangingFile] = useState(false);
@@ -36,13 +36,17 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
   const defaultValues = {
     tipo: item.tipo,
     resolucion_bonus: item.resolucion_bonus,
-    fecha: item.fecha.toISOString().split("")[0],
-    cargo: { nombre: item.cargo.nombre },
-    dependencia: { nombre: item.dependencia.nombre, codigo: item.dependencia.codigo, direccion: item.dependencia.direccion },
+    fecha: item.fecha.toString(),
+    cargo_id: item.usuarioCargoDependencia.cargoDependencia.cargo.id.toString(),
+    dependencia_id: item.usuarioCargoDependencia.cargoDependencia.dependencia.id.toString(),
     file: undefined,
   };
 
   const form = useForm<ZBonusFamiliar>({ resolver: zodResolver(bonusFamiliarSchema), defaultValues: defaultValues as any });
+
+  useEffect(() => {
+    form.reset(defaultValues as any);
+  }, [item, form]);
 
   const onUpdate = async (data: ZBonusFamiliar) => {
     startTransition(async () => {
@@ -59,6 +63,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
+        // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
         toast.error("Error al modificar.");
       }
@@ -76,7 +81,8 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
-      } catch (e) {
+        // eslint-disable-next-line no-unused-vars
+      } catch (e: unknown) {
         toast.error("Error al eliminar.");
       }
     });
@@ -92,14 +98,8 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
 
           <DateField control={form.control} name="fecha" label="Fecha de la bonificacion" disabled={false} />
 
-          <CargoField control={form.control} name="cargo.nombre" />
-
-          <div className="flex flex-col gap-2">
-            <p className="font-primary font-semibold text-md">Dependencia</p>
-            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
-              <DependenciaField control={form.control} />
-            </div>
-          </div>
+          <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" />
+          <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} />
 
           {fileUrl && !isChangingFile ? (
             <div className="flex md:flex-row flex-col items-center gap-4 md:text-left text-center">
@@ -109,6 +109,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
               </div>
               <div className="flex md:flex-row flex-col gap-2 w-full md:w-auto">
                 <Button variant="outline" asChild>
+                  {/* eslint-disable-next-line jsx-no-target-blank */}
                   <a href={fileUrl} download target="_blank">
                     <Download size={16} /> Descargar
                   </a>

@@ -63,8 +63,8 @@ export const Table: React.FC<TableProps> = ({ items, loading, selectedItem, setS
                     <td className="px-4 lg:px-6 py-3">{item.tipo}</td>
                     <td className="px-4 lg:px-6 py-3">{item.resolucion_bonus}</td>
                     <td className="px-4 lg:px-6 py-3">{new Date(item.fecha).toLocaleDateString()}</td>
-                    <td className="px-4 lg:px-6 py-3">{item.cargo.nombre}</td>
-                    <td className="px-4 lg:px-6 py-3">{item.dependencia.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.usuarioCargoDependencia.cargoDependencia.cargo.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.usuarioCargoDependencia.cargoDependencia.dependencia.nombre}</td>
                     <td className="px-4 lg:px-6 py-3 rounded-e-md">
                       {fileUrls[item.file.id] ? (
                         <a
