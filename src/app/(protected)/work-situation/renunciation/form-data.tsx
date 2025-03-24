@@ -71,7 +71,7 @@ export const Create: React.FC<CreateProps> = ({ onRenunciaCreated, setSelectedRe
       <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
-          <InputField control={form.control} name="motivo" label="Motivo de Renuncia*" placeholder="Ingrese la resolucion del motivo de la renuncia" />
+          <InputField control={form.control} name="motivo" label="Motivo *" placeholder="Ingrese el motivo" />
 
           <DateField control={form.control} name="fecha" label="Fecha de la bonificacion" disabled={false} />
 

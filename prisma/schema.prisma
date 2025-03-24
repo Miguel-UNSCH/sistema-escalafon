@@ -180,9 +180,8 @@ model Dependencia {
   cargos   CargoDependencia[]
   contrato Contrato[]
 
-  evaluation           evaluation[]
-  documentos_enviados  documento[]  @relation(name: "dependencia_emisor")
-  documentos_recibidos documento[]  @relation(name: "dependencia_receptor")
+  documentos_enviados  documento[] @relation(name: "dependencia_emisor")
+  documentos_recibidos documento[] @relation(name: "dependencia_receptor")
 
   @@map("dependencias")
 }
@@ -194,9 +193,8 @@ model Cargo {
   dependencias CargoDependencia[]
   contrato     Contrato[]
 
-  evaluation           evaluation[]
-  documentos_enviados  documento[]  @relation(name: "cargo_emisor")
-  documentos_recibidos documento[]  @relation(name: "cargo_receptor")
+  documentos_enviados  documento[] @relation(name: "cargo_emisor")
+  documentos_recibidos documento[] @relation(name: "cargo_receptor")
 
   @@map("cargos")
 }
@@ -235,6 +233,8 @@ model UsuarioCargoDependencia {
   user             User             @relation(fields: [userId], references: [id])
   cargoDependencia CargoDependencia @relation(fields: [cargoDependenciaId], references: [id])
   demerito         demerito[]
+  evaluado_ucd     evaluation[]     @relation(name: "evaluado_ucd")
+  evaluador_ucd    evaluation[]     @relation(name: "evaluador_ucd")
 
   @@unique([userId, cargoDependenciaId])
   @@map("usuario_cargo_dependencias")
@@ -327,7 +327,6 @@ model User {
   ascenso                 ascenso[]
   bonus_personal          bonus_personal[]
   bonus_family            bonus_family[]
-  evaluation              evaluation[]
   merito                  merito[]
   documentos_enviados     documento[]               @relation(name: "documento_emisor")
   documentos_recibidos    documento[]               @relation(name: "documento_receptor")
@@ -335,6 +334,8 @@ model User {
   UsuarioCargoDependencia UsuarioCargoDependencia[]
   experience              Experience[]
   Session                 Session[]
+  evaluado                evaluation[]              @relation(name: "evaluado")
+  evaluador               evaluation[]              @relation(name: "evaluador")
 
   @@map("users")
 }
@@ -652,21 +653,23 @@ model bonus_family {
 }
 
 model evaluation {
-  id         String   @id @default(cuid())
-  fecha      DateTime
-  puntuacion Int?
+  id    String   @id @default(cuid())
+  etapa Int // 1 | 2
+  fecha DateTime
 
-  user_id        String
-  file_id        String
-  cargo_id       Int
-  dependencia_id Int
+  file_id          String
+  evaluado_id      String
+  evaluado_ucd_id  Int
+  evaluador_id     String
+  evaluador_ucd_id Int
 
-  cargo       Cargo       @relation(fields: [cargo_id], references: [id], onDelete: Restrict)
-  dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
-  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  file        File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
+  evaluado_ucd  UsuarioCargoDependencia @relation(name: "evaluado_ucd", fields: [evaluado_ucd_id], references: [id], onDelete: Cascade)
+  evaluador_ucd UsuarioCargoDependencia @relation(name: "evaluador_ucd", fields: [evaluador_ucd_id], references: [id], onDelete: Cascade)
+  evaluado      User                    @relation(name: "evaluado", fields: [evaluado_id], references: [id], onDelete: Cascade)
+  evaluador     User                    @relation(name: "evaluador", fields: [evaluador_id], references: [id], onDelete: Cascade)
+  file          File                    @relation(fields: [file_id], references: [id], onDelete: Restrict)
 
-  @@unique([user_id, file_id])
+  @@unique([evaluado_id, file_id])
   @@map("evaluations")
 }
 

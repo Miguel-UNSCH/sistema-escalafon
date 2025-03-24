@@ -1,26 +1,29 @@
+"use client";
+
 import { deleteEvaluation, evaluationRecord, updateEvaliation } from "@/actions/evaluation-action";
 import { getFile } from "@/actions/file-action";
-import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
-import { DependenciaField } from "@/components/custom-fields/dependencia-field";
-import { InputField } from "@/components/custom-fields/input-field";
+import { SelectField } from "@/components/custom-fields/select-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
+import { CargosUserField, DependenciasUserField } from "@/components/custom-fields/user-cargos-dependencia";
+import { UserField } from "@/components/custom-fields/user-field";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { evaluationSchema, ZEvaluation } from "@/lib/schemas/bonus-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Download, Save, Trash } from "lucide-react";
 import { useEffect, useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import toast from "react-hot-toast";
 
 type ModifyProps = {
   item: evaluationRecord;
   onUpdated: () => void;
   setSelectedItem: React.Dispatch<React.SetStateAction<evaluationRecord | null>>;
+  user_id: string;
 };
 
-export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem }) => {
+export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem, user_id }) => {
   const [isPending, startTransition] = useTransition();
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [isChangingFile, setIsChangingFile] = useState(false);
@@ -34,14 +37,27 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
   }, [item.file?.id]);
 
   const defaultValues = {
-    puntuacion: item.puntuacion,
-    fecha: item.fecha.toISOString().split("")[0],
-    cargo: { nombre: item.cargo.nombre },
-    dependencia: { nombre: item.dependencia.nombre, codigo: item.dependencia.codigo, direccion: item.dependencia.direccion },
+    evaluador: { name: item.evaluador.name, dni: item.evaluador.dni, id: item.evaluador.id },
+    etapa: item.etapa.toString(),
+    fecha: item.fecha.toString(),
+    cargo_id: item.evaluado_ucd.cargoDependencia.cargo.id.toString(),
+    dependencia_id: item.evaluado_ucd.cargoDependencia.dependencia.id.toString(),
+    ev_cargo_id: item.evaluador_ucd.cargoDependencia.cargo.id.toString(),
+    ev_dependencia_id: item.evaluador_ucd.cargoDependencia.dependencia.id.toString(),
     file: undefined,
   };
 
   const form = useForm<ZEvaluation>({ resolver: zodResolver(evaluationSchema), defaultValues: defaultValues as any });
+
+  useEffect(() => {
+    form.reset(defaultValues as any);
+  }, [item, form]);
+
+  const evaluadorId = useWatch({
+    control: form.control,
+    name: "evaluador.id",
+    defaultValue: item.evaluador.id,
+  });
 
   const onUpdate = async (data: ZEvaluation) => {
     startTransition(async () => {
@@ -58,6 +74,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
+        // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
         toast.error("Error al modificar.");
       }
@@ -75,11 +92,18 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
-      } catch (e) {
+        // eslint-disable-next-line no-unused-vars
+      } catch (e: unknown) {
         toast.error("Error al eliminar.");
       }
     });
   };
+
+  const selectValues = [
+    { key: "0", value: "Ninguna" },
+    { key: "1", value: "Primera Etapa" },
+    { key: "2", value: "Segunda Etapa" },
+  ];
 
   return (
     <div className="flex flex-col gap-5 w-full font-text">
@@ -88,16 +112,17 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
           <div className="gap-2 grid grid-cols-2">
             <DateField control={form.control} name="fecha" label="Fecha de la evaluacion" disabled={false} />
-            <InputField control={form.control} name="puntuacion" label="Puntuacion *" type="number" />
+            <SelectField control={form.control} name="etapa" label="Etapa" options={selectValues} />
           </div>
 
-          <CargoField control={form.control} name="cargo.nombre" />
+          <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" />
+          <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} label="Cargo *" />
 
-          <div className="flex flex-col gap-2">
-            <p className="font-primary font-semibold text-md">Dependencia</p>
-            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
-              <DependenciaField control={form.control} />
-            </div>
+          <div className="flex flex-col gap-4">
+            <p className="font-primary font-semibold">Datos del Evaluador</p>
+            <UserField control={form.control} name="evaluador" label="Numbre *" />
+            <DependenciasUserField control={form.control} name="ev_dependencia_id" user_id={evaluadorId} label="Dependencia *" />
+            <CargosUserField control={form.control} name="ev_cargo_id" user_id={evaluadorId} dependencia_id={form.watch("ev_dependencia_id")} label="Cargo *" />
           </div>
 
           {fileUrl && !isChangingFile ? (
@@ -108,6 +133,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
               </div>
               <div className="flex md:flex-row flex-col gap-2 w-full md:w-auto">
                 <Button variant="outline" asChild>
+                  {/* eslint-disable-next-line jsx-no-target-blank */}
                   <a href={fileUrl} download target="_blank">
                     <Download size={16} /> Descargar
                   </a>
