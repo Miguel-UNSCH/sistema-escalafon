@@ -1,27 +1,77 @@
+// eslint-disable no-unused-vars
 "use server";
 
-import { signIn } from "@/auth";
 import { prisma } from "@/config/prisma.config";
 import { registerSchema, ZLoginS, ZRegisterS } from "@/lib/zod";
 import { User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";
+import { z } from "zod";
+import { signIn as nextAuthSignIn } from "@/auth";
 
-export const loginAction = async (values: ZLoginS) => {
-  try {
-    const user = await prisma.user.findUnique({ where: { email: values.email } });
-    if (!user) return { error: "Usuario no encontrado." };
-
-    await signIn("credentials", { email: values.email, password: values.password, redirect: false });
-
-    return { success: true, must_change_pwd: user.must_change_pwd, role: user.role };
-  } catch (error) {
-    if (error instanceof AuthError) {
-      return { message: error.cause?.err?.message };
-    }
-    return { message: "error 500" };
-  }
+// Define el tipo de resultado, extendiéndolo para incluir los campos adicionales
+type LoginResult = {
+  success: boolean;
+  message?: string;
+  must_change_pwd?: number;
+  role?: string;
+  redirectTo?: string;
 };
+
+export async function loginAction(values: ZLoginS): Promise<LoginResult> {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email: values.email },
+    });
+    if (!user) {
+      return {
+        success: false,
+        message: "Usuario no encontrado.",
+      };
+    }
+
+    // Usar la versión server-side de signIn
+    const result = await nextAuthSignIn("credentials", {
+      email: values.email,
+      password: values.password,
+      redirect: false,
+    });
+
+    if (!result || result.error) {
+      return {
+        success: false,
+        message: result?.error || "Error al iniciar sesión",
+      };
+    }
+
+    // Retornar los datos adicionales y la redirección basada en el rol
+    return {
+      success: true,
+      must_change_pwd: user.must_change_pwd,
+      role: user.role,
+      redirectTo: user.role === "admin" ? "/dashboard" : "/personal-file",
+    };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        message: error.errors[0].message,
+      };
+    }
+    if (error instanceof AuthError) {
+      return {
+        success: false,
+        message: "Credenciales inválidas",
+      };
+    }
+    // eslint-disable-next-line no-console
+    console.error("Error de autenticación:", error);
+    return {
+      success: false,
+      message: "Error del servidor",
+    };
+  }
+}
 
 export const registerAction = async (values: ZRegisterS) => {
   try {
@@ -45,7 +95,7 @@ export const registerAction = async (values: ZRegisterS) => {
     });
 
     return { success: true, message: "Usuario creado con éxito." };
-  } catch (error) {
+  } catch (error: unknown) {
     return { error: "Error en el servidor. Intente nuevamente más tarde." };
   }
 };
@@ -60,7 +110,7 @@ export const patchPassword = async (email: string, newPassword: string) => {
     await prisma.user.update({ where: { id: existingUser.id }, data: { password, must_change_pwd: 0 } });
 
     return { success: true, message: "Contraseña actualizada exitosamente." };
-  } catch (error) {
+  } catch (error: unknown) {
     return { error: "Error en el servidor. Intente nuevamente más tarde." };
   }
 };

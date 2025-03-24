@@ -7,12 +7,14 @@ import { Table } from "./table-data";
 import { expRecord, getExperiences } from "@/actions/exp-action";
 import { Create } from "./form-data";
 import { Modify } from "./modify-data";
+import { Session } from "next-auth";
 
 export type ExperienceRecord = Omit<expRecord, "periodo"> & {
   periodo: { from: string; to: string };
 };
 
-export const ContentData = () => {
+// eslint-disable-next-line no-unused-vars
+export const ContentData = ({ session }: { session: Session }) => {
   const [items, setItems] = useState<ExperienceRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItem, setSelectedItem] = useState<ExperienceRecord | null>(null);

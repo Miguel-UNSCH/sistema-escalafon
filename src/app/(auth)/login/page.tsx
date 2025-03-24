@@ -1,3 +1,5 @@
+"use server";
+
 import { FormLogin } from "@/components/form-login";
 import React from "react";
 
