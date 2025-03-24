@@ -108,7 +108,6 @@ export const updateRenuncia = async (id: string, data: ZRenunciaS & { file?: Fil
     });
     if (!usuarioCargoDependencia) throw new Error("No existe la relación entre el usuario y el cargo-dependencia seleccionado.");
 
-    // Si se actualiza el archivo
     if (data.file) {
       const filePath = path.resolve(process.cwd(), current_renuncia.file.path, `${current_renuncia.file.id}${current_renuncia.file.extension}`);
       const fileBuffer = Buffer.from(await data.file.arrayBuffer());

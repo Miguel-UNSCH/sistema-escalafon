@@ -87,41 +87,38 @@ export const updateBonusPer = async (id: string, data: ZBonusPersonal & { file_i
     const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (!user) throw new Error("Usuario no encontrado");
 
-    const bonusPersonal = await prisma.bonus_personal.findUnique({ where: { id } });
+    const bonusPersonal = await prisma.bonus_personal.findUnique({ where: { id }, include: { file: true } });
     if (!bonusPersonal) throw new Error("Bono personal no encontrado");
 
-    let cargo;
-    if (data.cargo_id !== undefined) {
-      cargo = await prisma.cargo.findUnique({ where: { id: Number(data.cargo_id) } });
-      if (!cargo) throw new Error("Cargo no encontrado");
-    }
+    const cargo = await prisma.cargo.findUnique({ where: { id: Number(data.cargo_id) } });
+    if (!cargo) throw new Error("Cargo no encontrado");
 
-    let dependencia;
-    if (data.dependencia_id !== undefined) {
-      dependencia = await prisma.dependencia.findUnique({ where: { id: Number(data.dependencia_id) } });
-      if (!dependencia) throw new Error("Dependencia no encontrada");
-    }
+    const dependencia = await prisma.dependencia.findUnique({ where: { id: Number(data.dependencia_id) } });
+    if (!dependencia) throw new Error("Dependencia no encontrada");
 
-    let cargoDependencia;
-    if (cargo && dependencia) {
-      cargoDependencia = await prisma.cargoDependencia.findUnique({
-        where: { cargoId_dependenciaId: { cargoId: cargo.id, dependenciaId: dependencia.id } },
+    const cargoDependencia = await prisma.cargoDependencia.findUnique({
+      where: {
+        cargoId_dependenciaId: { cargoId: cargo.id, dependenciaId: dependencia.id },
+      },
+    });
+    if (!cargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia seleccionada.");
+
+    const usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
+      where: {
+        userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: cargoDependencia.id },
+      },
+    });
+    if (!usuarioCargoDependencia) throw new Error("No existe la relación entre el usuario y el cargo-dependencia seleccionado.");
+
+    if (data.file) {
+      const filePath = path.resolve(process.cwd(), bonusPersonal.file.path, `${bonusPersonal.file.id}${bonusPersonal.file.extension}`);
+      const fileBuffer = Buffer.from(await data.file.arrayBuffer());
+      await fs.writeFile(filePath, fileBuffer);
+
+      await prisma.file.update({
+        where: { id: bonusPersonal.file.id },
+        data: { name: data.file.name, size: fileBuffer.length },
       });
-      if (!cargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia seleccionada.");
-    }
-
-    let file;
-    if (data.file_id !== undefined) {
-      file = await prisma.file.findUnique({ where: { id: data.file_id } });
-      if (!file) throw new Error("Archivo no encontrado");
-    }
-
-    let usuarioCargoDependencia;
-    if (cargoDependencia) {
-      usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
-        where: { userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: cargoDependencia.id } },
-      });
-      if (!usuarioCargoDependencia) throw new Error("No existe la relación entre el usuario y el cargo-dependencia seleccionado.");
     }
 
     await prisma.bonus_personal.update({
