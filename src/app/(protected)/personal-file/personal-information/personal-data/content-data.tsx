@@ -19,7 +19,8 @@ export const ContentData = ({ session }: { session: Session }) => {
       if (response.success && response.data) {
         setPersonalData(response.data);
       }
-    } catch (e) {
+      // eslint-disable-next-line no-unused-vars
+    } catch (e: unknown) {
       toast.error("Error al cargar los datos del personal.");
     } finally {
       setLoading(false);

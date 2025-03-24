@@ -52,7 +52,8 @@ export const ModifyData = ({ personalData, onRefresh }: { personalData: personal
           toast.success("personal actualizado exitosamente.");
           onRefresh();
         }
-      } catch (e) {
+        // eslint-disable-next-line no-unused-vars
+      } catch (e: unknown) {
         toast.error("Error al actualizar los datos del personal.");
       }
     });
@@ -69,7 +70,8 @@ export const ModifyData = ({ personalData, onRefresh }: { personalData: personal
           toast.success("personal eliminado exitosamente.");
           onRefresh();
         }
-      } catch (e) {
+        // eslint-disable-next-line no-unused-vars
+      } catch (e: unknown) {
         toast.error("Error al eliminar el personal.");
       }
     });

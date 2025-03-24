@@ -14,7 +14,7 @@ import { SelectField } from "@/components/custom-fields/select-field";
 import { SwitchField } from "@/components/custom-fields/switch-field";
 import { UbigeoField } from "@/components/custom-fields/ubigeo-field";
 import { personalSchema, ZPersonal } from "@/lib/schemas/personal-schema";
-import { estadoCivilOp, grupoSanguineoOp, regimenPensionarioOp, sexoOp, situacionLaboralOp } from "@/utils/options";
+import { estadoCivilOp, grupoSanguineoOp, sexoOp } from "@/utils/options";
 import toast from "react-hot-toast";
 
 export const CreateData = ({ onRefresh }: { onRefresh: () => void }) => {
@@ -49,6 +49,7 @@ export const CreateData = ({ onRefresh }: { onRefresh: () => void }) => {
           toast.success("Personal registrado exitosamente.");
           onRefresh();
         }
+        // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
         toast.error("Error al procesar la información.");
       }
