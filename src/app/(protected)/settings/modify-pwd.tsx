@@ -46,17 +46,36 @@ export const ModifyPwd: React.FC<ModifyPwdProps> = ({ userId }) => {
   };
 
   return (
-    <div className="flex flex-col p-4 sm:p-6 md:p-8 w-full">
-      <h2 className="py-2 font-primary font-bold text-peach text-2xl sm:text-3xl md:text-4xl">Cambiar contraseña</h2>
+    <div className="flex flex-col gap-2 w-full">
+      <h2 className="py-2 font-primary font-bold text-peach text-2xl">Cambiar contraseña</h2>
       <div className="flex flex-col">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 mx-auto w-full max-w-md">
-            <InputField control={form.control} name="current_pwd" label="Contraseña Actual" placeholder="**********" type="password" />
-            <InputField control={form.control} name="new_pwd" label="Nueva Contraseña" placeholder="**********" type="password" />
-            <InputField control={form.control} name="repeat_new_pwd" label="Repita la Nueva Contraseña" placeholder="**********" type="password" />
-            <Button type="submit" disabled={isPending} className="flex bg-maroon hover:bg-red px-4 py-2 rounded-md w-full font-primary font-semibold text-sm text-base">
-              {isPending ? "Cargando..." : "Cambiar contraseña"}
-            </Button>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
+            <div className="flex flex-col gap-4 w-full text-[1rem]">
+              <div className="flex flex-row-reverse items-center gap-4 w-full">
+                <div className="w-full">
+                  <InputField control={form.control} name="current_pwd" label="" placeholder="**********" type="password" />
+                </div>
+                <p className="pl-4 w-1/3 font-primary capitalize">contraseña actual</p>
+              </div>
+              <div className="flex flex-row-reverse items-center gap-4 w-full">
+                <div className="w-full">
+                  <InputField control={form.control} name="new_pwd" label="" placeholder="**********" type="password" />
+                </div>
+                <p className="pl-4 w-1/3 font-primary capitalize">nueva contraseña</p>
+              </div>
+              <div className="flex flex-row-reverse items-center gap-4 w-full">
+                <div className="w-full">
+                  <InputField control={form.control} name="repeat_new_pwd" label="" placeholder="**********" type="password" />
+                </div>
+                <p className="pl-4 w-1/3 font-primary capitalize">repita la nueva contraseña</p>
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <Button type="submit" disabled={isPending} className="bg-red hover:bg-maroon px-4 py-2 rounded-md w-auto font-semibold text-white">
+                {isPending ? "Cargando..." : "Cambiar contraseña"}
+              </Button>
+            </div>
           </form>
         </Form>
       </div>
