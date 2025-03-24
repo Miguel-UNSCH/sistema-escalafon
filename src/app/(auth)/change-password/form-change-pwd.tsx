@@ -30,7 +30,7 @@ export const FormChangePwd = ({ email, role }: { email: string; role: string }) 
     setSuccessMessage(null);
 
     startTransition(async () => {
-      const response = await patchPassword(email, data.newPwd);
+      const response = await patchPassword(email, data.pwd, data.newPwd);
 
       if (response.error) {
         setError(response.error);

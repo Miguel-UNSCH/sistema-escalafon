@@ -16,7 +16,6 @@ export const ContentData = () => {
   const [items, setItems] = useState<StudyRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItem, setSelectedItem] = useState<StudyRecord | null>(null);
-
   const [showCreate, setShowCreate] = useState<boolean>(false);
 
   const fnFormAc = async () => {
