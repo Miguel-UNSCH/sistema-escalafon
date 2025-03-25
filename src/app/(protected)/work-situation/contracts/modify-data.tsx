@@ -1,8 +1,6 @@
-import { contractRecord, deleteContract, updateContract } from "@/actions/contract-action";
+import { deleteContract, updateContract } from "@/actions/contract-action";
 import { getFile } from "@/actions/file-action";
-import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
-import { DependenciaField } from "@/components/custom-fields/dependencia-field";
 import { InputField } from "@/components/custom-fields/input-field";
 import { SelectField } from "@/components/custom-fields/select-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
@@ -16,11 +14,14 @@ import React from "react";
 import { useEffect, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { ContractRecord } from "./content-data";
+import { CargoIdDependenciaField, DependenciaIdField } from "@/components/custom-fields/cargos-dependencia";
 
 type ModifyProps = {
-  item: contractRecord;
+  item: ContractRecord;
   onUpdated: () => void;
-  setSelectedItem: React.Dispatch<React.SetStateAction<contractRecord | null>>;
+  setSelectedItem: React.Dispatch<React.SetStateAction<ContractRecord | null>>;
+  user_id: string;
 };
 
 export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem }) => {
@@ -40,20 +41,19 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
     tipo_contrato: item.tipo_contrato,
     condicion_laboral: item.condicion_laboral,
     resolucion_contrato: item.resolucion_contrato,
-    regimen_laboral: item.regimen_laboral,
-    nivel_remuneracion: item.nivel_remuneracion,
-    pap: item.pap,
-    cnp: item.cnp,
-    meta: item.meta,
-    convenio: item.convenio,
-    fecha_ingreso: item.fecha_ingreso.toISOString(),
-    fecha_cese: item.fecha_cese?.toISOString(),
+    regimen_laboral: item.regimen_laboral || "",
+    nivel_remuneracion: item.nivel_remuneracion || "",
+    pap: item.pap || 0,
+    cnp: item.cnp || 0,
+    meta: item.meta || "",
+    cargo_id: item.ucd.cargoDependencia.cargo.id.toString(),
+    dependencia_id: item.ucd.cargoDependencia.dependencia.id.toString(),
+    periodo: { from: new Date(item.periodo.from), to: new Date(item.periodo.to) },
     file: undefined,
-    cargo: { nombre: item.cargo.nombre },
-    dependencia: { nombre: item.dependencia.nombre, codigo: item.dependencia.codigo, direccion: item.dependencia.direccion },
   };
 
   const form = useForm<ZContratoS>({ resolver: zodResolver(contratoSchema), defaultValues: defaultValues as any });
+  const tipoContrato = form.watch("tipo_contrato");
 
   const onUpdate = async (data: ZContratoS) => {
     startTransition(async () => {
@@ -70,6 +70,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
+        // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
         toast.error("Error al modificar.");
       }
@@ -87,7 +88,8 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
-      } catch (e) {
+        // eslint-disable-next-line no-unused-vars
+      } catch (e: unknown) {
         toast.error("Error al eliminar.");
       }
     });
@@ -99,33 +101,41 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
           <SelectField control={form.control} name="tipo_contrato" label="Tipo de Contrato *" options={TContratoOp} />
-          <SelectField control={form.control} name="condicion_laboral" label="Condicion Laboral *" options={CLaboralOp} />
+          <SelectField control={form.control} name="condicion_laboral" label="Condición Laboral *" options={CLaboralOp} />
 
-          <InputField control={form.control} name="resolucion_contrato" label="Resolucion de Contrato *" placeholder="Ingrese la resolucion del contrato" />
-          <SelectField control={form.control} name="regimen_laboral" label="Regimen Laboral *" options={RLaboralOp} />
+          {(tipoContrato === "dl_276" || tipoContrato === "cas" || tipoContrato === "dl_276_proyecto") && (
+            <SelectField control={form.control} name="regimen_laboral" label="Régimen Laboral *" options={RLaboralOp} />
+          )}
 
-          <CargoField control={form.control} name="cargo.nombre" />
+          {(tipoContrato === "dl_276" || tipoContrato === "dl_276_proyecto" || tipoContrato === "cas") && (
+            <InputField
+              control={form.control}
+              name="resolucion_contrato"
+              label={tipoContrato === "cas" ? "Contrato CAS *" : "Resolución de Nombramiento o Contrato *"}
+              placeholder="Ingrese la resolución o contrato"
+            />
+          )}
 
-          <div className="flex flex-col gap-2">
-            <p className="font-primary font-semibold text-md">Dependencia</p>
-            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
-              <DependenciaField control={form.control} />
-            </div>
-          </div>
+          {tipoContrato === "dl_276" && (
+            <>
+              <InputField control={form.control} name="nivel_remuneracion" label="Nivel Remunerativo *" placeholder="Ingrese el nivel" />
+              <div className="gap-2 grid grid-cols-2">
+                <InputField control={form.control} name="pap" label="PAP" placeholder="Ingrese el PAP" type="number" />
+                <InputField control={form.control} name="cnp" label="CNP" placeholder="Ingrese el CNP" type="number" />
+              </div>
+            </>
+          )}
 
-          <InputField control={form.control} name="nivel_remuneracion" label="Nivel Remunerativo *" placeholder="Ingrese el nivel de remuneracion" />
+          {tipoContrato === "dl_276_proyecto" && <InputField control={form.control} name="meta" label="Meta *" placeholder="Ingrese la meta" />}
 
-          <div className="gap-2 grid grid-cols-2">
-            <InputField control={form.control} name="pap" label="PAP" placeholder="Ingrese el PAP" type="number" />
-            <InputField control={form.control} name="cnp" label="CNP" placeholder="Ingrese el CNP" type="number" />
-          </div>
+          {tipoContrato === "practicante" && <InputField control={form.control} name="resolucion_contrato" label="Convenio *" placeholder="Ingrese el convenio" />}
 
-          <InputField control={form.control} name="meta" label="Meta" placeholder="Ingrese la meta" />
-          <InputField control={form.control} name="convenio" label="Convenio" placeholder="Ingrese el convenio" />
+          <DependenciaIdField control={form.control} name="dependencia_id" label="Dependencia *" />
+          <CargoIdDependenciaField control={form.control} name="cargo_id" dependencia_id={form.watch("dependencia_id")} />
 
           <div className="gap-4 grid grid-cols-2">
-            <DateField control={form.control} name="fecha_ingreso" label="Fecha de inicio" disabled={false} />
-            <DateField control={form.control} name="fecha_cese" label="Fecha de culminacion" disabled={false} />
+            <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={false} />
+            <DateField control={form.control} name="periodo.to" label="Fecha de culminación" disabled={false} />
           </div>
 
           {fileUrl && !isChangingFile ? (
@@ -136,6 +146,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
               </div>
               <div className="flex md:flex-row flex-col gap-2 w-full md:w-auto">
                 <Button variant="outline" asChild>
+                  {/* eslint-disable-next-line jsx-no-target-blank */}
                   <a href={fileUrl} download target="_blank">
                     <Download size={16} /> Descargar
                   </a>

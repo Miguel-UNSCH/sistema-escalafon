@@ -754,15 +754,6 @@ model documento {
   @@map("documentos")
 }
 
-// XVII. Constancia de pagos de haberes y descuentos (+ trabajador)
-// Apellidos y nombres
-// Documento de sustento (Constancia de pago, Boleta de pago)
-// Dependencia y/o oficina
-// Cargo
-// Nivel Remunerativo (SPC, P-4)
-// PAP
-// CNP
-// Dias Laborados (Del - Al)
 model constancia {
   id               String @id @default(cuid())
   periodo          Json // {from: DateTime, to: DateTime}
