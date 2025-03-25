@@ -177,11 +177,7 @@ model Dependencia {
   direccion String? @db.Citext
   codigo    String  @unique @db.Citext
 
-  cargos   CargoDependencia[]
-  contrato Contrato[]
-
-  documentos_enviados  documento[] @relation(name: "dependencia_emisor")
-  documentos_recibidos documento[] @relation(name: "dependencia_receptor")
+  cargos CargoDependencia[]
 
   @@map("dependencias")
 }
@@ -191,10 +187,6 @@ model Cargo {
   nombre String @unique @db.Citext
 
   dependencias CargoDependencia[]
-  contrato     Contrato[]
-
-  documentos_enviados  documento[] @relation(name: "cargo_emisor")
-  documentos_recibidos documento[] @relation(name: "cargo_receptor")
 
   @@map("cargos")
 }
@@ -227,6 +219,8 @@ model UsuarioCargoDependencia {
   new_ascenso            ascenso[]         @relation(name: "new_ucd")
   current_desplazamiento desplazamiento[]  @relation(name: "current_ucd")
   new_desplazamiento     desplazamiento[]  @relation(name: "new_ucd")
+  doc_u                  documento[]       @relation(name: "ucd")
+  doc_r                  documento[]       @relation(name: "r_ucd")
   bonus_family           bonus_family[]
   merito                 merito[]
 
@@ -235,6 +229,8 @@ model UsuarioCargoDependencia {
   demerito         demerito[]
   evaluado_ucd     evaluation[]     @relation(name: "evaluado_ucd")
   evaluador_ucd    evaluation[]     @relation(name: "evaluador_ucd")
+  Contrato         Contrato[]
+  constancia       constancia[]
 
   @@unique([userId, cargoDependenciaId])
   @@map("usuario_cargo_dependencias")
@@ -267,6 +263,7 @@ model File {
   merito             merito[]
   documento          documento[]
   demerito           demerito[]
+  constancia         constancia[]
 
   @@map("files")
 }
@@ -328,14 +325,15 @@ model User {
   bonus_personal          bonus_personal[]
   bonus_family            bonus_family[]
   merito                  merito[]
-  documentos_enviados     documento[]               @relation(name: "documento_emisor")
-  documentos_recibidos    documento[]               @relation(name: "documento_receptor")
+  documentos_e            documento[]               @relation(name: "user")
+  documentos_r            documento[]               @relation(name: "received")
   demerito                demerito[]
   UsuarioCargoDependencia UsuarioCargoDependencia[]
   experience              Experience[]
   Session                 Session[]
   evaluado                evaluation[]              @relation(name: "evaluado")
   evaluador               evaluation[]              @relation(name: "evaluador")
+  constancia              constancia[]
 
   @@map("users")
 }
@@ -489,29 +487,56 @@ model Experience {
   @@map("experiencias")
 }
 
+// a. Régimen de decreto legislativo 276
+// Condición laboral (Nombrado, Contratado o en plaza vacante, Designado) *
+// Régimen laboral (276, 276, FAG-CAS-FUN276) *
+// Resolución de nombramiento y/o contrato
+// Dependencia y/o oficina -- cargo
+// Nivel remunerativo
+// PAP
+// CNP
+// periodo
+
+// b. Contrato Administrativo de Servicio - CAS
+// Condición laboral (Indeterminado, Eventual) * 
+// Régimen laboral *
+// Contrato-CAS
+// Dependencia y/o oficina -- cargo
+// periodo
+
+// c. D.L. 276-Proyecto de inversión
+// Condición laboral (Contratado, Reincorporado-Mandato Judicial) * 
+// Régimen laboral *
+// Resolución de contrato
+// Dependencia y/o oficina -- cargo
+// Meta
+// periodo
+
+// d. Practicante-D.L. N° 1401-Régimen Especial Modalidades Formativas
+// Condición laboral (Profesional - Preprofesional) *
+// Convenio
+// Dependencia y/o oficina  -- cargo 
+// periodo
+
 model Contrato {
   id                  String    @id @default(cuid())
   tipo_contrato       TContrato
   condicion_laboral   CLaboral
+  regimen_laboral     RLaboral? // ** a, b, c
   resolucion_contrato String?   @db.Citext // Resolución de nombramiento, contrato o convenio
-  regimen_laboral     RLaboral
-  nivel_remuneracion  String?   @db.Citext // Solo para algunos contratos
-  pap                 Int? // Solo en DL 276
-  cnp                 Int? // Solo en DL 276
-  meta                String?   @db.Citext // Solo en DL 276 Proyecto
-  convenio            String?   @db.Citext // Solo en Practicante
-  fecha_ingreso       DateTime
-  fecha_cese          DateTime?
+  nivel_remuneracion  String?   @db.Citext // ** a
+  pap                 Int? // ** a
+  cnp                 Int? // ** a
+  meta                String?   @db.Citext // ** c
+  periodo             Json // {from: DateTime, to: DateTime}
 
-  cargo_id       Int
-  dependencia_id Int
-  file_id        String
-  user_id        String
+  file_id String
+  user_id String
+  ucd_id  Int
 
-  cargo       Cargo       @relation(fields: [cargo_id], references: [id], onDelete: Restrict)
-  dependencia Dependencia @relation(fields: [dependencia_id], references: [id], onDelete: Restrict)
-  file        File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
-  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  ucd  UsuarioCargoDependencia @relation(fields: [ucd_id], references: [id], onDelete: Cascade)
+  file File                    @relation(fields: [file_id], references: [id], onDelete: Restrict)
+  user User                    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@unique([user_id, file_id])
   @@map("contratos")
@@ -707,29 +732,59 @@ model demerito {
   @@map("demeritos")
 }
 
+// XVI. Acta de entrega (+ trabajador)
+// Apellidos y nombres
+// Quien recibe la acta de entrega
+// Documento de sustento (acta)
+// Dependencia y/o oficina
+// Cargo
+// Fecha (Del - Al)
 model documento {
-  id               String   @id @default(cuid())
-  numero_documento String   @unique @db.Citext
-  tipo_documento   tipo_doc
-  asunto           String   @db.Citext
-  fecha_emision    DateTime @default(now())
+  id             String   @id @default(cuid())
+  tipo_documento tipo_doc
+  asunto         String   @db.Citext
+  fecha_emision  DateTime @default(now())
 
-  file_id                 String
-  emisor_id               String
-  receptor_id             String
-  cargo_emisor_id         Int
-  cargo_receptor_id       Int
-  dependencia_emisor_id   Int
-  dependencia_receptor_id Int
+  file_id  String
+  user_id  String
+  ucd_id   Int
+  r_id     String
+  r_ucd_id Int
 
-  file                 File        @relation(fields: [file_id], references: [id], onDelete: Restrict)
-  emisor               User        @relation(name: "documento_emisor", fields: [emisor_id], references: [id], onDelete: Cascade)
-  receptor             User        @relation(name: "documento_receptor", fields: [receptor_id], references: [id], onDelete: Cascade)
-  cargo_emisor         Cargo       @relation(name: "cargo_emisor", fields: [cargo_emisor_id], references: [id], onDelete: Restrict)
-  cargo_receptor       Cargo       @relation(name: "cargo_receptor", fields: [cargo_receptor_id], references: [id], onDelete: Restrict)
-  dependencia_emisor   Dependencia @relation(name: "dependencia_emisor", fields: [dependencia_emisor_id], references: [id], onDelete: Restrict)
-  dependencia_receptor Dependencia @relation(name: "dependencia_receptor", fields: [dependencia_receptor_id], references: [id], onDelete: Restrict)
+  ucd      UsuarioCargoDependencia @relation(name: "ucd", fields: [ucd_id], references: [id], onDelete: Cascade)
+  r_ucd    UsuarioCargoDependencia @relation(name: "r_ucd", fields: [r_ucd_id], references: [id], onDelete: Cascade)
+  user     User                    @relation(name: "user", fields: [user_id], references: [id], onDelete: Cascade)
+  received User                    @relation(name: "received", fields: [r_id], references: [id], onDelete: Cascade)
+  file     File                    @relation(fields: [file_id], references: [id], onDelete: Restrict)
 
-  @@unique([emisor_id, file_id])
+  @@unique([user_id, file_id])
   @@map("documentos")
+}
+
+// XVII. Constancia de pagos de haberes y descuentos (+ trabajador)
+// Apellidos y nombres
+// Documento de sustento (Constancia de pago, Boleta de pago)
+// Dependencia y/o oficina
+// Cargo
+// Nivel Remunerativo (SPC, P-4)
+// PAP
+// CNP
+// Dias Laborados (Del - Al)
+model constancia {
+  id               String @id @default(cuid())
+  periodo          Json // {from: DateTime, to: DateTime}
+  nivel_remunerado String @db.Citext
+  pap              Int
+  cnp              Int
+
+  ucd_id  Int
+  user_id String
+  file_id String
+
+  ucd  UsuarioCargoDependencia @relation(fields: [ucd_id], references: [id], onDelete: Cascade)
+  user User                    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  file File                    @relation(fields: [file_id], references: [id], onDelete: Restrict)
+
+  @@unique([user_id, file_id])
+  @@map("constancias")
 }
