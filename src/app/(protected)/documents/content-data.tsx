@@ -1,26 +1,34 @@
+// eslint-disable no-unused-vars
 "use client";
 
-import toast from "react-hot-toast";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
-import { FormData } from "./form-data";
-import { TableData } from "./table-data";
+import { Table } from "./table-data";
+import { Modify } from "./modify-data";
+
 import { documentRecord, getDocumentos } from "@/actions/document-action";
+import { Session } from "next-auth";
+import { Create } from "./form-data";
 
-export const ContentData = () => {
+export const ContentData = ({ session }: { session: Session }) => {
   const [documentos, setDocumentos] = useState<documentRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [selectedDocumento, setSelectedDocumento] = useState<documentRecord | null>(null);
+  const [showCreate, setShowCreate] = useState<boolean>(false);
 
-  const fetchDocumentos = async () => {
+  const fnDocumentos = async () => {
     setLoading(true);
     try {
       const response = await getDocumentos();
       if (response.success && response.data) {
         setDocumentos(response.data);
-        toast.success("Tabla actualizada correctamente.");
-      } else toast.error(response.message || "No se pudieron obtener los documentos.");
-
-      // eslint-disable-next-line no-unused-vars
+        if (response.data.length === 0) {
+          setShowCreate(true);
+        }
+      } else {
+        toast.error(response.message || "No se pudieron obtener los documentos.");
+      }
     } catch (e: unknown) {
       toast.error("Error al obtener los documentos.");
     } finally {
@@ -29,14 +37,45 @@ export const ContentData = () => {
   };
 
   useEffect(() => {
-    fetchDocumentos();
+    fnDocumentos();
   }, []);
 
+  const handleRefresh = () => {
+    fnDocumentos();
+    setSelectedDocumento(null);
+    setShowCreate(false);
+  };
+
   return (
-    <div className="flex flex-col gap-5 p-2 w-4/5">
+    <div className="flex flex-col gap-5 mx-auto p-2 w-full max-w-5xl">
       <p className="font-primary font-semibold text-2xl text-center uppercase">Documentos</p>
-      <TableData documentos={documentos} loading={loading} />
-      <FormData fetchDocumentos={fetchDocumentos} />
+
+      {documentos.length > 0 ? (
+        <Table items={documentos} loading={loading} selectedItem={selectedDocumento} setSelectedItem={setSelectedDocumento} />
+      ) : (
+        <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
+      )}
+
+      {selectedDocumento && <Modify item={selectedDocumento} onUpdated={handleRefresh} setSelectedItem={setSelectedDocumento} user_id={session.user.id} />}
+
+      {!showCreate && documentos.length > 0 && (
+        <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
+          <p className="border-mauve border-b-2 hover:border-b-4 font-special hover:font-bold text-mauve cursor-pointer" onClick={() => setShowCreate(true)}>
+            Registrar
+          </p>
+          <p>nuevo documento</p>
+        </div>
+      )}
+
+      {showCreate && (
+        <Create
+          onCreated={handleRefresh}
+          setSelectedItem={setSelectedDocumento}
+          onCancel={() => setShowCreate(false)}
+          showCancel={documentos.length > 0}
+          user_id={session.user.id}
+        />
+      )}
     </div>
   );
 };
