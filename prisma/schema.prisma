@@ -716,17 +716,19 @@ model merito {
 }
 
 model demerito {
-  id           String   @id @default(cuid())
-  fecha        DateTime
-  tipo_sancion String   @db.Citext
+  id             String @id @default(cuid())
+  tipo_sancion   String @db.Citext
+  tipo_documento String @db.Citext // Resoluciones, Memorando
+  asunto         String @db.Citext
+  periodo        Json // {from: DateTime, to: DateTime}
 
-  user_id                   String
-  file_id                   String
-  usuarioCargoDependenciaId Int
+  user_id String
+  file_id String
+  ucd_id  Int
 
-  usuarioCargoDependencia UsuarioCargoDependencia @relation(fields: [usuarioCargoDependenciaId], references: [id], onDelete: Cascade)
-  user                    User                    @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  file                    File                    @relation(fields: [file_id], references: [id], onDelete: Restrict)
+  ucd  UsuarioCargoDependencia @relation(fields: [ucd_id], references: [id], onDelete: Cascade)
+  user User                    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  file File                    @relation(fields: [file_id], references: [id], onDelete: Restrict)
 
   @@unique([user_id, file_id])
   @@map("demeritos")
