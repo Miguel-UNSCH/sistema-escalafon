@@ -1,9 +1,7 @@
 "use client";
 
 import { createPerLicVac } from "@/actions/per-lic-vac-action";
-import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
-import { DependenciaField } from "@/components/custom-fields/dependencia-field";
 import { SelectField } from "@/components/custom-fields/select-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
 import { Button } from "@/components/ui/button";
@@ -17,20 +15,26 @@ import React, { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { PerLicVacRecord } from "./content-data";
+import { InputField } from "@/components/custom-fields/input-field";
+import { CargosUserField, DependenciasUserField } from "@/components/custom-fields/user-cargos-dependencia";
 
 type CreateProps = {
   onCreated: () => void;
   setSelectedItem: React.Dispatch<React.SetStateAction<PerLicVacRecord | null>>;
+  onCancel?: () => void;
+  showCancel?: boolean;
+  user_id: string;
 };
 
-export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, user_id }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
     tipo: undefined,
+    detalle: "",
     periodo: { from: undefined, to: undefined },
-    cargo: { nombre: "" },
-    dependencia: { nombre: "", codigo: "", direccion: "" },
+    cargo_id: "",
+    dependencia_id: "",
     file: undefined,
   };
 
@@ -72,15 +76,10 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) =>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <SelectField control={form.control} name="tipo" label="Tipo de Permiso / Licencia / Vacacion *" options={tipoPermisoLicenciaVacacionOp} />
+          <InputField control={form.control} name="detalle" label="Detalle *" placeholder="Detalle" />
 
-          <CargoField control={form.control} name="cargo.nombre" />
-
-          <div className="flex flex-col gap-2">
-            <p className="font-primary font-semibold text-md">Dependencia</p>
-            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
-              <DependenciaField control={form.control} />
-            </div>
-          </div>
+          <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" />
+          <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} />
 
           <div className="gap-4 grid grid-cols-2">
             <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={false} />
@@ -88,7 +87,12 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) =>
           </div>
           <UploadField control={form.control} name="file" label="Documento" allowedTypes={["pdf"]} />
 
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
+            {showCancel && onCancel && (
+              <Button type="button" variant="outline" onClick={onCancel}>
+                Cancelar
+              </Button>
+            )}
             <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
               <Save />
               {isPending ? "Guardando..." : "Guardar"}

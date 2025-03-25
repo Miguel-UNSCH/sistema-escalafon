@@ -216,32 +216,50 @@
   }
 }
 
-/* Estilo general del scrollbar */
+/* Estilos generales para la barra de desplazamiento */
 ::-webkit-scrollbar {
-  width: 10px; /* Ancho de la barra de desplazamiento */
-  height: 12px; /* Altura de la barra de desplazamiento para scroll horizontal */
+  width: 10px;
+  height: 10px;
 }
 
-/* Estilo del "track" (fondo de la barra) */
+/* Estilo del track (fondo de la barra) */
 ::-webkit-scrollbar-track {
-  background: var(--ctp-mantle); /* Color de fondo */
-  border-radius: 10px; /* Bordes redondeados */
+  background: var(--ctp-base);
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
-/* Estilo del "thumb" (el indicador deslizante) */
+/* Estilo del thumb (deslizador) */
 ::-webkit-scrollbar-thumb {
-  background: var(--ctp-surface0); /* Color del thumb */
-  border-radius: 10px; /* Bordes redondeados */
-  border: 2px solid var(--ctp-mantle); /* Espacio entre el thumb y el track */
+  background: var(--ctp-red);
+  border-radius: 10px;
+  border: 2px solid var(--ctp-base);
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
-/* Hover en el thumb */
+/* Hover: cambia el color y hace el thumb ligeramente más grande */
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--ctp-red); /* Color más claro al pasar el mouse */
+  background: var(--ctp-maroon);
+  transform: scale(1.1);
 }
 
-/* Para navegadores Firefox */
+/* Active: efecto al hacer clic en el thumb */
+::-webkit-scrollbar-thumb:active {
+  background: var(--ctp-red);
+  transform: scale(1.15);
+}
+
+/* Scrollbar en Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--ctp-surface0) var(--ctp-mantle); /* Color del thumb y track */
+  scrollbar-color: var(--ctp-red) var(--ctp-base);
+}
+
+/* Mejoras adicionales para una apariencia más moderna */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overscroll-behavior: contain;
 }

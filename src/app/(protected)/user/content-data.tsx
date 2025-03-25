@@ -1,14 +1,15 @@
 "use client";
 
-import { getPerUsers, UserPerRecord } from "@/actions/user-actions";
+import { getPerUsers } from "@/actions/user-actions";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 import { useRouter } from "next/navigation";
+import { User } from "@prisma/client";
 
 export const ContentData = () => {
   const router = useRouter();
-  const [users, setUsers] = useState<UserPerRecord[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
   const handleClick = (id: string) => {
@@ -23,8 +24,6 @@ export const ContentData = () => {
       if (response.success && response.data) {
         setUsers(response.data);
       } else toast.error(response.message || "No se pudieron obtener los usuarios.");
-
-      // eslint-disable-next-line no-unused-vars
     } catch (e: unknown) {
       toast.error("Error al obtener los usuarios.");
     } finally {
@@ -58,13 +57,13 @@ export const ContentData = () => {
               </tr>
             </thead>
             <tbody className="font-text">
-              {users.map(({ id, dni, name, last_name, personal, email }) => (
+              {users.map(({ id, dni, name, last_name, email }) => (
                 <tr key={id} className="hover:bg-crust text-subtext0 text-sm cursor-pointer" onClick={() => handleClick(id)}>
                   <td className="px-3 py-3">{dni}</td>
                   <td className="px-3 py-3">{name}</td>
                   <td className="px-3 py-3">{last_name}</td>
-                  <td className="px-3 py-3">{personal?.cargo?.nombre || "N/A"}</td>
-                  <td className="px-3 py-3">{personal?.dependencia?.nombre || "N/A"}</td>
+                  <td className="px-3 py-3">{"N/A"}</td>
+                  <td className="px-3 py-3">{"N/A"}</td>
                   <td className="px-3 py-3">{email}</td>
                 </tr>
               ))}

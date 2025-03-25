@@ -1,9 +1,7 @@
 "use server";
 import { auth } from "@/auth";
 import { prisma } from "@/config/prisma.config";
-import { Prisma, User } from "@prisma/client";
-
-export type UserPerRecord = Prisma.UserGetPayload<{ include: { personal: { include: { cargo: true; dependencia: true } } } }>;
+import { User } from "@prisma/client";
 
 export const getusers = async (name: string): Promise<{ success: boolean; message?: string; data?: User[] }> => {
   try {
@@ -37,19 +35,18 @@ export const getUser = async (): Promise<{ success: boolean; message?: string; d
   }
 };
 
-export const getPerUsers = async (search?: string): Promise<{ success: boolean; message?: string; data?: UserPerRecord[] }> => {
+export const getPerUsers = async (search?: string): Promise<{ success: boolean; message?: string; data?: User[] }> => {
   try {
     const session = await auth();
     if (!session?.user?.email) throw new Error("No autorizado");
     if (session.user.role !== "admin") throw new Error("Permisos no satisfactorios");
 
-    const users: UserPerRecord[] = await prisma.user.findMany({
+    const users: User[] = await prisma.user.findMany({
       where: search
         ? {
             OR: [{ name: { contains: search, mode: "insensitive" } }, { last_name: { contains: search, mode: "insensitive" } }, { dni: { contains: search } }],
           }
         : {},
-      include: { personal: { include: { cargo: true, dependencia: true } } },
     });
     if (!users) throw new Error("No hay usuarios registrados");
 

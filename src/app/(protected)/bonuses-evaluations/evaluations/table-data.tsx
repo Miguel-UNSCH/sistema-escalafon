@@ -1,6 +1,5 @@
 "use client";
 
-import toast from "react-hot-toast";
 import React, { useEffect, useMemo, useState } from "react";
 import { evaluationRecord } from "@/actions/evaluation-action";
 import { getFile } from "@/actions/file-action";
@@ -16,7 +15,7 @@ type TableProps = {
 export const Table: React.FC<TableProps> = ({ items, loading, selectedItem, setSelectedItem }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const tableHeaders = ["N", "Fecha", "Puntuacion", "Cargo", "Dependencia", "Archivo"];
+  const tableHeaders = ["N", "Fecha", "Etapa", "Cargo Evaluado", "Dependencia Evaluado", "Evaluador", "Cargo Evaluador", "Dependencia Evaluador", "Archivo"];
 
   const [fileUrls, setFileUrls] = useState<{ [key: string]: string | null }>({});
 
@@ -34,6 +33,12 @@ export const Table: React.FC<TableProps> = ({ items, loading, selectedItem, setS
   }, [items]);
 
   const paginatedItems = useMemo(() => items.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [items, currentPage]);
+
+  const selectValues = [
+    { key: "0", value: "Ninguna" },
+    { key: "1", value: "Primera Etapa" },
+    { key: "2", value: "Segunda Etapa" },
+  ];
 
   return (
     <div className="flex flex-col gap-2 border-2 border-mantle rounded-md w-full">
@@ -63,9 +68,12 @@ export const Table: React.FC<TableProps> = ({ items, loading, selectedItem, setS
                   >
                     <td className="px-4 lg:px-6 py-3 rounded-s-md">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td className="px-4 lg:px-6 py-3">{new Date(item.fecha).toLocaleDateString()}</td>
-                    <td className="px-4 lg:px-6 py-3">{item?.puntuacion || "N/A"}</td>
-                    <td className="px-4 lg:px-6 py-3">{item.cargo.nombre}</td>
-                    <td className="px-4 lg:px-6 py-3">{item.dependencia.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3 uppercase">{selectValues.find((option) => option.key === String(item.etapa))?.value || "Desconocido"}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.evaluado_ucd.cargoDependencia.cargo.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.evaluado_ucd.cargoDependencia.dependencia.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{`${item.evaluador.name} ${item.evaluador.last_name}`}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.evaluador_ucd.cargoDependencia.cargo.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.evaluador_ucd.cargoDependencia.dependencia.nombre}</td>
                     <td className="px-4 lg:px-6 py-3 rounded-e-md">
                       {fileUrls[item.file.id] ? (
                         <a

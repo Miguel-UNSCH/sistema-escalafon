@@ -1,11 +1,11 @@
 "use client";
 
 import { createEvaluation, evaluationRecord } from "@/actions/evaluation-action";
-import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
-import { DependenciaField } from "@/components/custom-fields/dependencia-field";
-import { InputField } from "@/components/custom-fields/input-field";
+import { SelectField } from "@/components/custom-fields/select-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
+import { CargosUserField, DependenciasUserField } from "@/components/custom-fields/user-cargos-dependencia";
+import { UserField } from "@/components/custom-fields/user-field";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { evaluationSchema, ZEvaluation } from "@/lib/schemas/bonus-schema";
@@ -13,26 +13,38 @@ import { uploadFile } from "@/service/file-service";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save } from "lucide-react";
 import React, { useTransition } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import toast from "react-hot-toast";
 
 type CreateProps = {
   onCreated: () => void;
   setSelectedItem: React.Dispatch<React.SetStateAction<evaluationRecord | null>>;
+  onCancel?: () => void;
+  showCancel?: boolean;
+  user_id: string;
 };
 
-export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, user_id }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
-    puntuacion: 0,
+    evaluador: { name: "", dni: "", id: "" },
+    etapa: undefined,
     fecha: undefined,
-    cargo: { nombre: "" },
-    dependencia: { nombre: "", codigo: "", direccion: "" },
+    cargo_id: "",
+    dependencia_id: "",
+    ev_cargo_id: "",
+    ev_dependencia_id: "",
     file: undefined,
   };
 
   const form = useForm<ZEvaluation>({ resolver: zodResolver(evaluationSchema), defaultValues });
+
+  const evaluadorId = useWatch({
+    control: form.control,
+    name: "evaluador.id",
+    defaultValue: "",
+  });
 
   const onSubmit = async (data: ZEvaluation) => {
     startTransition(async () => {
@@ -64,6 +76,12 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) =>
     });
   };
 
+  const selectValues = [
+    { key: "0", value: "Ninguna" },
+    { key: "1", value: "Primera Etapa" },
+    { key: "2", value: "Segunda Etapa" },
+  ];
+
   return (
     <div className="flex flex-col gap-5 w-full">
       <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
@@ -71,21 +89,27 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) =>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <div className="gap-2 grid grid-cols-2">
             <DateField control={form.control} name="fecha" label="Fecha de la evaluacion" disabled={false} />
-            <InputField control={form.control} name="puntuacion" label="Puntuacion *" type="number" />
+            <SelectField control={form.control} name="etapa" label="Etapa" options={selectValues} />
           </div>
 
-          <CargoField control={form.control} name="cargo.nombre" />
+          <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" />
+          <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} label="Cargo *" />
 
-          <div className="flex flex-col gap-2">
-            <p className="font-primary font-semibold text-md">Dependencia</p>
-            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
-              <DependenciaField control={form.control} />
-            </div>
+          <div className="flex flex-col gap-4">
+            <p className="font-primary font-semibold">Datos del Evaluador</p>
+            <UserField control={form.control} name="evaluador" label="Numbre *" />
+            <DependenciasUserField control={form.control} name="ev_dependencia_id" user_id={evaluadorId} label="Dependencia *" />
+            <CargosUserField control={form.control} name="ev_cargo_id" user_id={evaluadorId} dependencia_id={form.watch("ev_dependencia_id")} label="Cargo *" />
           </div>
 
           <UploadField control={form.control} name="file" label="Documento *" allowedTypes={["pdf"]} />
 
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
+            {showCancel && onCancel && (
+              <Button type="button" variant="outline" onClick={onCancel}>
+                Cancelar
+              </Button>
+            )}
             <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
               <Save />
               {isPending ? "Guardando..." : "Guardar"}

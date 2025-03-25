@@ -6,18 +6,23 @@ import { ascensoRecord, getAscensos } from "@/actions/ascenso-action";
 import { Table } from "./table-data";
 import { Create } from "./form-data";
 import { Modify } from "./modify-data";
+import { Session } from "next-auth";
 
-export const ContentData = () => {
+// eslint-disable-next-line no-unused-vars
+export const ContentData = ({ session }: { session: Session }) => {
   const [items, setItems] = useState<ascensoRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItem, setSelectedItem] = useState<ascensoRecord | null>(null);
+  const [showCreate, setShowCreate] = useState<boolean>(false);
 
   const fnAscensos = async () => {
     setLoading(true);
     try {
       const response = await getAscensos();
-      if (response.success && response.data) setItems(response.data);
-      else toast.error(response.message || "No se pudieron obtener los ascensos.");
+      if (response.success && response.data) {
+        setItems(response.data);
+        if (response.data.length === 0) setShowCreate(true);
+      } else toast.error(response.message || "No se pudieron obtener los ascensos.");
 
       // eslint-disable-next-line no-unused-vars
     } catch (e: unknown) {
@@ -34,6 +39,7 @@ export const ContentData = () => {
   const handleRefresh = () => {
     fnAscensos();
     setSelectedItem(null);
+    setShowCreate(false);
   };
 
   return (
@@ -46,7 +52,16 @@ export const ContentData = () => {
       )}
 
       {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} />}
-      <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} />
+      {!showCreate && items.length > 0 && (
+        <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
+          <p className="border-mauve border-b-2 hover:border-b-4 font-special hover:font-bold text-mauve cursor-pointer" onClick={() => setShowCreate(true)}>
+            Registrar
+          </p>
+          <p>otro ascenso laboral.</p>
+        </div>
+      )}
+
+      {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} />}
     </div>
   );
 };

@@ -2,13 +2,18 @@
 
 import { auth } from "@/auth";
 import { prisma } from "@/config/prisma.config";
+import { isUCDInUse } from "@/lib/db-utils";
 import { ZDesplazamientoS } from "@/lib/schemas/w-situation-schema";
 import { Prisma, User } from "@prisma/client";
 import fs from "fs/promises";
 import path from "path";
 
 export type desplazamientoRecord = Prisma.desplazamientoGetPayload<{
-  include: { current_cargo: true; current_dependencia: true; new_cargo: true; new_dependencia: true; file: true };
+  include: {
+    file: true;
+    currentUCD: { include: { cargoDependencia: { include: { cargo: true; dependencia: true } } } };
+    newUCD: { include: { cargoDependencia: { include: { cargo: true; dependencia: true } } } };
+  };
 }>;
 
 export const getDesplazamientos = async (): Promise<{ success: boolean; message?: string; data?: Array<desplazamientoRecord> }> => {
@@ -21,7 +26,11 @@ export const getDesplazamientos = async (): Promise<{ success: boolean; message?
 
     const response: desplazamientoRecord[] | null = await prisma.desplazamiento.findMany({
       where: { user_id: user.id },
-      include: { current_cargo: true, current_dependencia: true, new_cargo: true, new_dependencia: true, file: true },
+      include: {
+        file: true,
+        currentUCD: { include: { cargoDependencia: { include: { cargo: true, dependencia: true } } } },
+        newUCD: { include: { cargoDependencia: { include: { cargo: true, dependencia: true } } } },
+      },
     });
     if (!response) throw new Error("No hay desplazamientos registrados.");
 
@@ -38,34 +47,98 @@ export const createDesplazamiento = async (data: ZDesplazamientoS & { file_id: s
     const session = await auth();
     if (!session?.user?.email) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user: User | null = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
     if (!user) throw new Error("Usuario no encontrado");
 
-    const current_c = await prisma.cargo.findUnique({ where: { nombre: data.current_cargo.nombre } });
-    if (!current_c) throw new Error("Cargo actual no encontrado");
+    const currentCargo = await prisma.cargo.findUnique({
+      where: { id: Number(data.current_cargo_id) },
+    });
+    if (!currentCargo) throw new Error("Cargo actual no encontrado");
 
-    const new_c = await prisma.cargo.findUnique({ where: { nombre: data.new_cargo.nombre } });
-    if (!new_c) throw new Error("Nuevo cargo no encontrado");
+    const currentDependencia = await prisma.dependencia.findUnique({
+      where: { id: Number(data.current_dependencia_id) },
+    });
+    if (!currentDependencia) throw new Error("Dependencia actual no encontrada");
 
-    const current_d = await prisma.dependencia.findUnique({ where: { codigo: data.current_dependencia.codigo } });
-    if (!current_d) throw new Error("Dependencia actual no encontrada");
+    const currentCargoDependencia = await prisma.cargoDependencia.findUnique({
+      where: {
+        cargoId_dependenciaId: {
+          cargoId: currentCargo.id,
+          dependenciaId: currentDependencia.id,
+        },
+      },
+    });
+    if (!currentCargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia actuales");
 
-    const new_d = await prisma.dependencia.findUnique({ where: { codigo: data.new_dependencia.codigo } });
-    if (!new_d) throw new Error("Nueva dependencia no encontrada");
+    let currentUCD = await prisma.usuarioCargoDependencia.findUnique({
+      where: {
+        userId_cargoDependenciaId: {
+          userId: user.id,
+          cargoDependenciaId: currentCargoDependencia.id,
+        },
+      },
+    });
+    if (!currentUCD) {
+      currentUCD = await prisma.usuarioCargoDependencia.create({
+        data: {
+          userId: user.id,
+          cargoDependenciaId: currentCargoDependencia.id,
+        },
+      });
+    }
 
-    const exist_file = await prisma.file.findUnique({ where: { id: data.file_id } });
+    const newCargo = await prisma.cargo.findUnique({
+      where: { id: Number(data.new_cargo_id) },
+    });
+    if (!newCargo) throw new Error("Nuevo cargo no encontrado");
+
+    const newDependencia = await prisma.dependencia.findUnique({
+      where: { id: Number(data.new_dependencia_id) },
+    });
+    if (!newDependencia) throw new Error("Nueva dependencia no encontrada");
+
+    const newCargoDependencia = await prisma.cargoDependencia.findUnique({
+      where: {
+        cargoId_dependenciaId: {
+          cargoId: newCargo.id,
+          dependenciaId: newDependencia.id,
+        },
+      },
+    });
+    if (!newCargoDependencia) throw new Error("No existe la relación entre el nuevo cargo y la nueva dependencia");
+
+    let newUCD = await prisma.usuarioCargoDependencia.findUnique({
+      where: {
+        userId_cargoDependenciaId: {
+          userId: user.id,
+          cargoDependenciaId: newCargoDependencia.id,
+        },
+      },
+    });
+    if (!newUCD) {
+      newUCD = await prisma.usuarioCargoDependencia.create({
+        data: {
+          userId: user.id,
+          cargoDependenciaId: newCargoDependencia.id,
+        },
+      });
+    }
+
+    const exist_file = await prisma.file.findUnique({
+      where: { id: data.file_id },
+    });
     if (!exist_file) throw new Error("Archivo no encontrado");
 
     await prisma.desplazamiento.create({
       data: {
         user_id: user.id,
         tipo_desplazamiento: data.tipo_desplazamiento,
-        fecha: data.fecha,
+        fecha: new Date(data.fecha).toISOString(),
         tipo_file: data.tipo_file.toUpperCase(),
-        current_cargo_id: current_c.id,
-        new_cargo_id: new_c.id,
-        current_dependencia_id: current_d.id,
-        new_dependencia_id: new_d.id,
+        currentUCDId: currentUCD.id,
+        newUCDId: newUCD.id,
         file_id: data.file_id,
       },
     });
@@ -80,40 +153,119 @@ export const createDesplazamiento = async (data: ZDesplazamientoS & { file_id: s
 
 export const updateDesplazamiento = async (id: string, data: ZDesplazamientoS & { file?: File | null; file_id?: string }): Promise<{ success: boolean; message: string }> => {
   try {
-    const current_model = await prisma.desplazamiento.findUnique({ where: { id }, include: { file: true } });
+    const session = await auth();
+    if (!session?.user?.email) throw new Error("No autorizado");
+
+    const user: User | null = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+    if (!user) throw new Error("Usuario no encontrado");
+
+    const current_model = await prisma.desplazamiento.findUnique({
+      where: { id },
+      include: { file: true },
+    });
     if (!current_model) throw new Error("Desplazamiento no encontrado");
 
-    const current_cargo = await prisma.cargo.findUnique({ where: { nombre: data.current_cargo.nombre } });
-    if (!current_cargo) throw new Error("Cargo anterior no encontrado");
+    const currentCargo = await prisma.cargo.findUnique({
+      where: { id: Number(data.current_cargo_id) },
+    });
+    if (!currentCargo) throw new Error("Cargo actual no encontrado");
 
-    const new_cargo = await prisma.cargo.findUnique({ where: { nombre: data.new_cargo.nombre } });
-    if (!new_cargo) throw new Error("Nuevo cargo no encontrado");
+    const currentDependencia = await prisma.dependencia.findUnique({
+      where: { id: Number(data.current_dependencia_id) },
+    });
+    if (!currentDependencia) throw new Error("Dependencia actual no encontrada");
 
-    const current_dependencia = await prisma.dependencia.findUnique({ where: { codigo: data.current_dependencia.codigo } });
-    if (!current_dependencia) throw new Error("Dependencia anterior no encontrada");
+    const currentCargoDependencia = await prisma.cargoDependencia.findUnique({
+      where: {
+        cargoId_dependenciaId: {
+          cargoId: currentCargo.id,
+          dependenciaId: currentDependencia.id,
+        },
+      },
+    });
+    if (!currentCargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia actuales");
 
-    const new_dependencia = await prisma.dependencia.findUnique({ where: { codigo: data.new_dependencia.codigo } });
-    if (!new_dependencia) throw new Error("Nueva dependencia no encontrada");
+    // Buscar o crear el registro en UsuarioCargoDependencia para la situación actual
+    let currentUCD = await prisma.usuarioCargoDependencia.findUnique({
+      where: {
+        userId_cargoDependenciaId: {
+          userId: user.id,
+          cargoDependenciaId: currentCargoDependencia.id,
+        },
+      },
+    });
+    if (!currentUCD) {
+      currentUCD = await prisma.usuarioCargoDependencia.create({
+        data: {
+          userId: user.id,
+          cargoDependenciaId: currentCargoDependencia.id,
+        },
+      });
+    }
 
-    if (data.file) {
+    const newCargo = await prisma.cargo.findUnique({
+      where: { id: Number(data.new_cargo_id) },
+    });
+    if (!newCargo) throw new Error("Nuevo cargo no encontrado");
+
+    const newDependencia = await prisma.dependencia.findUnique({
+      where: { id: Number(data.new_dependencia_id) },
+    });
+    if (!newDependencia) throw new Error("Nueva dependencia no encontrada");
+
+    // Buscar la relación en cargoDependencia para el nuevo cargo y dependencia
+    const newCargoDependencia = await prisma.cargoDependencia.findUnique({
+      where: {
+        cargoId_dependenciaId: {
+          cargoId: newCargo.id,
+          dependenciaId: newDependencia.id,
+        },
+      },
+    });
+    if (!newCargoDependencia) throw new Error("No existe la relación entre el nuevo cargo y la nueva dependencia");
+
+    // Buscar o crear el registro en UsuarioCargoDependencia para la situación nueva
+    let newUCD = await prisma.usuarioCargoDependencia.findUnique({
+      where: {
+        userId_cargoDependenciaId: {
+          userId: user.id,
+          cargoDependenciaId: newCargoDependencia.id,
+        },
+      },
+    });
+    if (!newUCD) {
+      newUCD = await prisma.usuarioCargoDependencia.create({
+        data: {
+          userId: user.id,
+          cargoDependenciaId: newCargoDependencia.id,
+        },
+      });
+    }
+
+    // Actualizar el archivo si se proporciona uno nuevo
+    if (data.file && current_model.file) {
       const filePath = path.resolve(process.cwd(), current_model.file.path, `${current_model.file.id}${current_model.file.extension}`);
       const fileBuffer = Buffer.from(await data.file.arrayBuffer());
       await fs.writeFile(filePath, fileBuffer);
 
-      await prisma.file.update({ where: { id: current_model.file.id }, data: { name: data.file?.name, size: fileBuffer.length } });
+      await prisma.file.update({
+        where: { id: current_model.file.id },
+        data: { name: data.file.name, size: fileBuffer.length },
+      });
     }
 
+    // Actualizar el registro de desplazamiento utilizando currentUCD.id y newUCD.id
     await prisma.desplazamiento.update({
       where: { id },
       data: {
         tipo_desplazamiento: data.tipo_desplazamiento,
-        fecha: data.fecha,
+        fecha: new Date(data.fecha).toISOString(),
         tipo_file: data.tipo_file.toUpperCase(),
-        current_cargo_id: current_cargo.id,
-        new_cargo_id: new_cargo.id,
-        current_dependencia_id: current_dependencia.id,
-        new_dependencia_id: new_dependencia.id,
-        file_id: data.file_id,
+        currentUCDId: currentUCD.id,
+        newUCDId: newUCD.id,
+        ...(data.file_id && { file_id: data.file_id }),
       },
     });
 
@@ -138,13 +290,24 @@ export const deleteDesplazamiento = async (id: string, file_id: string): Promise
     try {
       await fs.access(filePath);
       await fs.unlink(filePath);
+      // eslint-disable-next-line no-console
       console.log("Archivo eliminado correctamente.");
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.warn("Advertencia: No se pudo eliminar el archivo físico:", err);
     }
 
+    const current_ucd = current_model.currentUCDId;
+    const new_ucd = current_model.newUCDId;
+
     await prisma.desplazamiento.delete({ where: { id } });
     await prisma.file.delete({ where: { id: file_id } });
+
+    const current_stillInUse = await isUCDInUse(current_ucd);
+    if (!current_stillInUse) await prisma.usuarioCargoDependencia.delete({ where: { id: current_ucd } });
+
+    const new_stillInUse = await isUCDInUse(new_ucd);
+    if (!new_stillInUse) await prisma.usuarioCargoDependencia.delete({ where: { id: new_ucd } });
 
     return { success: true, message: "Desplazamiento eliminado exitosamente" };
   } catch (error: unknown) {

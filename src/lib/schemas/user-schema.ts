@@ -2,7 +2,6 @@ import { z } from "zod";
 
 import { fileSchema, periodoSchema } from "@/lib/zod";
 import { NivelEducativo, TCapacitacion, TDiscapacidad, TEntCertDic } from "./enums";
-import { cargoSchema, dependenciaSchema } from "./others-schema";
 
 export const estudiosSchema = z.object({
   institucion: z.string({ required_error: "Institución es requerida" }),
@@ -25,10 +24,10 @@ export const capacitacionSchema = z.object({
 export type ZCapacitacionS = z.infer<typeof capacitacionSchema>;
 
 export const expSchema = z.object({
-  centro_labor: z.string(),
+  centro_labor: z.string({ required_error: "Centro laboral es requerido" }),
   periodo: periodoSchema,
-  cargo: cargoSchema,
-  dependencia: dependenciaSchema,
+  cargo_id: z.string(),
+  dependencia_id: z.string(),
   file: fileSchema.optional(),
 });
 export type ZExpS = z.infer<typeof expSchema>;

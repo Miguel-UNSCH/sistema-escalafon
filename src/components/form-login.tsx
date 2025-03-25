@@ -29,12 +29,13 @@ export const FormLogin = () => {
     startTransition(async () => {
       const response = await loginAction(data);
 
-      if (response.error) {
-        setError(response.error);
+      if (response.message) {
+        setError(response.message);
         return;
       }
 
       if (response.success) {
+        // Redirigir según si el usuario debe cambiar la contraseña o según su rol
         if (response.must_change_pwd) {
           router.push("/change-password");
         } else {

@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { cargoSchema, dependenciaSchema } from "./others-schema";
 import { fileSchema, userSchema } from "../zod";
 
 export const meritoSchema = z.object({
@@ -7,8 +6,8 @@ export const meritoSchema = z.object({
     .string({ required_error: "Fecha es requerida" })
     .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
     .transform((date) => new Date(date)),
-  cargo: cargoSchema,
-  dependencia: dependenciaSchema,
+  cargo_id: z.string(),
+  dependencia_id: z.string(),
   file: fileSchema.optional(),
 });
 export type ZMerito = z.infer<typeof meritoSchema>;
@@ -22,8 +21,8 @@ export const demeritoSchema = z.object({
     .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
     .transform((date) => new Date(date)),
   tipo_sancion: tipo_sancion_z,
-  cargo: cargoSchema,
-  dependencia: dependenciaSchema,
+  cargo_id: z.string(),
+  dependencia_id: z.string(),
   file: fileSchema,
 });
 export type ZDemerito = z.infer<typeof demeritoSchema>;

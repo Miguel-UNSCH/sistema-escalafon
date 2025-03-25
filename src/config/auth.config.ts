@@ -1,34 +1,40 @@
-import { loginSchema } from "@/lib/zod";
+// auth.config.ts
 import type { NextAuthConfig } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
 
-import bcrypt from "bcryptjs";
-
-import Credentials from "next-auth/providers/credentials";
-import { prisma } from "@/config/prisma.config";
+// IMPORTANTE: No importar prisma directamente en este archivo
 
 export default {
   providers: [
-    Credentials({
-      authorize: async (credentials) => {
-        const { data, success } = loginSchema.safeParse(credentials);
-        if (!success) {
-          throw new Error("Invalid credentials");
-        }
-
-        const user = await prisma.user.findUnique({ where: { email: data.email } });
-
-        if (!user) {
-          throw new Error("Invalid credentials [user-not-found]");
-        }
-
-        const isValid = bcrypt.compare(data.password, user.password);
-
-        if (!isValid) {
-          throw new Error("Invalid credentials [password-not-match]");
-        }
-
-        return user;
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" },
       },
     }),
   ],
+  pages: {
+    signIn: "/login",
+  },
+  callbacks: {
+    // Mantener callbacks simples que no usen prisma
+    async authorized({ auth }) {
+      return !!auth;
+    },
+    async session({ session, token }) {
+      if (token.sub) {
+        session.user.id = token.sub;
+        session.user.role = token.role;
+      }
+      return session;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.sub = user.id;
+        token.role = user.role;
+      }
+      return token;
+    },
+  },
 } satisfies NextAuthConfig;

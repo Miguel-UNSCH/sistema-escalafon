@@ -6,19 +6,24 @@ import { bonusPersonalRecord, getBonusesPer } from "@/actions/bonus_per-action";
 import { Table } from "./table-data";
 import { Create } from "./form-data";
 import { Modify } from "./modify-data";
+import { Session } from "next-auth";
 
-export const ContentData = () => {
+export const ContentData = ({ session }: { session: Session }) => {
   const [bonuses, setBonuses] = useState<bonusPersonalRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedBonus, setSelectedBonus] = useState<bonusPersonalRecord | null>(null);
+  const [showCreate, setShowCreate] = useState<boolean>(false);
 
   const fnBonuses = async () => {
     setLoading(true);
     try {
       const response = await getBonusesPer();
-      if (response.success && response.data) setBonuses(response.data);
-      else toast.error(response.message || "No se pudieron obtener los bonos personales.");
-
+      if (response.success && response.data) {
+        setBonuses(response.data);
+        if (response.data.length === 0) setShowCreate(true);
+      } else {
+        toast.error(response.message || "No se pudieron obtener los bonos personales.");
+      }
       // eslint-disable-next-line no-unused-vars
     } catch (e: unknown) {
       toast.error("Error al obtener los bonos personales.");
@@ -34,6 +39,7 @@ export const ContentData = () => {
   const handleRefresh = () => {
     fnBonuses();
     setSelectedBonus(null);
+    setShowCreate(false);
   };
 
   return (
@@ -45,8 +51,20 @@ export const ContentData = () => {
         <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
       )}
 
-      {selectedBonus && <Modify item={selectedBonus} onUpdated={handleRefresh} setSelectedItem={setSelectedBonus} />}
-      <Create onCreated={handleRefresh} setSelectedItem={setSelectedBonus} />
+      {selectedBonus && <Modify item={selectedBonus} onUpdated={handleRefresh} setSelectedItem={setSelectedBonus} user_id={session.user.id} />}
+
+      {!showCreate && bonuses.length > 0 && (
+        <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
+          <p className="border-mauve border-b-2 hover:border-b-4 font-special hover:font-bold text-mauve cursor-pointer" onClick={() => setShowCreate(true)}>
+            Registrar
+          </p>
+          <p>otra bonificación personal.</p>
+        </div>
+      )}
+
+      {showCreate && (
+        <Create onCreated={handleRefresh} setSelectedItem={setSelectedBonus} onCancel={() => setShowCreate(false)} showCancel={bonuses.length > 0} user_id={session.user.id} />
+      )}
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { tipoDesplazamientoOp } from "@/utils/options";
 import { desplazamientoRecord } from "@/actions/desplazamiento-action";
 import { getFile } from "@/actions/file-action";
 import { Pagination } from "@/components/pagination";
+
 type TableProps = {
   items: desplazamientoRecord[];
   loading: boolean;
@@ -63,10 +64,10 @@ export const Table: React.FC<TableProps> = ({ items, loading, selectedItem, setS
                     <td className="px-4 lg:px-6 py-3 rounded-s-md">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td className="px-4 lg:px-6 py-3">{tipoDesplazamientoOp.find((i) => i.key === item.tipo_desplazamiento)?.value || "N/A"}</td>
                     <td className="px-4 lg:px-6 py-3">{new Date(item.fecha).toLocaleDateString()}</td>
-                    <td className="px-4 lg:px-6 py-3">{item.current_cargo.nombre}</td>
-                    <td className="px-4 lg:px-6 py-3">{item.new_cargo.nombre}</td>
-                    <td className="px-4 lg:px-6 py-3">{item.current_dependencia.nombre}</td>
-                    <td className="px-4 lg:px-6 py-3">{item.new_dependencia.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.currentUCD.cargoDependencia.cargo.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.newUCD.cargoDependencia.cargo.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.currentUCD.cargoDependencia.dependencia.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.newUCD.cargoDependencia.dependencia.nombre}</td>
                     <td className="px-4 lg:px-6 py-3 rounded-e-md">
                       {fileUrls[item.file.id] ? (
                         <a

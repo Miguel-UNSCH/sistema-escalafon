@@ -51,7 +51,6 @@ export const Table = ({
             </table>
           </div>
 
-          {/* Paginación dentro del Table */}
           <Pagination currentPage={currentPage} totalPages={Math.ceil(dependencias.length / itemsPerPage)} setCurrentPage={setCurrentPage} totalItems={dependencias.length} />
         </>
       )}

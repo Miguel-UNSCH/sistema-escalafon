@@ -3,15 +3,15 @@
 import React, { useEffect, useMemo, useState } from "react";
 
 import { CLaboralOp, TContratoOp } from "@/utils/options";
-import { contractRecord } from "@/actions/contract-action";
 import { getFile } from "@/actions/file-action";
 import { Pagination } from "@/components/pagination";
+import { ContractRecord } from "./content-data";
 
 type TableProps = {
-  items: contractRecord[];
+  items: ContractRecord[];
   loading: boolean;
-  selectedItem: contractRecord | null;
-  setSelectedItem: React.Dispatch<React.SetStateAction<contractRecord | null>>;
+  selectedItem: ContractRecord | null;
+  setSelectedItem: React.Dispatch<React.SetStateAction<ContractRecord | null>>;
 };
 
 export const Table: React.FC<TableProps> = ({ items, loading, selectedItem, setSelectedItem }) => {
@@ -65,8 +65,8 @@ export const Table: React.FC<TableProps> = ({ items, loading, selectedItem, setS
                     <td className="px-4 lg:px-6 py-3 rounded-s-md">{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td className="px-4 lg:px-6 py-3">{TContratoOp.find((i) => i.key === item.tipo_contrato)?.value || "N/A"}</td>
                     <td className="px-4 lg:px-6 py-3">{CLaboralOp.find((i) => i.key === item.condicion_laboral)?.value || "N/A"}</td>
-                    <td className="px-4 lg:px-6 py-3">{item.cargo.nombre}</td>
-                    <td className="px-4 lg:px-6 py-3">{item.dependencia.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.ucd.cargoDependencia.cargo.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.ucd.cargoDependencia.dependencia.nombre}</td>
                     <td className="px-4 lg:px-6 py-3">{item.nivel_remuneracion || "N/A"}</td>
                     <td className="px-4 lg:px-6 py-3 rounded-e-md">
                       {fileUrls[item.file.id] ? (

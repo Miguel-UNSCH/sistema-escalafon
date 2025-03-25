@@ -1,11 +1,10 @@
 "use client";
 
 import { bonusPersonalRecord, createBonusPer } from "@/actions/bonus_per-action";
-import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
-import { DependenciaField } from "@/components/custom-fields/dependencia-field";
 import { InputField } from "@/components/custom-fields/input-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
+import { CargosUserField, DependenciasUserField } from "@/components/custom-fields/user-cargos-dependencia";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { bonusPersonalSchema, ZBonusPersonal } from "@/lib/schemas/bonus-schema";
@@ -19,17 +18,20 @@ import toast from "react-hot-toast";
 type CreateProps = {
   onCreated: () => void;
   setSelectedItem: React.Dispatch<React.SetStateAction<bonusPersonalRecord | null>>;
+  onCancel?: () => void;
+  showCancel?: boolean;
+  user_id: string;
 };
 
-export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, user_id }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
     tipo: "",
     resolucion_bonus: "",
     fecha: undefined,
-    cargo: { nombre: "" },
-    dependencia: { nombre: "", codigo: "", direccion: "" },
+    dependencia_id: "",
+    cargo_id: "",
     file: undefined,
   };
 
@@ -76,18 +78,17 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) =>
 
           <DateField control={form.control} name="fecha" label="Fecha de la bonificacion" disabled={false} />
 
-          <CargoField control={form.control} name="cargo.nombre" />
-
-          <div className="flex flex-col gap-2">
-            <p className="font-primary font-semibold text-md">Dependencia</p>
-            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
-              <DependenciaField control={form.control} />
-            </div>
-          </div>
+          <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" />
+          <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} />
 
           <UploadField control={form.control} name="file" label="Documento *" allowedTypes={["pdf"]} />
 
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
+            {showCancel && onCancel && (
+              <Button type="button" variant="outline" onClick={onCancel}>
+                Cancelar
+              </Button>
+            )}
             <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
               <Save />
               {isPending ? "Guardando..." : "Guardar"}

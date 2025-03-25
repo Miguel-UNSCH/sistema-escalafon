@@ -1,6 +1,7 @@
 "use client";
 
 import { Calendar } from "@/components/ui/calendar";
+import { es } from "date-fns/locale";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useEffect, useState } from "react";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -32,7 +33,7 @@ export const DateField = ({ control, name, label, disabled }: { control: any; na
             <PopoverTrigger asChild disabled>
               <FormControl>
                 <Button variant={"outline"} className="pl-3 font-normal text-left" disabled={disabled}>
-                  {field.value ? format(new Date(field.value), "PPP") : <span>Seleccione la fecha</span>}
+                  {field.value ? format(new Date(field.value), "PPP", { locale: es }) : <span>Seleccione la fecha</span>}
                   <CalendarIcon className="opacity-50 ml-auto w-4 h-4 text-text" />
                 </Button>
               </FormControl>
@@ -42,7 +43,7 @@ export const DateField = ({ control, name, label, disabled }: { control: any; na
                 <select className="bg-mantle px-2 py-1 w-1/2 text-sm" value={currentMonth} onChange={(e) => setCurrentMonth(parseInt(e.target.value))}>
                   {Array.from({ length: 12 }, (_, i) => (
                     <option key={i} value={i} className="px-1">
-                      {format(new Date(2000, i), "MMMM")}
+                      {format(new Date(2000, i), "MMMM", { locale: es })}
                     </option>
                   ))}
                 </select>
@@ -71,6 +72,7 @@ export const DateField = ({ control, name, label, disabled }: { control: any; na
                   setCurrentYear(date.getFullYear());
                   setCurrentMonth(date.getMonth());
                 }}
+                locale={es}
               />
             </PopoverContent>
           </Popover>

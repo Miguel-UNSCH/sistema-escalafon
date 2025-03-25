@@ -12,18 +12,18 @@ import toast from "react-hot-toast";
 import { deleteMerito, meritoRecord, updateMerito } from "@/actions/m-d-action";
 import { meritoSchema, ZMerito } from "@/lib/schemas/m-d-schema";
 import { UploadField } from "@/components/custom-fields/upload-file";
-import { DependenciaField } from "@/components/custom-fields/dependencia-field";
-import { CargoField } from "@/components/custom-fields/cargo-field";
 import { DateField } from "@/components/custom-fields/date-field";
 import { getFile } from "@/actions/file-action";
+import { CargosUserField, DependenciasUserField } from "@/components/custom-fields/user-cargos-dependencia";
 
 type ModifyProps = {
   merito: meritoRecord;
   onUpdated: () => void;
   setSelectedMerito: React.Dispatch<React.SetStateAction<meritoRecord | null>>;
+  user_id: string;
 };
 
-export const Modify: React.FC<ModifyProps> = ({ merito, onUpdated, setSelectedMerito }) => {
+export const Modify: React.FC<ModifyProps> = ({ merito, onUpdated, setSelectedMerito, user_id }) => {
   const [isPending, startTransition] = useTransition();
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [isChangingFile, setIsChangingFile] = useState(false);
@@ -37,12 +37,17 @@ export const Modify: React.FC<ModifyProps> = ({ merito, onUpdated, setSelectedMe
   }, [merito.file?.id]);
 
   const defaultValues = {
-    fecha: merito.fecha.toISOString().split("T")[0],
-    cargo: { nombre: merito.cargo.nombre },
-    dependencia: { nombre: merito.dependencia.nombre, codigo: merito.dependencia.codigo, direccion: merito.dependencia.direccion || "" },
+    fecha: merito.fecha.toString(),
+    cargo_id: merito.usuarioCargoDependencia.cargoDependencia.cargo.id.toString(),
+    dependencia_id: merito.usuarioCargoDependencia.cargoDependencia.dependencia.id.toString(),
     file: undefined,
   };
+
   const form = useForm<ZMerito>({ resolver: zodResolver(meritoSchema), defaultValues: defaultValues as any });
+
+  useEffect(() => {
+    form.reset(defaultValues as any);
+  }, [merito, form]);
 
   const onUpdate = async (data: ZMerito) => {
     startTransition(async () => {
@@ -59,6 +64,7 @@ export const Modify: React.FC<ModifyProps> = ({ merito, onUpdated, setSelectedMe
           setSelectedMerito(null);
           form.reset();
         }
+        // eslint-disable-next-line no-unused-vars
       } catch (e: unknown) {
         toast.error("Error al modificar el mérito.");
       }
@@ -76,7 +82,8 @@ export const Modify: React.FC<ModifyProps> = ({ merito, onUpdated, setSelectedMe
           setSelectedMerito(null);
           form.reset();
         }
-      } catch (e) {
+        // eslint-disable-next-line no-unused-vars
+      } catch (e: unknown) {
         toast.error("Error al modificar el Renucnia.");
       }
     });
@@ -89,14 +96,8 @@ export const Modify: React.FC<ModifyProps> = ({ merito, onUpdated, setSelectedMe
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
           <DateField control={form.control} name="fecha" label="Fecha de la bonificacion" disabled={false} />
 
-          <CargoField control={form.control} name="cargo.nombre" />
-
-          <div className="flex flex-col gap-2">
-            <p className="font-primary font-semibold text-md">Dependencia</p>
-            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
-              <DependenciaField control={form.control} />
-            </div>
-          </div>
+          <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" />
+          <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} />
 
           {fileUrl && !isChangingFile ? (
             <div className="flex md:flex-row flex-col items-center gap-4 md:text-left text-center">
@@ -106,6 +107,7 @@ export const Modify: React.FC<ModifyProps> = ({ merito, onUpdated, setSelectedMe
               </div>
               <div className="flex md:flex-row flex-col gap-2 w-full md:w-auto">
                 <Button variant="outline" asChild>
+                  {/* eslint-disable-next-line jsx-no-target-blank */}
                   <a href={fileUrl} download target="_blank">
                     <Download size={16} /> Descargar
                   </a>

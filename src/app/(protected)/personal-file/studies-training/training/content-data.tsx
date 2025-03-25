@@ -16,6 +16,7 @@ export const ContentData = () => {
   const [items, setItems] = useState<CapacitacionRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItem, setSelectedItem] = useState<CapacitacionRecord | null>(null);
+  const [showCreate, setShowCreate] = useState<boolean>(false);
 
   const fnCapacitaciones = async () => {
     setLoading(true);
@@ -39,6 +40,7 @@ export const ContentData = () => {
   const handleRefresh = () => {
     fnCapacitaciones();
     setSelectedItem(null);
+    setShowCreate(false);
   };
 
   return (
@@ -51,7 +53,16 @@ export const ContentData = () => {
       )}
 
       {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} />}
-      <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} />
+
+      {!showCreate && items.length > 0 && (
+        <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
+          <p className="border-mauve border-b-2 hover:border-b-4 font-special hover:font-bold text-mauve cursor-pointer" onClick={() => setShowCreate(true)}>
+            Agregar
+          </p>
+          <p>mas capacitaciones.</p>
+        </div>
+      )}
+      {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} />}
     </div>
   );
 };

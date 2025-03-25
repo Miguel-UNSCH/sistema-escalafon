@@ -1,3 +1,4 @@
+// eslint-disable no-unused-vars
 import toast from "react-hot-toast";
 import { useState, useEffect } from "react";
 import { Dependencia } from "@prisma/client";

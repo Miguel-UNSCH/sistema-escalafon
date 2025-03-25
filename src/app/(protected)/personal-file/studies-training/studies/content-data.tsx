@@ -16,13 +16,16 @@ export const ContentData = () => {
   const [items, setItems] = useState<StudyRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItem, setSelectedItem] = useState<StudyRecord | null>(null);
+  const [showCreate, setShowCreate] = useState<boolean>(false);
 
   const fnFormAc = async () => {
     setLoading(true);
     try {
       const response = await getStudies();
-      if (response.success && response.data) setItems(response.data as StudyRecord[]);
-      else toast.error(response.message || "No se pudieron obtener los estudios.");
+      if (response.success && response.data) {
+        setItems(response.data as StudyRecord[]);
+        if (response.data.length === 0) setShowCreate(true);
+      } else toast.error(response.message || "No se pudieron obtener los estudios.");
 
       // eslint-disable-next-line no-unused-vars
     } catch (e: unknown) {
@@ -39,6 +42,7 @@ export const ContentData = () => {
   const handleRefresh = () => {
     fnFormAc();
     setSelectedItem(null);
+    setShowCreate(false);
   };
 
   return (
@@ -51,7 +55,17 @@ export const ContentData = () => {
       )}
 
       {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} />}
-      <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} />
+
+      {!showCreate && items.length > 0 && (
+        <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
+          <p className="border-mauve border-b-2 hover:border-b-4 font-special hover:font-bold text-mauve cursor-pointer" onClick={() => setShowCreate(true)}>
+            Registrar
+          </p>
+          <p>mas estudios.</p>
+        </div>
+      )}
+
+      {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} />}
     </div>
   );
 };

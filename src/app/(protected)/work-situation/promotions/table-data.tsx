@@ -1,6 +1,5 @@
 "use client";
 
-import toast from "react-hot-toast";
 import React, { useEffect, useMemo, useState } from "react";
 import { ascensoRecord } from "@/actions/ascenso-action";
 import { getFile } from "@/actions/file-action";
@@ -66,10 +65,10 @@ export const Table: React.FC<TableProps> = ({ items, loading, selectedItem, setS
                     <td className="px-4 lg:px-6 py-3">{item.cnp}</td>
                     <td className="px-4 lg:px-6 py-3">{item.nivel_remunerativo}</td>
                     <td className="px-4 lg:px-6 py-3">{new Date(item.fecha).toLocaleDateString()}</td>
-                    <td className="px-4 lg:px-6 py-3">{item.current_cargo.nombre}</td>
-                    <td className="px-4 lg:px-6 py-3">{item.new_cargo.nombre}</td>
-                    <td className="px-4 lg:px-6 py-3">{item.current_dependencia.nombre}</td>
-                    <td className="px-4 lg:px-6 py-3">{item.new_dependencia.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.currentUCD.cargoDependencia.cargo.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.newUCD.cargoDependencia.cargo.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.currentUCD.cargoDependencia.dependencia.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.newUCD.cargoDependencia.dependencia.nombre}</td>
                     <td className="px-4 lg:px-6 py-3 rounded-e-md">
                       {fileUrls[item.file.id] ? (
                         <a

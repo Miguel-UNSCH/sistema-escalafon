@@ -53,3 +53,16 @@ export const uploadSchema = z.object({
   file: fileSchema,
 });
 export type ZUploadS = z.infer<typeof uploadSchema>;
+
+export const cPwdSchema = z
+  .object({
+    current_pwd: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
+    new_pwd: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
+    repeat_new_pwd: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
+  })
+  .refine((data) => data.new_pwd === data.repeat_new_pwd, {
+    message: "Las nuevas contraseñas deben coincidir.",
+    path: ["repeat_new_pwd"],
+  });
+
+export type ChangePwd = z.infer<typeof cPwdSchema>;

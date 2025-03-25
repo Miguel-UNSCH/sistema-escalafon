@@ -1,8 +1,8 @@
 "use client";
+
 import { createDesplazamiento, desplazamientoRecord } from "@/actions/desplazamiento-action";
-import { CargoField } from "@/components/custom-fields/cargo-field";
+import { CargoIdDependenciaField, DependenciaIdField } from "@/components/custom-fields/cargos-dependencia";
 import { DateField } from "@/components/custom-fields/date-field";
-import { DependenciaField } from "@/components/custom-fields/dependencia-field";
 import { InputField } from "@/components/custom-fields/input-field";
 import { SelectField } from "@/components/custom-fields/select-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
@@ -20,18 +20,20 @@ import toast from "react-hot-toast";
 type CreateProps = {
   onCreated: () => void;
   setSelectedItem: React.Dispatch<React.SetStateAction<desplazamientoRecord | null>>;
+  onCancel?: () => void;
+  showCancel?: boolean;
 };
-export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
     tipo_desplazamiento: undefined,
     fecha: undefined,
     tipo_file: "",
-    current_cargo: { nombre: "" },
-    new_cargo: { nombre: "" },
-    current_dependencia: { nombre: "", codigo: "", direccion: "" },
-    new_dependencia: { nombre: "", codigo: "", direccion: "" },
+    current_cargo_id: "",
+    new_cargo_id: "",
+    current_dependencia_id: "",
+    new_dependencia_id: "",
     file: undefined,
   };
   const form = useForm<ZDesplazamientoS>({ resolver: zodResolver(desplazamientoSchema), defaultValues });
@@ -78,28 +80,20 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) =>
             <DateField control={form.control} name="fecha" label="Fecha" disabled={false} />
           </div>
 
-          <div className="gap-2 grid grid-cols-2">
-            <CargoField control={form.control} name="current_cargo.nombre" placeholder="Cargo Actual *" />
-            <CargoField control={form.control} name="new_cargo.nombre" placeholder="Nuevo Cargo *" />
-          </div>
+          <DependenciaIdField control={form.control} name="current_dependencia_id" label="Dependencia Actual *" />
+          <CargoIdDependenciaField control={form.control} name="current_cargo_id" dependencia_id={form.watch("current_dependencia_id")} label="Cargo Actual *" />
 
-          <div className="flex flex-col gap-2">
-            <p className="font-primary font-semibold text-md">Dependencia Actual</p>
-            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
-              <DependenciaField control={form.control} name="current_dependencia" />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <p className="font-primary font-semibold text-md">Nueva Dependencia</p>
-            <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
-              <DependenciaField control={form.control} name="new_dependencia" />
-            </div>
-          </div>
+          <DependenciaIdField control={form.control} name="new_dependencia_id" label="Nueva Dependencia *" />
+          <CargoIdDependenciaField control={form.control} name="new_cargo_id" dependencia_id={form.watch("new_dependencia_id")} label="Nuevo Cargo *" />
 
           <UploadField control={form.control} name="file" label="Documento" allowedTypes={["pdf"]} />
 
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
+            {showCancel && onCancel && (
+              <Button type="button" variant="outline" onClick={onCancel}>
+                Cancelar
+              </Button>
+            )}
             <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
               <Save />
               {isPending ? "Guardando..." : "Guardar"}

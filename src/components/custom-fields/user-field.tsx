@@ -24,7 +24,7 @@ export const UserField = ({ control, name, label, disabled = false }: UserFieldP
   const { field } = useController({
     control,
     name,
-    defaultValue: { name: "", dni: "" },
+    defaultValue: { name: "", dni: "", id: "" },
   });
 
   useEffect(() => {
@@ -62,7 +62,7 @@ export const UserField = ({ control, name, label, disabled = false }: UserFieldP
               onChange={(e) => {
                 setSearch(e.target.value);
                 setShowSuggestions(true);
-                field.onChange({ name: e.target.value, dni: "" });
+                field.onChange({ name: e.target.value, dni: "", id: "" });
               }}
               onFocus={() => setShowSuggestions(true)}
               onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
@@ -73,7 +73,7 @@ export const UserField = ({ control, name, label, disabled = false }: UserFieldP
           </FormControl>
           <FormMessage />
 
-          {loading && <p className="mt-1 text-gray-500 text-sm">Cargando...</p>}
+          {loading && <p className="mt-1 text-text text-sm">Cargando...</p>}
 
           {showSuggestions && users.length > 0 && (
             <ul className="top-14 z-10 absolute bg-mantle shadow-md mt-1 border rounded w-full max-h-40 overflow-y-auto">
@@ -81,7 +81,7 @@ export const UserField = ({ control, name, label, disabled = false }: UserFieldP
                 <li
                   key={user.id}
                   onClick={() => {
-                    field.onChange({ name: user.name, dni: user.dni });
+                    field.onChange({ name: user.name, dni: user.dni, id: user.id });
                     setSearch(user.name);
                     setShowSuggestions(false);
                   }}
