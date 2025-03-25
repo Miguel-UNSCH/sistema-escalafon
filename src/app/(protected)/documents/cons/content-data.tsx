@@ -1,55 +1,56 @@
 "use client";
 
+import { consRecord, getCons } from "@/actions/cons-action";
+import { Session } from "next-auth";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { getPerLicVacs, perLicRecord } from "@/actions/per-lic-vac-action";
-import { Table } from "./table-data";
 import { Create } from "./form-data";
+import { Table } from "./table-data";
 import { Modify } from "./modify-data";
-import { Session } from "next-auth";
 
-export type PerLicVacRecord = Omit<perLicRecord, "periodo"> & {
+export type ConsRecord = Omit<consRecord, "periodo"> & {
   periodo: { from: string; to: string };
 };
 
 export const ContentData = ({ session }: { session: Session }) => {
-  const [items, setItems] = useState<PerLicVacRecord[]>([]);
+  const [items, setItems] = useState<ConsRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedItem, setSelectedItem] = useState<PerLicVacRecord | null>(null);
+  const [selectedItem, setSelectedItem] = useState<ConsRecord | null>(null);
   const [showCreate, setShowCreate] = useState<boolean>(false);
 
-  const fnPerLicVacs = async () => {
+  const fnItems = async () => {
     setLoading(true);
     try {
-      const response = await getPerLicVacs();
+      const response = await getCons();
       if (response.success && response.data) {
-        setItems(response.data as PerLicVacRecord[]);
+        setItems(response.data as ConsRecord[]);
         if (response.data.length === 0) {
           setShowCreate(true);
         }
       } else {
-        toast.error(response.message || "No se pudieron obtener los permisos/licencias/vacaciones.");
+        toast.error(response.message || "No se pudieron obtener los datos.");
       }
-    } catch {
-      toast.error("Error al obtener los permisos/licencias/vacaciones.");
+      // eslint-disable-next-line no-unused-vars
+    } catch (e: unknown) {
+      toast.error("Error al obtener los datos.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fnPerLicVacs();
+    fnItems();
   }, []);
 
   const handleRefresh = () => {
-    fnPerLicVacs();
+    fnItems();
     setSelectedItem(null);
     setShowCreate(false);
   };
 
   return (
     <div className="flex flex-col gap-5 mx-auto p-2 w-full max-w-5xl">
-      <p className="font-primary font-semibold text-2xl text-center uppercase">Permisos / Licencias / Vacaciones</p>
+      <p className="font-primary font-semibold text-2xl text-center uppercase">Constancia de pagos de haberes y descuentos</p>
 
       {items.length > 0 ? (
         <Table items={items} loading={loading} selectedItem={selectedItem} setSelectedItem={setSelectedItem} />
@@ -64,7 +65,7 @@ export const ContentData = ({ session }: { session: Session }) => {
           <p className="border-mauve border-b-2 hover:border-b-4 font-special hover:font-bold text-mauve cursor-pointer" onClick={() => setShowCreate(true)}>
             Registrar
           </p>
-          <p>nuevo permiso / licencia / vacaciones</p>
+          <p>nueva constancia.</p>
         </div>
       )}
 
