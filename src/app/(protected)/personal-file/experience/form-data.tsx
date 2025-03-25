@@ -77,7 +77,6 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
           <InputField control={form.control} name="centro_labor" label="Centro de Labor *" placeholder="Ingrese el centro de labor" />
 
           <DependenciaIdField control={form.control} name="dependencia_id" label="Dependencia *" />
-
           <CargoIdDependenciaField control={form.control} name="cargo_id" dependencia_id={form.watch("dependencia_id")} />
 
           <div className="gap-4 grid grid-cols-2">

@@ -10,6 +10,10 @@ import { useController } from "react-hook-form";
 import { Input } from "../ui/input";
 
 import { cn } from "@/lib/utils";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "../ui/button";
+import { Check, ChevronsUpDown } from "lucide-react";
 
 interface DependenciasUserFieldProps {
   control: any;
@@ -21,48 +25,59 @@ interface DependenciasUserFieldProps {
 
 export const DependenciasUserField = ({ control, name, user_id, label, disabled = false }: DependenciasUserFieldProps) => {
   const { field } = useController({ control, name, defaultValue: "" });
+
+  const [open, setOpen] = useState(false);
   const [dependencias, setDependencias] = useState<{ id: number; nombre: string }[]>([]);
-  const [search, setSearch] = useState<string>("");
-  const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [search, setSearch] = useState("");
+  const [selectedLabel, setSelectedLabel] = useState("");
   const [isPending, startTransition] = useTransition();
 
+  // Obtener nombre inicial si ya hay valor
   useEffect(() => {
-    if (field.value && search === "") {
+    if (field.value && !selectedLabel) {
       startTransition(async () => {
         try {
           const response = await getDependencia(Number(field.value));
           if (response.success && response.data) {
-            setSearch(response.data.nombre);
+            setSelectedLabel(response.data.nombre);
           }
         } catch {
           toast.error("No se pudo cargar la dependencia inicial.");
         }
       });
     }
-  }, [field.value, search]);
+  }, [field.value]);
 
+  // Obtener todas al abrir por primera vez
   useEffect(() => {
-    if (search.length < 2) {
-      setDependencias([]);
-      return;
+    if (dependencias.length === 0 && open && search === "") {
+      startTransition(async () => {
+        try {
+          const response = await getDependenciasUser(user_id, "");
+          if (response.success && response.data) {
+            setDependencias(response.data);
+          }
+        } catch {
+          toast.error("Error al cargar las dependencias.");
+        }
+      });
     }
+  }, [open]);
 
-    setLoading(true);
-    const delayDebounce = setTimeout(async () => {
+  // Buscar al escribir (si son al menos 2 caracteres)
+  useEffect(() => {
+    if (search.length < 2) return;
+
+    startTransition(async () => {
       try {
         const response = await getDependenciasUser(user_id, search);
         if (response.success && response.data) {
           setDependencias(response.data);
         }
       } catch {
-        toast.error("Error al obtener dependencias.");
-      } finally {
-        setLoading(false);
+        toast.error("Error al buscar dependencias.");
       }
-    }, 300);
-
-    return () => clearTimeout(delayDebounce);
+    });
   }, [search]);
 
   return (
@@ -70,42 +85,50 @@ export const DependenciasUserField = ({ control, name, user_id, label, disabled 
       control={control}
       name={name}
       render={() => (
-        <FormItem className="relative">
+        <FormItem className="flex flex-col w-full">
           {label && <FormLabel>{label}</FormLabel>}
-          <FormControl>
-            <Input
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setShowSuggestions(true);
-              }}
-              onFocus={() => setShowSuggestions(true)}
-              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-              placeholder="Escriba un nombre..."
-              disabled={disabled}
-              className="p-2 border rounded w-full"
-            />
-          </FormControl>
-          <FormMessage />
-          {(loading || isPending) && <p className="mt-1 text-subtext0 text-sm">Cargando...</p>}
-
-          {showSuggestions && dependencias.length > 0 && (
-            <ul className="top-14 z-10 absolute bg-mantle shadow-md mt-1 border rounded w-full max-h-64 overflow-y-auto">
-              {dependencias.map((dependencia) => (
-                <li
-                  key={dependencia.id}
-                  onClick={() => {
-                    field.onChange(dependencia.id.toString());
-                    setSearch(dependencia.nombre);
-                    setShowSuggestions(false);
-                  }}
-                  className={cn("p-2 flex cursor-pointer hover:bg-crust")}
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <FormControl>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={open}
+                  className={cn("w-full justify-between", disabled && "cursor-not-allowed opacity-70")}
+                  disabled={disabled}
                 >
-                  {dependencia.nombre}
-                </li>
-              ))}
-            </ul>
-          )}
+                  {selectedLabel || "Seleccione una dependencia..."}
+                  <ChevronsUpDown className="opacity-50 ml-2 w-4 h-4 shrink-0" />
+                </Button>
+              </FormControl>
+            </PopoverTrigger>
+            <PopoverContent className="p-0 w-full">
+              <Command>
+                <CommandInput placeholder="Buscar dependencia..." value={search} onValueChange={setSearch} className="h-9" disabled={disabled} />
+                <CommandList>
+                  {isPending && <p className="px-4 py-2 text-text text-sm">Cargando...</p>}
+                  <CommandEmpty>No se encontraron resultados.</CommandEmpty>
+                  <CommandGroup>
+                    {dependencias.map((dep) => (
+                      <CommandItem
+                        key={dep.id}
+                        value={dep.nombre}
+                        onSelect={() => {
+                          field.onChange(dep.id.toString());
+                          setSelectedLabel(dep.nombre);
+                          setOpen(false);
+                        }}
+                      >
+                        {dep.nombre}
+                        <Check className={cn("ml-auto h-4 w-4", field.value == dep.id.toString() ? "opacity-100" : "opacity-0")} />
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
+          <FormMessage />
         </FormItem>
       )}
     />
