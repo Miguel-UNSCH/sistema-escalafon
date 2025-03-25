@@ -80,7 +80,10 @@ export const breadcrumbs_options: BreadcrumbItem[] = [
   {
     label: "documentos / otros",
     path: "/documents",
-    items: [{ label: "documentos", path: "" }],
+    items: [
+      { label: "documentos", path: "/doc" },
+      { label: "constancias", path: "/cons" },
+    ],
   },
   {
     label: "reportes",
