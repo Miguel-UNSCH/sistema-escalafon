@@ -2,6 +2,7 @@
 
 import { createMerito, meritoRecord } from "@/actions/m-d-action";
 import { DateField } from "@/components/custom-fields/date-field";
+import { InputField } from "@/components/custom-fields/input-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
 import { CargosUserField, DependenciasUserField } from "@/components/custom-fields/user-cargos-dependencia";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ export const Create: React.FC<CreateProps> = ({ onMeritoCreated, setSelectedMeri
 
   const defaultValues = {
     fecha: undefined,
+    motivo: "",
     dependencia_id: "",
     cargo_id: "",
     file: undefined,
@@ -57,8 +59,7 @@ export const Create: React.FC<CreateProps> = ({ onMeritoCreated, setSelectedMeri
           onMeritoCreated();
           setSelectedMerito(null);
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al registrar el mérito.");
       }
     });
@@ -70,6 +71,8 @@ export const Create: React.FC<CreateProps> = ({ onMeritoCreated, setSelectedMeri
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <DateField control={form.control} name="fecha" label="Fecha de la bonificacion" disabled={false} />
+
+          <InputField control={form.control} name="motivo" label="Motivo *" placeholder="Motivo del merito" />
 
           <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" />
           <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} />

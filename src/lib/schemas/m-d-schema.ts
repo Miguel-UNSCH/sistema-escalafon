@@ -6,6 +6,7 @@ export const meritoSchema = z.object({
     .string({ required_error: "Fecha es requerida" })
     .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
     .transform((date) => new Date(date)),
+  motivo: z.string(),
   cargo_id: z.string(),
   dependencia_id: z.string(),
   file: fileSchema.optional(),

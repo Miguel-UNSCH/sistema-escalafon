@@ -15,6 +15,7 @@ import { UploadField } from "@/components/custom-fields/upload-file";
 import { DateField } from "@/components/custom-fields/date-field";
 import { getFile } from "@/actions/file-action";
 import { CargosUserField, DependenciasUserField } from "@/components/custom-fields/user-cargos-dependencia";
+import { InputField } from "@/components/custom-fields/input-field";
 
 type ModifyProps = {
   merito: meritoRecord;
@@ -37,6 +38,7 @@ export const Modify: React.FC<ModifyProps> = ({ merito, onUpdated, setSelectedMe
   }, [merito.file?.id]);
 
   const defaultValues = {
+    motivo: merito.motivo,
     fecha: merito.fecha.toString(),
     cargo_id: merito.usuarioCargoDependencia.cargoDependencia.cargo.id.toString(),
     dependencia_id: merito.usuarioCargoDependencia.cargoDependencia.dependencia.id.toString(),
@@ -64,8 +66,7 @@ export const Modify: React.FC<ModifyProps> = ({ merito, onUpdated, setSelectedMe
           setSelectedMerito(null);
           form.reset();
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al modificar el mérito.");
       }
     });
@@ -82,8 +83,7 @@ export const Modify: React.FC<ModifyProps> = ({ merito, onUpdated, setSelectedMe
           setSelectedMerito(null);
           form.reset();
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al modificar el Renucnia.");
       }
     });
@@ -96,6 +96,8 @@ export const Modify: React.FC<ModifyProps> = ({ merito, onUpdated, setSelectedMe
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
           <DateField control={form.control} name="fecha" label="Fecha de la bonificacion" disabled={false} />
 
+          <InputField control={form.control} name="motivo" label="Motivo *" placeholder="Motivo del merito" />
+
           <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" />
           <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} />
 
@@ -107,7 +109,7 @@ export const Modify: React.FC<ModifyProps> = ({ merito, onUpdated, setSelectedMe
               </div>
               <div className="flex md:flex-row flex-col gap-2 w-full md:w-auto">
                 <Button variant="outline" asChild>
-                  {/* eslint-disable-next-line jsx-no-target-blank */}
+                  {/* oxlint-disable-next-line jsx-no-target-blank */}
                   <a href={fileUrl} download target="_blank">
                     <Download size={16} /> Descargar
                   </a>

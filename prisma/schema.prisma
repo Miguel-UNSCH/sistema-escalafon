@@ -716,8 +716,9 @@ model evaluation {
 }
 
 model merito {
-  id    String   @id @default(cuid())
-  fecha DateTime
+  id     String   @id @default(cuid())
+  fecha  DateTime
+  motivo String   @db.Citext
 
   user_id                   String
   file_id                   String

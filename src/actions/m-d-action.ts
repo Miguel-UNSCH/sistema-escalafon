@@ -87,6 +87,7 @@ export const createMerito = async (data: ZMerito & { file_id: string }): Promise
 
     await prisma.merito.create({
       data: {
+        motivo: data.motivo.toUpperCase(),
         fecha: new Date(data.fecha).toISOString(),
         user_id: user.id,
         usuarioCargoDependenciaId: usuarioCargoDependencia.id,
@@ -186,7 +187,7 @@ export const updateMerito = async (id: string, data: ZMerito & { file?: File | n
       await prisma.file.update({ where: { id: currentMerito.file.id }, data: { name: data.file?.name, size: fileBuffer.length } });
     }
 
-    await prisma.merito.update({ where: { id }, data: { fecha: data.fecha, ...(data.file_id && { file_id: data.file_id }) } });
+    await prisma.merito.update({ where: { id }, data: { motivo: data.motivo, fecha: data.fecha, ...(data.file_id && { file_id: data.file_id }) } });
 
     return { success: true, message: "Mérito actualizado exitosamente" };
   } catch (error: unknown) {
