@@ -65,9 +65,15 @@ enum TipoDescanso {
 }
 
 enum TipoPermisoLicenciaVacacion {
-  p
-  v
-  pf
+  per_mot
+  per_enf
+  per_hon
+  per_cap
+  per_lac
+  lic_sgh
+  lic_cgh
+  lic_vac
+  vac
 }
 
 enum SituacionLaboral {

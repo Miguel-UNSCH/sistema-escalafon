@@ -50,9 +50,15 @@ export const tipoDescansoOp = [
 ];
 
 export const tipoPermisoLicenciaVacacionOp = [
-  { key: "p", value: "PERMISO" },
-  { key: "v", value: "VACACIONES" },
-  { key: "pf", value: "PERMISO FAMILIAR" },
+  { key: "per_mot", value: "MOTIVO PERSONAL" },
+  { key: "per_enf", value: "PERMISO POR ENFERMEDAD (CONYUGE - PARIENTE)" },
+  { key: "per_hon", value: "PERMISO POR HONONASTICOS" },
+  { key: "per_cap", value: "PERMISO POR CAPACITACION" },
+  { key: "per_lac", value: "PERMISO POR LACTANCIA" },
+  { key: "lic_sgh", value: "LICENCIA SIN GOCE DE HABERES" },
+  { key: "lic_cgh", value: "LICENCIA CON GOCE DE HABERES" },
+  { key: "lic_vac", value: "LICENCIA POR VACACIONES" },
+  { key: "vac", value: "VACACIONES" },
 ];
 
 export const situacionLaboralOp = [
