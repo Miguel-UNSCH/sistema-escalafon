@@ -9,8 +9,15 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const DateField = ({ control, name, label, disabled }: { control: any; name: string; label: string; disabled: boolean }) => {
+interface DateFieldProps {
+  control: any;
+  name: string;
+  label: string;
+  disabled: boolean;
+  dateLimit?: "past" | "future" | "any";
+}
+
+export const DateField = ({ control, name, label, disabled, dateLimit = "past" }: DateFieldProps) => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
@@ -22,6 +29,14 @@ export const DateField = ({ control, name, label, disabled }: { control: any; na
     }
   }, [selectedDate]);
 
+  const disableDate = (date: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // para comparación precisa
+    if (dateLimit === "past") return date > today;
+    if (dateLimit === "future") return date < today;
+    return false;
+  };
+
   return (
     <FormField
       control={control}
@@ -30,9 +45,9 @@ export const DateField = ({ control, name, label, disabled }: { control: any; na
         <FormItem className="flex flex-col">
           <FormLabel>{label} *</FormLabel>
           <Popover>
-            <PopoverTrigger asChild disabled>
+            <PopoverTrigger asChild disabled={disabled}>
               <FormControl>
-                <Button variant={"outline"} className="pl-3 font-normal text-left" disabled={disabled}>
+                <Button variant="outline" className="pl-3 w-full font-normal text-left" disabled={disabled}>
                   {field.value ? format(new Date(field.value), "PPP", { locale: es }) : <span>Seleccione la fecha</span>}
                   <CalendarIcon className="opacity-50 ml-auto w-4 h-4 text-text" />
                 </Button>
@@ -66,7 +81,7 @@ export const DateField = ({ control, name, label, disabled }: { control: any; na
                   setSelectedDate(date);
                   field.onChange(date ? date.toISOString() : "");
                 }}
-                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                disabled={disableDate}
                 month={new Date(currentYear, currentMonth)}
                 onMonthChange={(date) => {
                   setCurrentYear(date.getFullYear());

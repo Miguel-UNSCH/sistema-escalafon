@@ -31,14 +31,9 @@ export const getDescansos = async (): Promise<{ success: boolean; message?: stri
     });
     if (!response) throw new Error("No hay descansos médicos disponibles.");
 
-    return {
-      success: true,
-      data: response,
-    };
+    return { success: true, data: response };
   } catch (error: unknown) {
-    let errorMessage = "Error al obtener los descansos médicos.";
-    if (error instanceof Error) errorMessage = error.message;
-    return { success: false, message: errorMessage };
+    return { success: false, message: error instanceof Error ? error.message : "Error al obtener los descansos médicos." };
   }
 };
 

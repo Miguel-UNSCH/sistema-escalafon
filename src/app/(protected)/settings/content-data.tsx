@@ -7,6 +7,7 @@ import { User } from "@prisma/client";
 import toast from "react-hot-toast";
 import { getUser } from "@/actions/user-actions";
 import { ModifyPwd } from "./modify-pwd";
+import { EditTime } from "./edit-time";
 
 export const ContentData = ({ session }: { session: Session }) => {
   const [user, setUser] = useState<User>();
@@ -38,22 +39,22 @@ export const ContentData = ({ session }: { session: Session }) => {
 
           <div className="flex flex-col gap-4 w-full text-[1rem]">
             <div className="flex flex-row-reverse items-center gap-4 w-full">
-              <p className="bg-crust p-2 px-4 rounded-md w-full font-light text-subtext0 uppercase">{user?.name}</p>
+              <p className="bg-crust p-2 px-4 rounded-md w-full font-light text-subtext0 uppercase cursor-not-allowed select-none">{user?.name}</p>
               <p className="pl-4 w-1/3 font-primary capitalize">nombres</p>
             </div>
 
             <div className="flex flex-row-reverse items-center gap-4 w-full">
-              <p className="bg-crust p-2 px-4 rounded-md w-full font-light text-subtext0 uppercase">{user?.last_name}</p>
+              <p className="bg-crust p-2 px-4 rounded-md w-full font-light text-subtext0 uppercase cursor-not-allowed select-none">{user?.last_name}</p>
               <p className="pl-4 w-1/3 font-primary capitalize">apellidos</p>
             </div>
 
             <div className="flex flex-row-reverse items-center gap-4 w-full">
-              <p className="bg-crust p-2 px-4 rounded-md w-full font-light text-subtext0 uppercase">{user?.email}</p>
+              <p className="bg-crust p-2 px-4 rounded-md w-full font-light text-subtext0 uppercase cursor-not-allowed select-none">{user?.email}</p>
               <p className="pl-4 w-1/3 font-primary capitalize">correo electronico</p>
             </div>
 
             <div className="flex flex-row-reverse items-center gap-4 w-full">
-              <p className="bg-crust p-2 px-4 rounded-md w-full font-light text-subtext0 uppercase">{user?.dni}</p>
+              <p className="bg-crust p-2 px-4 rounded-md w-full font-light text-subtext0 uppercase cursor-not-allowed select-none">{user?.dni}</p>
               <p className="pl-4 w-1/3 font-primary capitalize">documento de identidad</p>
             </div>
           </div>
@@ -62,15 +63,7 @@ export const ContentData = ({ session }: { session: Session }) => {
 
       <ModifyPwd userId={session.user.id} />
 
-      {session.user.role === "admin" && (
-        <div>
-          <h2 className="py-2 font-primary font-bold text-peach text-2xl">Establecer tiempo de edicion de datos</h2>
-          <div>
-            <p>fecha de inicio</p>
-            <p>fecha de limite</p>
-          </div>
-        </div>
-      )}
+      {session.user.role === "admin" && <EditTime />}
     </div>
   );
 };

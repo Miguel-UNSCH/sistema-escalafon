@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { patchPwd } from "@/actions/auth-action";
 import { ChangePwd, cPwdSchema } from "@/lib/zod";
+import { Key } from "lucide-react";
 
 type ModifyPwdProps = {
   userId: string;
@@ -38,8 +39,7 @@ export const ModifyPwd: React.FC<ModifyPwdProps> = ({ userId }) => {
           toast.success(response.message || "Contraseña actualizada exitosamente.");
           form.reset();
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (error) {
+      } catch {
         toast.error("Error al cambiar la contraseña.");
       }
     });
@@ -72,7 +72,8 @@ export const ModifyPwd: React.FC<ModifyPwdProps> = ({ userId }) => {
               </div>
             </div>
             <div className="flex justify-end">
-              <Button type="submit" disabled={isPending} className="bg-red hover:bg-maroon px-4 py-2 rounded-md w-auto font-semibold text-white">
+              <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2 font-special">
+                <Key />
                 {isPending ? "Cargando..." : "Cambiar contraseña"}
               </Button>
             </div>
