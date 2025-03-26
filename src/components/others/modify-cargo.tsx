@@ -41,7 +41,7 @@ export const ModifyCargoComponent = ({
           setSelectedCargo(null);
           form.reset();
         }
-      } catch (e) {
+      } catch {
         toast.error("Error al modificar el cargo.");
       }
     });
@@ -59,7 +59,7 @@ export const ModifyCargoComponent = ({
           setSelectedCargo(null);
           form.reset();
         }
-      } catch (e) {
+      } catch {
         toast.error("Error al modificar el cargo.");
       }
     });

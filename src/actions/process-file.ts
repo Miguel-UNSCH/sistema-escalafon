@@ -81,6 +81,7 @@ export const processFile = async (fileId: string, model: ModelType) => {
     if (model === "cargo") {
       await prisma.cargo.createMany({ data: formattedRecords, skipDuplicates: true });
     } else if (model === "usuario") {
+      // oxlint-disable-next-line no-console
       console.log({ data: { ...formattedRecords, modification_end_time: new Date(Date.now() + 1 * 60 * 1000) }, skipDuplicates: true });
       await prisma.user.createMany({ data: formattedRecords, skipDuplicates: true });
     } else if (model === "dependencia") {

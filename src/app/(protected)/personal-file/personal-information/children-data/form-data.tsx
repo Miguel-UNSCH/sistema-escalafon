@@ -15,7 +15,6 @@ import { InputField } from "@/components/custom-fields/input-field";
 import { SelectField } from "@/components/custom-fields/select-field";
 import { UbigeoField } from "@/components/custom-fields/ubigeo-field";
 import { childrenSchema, ZChildren } from "@/lib/schemas/personal-schema";
-import { Children } from "@prisma/client";
 
 type CreateProps = {
   onCreated: () => void;
@@ -47,7 +46,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) =>
           onCreated();
           setSelectedItem(null);
         }
-        // eslint-disable-next-line no-unused-vars
+        // oxlint-disable-next-line no-unused-vars
       } catch (e: unknown) {
         toast.error("Error al registrar el hijo.");
       }

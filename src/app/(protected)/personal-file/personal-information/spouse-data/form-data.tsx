@@ -41,7 +41,7 @@ export const CreateData = ({ onRefresh }: { onRefresh: () => void }) => {
           toast.success("Cónyuge registrado exitosamente.");
           onRefresh();
         }
-      } catch (e) {
+      } catch {
         toast.error("Error al registrar el cónyuge.");
       }
     });

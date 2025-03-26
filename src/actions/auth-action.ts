@@ -1,8 +1,8 @@
-// eslint-disable no-unused-vars
+/* oxlint-disable no-unused-vars */
 "use server";
 
 import { prisma } from "@/config/prisma.config";
-import { ChangePwd, changePwdSchema, cPwdSchema, registerSchema, ZLoginS, ZRegisterS } from "@/lib/zod";
+import { ChangePwd, cPwdSchema, registerSchema, ZLoginS, ZRegisterS } from "@/lib/zod";
 import { User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { AuthError } from "next-auth";

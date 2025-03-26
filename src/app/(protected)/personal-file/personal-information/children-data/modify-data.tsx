@@ -1,3 +1,5 @@
+"use client";
+
 import { childrenRecord, deleteChildren, updateChildren } from "@/actions/children-action";
 import { DateField } from "@/components/custom-fields/date-field";
 import { InputField } from "@/components/custom-fields/input-field";
@@ -9,7 +11,7 @@ import { childrenSchema, ZChildren } from "@/lib/schemas/personal-schema";
 import { gradoInstruccionOp } from "@/utils/options";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save, Trash } from "lucide-react";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
@@ -45,7 +47,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al modificar.");
       }
     });
@@ -62,7 +64,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
-      } catch (e) {
+      } catch {
         toast.error("Error al eliminar.");
       }
     });

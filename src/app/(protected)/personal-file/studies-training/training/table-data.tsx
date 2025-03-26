@@ -1,6 +1,5 @@
 "use client";
 
-import toast from "react-hot-toast";
 import React, { useEffect, useMemo, useState } from "react";
 import { CapacitacionRecord } from "./content-data";
 import { getFile } from "@/actions/file-action";

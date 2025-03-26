@@ -1,4 +1,4 @@
-// eslint-disable no-console
+/* oxlint-disable no-console */
 "use server";
 
 import { prisma } from "@/config/prisma.config";

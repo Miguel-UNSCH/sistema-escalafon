@@ -29,8 +29,22 @@ export const DocComponent = () => {
           <Table
             headers={["Formato", "Extensión", "Tamaño Máximo", "Descripción"]}
             rows={[
-              ["Excel", <span className="bg-crust px-1 rounded-sm font-code text-xs">.xlsx</span>, "10MB", "Estructura tabular con múltiples filas y columnas."],
-              ["JSON", <span className="bg-crust px-1 rounded-sm font-code text-xs">.json</span>, "5MB", "Representación en formato clave-valor."],
+              [
+                "Excel",
+                <span key="xlsx" className="bg-crust px-1 rounded-sm font-code text-xs">
+                  .xlsx
+                </span>,
+                "10MB",
+                "Estructura tabular con múltiples filas y columnas.",
+              ],
+              [
+                "JSON",
+                <span key="json" className="bg-crust px-1 rounded-sm font-code text-xs">
+                  .json
+                </span>,
+                "5MB",
+                "Representación en formato clave-valor.",
+              ],
             ]}
           />
 

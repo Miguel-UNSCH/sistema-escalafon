@@ -28,8 +28,6 @@ export const getDisabilities = async (): Promise<{ success: boolean; message?: s
   }
 };
 
-// export const getDisability = async (id: string): Promise<{ success: boolean; message?: string; data?: discapacidad }> => {};
-
 export const createDisability = async (data: ZDisabilityS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
@@ -102,8 +100,10 @@ export const deleteDisability = async (id: string, file_id: string): Promise<{ s
     try {
       await fs.access(filePath);
       await fs.unlink(filePath);
+      // oxlint-disable-next-line no-console
       console.log("Archivo eliminado correctamente.");
     } catch (err) {
+      // oxlint-disable-next-line no-console
       console.warn("Advertencia: No se pudo eliminar el archivo físico:", err);
     }
 

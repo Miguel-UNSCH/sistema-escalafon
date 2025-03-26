@@ -100,7 +100,6 @@ export const createAscenso = async (data: ZAscensoS & { file_id: string }): Prom
 
 export const updateAscenso = async (id: string, data: ZAscensoS & { file?: File | null; file_id?: string }): Promise<{ success: boolean; message: string }> => {
   try {
-    // Verificar que exista una sesión y obtener el usuario autenticado
     const session = await auth();
     if (!session?.user?.email) throw new Error("No autorizado");
 
@@ -109,14 +108,12 @@ export const updateAscenso = async (id: string, data: ZAscensoS & { file?: File 
     });
     if (!user) throw new Error("Usuario no encontrado");
 
-    // Obtener el registro actual del ascenso (incluyendo el archivo relacionado)
     const currentAscenso = await prisma.ascenso.findUnique({
       where: { id },
       include: { file: true },
     });
     if (!currentAscenso) throw new Error("Ascenso no encontrado");
 
-    // === Procesar cargo y dependencia ACTUALES ===
     const currentCargo = await prisma.cargo.findUnique({
       where: { id: Number(data.current_cargo_id) },
     });
@@ -151,7 +148,6 @@ export const updateAscenso = async (id: string, data: ZAscensoS & { file?: File 
       });
     }
 
-    // === Procesar NUEVO cargo y dependencia ===
     const newCargo = await prisma.cargo.findUnique({
       where: { id: Number(data.new_cargo_id) },
     });
@@ -186,7 +182,6 @@ export const updateAscenso = async (id: string, data: ZAscensoS & { file?: File 
       });
     }
 
-    // === Actualizar archivo (si se proporciona uno nuevo) ===
     if (data.file && currentAscenso.file) {
       const filePath = path.resolve(process.cwd(), currentAscenso.file.path, `${currentAscenso.file.id}${currentAscenso.file.extension}`);
       const fileBuffer = Buffer.from(await data.file.arrayBuffer());
@@ -197,7 +192,6 @@ export const updateAscenso = async (id: string, data: ZAscensoS & { file?: File 
       });
     }
 
-    // === Actualizar el registro de ascenso ===
     await prisma.ascenso.update({
       where: { id },
       data: {
@@ -232,10 +226,10 @@ export const deleteAscenso = async (id: string, file_id: string): Promise<{ succ
     try {
       await fs.access(filePath);
       await fs.unlink(filePath);
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.log("Archivo eliminado correctamente.");
     } catch (err) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.warn("Advertencia: No se pudo eliminar el archivo físico:", err);
     }
 

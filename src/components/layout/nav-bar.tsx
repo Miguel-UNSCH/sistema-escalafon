@@ -1,6 +1,6 @@
 "use client";
 
-import { AlignJustify, ChevronLeft, ChevronRight, House, Search, UserRound } from "lucide-react";
+import { ChevronLeft, ChevronRight, UserRound } from "lucide-react";
 import { ThemeToggle } from "../theme-provider";
 import { LogOutBtn } from "../log-out";
 import { Session } from "next-auth";

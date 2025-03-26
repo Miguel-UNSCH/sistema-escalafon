@@ -51,7 +51,6 @@ export const createEvaluation = async (data: ZEvaluation & { file_id: string }):
     const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (!user) throw new Error("Usuario no encontrado");
 
-    // Evaluado
     const cargo = await prisma.cargo.findUnique({ where: { id: Number(data.cargo_id) } });
     if (!cargo) throw new Error("Cargo no encontrado");
     const dependencia = await prisma.dependencia.findUnique({ where: { id: Number(data.dependencia_id) } });
@@ -65,7 +64,6 @@ export const createEvaluation = async (data: ZEvaluation & { file_id: string }):
     });
     if (!usuarioCargoDependencia) throw new Error("No existe la relación entre el usuario y el cargo-dependencia seleccionado.");
 
-    // Evaluador
     const ev_cargo = await prisma.cargo.findUnique({ where: { id: Number(data.ev_cargo_id) } });
     if (!ev_cargo) throw new Error("Cargo del evaluador no encontrado");
     const ev_dependencia = await prisma.dependencia.findUnique({ where: { id: Number(data.ev_dependencia_id) } });
@@ -113,7 +111,6 @@ export const updateEvaliation = async (id: string, data: ZEvaluation & { file?: 
     const current_model = await prisma.evaluation.findUnique({ where: { id }, include: { file: true } });
     if (!current_model) throw new Error("Evaluacion no encontrada");
 
-    // Evaluado
     const cargo = await prisma.cargo.findUnique({ where: { id: Number(data.cargo_id) } });
     if (!cargo) throw new Error("Cargo no encontrado");
     const dependencia = await prisma.dependencia.findUnique({ where: { id: Number(data.dependencia_id) } });
@@ -127,7 +124,6 @@ export const updateEvaliation = async (id: string, data: ZEvaluation & { file?: 
     });
     if (!usuarioCargoDependencia) throw new Error("No existe la relación entre el usuario y el cargo-dependencia seleccionado.");
 
-    // Evaluador
     const ev_cargo = await prisma.cargo.findUnique({ where: { id: Number(data.ev_cargo_id) } });
     if (!ev_cargo) throw new Error("Cargo del evaluador no encontrado");
     const ev_dependencia = await prisma.dependencia.findUnique({ where: { id: Number(data.ev_dependencia_id) } });
@@ -184,10 +180,10 @@ export const deleteEvaluation = async (id: string, file_id: string): Promise<{ s
     try {
       await fs.access(filePath);
       await fs.unlink(filePath);
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.log("Archivo eliminado correctamente.");
     } catch (err) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.warn("Advertencia: No se pudo eliminar el archivo físico:", err);
     }
 

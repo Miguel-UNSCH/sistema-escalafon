@@ -10,16 +10,7 @@ import path from "path";
 export type descanso_medicoRecord = Prisma.descanso_medicoGetPayload<{
   include: {
     file: true;
-    usuarioCargoDependencia: {
-      include: {
-        cargoDependencia: {
-          include: {
-            cargo: true;
-            dependencia: true;
-          };
-        };
-      };
-    };
+    usuarioCargoDependencia: { include: { cargoDependencia: { include: { cargo: true; dependencia: true } } } };
   };
 }>;
 
@@ -35,16 +26,7 @@ export const getDescansos = async (): Promise<{ success: boolean; message?: stri
       where: { user_id: user.id },
       include: {
         file: true,
-        usuarioCargoDependencia: {
-          include: {
-            cargoDependencia: {
-              include: {
-                cargo: true,
-                dependencia: true,
-              },
-            },
-          },
-        },
+        usuarioCargoDependencia: { include: { cargoDependencia: { include: { cargo: true, dependencia: true } } } },
       },
     });
     if (!response) throw new Error("No hay descansos médicos disponibles.");
@@ -76,10 +58,7 @@ export const createDescanso = async (data: ZDesMedS & { file_id: string }): Prom
 
     const cargoDependencia = await prisma.cargoDependencia.findUnique({
       where: {
-        cargoId_dependenciaId: {
-          cargoId: cargo.id,
-          dependenciaId: dependencia.id,
-        },
+        cargoId_dependenciaId: { cargoId: cargo.id, dependenciaId: dependencia.id },
       },
     });
 
@@ -87,10 +66,7 @@ export const createDescanso = async (data: ZDesMedS & { file_id: string }): Prom
 
     const usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
       where: {
-        userId_cargoDependenciaId: {
-          userId: user.id,
-          cargoDependenciaId: cargoDependencia.id,
-        },
+        userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: cargoDependencia.id },
       },
     });
 
@@ -193,10 +169,10 @@ export const deleteDescanso = async (id: string, file_id: string): Promise<{ suc
     try {
       await fs.access(filePath);
       await fs.unlink(filePath);
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.log("Archivo eliminado correctamente.");
     } catch (err) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.warn("Advertencia: No se pudo eliminar el archivo físico:", err);
     }
 

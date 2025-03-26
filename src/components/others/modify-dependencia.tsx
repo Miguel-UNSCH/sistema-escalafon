@@ -1,3 +1,5 @@
+"use client";
+
 import { deleteDependencia, updateDependencia } from "@/actions/others-action";
 import { InputField } from "@/components/custom-fields/input-field";
 import { Button } from "@/components/ui/button";
@@ -38,7 +40,7 @@ export const ModifyDependencia = ({
           setSelectedDependencia(null);
           form.reset();
         }
-      } catch (e) {
+      } catch {
         toast.error("Error al modificar el cargo.");
       }
     });
@@ -56,7 +58,7 @@ export const ModifyDependencia = ({
           setSelectedDependencia(null);
           form.reset();
         }
-      } catch (e) {
+      } catch {
         toast.error("Error al modificar el cargo.");
       }
     });

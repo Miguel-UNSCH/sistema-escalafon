@@ -48,7 +48,8 @@ export const ContentData = ({ session }: { session: any }) => {
       } else {
         toast.error(response.message || "No se pudieron obtener los hijos.");
       }
-    } catch (e) {
+      // oxlint-disable-next-line no-unused-vars
+    } catch (e: unknown) {
       toast.error("Error al obtener los hijos.");
     }
     //  finally {

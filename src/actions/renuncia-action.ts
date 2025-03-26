@@ -150,10 +150,10 @@ export const deleteRenuncia = async (id: string, file_id: string): Promise<{ suc
     try {
       await fs.access(filePath);
       await fs.unlink(filePath);
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.log("Archivo eliminado correctamente.");
     } catch (err) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.warn("Advertencia: No se pudo eliminar el archivo físico:", err);
     }
 

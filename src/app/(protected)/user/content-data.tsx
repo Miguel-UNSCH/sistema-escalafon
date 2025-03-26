@@ -24,7 +24,7 @@ export const ContentData = () => {
       if (response.success && response.data) {
         setUsers(response.data);
       } else toast.error(response.message || "No se pudieron obtener los usuarios.");
-    } catch (e: unknown) {
+    } catch {
       toast.error("Error al obtener los usuarios.");
     } finally {
       setLoading(false);

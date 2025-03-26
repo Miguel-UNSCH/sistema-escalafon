@@ -43,7 +43,7 @@ export const ContentData = ({ session }: { session: Session }) => {
       const response = await getCurrentSpouse();
       setSpouseExists(response.success && !!response.data);
       if (response.success && !!response.data) setSpouseData(response.data);
-    } catch (e) {
+    } catch {
       toast.error("Error al cargar los datos del cónyuge.");
     }
   };

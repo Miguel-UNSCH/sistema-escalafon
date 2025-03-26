@@ -4,7 +4,7 @@ import { useTransition } from "react";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Save, Edit, Trash } from "lucide-react";
+import { Edit, Trash } from "lucide-react";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { gradoInstruccionOp } from "@/utils/options";
@@ -44,7 +44,7 @@ export const ModifyData = ({ spouseData, onRefresh }: { spouseData: spouseRecord
           toast.success("Cónyuge actualizado exitosamente.");
           onRefresh();
         }
-      } catch (e) {
+      } catch {
         toast.error("Error al actualizar los datos del cónyuge.");
       }
     });
@@ -61,7 +61,7 @@ export const ModifyData = ({ spouseData, onRefresh }: { spouseData: spouseRecord
           toast.success("Cónyuge eliminado exitosamente.");
           onRefresh();
         }
-      } catch (e) {
+      } catch {
         toast.error("Error al eliminar el cónyuge.");
       }
     });

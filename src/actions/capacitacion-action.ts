@@ -103,8 +103,10 @@ export const deleteCapacitacion = async (id: string, file_id: string): Promise<{
     try {
       await fs.access(filePath);
       await fs.unlink(filePath);
+      // oxlint-disable-next-line no-console
       console.log("Archivo eliminado correctamente.");
     } catch (err) {
+      // oxlint-disable-next-line no-console
       console.warn("Advertencia: No se pudo eliminar el archivo físico:", err);
     }
 

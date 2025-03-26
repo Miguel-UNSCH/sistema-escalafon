@@ -10,16 +10,7 @@ import path from "path";
 export type perLicRecord = Prisma.per_lic_vacGetPayload<{
   include: {
     file: true;
-    usuarioCargoDependencia: {
-      include: {
-        cargoDependencia: {
-          include: {
-            cargo: true;
-            dependencia: true;
-          };
-        };
-      };
-    };
+    usuarioCargoDependencia: { include: { cargoDependencia: { include: { cargo: true; dependencia: true } } } };
   };
 }>;
 export const getPerLicVacs = async (): Promise<{
@@ -38,16 +29,7 @@ export const getPerLicVacs = async (): Promise<{
       where: { user_id: user.id },
       include: {
         file: true,
-        usuarioCargoDependencia: {
-          include: {
-            cargoDependencia: {
-              include: {
-                cargo: true,
-                dependencia: true,
-              },
-            },
-          },
-        },
+        usuarioCargoDependencia: { include: { cargoDependencia: { include: { cargo: true, dependencia: true } } } },
       },
     });
     if (!response) throw new Error("No hay permisos, licencias o vacaciones disponibles");
@@ -75,23 +57,13 @@ export const createPerLicVac = async (data: ZPerLicVacS & { file_id: string }): 
     if (!dependencia) throw new Error("Dependencia no encontrada");
 
     const cargoDependencia = await prisma.cargoDependencia.findUnique({
-      where: {
-        cargoId_dependenciaId: {
-          cargoId: cargo.id,
-          dependenciaId: dependencia.id,
-        },
-      },
+      where: { cargoId_dependenciaId: { cargoId: cargo.id, dependenciaId: dependencia.id } },
     });
 
     if (!cargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia seleccionada.");
 
     const usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
-      where: {
-        userId_cargoDependenciaId: {
-          userId: user.id,
-          cargoDependenciaId: cargoDependencia.id,
-        },
-      },
+      where: { userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: cargoDependencia.id } },
     });
 
     if (!usuarioCargoDependencia) throw new Error("El usuario no tiene asignado ese cargo en la dependencia seleccionada.");
@@ -189,10 +161,10 @@ export const deletePerLicVac = async (id: string, file_id: string): Promise<{ su
     try {
       await fs.access(filePath);
       await fs.unlink(filePath);
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.log("Archivo eliminado correctamente.");
     } catch (err) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.warn("Advertencia: No se pudo eliminar el archivo físico:", err);
     }
 

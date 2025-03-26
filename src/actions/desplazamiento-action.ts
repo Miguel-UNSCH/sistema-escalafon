@@ -64,28 +64,19 @@ export const createDesplazamiento = async (data: ZDesplazamientoS & { file_id: s
 
     const currentCargoDependencia = await prisma.cargoDependencia.findUnique({
       where: {
-        cargoId_dependenciaId: {
-          cargoId: currentCargo.id,
-          dependenciaId: currentDependencia.id,
-        },
+        cargoId_dependenciaId: { cargoId: currentCargo.id, dependenciaId: currentDependencia.id },
       },
     });
     if (!currentCargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia actuales");
 
     let currentUCD = await prisma.usuarioCargoDependencia.findUnique({
       where: {
-        userId_cargoDependenciaId: {
-          userId: user.id,
-          cargoDependenciaId: currentCargoDependencia.id,
-        },
+        userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: currentCargoDependencia.id },
       },
     });
     if (!currentUCD) {
       currentUCD = await prisma.usuarioCargoDependencia.create({
-        data: {
-          userId: user.id,
-          cargoDependenciaId: currentCargoDependencia.id,
-        },
+        data: { userId: user.id, cargoDependenciaId: currentCargoDependencia.id },
       });
     }
 
@@ -101,28 +92,19 @@ export const createDesplazamiento = async (data: ZDesplazamientoS & { file_id: s
 
     const newCargoDependencia = await prisma.cargoDependencia.findUnique({
       where: {
-        cargoId_dependenciaId: {
-          cargoId: newCargo.id,
-          dependenciaId: newDependencia.id,
-        },
+        cargoId_dependenciaId: { cargoId: newCargo.id, dependenciaId: newDependencia.id },
       },
     });
     if (!newCargoDependencia) throw new Error("No existe la relación entre el nuevo cargo y la nueva dependencia");
 
     let newUCD = await prisma.usuarioCargoDependencia.findUnique({
       where: {
-        userId_cargoDependenciaId: {
-          userId: user.id,
-          cargoDependenciaId: newCargoDependencia.id,
-        },
+        userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: newCargoDependencia.id },
       },
     });
     if (!newUCD) {
       newUCD = await prisma.usuarioCargoDependencia.create({
-        data: {
-          userId: user.id,
-          cargoDependenciaId: newCargoDependencia.id,
-        },
+        data: { userId: user.id, cargoDependenciaId: newCargoDependencia.id },
       });
     }
 
@@ -187,21 +169,14 @@ export const updateDesplazamiento = async (id: string, data: ZDesplazamientoS & 
     });
     if (!currentCargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia actuales");
 
-    // Buscar o crear el registro en UsuarioCargoDependencia para la situación actual
     let currentUCD = await prisma.usuarioCargoDependencia.findUnique({
       where: {
-        userId_cargoDependenciaId: {
-          userId: user.id,
-          cargoDependenciaId: currentCargoDependencia.id,
-        },
+        userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: currentCargoDependencia.id },
       },
     });
     if (!currentUCD) {
       currentUCD = await prisma.usuarioCargoDependencia.create({
-        data: {
-          userId: user.id,
-          cargoDependenciaId: currentCargoDependencia.id,
-        },
+        data: { userId: user.id, cargoDependenciaId: currentCargoDependencia.id },
       });
     }
 
@@ -215,36 +190,22 @@ export const updateDesplazamiento = async (id: string, data: ZDesplazamientoS & 
     });
     if (!newDependencia) throw new Error("Nueva dependencia no encontrada");
 
-    // Buscar la relación en cargoDependencia para el nuevo cargo y dependencia
     const newCargoDependencia = await prisma.cargoDependencia.findUnique({
-      where: {
-        cargoId_dependenciaId: {
-          cargoId: newCargo.id,
-          dependenciaId: newDependencia.id,
-        },
-      },
+      where: { cargoId_dependenciaId: { cargoId: newCargo.id, dependenciaId: newDependencia.id } },
     });
     if (!newCargoDependencia) throw new Error("No existe la relación entre el nuevo cargo y la nueva dependencia");
 
-    // Buscar o crear el registro en UsuarioCargoDependencia para la situación nueva
     let newUCD = await prisma.usuarioCargoDependencia.findUnique({
       where: {
-        userId_cargoDependenciaId: {
-          userId: user.id,
-          cargoDependenciaId: newCargoDependencia.id,
-        },
+        userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: newCargoDependencia.id },
       },
     });
     if (!newUCD) {
       newUCD = await prisma.usuarioCargoDependencia.create({
-        data: {
-          userId: user.id,
-          cargoDependenciaId: newCargoDependencia.id,
-        },
+        data: { userId: user.id, cargoDependenciaId: newCargoDependencia.id },
       });
     }
 
-    // Actualizar el archivo si se proporciona uno nuevo
     if (data.file && current_model.file) {
       const filePath = path.resolve(process.cwd(), current_model.file.path, `${current_model.file.id}${current_model.file.extension}`);
       const fileBuffer = Buffer.from(await data.file.arrayBuffer());
@@ -256,7 +217,6 @@ export const updateDesplazamiento = async (id: string, data: ZDesplazamientoS & 
       });
     }
 
-    // Actualizar el registro de desplazamiento utilizando currentUCD.id y newUCD.id
     await prisma.desplazamiento.update({
       where: { id },
       data: {
@@ -290,10 +250,10 @@ export const deleteDesplazamiento = async (id: string, file_id: string): Promise
     try {
       await fs.access(filePath);
       await fs.unlink(filePath);
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.log("Archivo eliminado correctamente.");
     } catch (err) {
-      // eslint-disable-next-line no-console
+      // oxlint-disable-next-line no-console
       console.warn("Advertencia: No se pudo eliminar el archivo físico:", err);
     }
 

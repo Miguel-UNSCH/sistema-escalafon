@@ -30,6 +30,7 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
       },
     });
   } catch (error) {
+    // oxlint-disable-next-line no-console
     console.error("Error al servir el archivo:", error);
     return NextResponse.json({ message: "Error interno del servidor" }, { status: 500 });
   }

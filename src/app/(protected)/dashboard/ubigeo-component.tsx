@@ -22,7 +22,7 @@ export const UbigeoComponent = () => {
       } else {
         toast.error(response.message || "No se pudieron obtener los ubigeos.");
       }
-    } catch (e: unknown) {
+    } catch {
       toast.error("Error al obtener los desplazamientos.");
     } finally {
       setLoading(false);

@@ -10,7 +10,7 @@ import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { cargoSchema, ZCargo } from "@/lib/schemas/others-schema";
 import { InputField } from "@/components/custom-fields/input-field";
-import { createCargo, deleteCargo, getCargos, patchCargo } from "@/actions/others-action";
+import { createCargo } from "@/actions/others-action";
 import toast from "react-hot-toast";
 
 export const CreateCargoComponent = ({
@@ -40,8 +40,8 @@ export const CreateCargoComponent = ({
           setSelectedCargo(null);
         }
 
-        // eslint-disable-next-line no-unused-vars
-      } catch (e) {
+        // oxlint-disable-next-line no-unused-vars
+      } catch (e: unknown) {
         toast.error("Error al registrar el cargo.");
       }
     });

@@ -51,14 +51,13 @@ export const CreateEntity = ({ title, icon, buttonText, model }: CreateEntityPro
             if (response.success) {
               toast.success(response.message);
             } else {
-              console.log(response.message);
               toast.error(response.message);
             }
-          } catch (e: unknown) {
+          } catch {
             toast.error("Error al procesar el archivo.");
           }
         }
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al subir el archivo.");
       }
     });

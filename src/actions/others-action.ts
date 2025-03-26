@@ -271,7 +271,6 @@ export const getCargosDependenciasUser = async (id: string): Promise<{ success: 
 
     if (!relaciones.length) throw new Error("No se encontraron dependencias asociadas a este usuario.");
 
-    // Agrupar por dependencia
     const dependenciaMap = new Map<number, cargoDependenciaRecord>();
 
     for (const rel of relaciones) {
@@ -288,7 +287,6 @@ export const getCargosDependenciasUser = async (id: string): Promise<{ success: 
         });
       } else {
         const existing = dependenciaMap.get(dep.id)!;
-        // Evitar cargos duplicados (opcional)
         if (!existing.cargos.some((c) => c.id === cargo.id)) {
           existing.cargos.push(cargo);
         }
@@ -322,7 +320,6 @@ export const getDependenciasUser = async (userId: string, search?: string): Prom
 
     if (!relaciones.length) throw new Error("No se encontraron dependencias asociadas al usuario.");
 
-    // Agrupar dependencias por ID y aplicar filtro por búsqueda
     const dependenciaMap = new Map<number, Dependencia>();
 
     for (const rel of relaciones) {
@@ -365,7 +362,6 @@ export const getCargosUser = async (userId: string, dependenciaId: number): Prom
       throw new Error("El usuario no tiene cargos registrados.");
     }
 
-    // Filtrar las relaciones que coincidan con la dependencia dada
     const cargosFiltrados = relaciones.filter((rel) => rel.cargoDependencia.dependencia.id === dependenciaId).map((rel) => rel.cargoDependencia.cargo);
 
     if (!cargosFiltrados.length) {
