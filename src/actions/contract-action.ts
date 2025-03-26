@@ -19,7 +19,7 @@ export const getContracts = async (): Promise<{ success: boolean; message?: stri
     const session = await auth();
     if (!session?.user?.email) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const contracts: contractRecord[] | null = await prisma.contrato.findMany({
@@ -44,7 +44,7 @@ export const createContract = async (data: ZContratoS & { file_id: string }): Pr
     const session = await auth();
     if (!session?.user?.email) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const cargo = await prisma.cargo.findUnique({ where: { id: Number(data.cargo_id) } });
@@ -55,25 +55,20 @@ export const createContract = async (data: ZContratoS & { file_id: string }): Pr
 
     const cargoDependencia = await prisma.cargoDependencia.findUnique({
       where: {
-        cargoId_dependenciaId: {
-          cargoId: cargo.id,
-          dependenciaId: dependencia.id,
-        },
+        cargoId_dependenciaId: { cargoId: cargo.id, dependenciaId: dependencia.id },
       },
     });
 
     if (!cargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia seleccionada.");
 
-    const usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
+    let usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
       where: {
-        userId_cargoDependenciaId: {
-          userId: user.id,
-          cargoDependenciaId: cargoDependencia.id,
-        },
+        userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: cargoDependencia.id },
       },
     });
-
-    if (!usuarioCargoDependencia) throw new Error("El usuario no tiene asignado ese cargo en la dependencia seleccionada.");
+    if (!usuarioCargoDependencia) {
+      usuarioCargoDependencia = await prisma.usuarioCargoDependencia.create({ data: { userId: user.id, cargoDependenciaId: cargoDependencia.id } });
+    }
 
     const file = await prisma.file.findUnique({ where: { id: data.file_id } });
     if (!file) throw new Error("Archivo no encontrado");
@@ -105,6 +100,12 @@ export const createContract = async (data: ZContratoS & { file_id: string }): Pr
 
 export const updateContract = async (id: string, data: ZContratoS & { file?: File | null; file_id?: string }): Promise<{ success: boolean; message: string }> => {
   try {
+    const session = await auth();
+    if (!session?.user?.email) throw new Error("No autorizado");
+
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!user) throw new Error("Usuario no encontrado");
+
     const current_model = await prisma.contrato.findUnique({ where: { id }, include: { file: true } });
     if (!current_model) throw new Error("Contrato no encontrado");
 
@@ -122,19 +123,18 @@ export const updateContract = async (id: string, data: ZContratoS & { file?: Fil
         },
       },
     });
-
     if (!cargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia seleccionada.");
 
-    const usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
+    let usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
       where: {
-        userId_cargoDependenciaId: {
-          userId: current_model.user_id,
-          cargoDependenciaId: cargoDependencia.id,
-        },
+        userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: cargoDependencia.id },
       },
     });
-
-    if (!usuarioCargoDependencia) throw new Error("El usuario no tiene asignado ese cargo en la dependencia seleccionada.");
+    if (!usuarioCargoDependencia) {
+      usuarioCargoDependencia = await prisma.usuarioCargoDependencia.create({
+        data: { userId: user.id, cargoDependenciaId: cargoDependencia.id },
+      });
+    }
 
     const file = await prisma.file.findUnique({ where: { id: data.file_id } });
     if (!file) throw new Error("Archivo no encontrado");
