@@ -8,10 +8,10 @@ import fs from "fs/promises";
 import path from "path";
 
 export type meritoRecord = Prisma.meritoGetPayload<{
-  include: { file: true; usuarioCargoDependencia: { include: { cargoDependencia: { include: { cargo: true; dependencia: true } } } } };
+  include: { user: true; file: true; usuarioCargoDependencia: { include: { cargoDependencia: { include: { cargo: true; dependencia: true } } } } };
 }>;
 export type demeritoRecord = Prisma.demeritoGetPayload<{
-  include: { file: true; usuarioCargoDependencia: { include: { cargoDependencia: { include: { cargo: true; dependencia: true } } } } };
+  include: { user: true; file: true; ucd: { include: { cargoDependencia: { include: { cargo: true; dependencia: true } } } } };
 }>;
 
 export const getMeritos = async (): Promise<{ success: boolean; message?: string; data?: Array<meritoRecord> }> => {
@@ -24,7 +24,7 @@ export const getMeritos = async (): Promise<{ success: boolean; message?: string
 
     const response: meritoRecord[] | null = await prisma.merito.findMany({
       where: { user_id: user.id },
-      include: { file: true, usuarioCargoDependencia: { include: { cargoDependencia: { include: { cargo: true, dependencia: true } } } } },
+      include: { user: true, file: true, usuarioCargoDependencia: { include: { cargoDependencia: { include: { cargo: true, dependencia: true } } } } },
     });
     if (!response) throw new Error("No haye meritos registradas.");
 
@@ -46,7 +46,7 @@ export const getDemeritos = async (): Promise<{ success: boolean; message?: stri
     if (!user) throw new Error("Usuario no encontrado");
 
     const response: demeritoRecord[] | null = await prisma.demerito.findMany({
-      include: { file: true, usuarioCargoDependencia: { include: { cargoDependencia: { include: { cargo: true, dependencia: true } } } } },
+      include: { user: true, file: true, ucd: { include: { cargoDependencia: { include: { cargo: true, dependencia: true } } } } },
     });
     if (!response) throw new Error("No hay demeritos registradas.");
 
@@ -104,29 +104,36 @@ export const createMerito = async (data: ZMerito & { file_id: string }): Promise
 
 export const createDemerito = async (data: ZDemerito & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
-    const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
-    if (session?.user?.role !== "admin") throw new Error("No autorizado");
-
-    const user: User | null = await prisma.user.findUnique({ where: { dni: data.user.dni } });
+    const user: User | null = await prisma.user.findUnique({ where: { id: data.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
 
-    const cargo = await prisma.cargo.findUnique({ where: { nombre: data.cargo.nombre } });
+    const cargo = await prisma.cargo.findUnique({ where: { id: Number(data.cargo_id) } });
     if (!cargo) throw new Error("Cargo no encontrado");
 
-    const dependencia = await prisma.dependencia.findUnique({ where: { codigo: data.dependencia.codigo } });
+    const dependencia = await prisma.dependencia.findUnique({ where: { id: Number(data.dependencia_id) } });
     if (!dependencia) throw new Error("Dependencia no encontrada");
+
+    const cargoDependencia = await prisma.cargoDependencia.findUnique({
+      where: { cargoId_dependenciaId: { cargoId: cargo.id, dependenciaId: dependencia.id } },
+    });
+    if (!cargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia seleccionada.");
 
     const file = await prisma.file.findUnique({ where: { id: data.file_id } });
     if (!file) throw new Error("Archivo no encontrado");
 
+    const usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
+      where: { userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: cargoDependencia.id } },
+    });
+    if (!usuarioCargoDependencia) throw new Error("No existe la relación entre el usuario y el cargo-dependencia seleccionado.");
+
     await prisma.demerito.create({
       data: {
-        tipo_sancion: data.tipo_sancion,
-        fecha: data.fecha,
         user_id: user.id,
-        cargo_id: cargo.id,
-        dependencia_id: dependencia.id,
+        tipo_sancion: data.tipo_sancion,
+        tipo_documento: data.tipo_documento,
+        asunto: data.asunto.toUpperCase(),
+        periodo: { from: new Date(data.periodo.from).toISOString(), to: new Date(data.periodo.to).toISOString() },
+        ucd_id: usuarioCargoDependencia.id,
         file_id: file.id,
       },
     });
@@ -189,6 +196,59 @@ export const updateMerito = async (id: string, data: ZMerito & { file?: File | n
   }
 };
 
+export const updateDemerito = async (id: string, data: ZDemerito & { file?: File | null; file_id?: string }): Promise<{ success: boolean; message: string }> => {
+  try {
+    const current_model = await prisma.demerito.findUnique({ where: { id }, include: { file: true } });
+    if (!current_model || !current_model.file) throw new Error("Demérito no encontrado");
+
+    const user: User | null = await prisma.user.findUnique({ where: { id: data.user.id } });
+    if (!user) throw new Error("Usuario no encontrado");
+
+    const cargo = await prisma.cargo.findUnique({ where: { id: Number(data.cargo_id) } });
+    if (!cargo) throw new Error("Cargo no encontrado");
+
+    const dependencia = await prisma.dependencia.findUnique({ where: { id: Number(data.dependencia_id) } });
+    if (!dependencia) throw new Error("Dependencia no encontrada");
+
+    const cargoDependencia = await prisma.cargoDependencia.findUnique({
+      where: { cargoId_dependenciaId: { cargoId: cargo.id, dependenciaId: dependencia.id } },
+    });
+    if (!cargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia seleccionada.");
+
+    const usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
+      where: { userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: cargoDependencia.id } },
+    });
+    if (!usuarioCargoDependencia) throw new Error("No existe la relación entre el usuario y el cargo-dependencia seleccionado.");
+
+    if (data.file) {
+      const filePath = path.resolve(process.cwd(), current_model.file.path, `${current_model.file.id}${current_model.file.extension}`);
+
+      const fileBuffer = Buffer.from(await data.file.arrayBuffer());
+      await fs.writeFile(filePath, fileBuffer);
+
+      await prisma.file.update({ where: { id: current_model.file.id }, data: { name: data.file?.name, size: fileBuffer.length } });
+    }
+
+    await prisma.demerito.update({
+      where: { id },
+      data: {
+        tipo_sancion: data.tipo_sancion,
+        tipo_documento: data.tipo_documento,
+        asunto: data.asunto.toUpperCase(),
+        periodo: { from: new Date(data.periodo.from).toISOString(), to: new Date(data.periodo.to).toISOString() },
+        ucd_id: usuarioCargoDependencia.id,
+        ...(data.file_id && { file_id: data.file_id }),
+      },
+    });
+
+    return { success: true, message: "Demérito actualizado exitosamente" };
+  } catch (error: unknown) {
+    let errorMessage = "Error al actualizar el demérito";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
+  }
+};
+
 export const deleteMerito = async (id: string, file_id: string): Promise<{ success: boolean; message: string }> => {
   try {
     const current_merito = await prisma.merito.findUnique({ where: { id } });
@@ -215,6 +275,37 @@ export const deleteMerito = async (id: string, file_id: string): Promise<{ succe
     return { success: true, message: "Mérito y archivo eliminados exitosamente" };
   } catch (error: unknown) {
     let errorMessage = "Error al eliminar el mérito";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
+  }
+};
+
+export const deleteDemerito = async (id: string, file_id: string): Promise<{ success: boolean; message: string }> => {
+  try {
+    const current_model = await prisma.demerito.findUnique({ where: { id } });
+    if (!current_model) throw new Error("Demérito no encontrado");
+
+    const current_file = await prisma.file.findUnique({ where: { id: file_id } });
+    if (!current_file) throw new Error("Archivo no encontrado");
+
+    const filePath = path.resolve(process.cwd(), current_file.path, `${current_file.id}${current_file.extension}`);
+
+    try {
+      await fs.access(filePath);
+      await fs.unlink(filePath);
+      // eslint-disable-next-line no-console
+      console.log("Archivo eliminado correctamente.");
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.warn("Advertencia: No se pudo eliminar el archivo físico:", err);
+    }
+
+    await prisma.demerito.delete({ where: { id } });
+    await prisma.file.delete({ where: { id: file_id } });
+
+    return { success: true, message: "Demérito y archivo eliminados exitosamente" };
+  } catch (error: unknown) {
+    let errorMessage = "Error al eliminar el demérito";
     if (error instanceof Error) errorMessage = error.message;
     return { success: false, message: errorMessage };
   }

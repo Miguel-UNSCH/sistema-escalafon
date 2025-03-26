@@ -10,7 +10,7 @@ const page = async () => {
   if (!session || !session?.user?.email) return <p>No autorizado!</p>;
   return (
     <div className="flex justify-center w-full">
-      <ContentData session={session} />
+      <ContentData />
     </div>
   );
 };

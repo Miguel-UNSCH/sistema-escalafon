@@ -65,8 +65,8 @@ export const Table: React.FC<TableProps> = ({ medicals, loading, selectedMedical
                     <td className="px-4 lg:px-6 py-3">{tipoDescansoOp.find((item) => item.key === medical.tipo_descanso)?.value}</td>
                     <td className="px-4 lg:px-6 py-3">{medical.detalle}</td>
                     <td className="px-4 lg:px-6 py-3">{medical.usuarioCargoDependencia.cargoDependencia.cargo.nombre}</td>
-                    <td className="px-4 lg:px-6 py-3">{`${new Date(medical.periodo?.from).toLocaleDateString()} - ${new Date(medical.periodo.to).toLocaleDateString()}`}</td>
                     <td className="px-4 lg:px-6 py-3">{medical.usuarioCargoDependencia.cargoDependencia.dependencia.nombre}</td>
+                    <td className="px-4 lg:px-6 py-3">{`${new Date(medical.periodo?.from).toLocaleDateString()} - ${new Date(medical.periodo.to).toLocaleDateString()}`}</td>
                     <td className="px-4 lg:px-6 py-3 rounded-e-md">
                       {fileUrls[medical.file.id] ? (
                         <a
