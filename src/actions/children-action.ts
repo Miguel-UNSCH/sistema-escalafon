@@ -3,6 +3,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/config/prisma.config";
 import { ZChildren } from "@/lib/schemas/personal-schema";
+import { edit } from "@/utils/edit-utils";
 import { Children, Personal, Prisma, Ubigeo, User } from "@prisma/client";
 
 export type childrenRecord = Prisma.ChildrenGetPayload<{ include: { ubigeo: true } }>;
@@ -22,8 +23,7 @@ export const getChilds = async (): Promise<{ success: boolean; message?: string;
 
     return { success: true, data: children };
   } catch (error: unknown) {
-    let errorMessage = "Error al obtener hijos.";
-    if (error instanceof Error) errorMessage = error.message;
+    const errorMessage = error instanceof Error ? error.message : "Error al obtener hijos.";
     return { success: false, message: errorMessage };
   }
 };
@@ -33,8 +33,11 @@ export const createChild = async (data: ZChildren): Promise<{ success: boolean; 
     const session = await auth();
     if (!session || !session?.user?.email) throw new Error("No autorizado");
 
-    const currentUser: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const currentUser: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
+
+    const permitido = await edit(currentUser.id);
+    if (!permitido) throw new Error("No puedes registrar hijos. Tiempo de edición expirado.");
 
     const currentPersonal: Personal | null = await prisma.personal.findUnique({ where: { user_id: currentUser.id } });
     if (!currentPersonal) throw new Error("Personal no encontrado");
@@ -62,14 +65,22 @@ export const createChild = async (data: ZChildren): Promise<{ success: boolean; 
 
     return { success: true, message: "Hijo registrado exitosamente." };
   } catch (error: unknown) {
-    let errorMessage = "Error al registrar el hijo.";
-    if (error instanceof Error) errorMessage = error.message;
+    const errorMessage = error instanceof Error ? error.message : "Error al registrar el hijo.";
     return { success: false, message: errorMessage };
   }
 };
 
 export const updateChildren = async (id: string, data: ZChildren): Promise<{ success: boolean; message: string }> => {
   try {
+    const session = await auth();
+    if (!session || !session?.user?.email) throw new Error("No autorizado");
+
+    const currentUser: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    const permitido = await edit(currentUser.id);
+    if (!permitido) throw new Error("No puedes modificar hijos. Tiempo de edición expirado.");
+
     const current_model = await prisma.children.findUnique({ where: { id } });
     if (!current_model) throw new Error("Discapacidad no encontrado");
 
@@ -98,6 +109,15 @@ export const updateChildren = async (id: string, data: ZChildren): Promise<{ suc
 
 export const deleteChildren = async (id: string): Promise<{ success: boolean; message: string }> => {
   try {
+    const session = await auth();
+    if (!session || !session?.user?.email) throw new Error("No autorizado");
+
+    const currentUser: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    const permitido = await edit(currentUser.id);
+    if (!permitido) throw new Error("No puedes modificar hijos. Tiempo de edición expirado.");
+
     const current_model = await prisma.children.findUnique({ where: { id } });
     if (!current_model) throw new Error("children no encontrado");
 
