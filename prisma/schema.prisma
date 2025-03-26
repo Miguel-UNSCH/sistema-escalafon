@@ -61,7 +61,7 @@ enum TipoDesplazamiento {
 enum TipoDescanso {
   m
   p
-  pn
+  it
 }
 
 enum TipoPermisoLicenciaVacacion {

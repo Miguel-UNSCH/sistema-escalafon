@@ -62,8 +62,7 @@ export const Create: React.FC<CreateProps> = ({ onMedicalCreated, setSelectedMed
           onMedicalCreated();
           setSelectedMedical(null);
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al registrar el descanso médico.");
       }
     });

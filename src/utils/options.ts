@@ -46,7 +46,7 @@ export const tipoDesplazamientoOp = [
 export const tipoDescansoOp = [
   { key: "m", value: "MATERNIDAD" },
   { key: "p", value: "PATERNIDAD" },
-  { key: "pn", value: "PERSONAL NO REMUNERADO" },
+  { key: "it", value: "INCAPACIDAD TEMPORAL" },
 ];
 
 export const tipoPermisoLicenciaVacacionOp = [

@@ -68,8 +68,7 @@ export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedM
           setSelectedMedical(null);
           form.reset();
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al modificar el descanso.");
       }
     });
@@ -86,8 +85,7 @@ export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedM
           setSelectedMedical(null);
           form.reset();
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al modificar el Descanso.");
       }
     });
@@ -118,7 +116,7 @@ export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedM
               </div>
               <div className="flex md:flex-row flex-col gap-2 w-full md:w-auto">
                 <Button variant="outline" asChild>
-                  {/*  eslint-disable-next-line jsx-no-target-blank */}
+                  {/*  oxlint-disable-next-line jsx-no-target-blank */}
                   <a href={fileUrl} download target="_blank">
                     <Download size={16} /> Descargar
                   </a>
