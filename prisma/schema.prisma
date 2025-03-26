@@ -288,6 +288,14 @@ model rud_access {
   @@map("rud_access")
 }
 
+model conf_edicion {
+  id           Int      @id @default(autoincrement())
+  fecha_inicio DateTime
+  fecha_fin    DateTime
+
+  @@map("conf_edicion")
+}
+
 model Session {
   sessionToken String   @unique
   userId       String

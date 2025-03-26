@@ -73,7 +73,7 @@ export async function loginAction(values: ZLoginS): Promise<LoginResult> {
   }
 }
 
-export const registerAction = async (values: ZRegisterS) => {
+export const registerAction = async (values: ZRegisterS, days: number = 3) => {
   try {
     const { data, success } = registerSchema.safeParse(values);
     if (!success) return { error: "Datos inválidos, revise los campos." };
@@ -83,11 +83,15 @@ export const registerAction = async (values: ZRegisterS) => {
 
     const password = await bcrypt.hash(data.dni, 10);
 
+    const now = new Date();
+    const modification_end_time = new Date();
+    modification_end_time.setDate(now.getDate() + days);
+
     await prisma.user.create({
       data: {
         name: data.name.toUpperCase(),
         last_name: data.lastName.toUpperCase(),
-        modification_end_time: new Date(Date.now() + 1 * 60 * 1000),
+        modification_end_time,
         dni: data.dni,
         email: data.email.toUpperCase(),
         password,
