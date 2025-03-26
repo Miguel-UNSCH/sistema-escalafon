@@ -98,9 +98,9 @@ export const EditTime = () => {
             <DateField control={form.control} name="fecha_inicio" label="Fecha de inicio" disabled={false} dateLimit="future" />
             <DateField control={form.control} name="fecha_fin" label="Fecha de culminación" disabled={false} dateLimit="future" />
 
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-4">
               {confId && (
-                <Button type="button" onClick={onDelete} variant="destructive">
+                <Button type="button" onClick={onDelete} variant="destructive" className="flex flex-row items-center gap-2 bg-surface0 hover:bg-surface1 font-special text-red">
                   <Trash2 className="mr-2 w-4 h-4" /> Eliminar
                 </Button>
               )}

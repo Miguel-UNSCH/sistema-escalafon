@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { ReactNode } from "react";
 import { Session } from "next-auth";
 
-export const Dashboard = ({ children, session }: { children: ReactNode; session: Session | null }) => {
+export const ContentData = ({ children, session }: { children: ReactNode; session: Session | null }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 

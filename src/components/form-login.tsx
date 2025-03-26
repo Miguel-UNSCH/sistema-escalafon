@@ -35,7 +35,6 @@ export const FormLogin = () => {
       }
 
       if (response.success) {
-        // Redirigir según si el usuario debe cambiar la contraseña o según su rol
         if (response.must_change_pwd) {
           router.push("/change-password");
         } else {
@@ -59,6 +58,14 @@ export const FormLogin = () => {
           </Button>
         </form>
       </Form>
+      <p
+        className="hover:border-mauve hover:border-b-2 font-special hover:font-semibold hover:text-mauve text-sm cursor-pointer"
+        onClick={() => {
+          router.push("/");
+        }}
+      >
+        Regresar a la pagina principal
+      </p>
     </div>
   );
 };
