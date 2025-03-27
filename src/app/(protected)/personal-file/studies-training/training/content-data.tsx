@@ -22,11 +22,11 @@ export const ContentData = () => {
     setLoading(true);
     try {
       const response = await getCapacitaciones();
-      if (response.success && response.data) setItems(response.data as CapacitacionRecord[]);
-      else toast.error(response.message || "No se pudieron obtener las capacitaciones.");
-
-      // eslint-disable-next-line no-unused-vars
-    } catch (e: unknown) {
+      if (response.success && response.data) {
+        setItems(response.data as CapacitacionRecord[]);
+        if (response.data.length === 0) setShowCreate(true);
+      } else toast.error(response.message || "No se pudieron obtener las capacitaciones.");
+    } catch {
       toast.error("Error al obtener las capacitaciones.");
     } finally {
       setLoading(false);

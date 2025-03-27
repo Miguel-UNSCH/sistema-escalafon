@@ -464,12 +464,15 @@ model FormacionAcademica {
 }
 
 enum TipoCapacitacion {
-  c
+  dip
+  cur_cap
+  cert
+  cons
 }
 
 model Capacitacion {
   id                  String           @id @default(cuid())
-  tipe                TipoCapacitacion @default(c)
+  tipe                TipoCapacitacion
   centro_capacitacion String           @db.Citext
   materia             String           @db.Citext
   especialidad        String           @db.Citext
