@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-import { DemeritoRecord } from "./content-data";
 import { getFile } from "@/actions/file-action";
 import { demeritoSchema, ZDemerito } from "@/lib/schemas/m-d-schema";
 import { useForm, useWatch } from "react-hook-form";
@@ -16,13 +15,13 @@ import { InputField } from "@/components/custom-fields/input-field";
 import { CargosUserField, DependenciasUserField } from "@/components/custom-fields/user-cargos-dependencia";
 import { DateField } from "@/components/custom-fields/date-field";
 import { tipo_sancionOp } from "@/utils/options";
-import { deleteDemerito, updateDemerito } from "@/actions/m-d-action";
+import { deleteDemerito, demeritoRecord, updateDemerito } from "@/actions/m-d-action";
 import toast from "react-hot-toast";
 
 type ModifyProps = {
-  item: DemeritoRecord;
+  item: demeritoRecord;
   onUpdated: () => void;
-  setSelectedItem: React.Dispatch<React.SetStateAction<DemeritoRecord | null>>;
+  setSelectedItem: React.Dispatch<React.SetStateAction<demeritoRecord | null>>;
 };
 
 export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem }) => {
@@ -43,7 +42,8 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
     tipo_sancion: item.tipo_sancion,
     tipo_documento: item.tipo_documento,
     asunto: item.asunto,
-    periodo: { from: new Date(item.periodo.from), to: new Date(item.periodo.to) },
+    fecha_start: item.fecha_start.toString(),
+    fecha_end: item.fecha_end?.toString(),
     dependencia_id: item.ucd.cargoDependencia.dependencia.id.toString(),
     cargo_id: item.ucd.cargoDependencia.cargo.id.toString(),
     file: undefined,
@@ -55,6 +55,12 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
     control: form.control,
     name: "user.id",
     defaultValue: item.user.id,
+  });
+
+  const tipoSancion = useWatch({
+    control: form.control,
+    name: "tipo_sancion",
+    defaultValue: item.tipo_sancion,
   });
 
   useEffect(() => {
@@ -114,15 +120,21 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
 
           <SelectField control={form.control} name="tipo_sancion" label="Tipo de Sancion *" options={tipo_sancionOp} />
           <SelectField control={form.control} name="tipo_documento" label="Tipo de Documento *" options={selectValues} />
-          <InputField control={form.control} name="asunto" label="Asunto *" placeholder="Asunto de la sancion" />
+
+          <InputField control={form.control} name="asunto" label="Detalle *" placeholder="Detalle de la sancion" />
 
           <DependenciasUserField control={form.control} name="dependencia_id" user_id={userId} label="Dependencia *" />
           <CargosUserField control={form.control} name="cargo_id" user_id={userId} dependencia_id={form.watch("dependencia_id")} />
 
-          <div className="gap-4 grid grid-cols-2">
-            <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={false} />
-            <DateField control={form.control} name="periodo.to" label="Fecha de culminacion" disabled={false} />
-          </div>
+          {tipoSancion === "sus" ? (
+            <div className="gap-4 grid grid-cols-2">
+              <DateField control={form.control} name="fecha_start" label="Fecha de inicio" disabled={false} dateLimit="any" />
+              <DateField control={form.control} name="fecha_end" label="Fecha de culminación" disabled={false} dateLimit="any" />
+            </div>
+          ) : (
+            <DateField control={form.control} name="fecha_start" label="Fecha" disabled={false} dateLimit="past" />
+          )}
+
           {fileUrl && !isChangingFile ? (
             <div className="flex md:flex-row flex-col items-center gap-4 md:text-left text-center">
               <div className="flex flex-row items-center gap-2 w-full">

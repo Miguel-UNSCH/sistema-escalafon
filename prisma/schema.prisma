@@ -748,7 +748,8 @@ model demerito {
   tipo_sancion   tipo_sancion
   tipo_documento String       @db.Citext // Resoluciones, Memorando
   asunto         String       @db.Citext
-  periodo        Json // {from: DateTime, to: DateTime}
+  fecha_start    DateTime
+  fecha_end      DateTime?
 
   user_id String
   file_id String

@@ -1,6 +1,6 @@
 "use client";
 
-import { createDemerito } from "@/actions/m-d-action";
+import { createDemerito, demeritoRecord } from "@/actions/m-d-action";
 import { DateField } from "@/components/custom-fields/date-field";
 import { SelectField } from "@/components/custom-fields/select-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
@@ -16,12 +16,11 @@ import { Save } from "lucide-react";
 import React, { useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import toast from "react-hot-toast";
-import { DemeritoRecord } from "./content-data";
 import { InputField } from "@/components/custom-fields/input-field";
 
 type CreateProps = {
   onItemCreated: () => void;
-  setSelectedItem: React.Dispatch<React.SetStateAction<DemeritoRecord | null>>;
+  setSelectedItem: React.Dispatch<React.SetStateAction<demeritoRecord | null>>;
   onCancel?: () => void;
   showCancel?: boolean;
 };
@@ -34,7 +33,8 @@ export const Create: React.FC<CreateProps> = ({ onItemCreated, setSelectedItem, 
     tipo_sancion: undefined,
     tipo_documento: undefined,
     asunto: "",
-    periodo: { from: undefined, to: undefined },
+    fecha_start: undefined,
+    fecha_end: undefined,
     dependencia_id: "",
     cargo_id: "",
     file: undefined,
@@ -46,6 +46,12 @@ export const Create: React.FC<CreateProps> = ({ onItemCreated, setSelectedItem, 
     control: form.control,
     name: "user.id",
     defaultValue: "",
+  });
+
+  const tipoSancion = useWatch({
+    control: form.control,
+    name: "tipo_sancion",
+    defaultValue: undefined,
   });
 
   const onSubmit = async (data: ZDemerito) => {
@@ -92,15 +98,19 @@ export const Create: React.FC<CreateProps> = ({ onItemCreated, setSelectedItem, 
 
           <SelectField control={form.control} name="tipo_sancion" label="Tipo de Sancion *" options={tipo_sancionOp} />
           <SelectField control={form.control} name="tipo_documento" label="Tipo de Documento *" options={selectValues} />
-          <InputField control={form.control} name="asunto" label="Asunto *" placeholder="Asunto de la sancion" />
+          <InputField control={form.control} name="asunto" label="Detalle *" placeholder="Detalle de la sancion" />
 
           <DependenciasUserField control={form.control} name="dependencia_id" user_id={userId} label="Dependencia *" />
           <CargosUserField control={form.control} name="cargo_id" user_id={userId} dependencia_id={form.watch("dependencia_id")} />
 
-          <div className="gap-4 grid grid-cols-2">
-            <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={false} />
-            <DateField control={form.control} name="periodo.to" label="Fecha de culminacion" disabled={false} />
-          </div>
+          {tipoSancion === "sus" ? (
+            <div className="gap-4 grid grid-cols-2">
+              <DateField control={form.control} name="fecha_start" label="Fecha de inicio" disabled={false} dateLimit="any" />
+              <DateField control={form.control} name="fecha_end" label="Fecha de culminación" disabled={false} dateLimit="any" />
+            </div>
+          ) : (
+            <DateField control={form.control} name="fecha_start" label="Fecha" disabled={false} dateLimit="past" />
+          )}
 
           <UploadField control={form.control} name="file" label="Documento *" allowedTypes={["pdf"]} />
 

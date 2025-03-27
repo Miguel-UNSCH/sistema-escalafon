@@ -2,22 +2,22 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { tipo_sancionOp } from "@/utils/options";
-import { DemeritoRecord } from "./content-data";
 import { getFile } from "@/actions/file-action";
 import { Pagination } from "@/components/pagination";
+import { demeritoRecord } from "@/actions/m-d-action";
 
 type TableDataProps = {
-  items: DemeritoRecord[];
+  items: demeritoRecord[];
   loading: boolean;
-  selectedItem: DemeritoRecord | null;
-  setSelectedItem: React.Dispatch<React.SetStateAction<DemeritoRecord | null>>;
+  selectedItem: demeritoRecord | null;
+  setSelectedItem: React.Dispatch<React.SetStateAction<demeritoRecord | null>>;
 };
 
 export const Table: React.FC<TableDataProps> = ({ items, loading, selectedItem, setSelectedItem }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const tableHeaders = ["N", "Personal", "Tipo", "Asunto", "Periodo", "Cargo", "Dependencia", "Archivo"];
+  const tableHeaders = ["N", "Personal", "Tipo", "Detalle", "Fecha", "Cargo", "Dependencia", "Archivo"];
 
   const [fileUrls, setFileUrls] = useState<{ [key: string]: string | null }>({});
 
@@ -66,7 +66,11 @@ export const Table: React.FC<TableDataProps> = ({ items, loading, selectedItem, 
                     <td className="px-4 lg:px-6 py-3 text-nowrap">{`${item.user.name} ${item.user.last_name}`}</td>
                     <td className="px-4 lg:px-6 py-3">{tipo_sancionOp.find((i) => i.key === item.tipo_sancion)?.value}</td>
                     <td className="px-4 lg:px-6 py-3">{item.asunto}</td>
-                    <td className="px-4 lg:px-6 py-3">{`${new Date(item.periodo?.from).toLocaleDateString()} - ${new Date(item.periodo.to).toLocaleDateString()}`}</td>
+                    <td className="px-4 lg:px-6 py-3">{`${
+                      item.fecha_end
+                        ? `${new Date(item.fecha_start).toLocaleDateString()} - ${new Date(item.fecha_end).toLocaleDateString()}`
+                        : new Date(item.fecha_start).toLocaleDateString()
+                    }`}</td>
                     <td className="px-4 lg:px-6 py-3">{item.ucd.cargoDependencia.cargo.nombre}</td>
                     <td className="px-4 lg:px-6 py-3">{item.ucd.cargoDependencia.dependencia.nombre}</td>
                     <td className="px-4 lg:px-6 py-3 rounded-e-md">

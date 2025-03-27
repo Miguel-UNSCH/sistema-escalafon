@@ -7,14 +7,10 @@ import { Create } from "./form-data";
 import { Table } from "./table-data";
 import { Modify } from "./modify-data";
 
-export type DemeritoRecord = Omit<demeritoRecord, "periodo"> & {
-  periodo: { from: string; to: string };
-};
-
 export const ContentData = () => {
-  const [items, setItems] = useState<DemeritoRecord[]>([]);
+  const [items, setItems] = useState<demeritoRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedItem, setSelectedItem] = useState<DemeritoRecord | null>(null);
+  const [selectedItem, setSelectedItem] = useState<demeritoRecord | null>(null);
   const [showCreate, setShowCreate] = useState<boolean>(false);
 
   const fnItems = async () => {
@@ -22,11 +18,9 @@ export const ContentData = () => {
     try {
       const response = await getDemeritos();
       if (response.success && response.data) {
-        setItems(response.data as DemeritoRecord[]);
+        setItems(response.data);
         if (response.data.length === 0) setShowCreate(true);
       } else toast.error(response.message || "No se pudieron obtener los deméritos.");
-
-      // eslint-disable-next-line no-unused-vars
     } catch {
       toast.error("Error al obtener los deméritos.");
     } finally {

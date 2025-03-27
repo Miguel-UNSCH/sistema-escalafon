@@ -70,9 +70,8 @@ export const Create: React.FC<CreateProps> = ({ onMeritoCreated, setSelectedMeri
       <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
-          <DateField control={form.control} name="fecha" label="Fecha de la bonificacion" disabled={false} />
-
           <InputField control={form.control} name="motivo" label="Motivo *" placeholder="Motivo del merito" />
+          <DateField control={form.control} name="fecha" label="Fecha" disabled={false} />
 
           <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" />
           <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} />
