@@ -12,6 +12,7 @@ export const contratoSchema = z.object({
   pap: z.number().optional(), // ** a
   cnp: z.number().optional(), // ** a
   meta: z.string().optional(), // ** c
+  obra: z.string().optional(), // ** c
   periodo: periodoSchema,
   cargo_id: z.string(),
   dependencia_id: z.string(),

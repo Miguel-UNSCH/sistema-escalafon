@@ -21,18 +21,34 @@ export const sexoOp = [
   { key: "f", value: "FEMENINO" },
 ];
 
-export const tipoContratoOp = [
-  { key: "dl", value: "DECRETO LEGISLATIVO" },
-  { key: "cas", value: "CAS" },
-  { key: "pi", value: "PROYECTO DE INVERSIÓN" },
-  { key: "p", value: "PLAZA" },
-];
-
 export const TContratoOp = [
   { key: "dl_276", value: "DL 276" },
   { key: "cas", value: "CAS" },
-  { key: "dl_276_proyecto", value: "DL 276 PROYECTO" },
-  { key: "practicante", value: "PRACTICANTE" },
+  { key: "pro_inv", value: "DL 276 PROYECTO DE INVERSION" },
+  { key: "pra", value: "PRACTICANTE" },
+];
+
+export const CLaboralOp = [
+  { key: "dl_con", value: "CONTRATADO" },
+  { key: "dl_nom", value: "NOMBRADO" },
+  { key: "dl_cps", value: "CONTRATADO POR SUPLENCIA" },
+  { key: "dl_rpmj", value: "REINCORPORADO POR MANDATO JUDICIAL" },
+  { key: "dl_cpsj", value: "CONTRATO PERMANENTE - MANDATATO JUDICIAL" },
+  { key: "cas_ind", value: "INDETERMINADP" },
+  { key: "cas_tem", value: "TEMPORAL" },
+  { key: "cas_sup", value: "SUPLENCIA" },
+  { key: "cas_tra", value: "TRANSITORIA" },
+  { key: "pi_con", value: "CONTRATADO" },
+  { key: "pi_prmj", value: "PERSONAL RETORNANTE CON MANDATO JUDICIAL" },
+  { key: "pra_pre", value: "PREPROFESIONAL" },
+  { key: "pra_pro", value: "PROFESIONAL" },
+];
+
+export const RLaboralOp = [
+  { key: "dl_276", value: "DL 276" },
+  { key: "cas_7057", value: "CAS 7057" },
+  { key: "pi_276", value: "PROYECTO DE INVERSION 276" },
+  { key: "pi_728", value: "PROYECTO DE INVERSION 278" },
 ];
 
 export const tipoDesplazamientoOp = [
@@ -59,43 +75,6 @@ export const tipoPermisoLicenciaVacacionOp = [
   { key: "lic_cgh", value: "LICENCIA CON GOCE DE HABERES" },
   { key: "lic_vac", value: "LICENCIA POR VACACIONES" },
   { key: "vac", value: "VACACIONES" },
-];
-
-export const situacionLaboralOp = [
-  { key: "nd276", value: "NOMBRADO-D-L. 276" },
-  { key: "cpv", value: "CONTRATADO PLAZA VACANTE" },
-  { key: "cl30057", value: "CONTRATADO LEY 30057" },
-  { key: "casi", value: "CONTRATADO CAS-INDETERMINADO" },
-  { key: "cast", value: "CONTRATADO EN CAS-TEMPORAL D.L. 1057" },
-  { key: "cpi", value: "CONTRATADO EN PROYECTO DE INVERSIÓN" },
-  { key: "ppp1404", value: "PRACTICANTES PREPROFESIONALES-D.L. 1404" },
-  { key: "pp1004", value: "PRACTICANTE PROFESIONAL-D.L. 1004" },
-];
-
-export const CLaboralOp = [
-  { key: "nombrado", value: "NOMBRADO" },
-  { key: "contratado", value: "CONTRATADO" },
-  { key: "plaza_vacante", value: "PLAZA VACANTE" },
-  { key: "designado", value: "DESIGNADO" },
-  { key: "indeterminado", value: "INDETERMINADO" },
-  { key: "eventual", value: "EVENTUAL" },
-  { key: "reincorporado", value: "REINCORPORADO" },
-  { key: "mandato_judicial", value: "MANDATO JUDICIAL" },
-  { key: "profesional", value: "PROFESIONAL" },
-  { key: "preprofesional", value: "PREPROFESIONAL" },
-];
-
-export const regimenPensionarioOp = [
-  { key: "l29903", value: "LEY N° 29903" },
-  { key: "dl19990", value: "DECRETO LEGISLATIVO N° 19990" },
-];
-
-export const RLaboralOp = [
-  { key: "dl_276", value: "DL 276" },
-  { key: "fag_cas", value: "FAG CAS" },
-  { key: "fun_276", value: "FUN 276" },
-  { key: "cas", value: "CAS" },
-  { key: "regimen_especial", value: "RÉGIMEN ESPECIAL" },
 ];
 
 export const gradoInstruccionOp = [

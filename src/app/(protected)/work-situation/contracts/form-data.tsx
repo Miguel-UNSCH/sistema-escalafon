@@ -39,6 +39,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
     pap: 0,
     cnp: 0,
     meta: "",
+    obre: "",
     periodo: { from: undefined, to: undefined },
     cargo_id: "",
     dependencia_id: "",
@@ -85,11 +86,11 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
           <SelectField control={form.control} name="tipo_contrato" label="Tipo de Contrato *" options={TContratoOp} />
           <SelectField control={form.control} name="condicion_laboral" label="Condición Laboral *" options={CLaboralOp} />
 
-          {(tipoContrato === "dl_276" || tipoContrato === "cas" || tipoContrato === "dl_276_proyecto") && (
+          {(tipoContrato === "dl_276" || tipoContrato === "cas" || tipoContrato === "pro_inv") && (
             <SelectField control={form.control} name="regimen_laboral" label="Régimen Laboral *" options={RLaboralOp} />
           )}
 
-          {(tipoContrato === "dl_276" || tipoContrato === "dl_276_proyecto" || tipoContrato === "cas") && (
+          {(tipoContrato === "dl_276" || tipoContrato === "pro_inv" || tipoContrato === "cas") && (
             <InputField
               control={form.control}
               name="resolucion_contrato"
@@ -108,9 +109,14 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
             </>
           )}
 
-          {tipoContrato === "dl_276_proyecto" && <InputField control={form.control} name="meta" label="Meta *" placeholder="Ingrese la meta" />}
+          {tipoContrato === "pro_inv" && (
+            <>
+              <InputField control={form.control} name="meta" label="Meta *" placeholder="Ingrese la meta" />
+              <InputField control={form.control} name="obra" label="Obra *" placeholder="Ingrese la obra" />
+            </>
+          )}
 
-          {tipoContrato === "practicante" && <InputField control={form.control} name="resolucion_contrato" label="Convenio *" placeholder="Ingrese el convenio" />}
+          {tipoContrato === "pra" && <InputField control={form.control} name="resolucion_contrato" label="Convenio *" placeholder="Ingrese el convenio" />}
 
           <DependenciaIdField control={form.control} name="dependencia_id" label="Dependencia *" />
           <CargoIdDependenciaField control={form.control} name="cargo_id" dependencia_id={form.watch("dependencia_id")} />

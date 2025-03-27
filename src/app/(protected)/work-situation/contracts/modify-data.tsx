@@ -46,6 +46,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
     pap: item.pap || 0,
     cnp: item.cnp || 0,
     meta: item.meta || "",
+    obrea: item.obra || "",
     cargo_id: item.ucd.cargoDependencia.cargo.id.toString(),
     dependencia_id: item.ucd.cargoDependencia.dependencia.id.toString(),
     periodo: { from: new Date(item.periodo.from), to: new Date(item.periodo.to) },
@@ -70,8 +71,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al modificar.");
       }
     });
@@ -88,8 +88,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al eliminar.");
       }
     });
@@ -103,11 +102,11 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           <SelectField control={form.control} name="tipo_contrato" label="Tipo de Contrato *" options={TContratoOp} />
           <SelectField control={form.control} name="condicion_laboral" label="Condición Laboral *" options={CLaboralOp} />
 
-          {(tipoContrato === "dl_276" || tipoContrato === "cas" || tipoContrato === "dl_276_proyecto") && (
+          {(tipoContrato === "dl_276" || tipoContrato === "cas" || tipoContrato === "pro_inv") && (
             <SelectField control={form.control} name="regimen_laboral" label="Régimen Laboral *" options={RLaboralOp} />
           )}
 
-          {(tipoContrato === "dl_276" || tipoContrato === "dl_276_proyecto" || tipoContrato === "cas") && (
+          {(tipoContrato === "dl_276" || tipoContrato === "pro_inv" || tipoContrato === "cas") && (
             <InputField
               control={form.control}
               name="resolucion_contrato"
@@ -126,9 +125,14 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
             </>
           )}
 
-          {tipoContrato === "dl_276_proyecto" && <InputField control={form.control} name="meta" label="Meta *" placeholder="Ingrese la meta" />}
+          {tipoContrato === "pro_inv" && (
+            <>
+              <InputField control={form.control} name="meta" label="Meta *" placeholder="Ingrese la meta" />
+              <InputField control={form.control} name="obra" label="Obra *" placeholder="Ingrese la obra" />
+            </>
+          )}
 
-          {tipoContrato === "practicante" && <InputField control={form.control} name="resolucion_contrato" label="Convenio *" placeholder="Ingrese el convenio" />}
+          {tipoContrato === "pra" && <InputField control={form.control} name="resolucion_contrato" label="Convenio *" placeholder="Ingrese el convenio" />}
 
           <DependenciaIdField control={form.control} name="dependencia_id" label="Dependencia *" />
           <CargoIdDependenciaField control={form.control} name="cargo_id" dependencia_id={form.watch("dependencia_id")} />
@@ -146,7 +150,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
               </div>
               <div className="flex md:flex-row flex-col gap-2 w-full md:w-auto">
                 <Button variant="outline" asChild>
-                  {/* eslint-disable-next-line jsx-no-target-blank */}
+                  {/* oxlint-disable-next-line jsx-no-target-blank */}
                   <a href={fileUrl} download target="_blank">
                     <Download size={16} /> Descargar
                   </a>

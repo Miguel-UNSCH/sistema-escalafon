@@ -15,153 +15,6 @@ datasource db {
   extensions = [citext]
 }
 
-enum Role {
-  admin
-  personal
-}
-
-enum EstadoCivil {
-  s
-  c
-  d
-  v
-}
-
-enum GrupoSanguineo {
-  a_positivo
-  a_negativo
-  b_positivo
-  b_negativo
-  ab_positivo
-  ab_negativo
-  o_positivo
-  o_negativo
-}
-
-enum Sexo {
-  m
-  f
-}
-
-enum TipoContrato {
-  dl
-  cas
-  pi
-  p
-}
-
-enum TipoDesplazamiento {
-  ri
-  rv
-  r
-  d
-  p
-}
-
-enum TipoDescanso {
-  m
-  p
-  it
-}
-
-enum TipoPermisoLicenciaVacacion {
-  per_mot
-  per_enf
-  per_hon
-  per_cap
-  per_lac
-  lic_sgh
-  lic_cgh
-  lic_vac
-  vac
-}
-
-enum SituacionLaboral {
-  nd276
-  cpv
-  cl30057
-  casi
-  cast
-  cpi
-  ppp1404
-  pp1004
-}
-
-enum RegimenPensionario {
-  l29903
-  dl19990
-}
-
-enum GradoInstruccion {
-  sin
-  pc
-  pi
-  sc
-  si
-  tec
-  uni
-  pos
-  null
-}
-
-enum NivelEducativo {
-  p
-  s
-  t
-  u
-  m
-  d
-  e
-}
-
-enum TContrato {
-  dl_276
-  cas
-  dl_276_proyecto
-  practicante
-}
-
-enum CLaboral {
-  nombrado
-  contratado
-  plaza_vacante
-  designado
-  indeterminado
-  eventual
-  reincorporado
-  mandato_judicial
-  profesional
-  preprofesional
-}
-
-enum RLaboral {
-  dl_276
-  fag_cas
-  fun_276
-  cas
-  regimen_especial
-}
-
-enum TDiscapacidad {
-  sen
-  mot
-  int
-  psi
-  mul
-}
-
-enum TEntCertDic {
-  min
-  ess
-  cod
-}
-
-enum tipo_doc {
-  mem
-  ofi
-  act
-}
-
 model Ubigeo {
   id           Int    @id @default(autoincrement())
   inei         String @unique
@@ -202,10 +55,10 @@ model CargoDependencia {
   cargoId       Int
   dependenciaId Int
 
+  usuarios UsuarioCargoDependencia[]
+
   cargo       Cargo       @relation(fields: [cargoId], references: [id])
   dependencia Dependencia @relation(fields: [dependenciaId], references: [id])
-
-  usuarios UsuarioCargoDependencia[]
 
   @@unique([cargoId, dependenciaId])
   @@map("cargos_dependencias")
@@ -251,8 +104,6 @@ model File {
   uploaded_by_id String
   folder         String
 
-  uploaded_by        User                 @relation(name: "file_uploaded_by", fields: [uploaded_by_id], references: [id], onDelete: Cascade)
-  accessible_by      FileAccess[]
   formacionAcademica FormacionAcademica[]
   capacitacion       Capacitacion[]
   experience         Experience[]
@@ -271,27 +122,9 @@ model File {
   demerito           demerito[]
   constancia         constancia[]
 
+  uploaded_by User @relation(name: "file_uploaded_by", fields: [uploaded_by_id], references: [id], onDelete: Cascade)
+
   @@map("files")
-}
-
-model FileAccess {
-  id      String @id @default(cuid())
-  file    File   @relation(fields: [file_id], references: [id], onDelete: Cascade)
-  file_id String
-  user    User   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id String
-
-  @@unique([file_id, user_id])
-  @@map("file_access")
-}
-
-model rud_access {
-  id         Int      @id @default(autoincrement())
-  start_time DateTime
-  end_time   DateTime
-
-  @@unique([start_time, end_time])
-  @@map("rud_access")
 }
 
 model conf_edicion {
@@ -309,11 +142,17 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   status       String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  admin
+  personal
 }
 
 model User {
@@ -328,7 +167,6 @@ model User {
   role                  Role     @default(personal)
 
   uploaded_files          File[]                    @relation(name: "file_uploaded_by")
-  accessible_files        FileAccess[]
   personal                Personal?
   formacion_academica     FormacionAcademica[]
   capacitacion            Capacitacion[]
@@ -353,6 +191,29 @@ model User {
   constancia              constancia[]
 
   @@map("users")
+}
+
+enum Sexo {
+  m
+  f
+}
+
+enum GrupoSanguineo {
+  a_positivo
+  a_negativo
+  b_positivo
+  b_negativo
+  ab_positivo
+  ab_negativo
+  o_positivo
+  o_negativo
+}
+
+enum EstadoCivil {
+  s
+  c
+  d
+  v
 }
 
 model Personal {
@@ -381,6 +242,18 @@ model Personal {
   children PersonalChildren[]
 
   @@map("personales")
+}
+
+enum GradoInstruccion {
+  sin
+  pc
+  pi
+  sc
+  si
+  tec
+  uni
+  pos
+  null
 }
 
 model Conyuge {
@@ -416,6 +289,20 @@ model Children {
   @@map("childrens")
 }
 
+enum TDiscapacidad {
+  sen
+  mot
+  int
+  psi
+  mul
+}
+
+enum TEntCertDic {
+  min
+  ess
+  cod
+}
+
 model discapacidad {
   id                    String        @id @default(cuid())
   tipo                  TDiscapacidad
@@ -443,6 +330,16 @@ model PersonalChildren {
 
   @@unique([personal_id, children_id])
   @@map("personal_children")
+}
+
+enum NivelEducativo {
+  p
+  s
+  t
+  u
+  m
+  d
+  e
 }
 
 model FormacionAcademica {
@@ -507,36 +404,35 @@ model Experience {
   @@map("experiencias")
 }
 
-// a. Régimen de decreto legislativo 276
-// Condición laboral (Nombrado, Contratado o en plaza vacante, Designado) *
-// Régimen laboral (276, 276, FAG-CAS-FUN276) *
-// Resolución de nombramiento y/o contrato
-// Dependencia y/o oficina -- cargo
-// Nivel remunerativo
-// PAP
-// CNP
-// periodo
+enum TContrato {
+  dl_276
+  cas
+  pro_inv
+  pra
+}
 
-// b. Contrato Administrativo de Servicio - CAS
-// Condición laboral (Indeterminado, Eventual) * 
-// Régimen laboral *
-// Contrato-CAS
-// Dependencia y/o oficina -- cargo
-// periodo
+enum CLaboral {
+  dl_con
+  dl_nom
+  dl_cps
+  dl_rpmj
+  dl_cpsj
+  cas_ind
+  cas_tem
+  cas_sup
+  cas_tra
+  pi_con
+  pi_prmj
+  pra_pre
+  pra_pro
+}
 
-// c. D.L. 276-Proyecto de inversión
-// Condición laboral (Contratado, Reincorporado-Mandato Judicial) * 
-// Régimen laboral *
-// Resolución de contrato
-// Dependencia y/o oficina -- cargo
-// Meta
-// periodo
-
-// d. Practicante-D.L. N° 1401-Régimen Especial Modalidades Formativas
-// Condición laboral (Profesional - Preprofesional) *
-// Convenio
-// Dependencia y/o oficina  -- cargo 
-// periodo
+enum RLaboral {
+  dl_276
+  cas_7057
+  pi_276
+  pi_728
+}
 
 model Contrato {
   id                  String    @id @default(cuid())
@@ -548,7 +444,8 @@ model Contrato {
   pap                 Int? // ** a
   cnp                 Int? // ** a
   meta                String?   @db.Citext // ** c
-  periodo             Json // {from: DateTime, to: DateTime}
+  obra                String?   @db.Citext // ** c
+  periodo             Json // {from: DateTime, to: DateTime} -- vigencia_proyecto_inversion
 
   file_id String
   user_id String
@@ -580,6 +477,14 @@ model renuncia {
   @@map("renuncias")
 }
 
+enum TipoDesplazamiento {
+  ri
+  rv
+  r
+  d
+  p
+}
+
 model desplazamiento {
   id                  String             @id @default(cuid())
   tipo_desplazamiento TipoDesplazamiento
@@ -600,6 +505,12 @@ model desplazamiento {
   @@map("desplazamientos")
 }
 
+enum TipoDescanso {
+  m
+  p
+  it
+}
+
 model descanso_medico {
   id            String       @id @default(cuid())
   detalle       String       @db.Citext
@@ -617,6 +528,18 @@ model descanso_medico {
 
   @@unique([user_id, file_id])
   @@map("descansos_medicos")
+}
+
+enum TipoPermisoLicenciaVacacion {
+  per_mot
+  per_enf
+  per_hon
+  per_cap
+  per_lac
+  lic_sgh
+  lic_cgh
+  lic_vac
+  vac
 }
 
 model per_lic_vac {
@@ -746,7 +669,7 @@ enum tipo_sancion {
 model demerito {
   id             String       @id @default(cuid())
   tipo_sancion   tipo_sancion
-  tipo_documento String       @db.Citext // Resoluciones, Memorando
+  tipo_documento String       @db.Citext
   asunto         String       @db.Citext
   fecha_start    DateTime
   fecha_end      DateTime?
@@ -761,6 +684,12 @@ model demerito {
 
   @@unique([user_id, file_id])
   @@map("demeritos")
+}
+
+enum tipo_doc {
+  mem
+  ofi
+  act
 }
 
 model documento {
