@@ -19,6 +19,7 @@ import {
   TipoCapacitacion as TCapacitacionPrisma,
   TEntCertDic as TEntCertDicdPrisma,
   tipo_doc as tipo_docPrisma,
+  tipo_sancion as tipo_sancionPrisma,
 } from "@prisma/client";
 
 export const EstadoCivil = z.nativeEnum(EstadoCivilPrisma);
@@ -56,3 +57,4 @@ export const TCapacitacion = z.nativeEnum(TCapacitacionPrisma);
 export const TEntCertDic = z.nativeEnum(TEntCertDicdPrisma);
 
 export const tipo_doc = z.nativeEnum(tipo_docPrisma);
+export const tipo_sancion = z.nativeEnum(tipo_sancionPrisma);

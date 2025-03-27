@@ -15,8 +15,8 @@ import { SelectField } from "@/components/custom-fields/select-field";
 import { InputField } from "@/components/custom-fields/input-field";
 import { CargosUserField, DependenciasUserField } from "@/components/custom-fields/user-cargos-dependencia";
 import { DateField } from "@/components/custom-fields/date-field";
-import { tipo_suspensionOp } from "@/utils/options";
-import { deleteMerito, updateDemerito } from "@/actions/m-d-action";
+import { tipo_sancionOp } from "@/utils/options";
+import { deleteDemerito, updateDemerito } from "@/actions/m-d-action";
 import toast from "react-hot-toast";
 
 type ModifyProps = {
@@ -76,8 +76,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al modificar.");
       }
     });
@@ -86,7 +85,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
   const onDelete = () => {
     startTransition(async () => {
       try {
-        const response = await deleteMerito(item.id, item.file_id);
+        const response = await deleteDemerito(item.id, item.file_id);
         if (!response.success) toast.error(response.message);
         else {
           toast.success("Eliminacion exitosa.");
@@ -94,8 +93,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al eliminar.");
       }
     });
@@ -114,7 +112,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
           <UserField control={form.control} name="user" label="Buscar al personal" />
 
-          <SelectField control={form.control} name="tipo_sancion" label="Tipo de Sancion *" options={tipo_suspensionOp} />
+          <SelectField control={form.control} name="tipo_sancion" label="Tipo de Sancion *" options={tipo_sancionOp} />
           <SelectField control={form.control} name="tipo_documento" label="Tipo de Documento *" options={selectValues} />
           <InputField control={form.control} name="asunto" label="Asunto *" placeholder="Asunto de la sancion" />
 
@@ -133,7 +131,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
               </div>
               <div className="flex md:flex-row flex-col gap-2 w-full md:w-auto">
                 <Button variant="outline" asChild>
-                  {/* eslint-disable-next-line jsx-no-target-blank */}
+                  {/* oxlint-disable-next-line jsx-no-target-blank */}
                   <a href={fileUrl} download target="_blank">
                     <Download size={16} /> Descargar
                   </a>

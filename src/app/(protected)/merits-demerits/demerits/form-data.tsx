@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { demeritoSchema, ZDemerito } from "@/lib/schemas/m-d-schema";
 import { uploadFile } from "@/service/file-service";
-import { tipo_suspensionOp } from "@/utils/options";
+import { tipo_sancionOp } from "@/utils/options";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save } from "lucide-react";
 import React, { useTransition } from "react";
@@ -71,8 +71,7 @@ export const Create: React.FC<CreateProps> = ({ onItemCreated, setSelectedItem, 
           onItemCreated();
           setSelectedItem(null);
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al registrar el demérito.");
       }
     });
@@ -91,7 +90,7 @@ export const Create: React.FC<CreateProps> = ({ onItemCreated, setSelectedItem, 
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <UserField control={form.control} name="user" label="Buscar al personal" />
 
-          <SelectField control={form.control} name="tipo_sancion" label="Tipo de Sancion *" options={tipo_suspensionOp} />
+          <SelectField control={form.control} name="tipo_sancion" label="Tipo de Sancion *" options={tipo_sancionOp} />
           <SelectField control={form.control} name="tipo_documento" label="Tipo de Documento *" options={selectValues} />
           <InputField control={form.control} name="asunto" label="Asunto *" placeholder="Asunto de la sancion" />
 

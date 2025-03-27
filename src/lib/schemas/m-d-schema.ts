@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { fileSchema, periodoSchema } from "../zod";
+import { tipo_sancion } from "./enums";
 
 export const meritoSchema = z.object({
   fecha: z
@@ -13,15 +14,13 @@ export const meritoSchema = z.object({
 });
 export type ZMerito = z.infer<typeof meritoSchema>;
 
-export const tipo_sancion_z = z.enum(["sgl", "amo", "ppe", "nin"]);
-
 export const demeritoSchema = z.object({
   user: z.object({
     name: z.string(),
     dni: z.string(),
     id: z.string(),
   }),
-  tipo_sancion: tipo_sancion_z,
+  tipo_sancion: tipo_sancion,
   tipo_documento: z.string(),
   asunto: z.string(),
   periodo: periodoSchema,

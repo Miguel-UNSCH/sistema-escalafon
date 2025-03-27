@@ -733,11 +733,18 @@ model merito {
   @@map("meritos")
 }
 
+enum tipo_sancion {
+  amo_ver
+  amo_esc
+  sus
+  dest
+}
+
 model demerito {
-  id             String @id @default(cuid())
-  tipo_sancion   String @db.Citext
-  tipo_documento String @db.Citext // Resoluciones, Memorando
-  asunto         String @db.Citext
+  id             String       @id @default(cuid())
+  tipo_sancion   tipo_sancion
+  tipo_documento String       @db.Citext // Resoluciones, Memorando
+  asunto         String       @db.Citext
   periodo        Json // {from: DateTime, to: DateTime}
 
   user_id String
