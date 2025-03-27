@@ -28,28 +28,38 @@ export const TContratoOp = [
   { key: "pra", value: "PRACTICANTE" },
 ];
 
-export const CLaboralOp = [
-  { key: "dl_con", value: "CONTRATADO" },
-  { key: "dl_nom", value: "NOMBRADO" },
-  { key: "dl_cps", value: "CONTRATADO POR SUPLENCIA" },
-  { key: "dl_rpmj", value: "REINCORPORADO POR MANDATO JUDICIAL" },
-  { key: "dl_cpsj", value: "CONTRATO PERMANENTE - MANDATATO JUDICIAL" },
-  { key: "cas_ind", value: "INDETERMINADP" },
-  { key: "cas_tem", value: "TEMPORAL" },
-  { key: "cas_sup", value: "SUPLENCIA" },
-  { key: "cas_tra", value: "TRANSITORIA" },
-  { key: "pi_con", value: "CONTRATADO" },
-  { key: "pi_prmj", value: "PERSONAL RETORNANTE CON MANDATO JUDICIAL" },
-  { key: "pra_pre", value: "PREPROFESIONAL" },
-  { key: "pra_pro", value: "PROFESIONAL" },
-];
+export const cond_lab_op = {
+  dl_276: [
+    { key: "dl_con", value: "CONTRATADO" },
+    { key: "dl_nom", value: "NOMBRADO" },
+    { key: "dl_cps", value: "CONTRATADO POR SUPLENCIA" },
+    { key: "dl_rpmj", value: "REINCORPORADO POR MANDATO JUDICIAL" },
+    { key: "dl_cpsj", value: "CONTRATO PERMANENTE - MANDATATO JUDICIAL" },
+  ],
+  cas: [
+    { key: "cas_ind", value: "INDETERMINADO" },
+    { key: "cas_tem", value: "TEMPORAL" },
+    { key: "cas_sup", value: "SUPLENCIA" },
+    { key: "cas_tra", value: "TRANSITORIA" },
+  ],
+  pro_inv: [
+    { key: "pi_con", value: "CONTRATADO" },
+    { key: "pi_prmj", value: "PERSONAL RETORNANTE CON MANDATO JUDICIAL" },
+  ],
+  pra: [
+    { key: "pra_pre", value: "PREPROFESIONAL" },
+    { key: "pra_pro", value: "PROFESIONAL" },
+  ],
+};
 
-export const RLaboralOp = [
-  { key: "dl_276", value: "DL 276" },
-  { key: "cas_7057", value: "CAS 7057" },
-  { key: "pi_276", value: "PROYECTO DE INVERSION 276" },
-  { key: "pi_728", value: "PROYECTO DE INVERSION 278" },
-];
+export const reg_lab_op = {
+  dl_276: [{ key: "dl_276", value: "DL 276" }],
+  cas: [{ key: "cas_7057", value: "CAS 7057" }],
+  pro_inv: [
+    { key: "pi_276", value: "PROYECTO DE INVERSION 276" },
+    { key: "pi_728", value: "PROYECTO DE INVERSION 278" },
+  ],
+};
 
 export const tipoDesplazamientoOp = [
   { key: "ri", value: "ROTACIÓN INTERNA" },

@@ -53,22 +53,14 @@ export const createContract = async (data: ZContratoS & { file_id: string }): Pr
     const dependencia = await prisma.dependencia.findUnique({ where: { id: Number(data.dependencia_id) } });
     if (!dependencia) throw new Error("Dependencia no encontrada");
 
-    const cargoDependencia = await prisma.cargoDependencia.findUnique({
-      where: {
-        cargoId_dependenciaId: { cargoId: cargo.id, dependenciaId: dependencia.id },
-      },
-    });
+    const cargoDependencia = await prisma.cargoDependencia.findUnique({ where: { cargoId_dependenciaId: { cargoId: cargo.id, dependenciaId: dependencia.id } } });
 
     if (!cargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia seleccionada.");
 
     let usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
-      where: {
-        userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: cargoDependencia.id },
-      },
+      where: { userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: cargoDependencia.id } },
     });
-    if (!usuarioCargoDependencia) {
-      usuarioCargoDependencia = await prisma.usuarioCargoDependencia.create({ data: { userId: user.id, cargoDependenciaId: cargoDependencia.id } });
-    }
+    if (!usuarioCargoDependencia) usuarioCargoDependencia = await prisma.usuarioCargoDependencia.create({ data: { userId: user.id, cargoDependenciaId: cargoDependencia.id } });
 
     const file = await prisma.file.findUnique({ where: { id: data.file_id } });
     if (!file) throw new Error("Archivo no encontrado");
@@ -84,6 +76,7 @@ export const createContract = async (data: ZContratoS & { file_id: string }): Pr
         pap: data.pap || null,
         cnp: data.cnp || null,
         meta: data.meta?.toUpperCase() || null,
+        obra: data.obra?.toUpperCase() || null,
         periodo: { from: new Date(data.periodo.from).toISOString(), to: new Date(data.periodo.to).toISOString() },
         ucd_id: usuarioCargoDependencia.id,
         file_id: data.file_id,
@@ -115,25 +108,14 @@ export const updateContract = async (id: string, data: ZContratoS & { file?: Fil
     const dependencia = await prisma.dependencia.findUnique({ where: { id: Number(data.dependencia_id) } });
     if (!dependencia) throw new Error("Dependencia no encontrada");
 
-    const cargoDependencia = await prisma.cargoDependencia.findUnique({
-      where: {
-        cargoId_dependenciaId: {
-          cargoId: cargo.id,
-          dependenciaId: dependencia.id,
-        },
-      },
-    });
+    const cargoDependencia = await prisma.cargoDependencia.findUnique({ where: { cargoId_dependenciaId: { cargoId: cargo.id, dependenciaId: dependencia.id } } });
     if (!cargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia seleccionada.");
 
     let usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
-      where: {
-        userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: cargoDependencia.id },
-      },
+      where: { userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: cargoDependencia.id } },
     });
     if (!usuarioCargoDependencia) {
-      usuarioCargoDependencia = await prisma.usuarioCargoDependencia.create({
-        data: { userId: user.id, cargoDependenciaId: cargoDependencia.id },
-      });
+      usuarioCargoDependencia = await prisma.usuarioCargoDependencia.create({ data: { userId: user.id, cargoDependenciaId: cargoDependencia.id } });
     }
 
     const file = await prisma.file.findUnique({ where: { id: data.file_id } });
@@ -147,22 +129,23 @@ export const updateContract = async (id: string, data: ZContratoS & { file?: Fil
       await prisma.file.update({ where: { id: current_model.file.id }, data: { name: data.file?.name, size: fileBuffer.length } });
     }
 
-    await prisma.contrato.update({
-      where: { id },
-      data: {
-        tipo_contrato: data.tipo_contrato,
-        condicion_laboral: data.condicion_laboral,
-        regimen_laboral: data.regimen_laboral || null,
-        resolucion_contrato: data.resolucion_contrato?.toUpperCase() || null,
-        nivel_remuneracion: data.nivel_remuneracion?.toUpperCase() || null,
-        pap: data.pap || null,
-        cnp: data.cnp || null,
-        meta: data.meta?.toUpperCase() || null,
-        periodo: { from: new Date(data.periodo.from).toISOString(), to: new Date(data.periodo.to).toISOString() },
-        ucd_id: usuarioCargoDependencia.id,
-        ...(data.file_id && { file_id: data.file_id }),
-      },
-    });
+    const dataUpdate: any = {
+      tipo_contrato: data.tipo_contrato,
+      condicion_laboral: data.condicion_laboral,
+      regimen_laboral: ["cas", "dl_276", "pro_inv"].includes(data.tipo_contrato) ? data.regimen_laboral : null,
+      resolucion_contrato: data.resolucion_contrato?.toUpperCase() || null,
+      nivel_remuneracion: data.tipo_contrato === "dl_276" ? data.nivel_remuneracion?.toUpperCase() || null : null,
+      pap: data.tipo_contrato === "dl_276" ? data.pap || null : null,
+      cnp: data.tipo_contrato === "dl_276" ? data.cnp || null : null,
+      meta: data.tipo_contrato === "pro_inv" ? data.meta?.toUpperCase() || null : null,
+      obra: data.tipo_contrato === "pro_inv" ? data.obra?.toUpperCase() || null : null,
+      periodo: { from: new Date(data.periodo.from).toISOString(), to: new Date(data.periodo.to).toISOString() },
+      ucd_id: usuarioCargoDependencia.id,
+    };
+
+    if (data.file_id) dataUpdate.file_id = data.file_id;
+
+    await prisma.contrato.update({ where: { id }, data: dataUpdate });
 
     return { success: true, message: "Contrato modificado exitosamente." };
   } catch (error: unknown) {

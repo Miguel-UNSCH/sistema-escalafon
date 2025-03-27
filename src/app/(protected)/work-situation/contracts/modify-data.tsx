@@ -7,7 +7,7 @@ import { UploadField } from "@/components/custom-fields/upload-file";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { contratoSchema, ZContratoS } from "@/lib/schemas/w-situation-schema";
-import { TContratoOp, CLaboralOp, RLaboralOp } from "@/utils/options";
+import { TContratoOp, reg_lab_op, cond_lab_op } from "@/utils/options";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Download, Save, Trash } from "lucide-react";
 import React from "react";
@@ -100,10 +100,12 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
           <SelectField control={form.control} name="tipo_contrato" label="Tipo de Contrato *" options={TContratoOp} />
-          <SelectField control={form.control} name="condicion_laboral" label="Condición Laboral *" options={CLaboralOp} />
+          {["dl_276", "cas", "pro_inv", "prac"].includes(tipoContrato) && (
+            <SelectField control={form.control} name="condicion_laboral" label="Condición Laboral *" options={cond_lab_op[tipoContrato as keyof typeof cond_lab_op]} />
+          )}
 
-          {(tipoContrato === "dl_276" || tipoContrato === "cas" || tipoContrato === "pro_inv") && (
-            <SelectField control={form.control} name="regimen_laboral" label="Régimen Laboral *" options={RLaboralOp} />
+          {["dl_276", "cas", "pro_inv"].includes(tipoContrato) && (
+            <SelectField control={form.control} name="regimen_laboral" label="Régimen Laboral *" options={reg_lab_op[tipoContrato as keyof typeof reg_lab_op]} />
           )}
 
           {(tipoContrato === "dl_276" || tipoContrato === "pro_inv" || tipoContrato === "cas") && (

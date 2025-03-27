@@ -13,7 +13,7 @@ import { createContract } from "@/actions/contract-action";
 import { DateField } from "@/components/custom-fields/date-field";
 import { InputField } from "@/components/custom-fields/input-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
-import { CLaboralOp, RLaboralOp, TContratoOp } from "@/utils/options";
+import { cond_lab_op, reg_lab_op, TContratoOp } from "@/utils/options";
 import { SelectField } from "@/components/custom-fields/select-field";
 import { contratoSchema, ZContratoS } from "@/lib/schemas/w-situation-schema";
 import { ContractRecord } from "./content-data";
@@ -84,17 +84,20 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <SelectField control={form.control} name="tipo_contrato" label="Tipo de Contrato *" options={TContratoOp} />
-          <SelectField control={form.control} name="condicion_laboral" label="Condición Laboral *" options={CLaboralOp} />
 
-          {(tipoContrato === "dl_276" || tipoContrato === "cas" || tipoContrato === "pro_inv") && (
-            <SelectField control={form.control} name="regimen_laboral" label="Régimen Laboral *" options={RLaboralOp} />
+          {["dl_276", "cas", "pro_inv", "prac"].includes(tipoContrato) && (
+            <SelectField control={form.control} name="condicion_laboral" label="Condición Laboral *" options={cond_lab_op[tipoContrato as keyof typeof cond_lab_op]} />
+          )}
+
+          {["dl_276", "cas", "pro_inv"].includes(tipoContrato) && (
+            <SelectField control={form.control} name="regimen_laboral" label="Régimen Laboral *" options={reg_lab_op[tipoContrato as keyof typeof reg_lab_op]} />
           )}
 
           {(tipoContrato === "dl_276" || tipoContrato === "pro_inv" || tipoContrato === "cas") && (
             <InputField
               control={form.control}
               name="resolucion_contrato"
-              label={tipoContrato === "cas" ? "Contrato CAS *" : "Resolución de Nombramiento o Contrato *"}
+              label={tipoContrato === "cas" ? "Contrato CAS *" : "Resolución de Nombramiento *"}
               placeholder="Ingrese la resolución o contrato"
             />
           )}
