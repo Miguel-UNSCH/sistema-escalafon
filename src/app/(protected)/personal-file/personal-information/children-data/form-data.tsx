@@ -19,9 +19,11 @@ import { childrenSchema, ZChildren } from "@/lib/schemas/personal-schema";
 type CreateProps = {
   onCreated: () => void;
   setSelectedItem: React.Dispatch<React.SetStateAction<childrenRecord | null>>;
+  onCancel?: () => void;
+  showCancel?: boolean;
 };
 
-export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel }) => {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<ZChildren>({
@@ -43,11 +45,11 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) =>
         if (!result.success) toast.error(result.message);
         else {
           toast.success("Hijo registrado exitosamente.");
+          form.reset();
           onCreated();
           setSelectedItem(null);
         }
-        // oxlint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al registrar el hijo.");
       }
     });
@@ -77,7 +79,12 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem }) =>
 
           <SelectField control={form.control} name="grado_instruccion" label="Grado de Instrucción *" options={gradoInstruccionOp} disabled={false} />
 
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-2">
+            {showCancel && onCancel && (
+              <Button type="button" variant="outline" onClick={onCancel}>
+                Cancelar
+              </Button>
+            )}
             <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
               <Save />
               {isPending ? "Guardando..." : "Guardar"}

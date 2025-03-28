@@ -7,8 +7,8 @@ import { useRouter } from "next/navigation";
 import { childrenRecord, getChilds } from "@/actions/children-action";
 import { getCurrentPersonal } from "@/actions/personal-action";
 import { Table } from "./table-data";
-import { Create } from "./form-data";
 import { Modify } from "./modify-data";
+import { Create } from "./form-data";
 
 export const ContentData = ({ session }: { session: any }) => {
   const [items, setItems] = useState<childrenRecord[]>([]);
@@ -16,6 +16,7 @@ export const ContentData = ({ session }: { session: any }) => {
   const [selectedItem, setSelectedItem] = useState<childrenRecord | null>(null);
   const [numeroHijos, setNumeroHijos] = useState<number | null>(null);
   const [personalExists, setPersonalExists] = useState<boolean>(true);
+  const [showCreate, setShowCreate] = useState<boolean>(false);
   const router = useRouter();
 
   const fetchPersonalData = async () => {
@@ -40,21 +41,20 @@ export const ContentData = ({ session }: { session: any }) => {
   }, [session]);
 
   const fnChildren = async () => {
-    // setLoading(true);
+    setLoading(true);
     try {
       const response = await getChilds();
       if (response.success && response.data) {
         setItems(response.data as childrenRecord[]);
-      } else {
-        toast.error(response.message || "No se pudieron obtener los hijos.");
-      }
-      // oxlint-disable-next-line no-unused-vars
-    } catch (e: unknown) {
+        if (response.data.length === 0) {
+          setShowCreate(true);
+        }
+      } else toast.error(response.message || "No se pudieron obtener los hijos.");
+    } catch {
       toast.error("Error al obtener los hijos.");
+    } finally {
+      setLoading(false);
     }
-    //  finally {
-    //   setLoading(false);
-    // }
   };
 
   useEffect(() => {
@@ -65,6 +65,7 @@ export const ContentData = ({ session }: { session: any }) => {
     await fetchPersonalData();
     await fnChildren();
     setSelectedItem(null);
+    setShowCreate(false);
   };
 
   if (loading) return <p className="text-subtext0 text-center">Cargando datos...</p>;
@@ -108,9 +109,18 @@ export const ContentData = ({ session }: { session: any }) => {
       )}
 
       {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} />}
-
       {items.length < (numeroHijos ?? 0) ? (
-        <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} />
+        <>
+          {!showCreate && items.length > 0 && (
+            <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
+              <p className="border-mauve border-b-2 hover:border-b-4 font-special hover:font-bold text-mauve cursor-pointer" onClick={() => setShowCreate(true)}>
+                Registrar
+              </p>
+              <p>datos de otro hijo.</p>
+            </div>
+          )}
+          {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} />}
+        </>
       ) : (
         <div className="flex flex-row justify-center items-center font-text">
           <p className="font-semibold text-subtext0 text-lg text-center">
