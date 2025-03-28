@@ -59,6 +59,7 @@ export const EditTime = () => {
         const res = await createConfEdit(data as any);
         if (res.success) {
           toast.success(res.message);
+          setConfId(res.data?.id || null);
           setShowForm(true);
         } else {
           toast.error(res.message);
@@ -95,8 +96,8 @@ export const EditTime = () => {
       {showForm && (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
-            <DateField control={form.control} name="fecha_inicio" label="Fecha de inicio" disabled={false} dateLimit="future" />
-            <DateField control={form.control} name="fecha_fin" label="Fecha de culminación" disabled={false} dateLimit="future" />
+            <DateField control={form.control} name="fecha_inicio" label="Fecha de inicio" disabled={false} dateLimit="past" />
+            <DateField control={form.control} name="fecha_fin" label="Fecha de culminación" disabled={false} dateLimit="past" />
 
             <div className="flex justify-end gap-4">
               {confId && (

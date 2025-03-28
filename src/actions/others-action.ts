@@ -232,7 +232,7 @@ export const getCargosDependencias = async (search?: string): Promise<{ success:
   try {
     const dependencias = await prisma.dependencia.findMany({
       where: { OR: [{ nombre: { contains: search, mode: Prisma.QueryMode.insensitive } }, { codigo: { contains: search, mode: Prisma.QueryMode.insensitive } }] },
-      orderBy: { nombre: "asc" },
+      orderBy: { codigo: "asc" },
       include: { cargos: { include: { cargo: true } } },
     });
     if (!dependencias.length) throw new Error("No se encontraron dependencias.");

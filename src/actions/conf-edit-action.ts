@@ -23,7 +23,7 @@ export const getConfEdit = async (): Promise<{ success: boolean; message?: strin
   }
 };
 
-export const createConfEdit = async (data: conf_edicion): Promise<{ success: boolean; message: string }> => {
+export const createConfEdit = async (data: conf_edicion): Promise<{ success: boolean; message: string; data?: { id: number } }> => {
   try {
     const session = await auth();
     if (!session?.user?.email) throw new Error("No autorizado");
@@ -31,14 +31,15 @@ export const createConfEdit = async (data: conf_edicion): Promise<{ success: boo
     const user = await prisma.user.findUnique({ where: { email: session.user.email } });
     if (!user) throw new Error("Usuario no encontrado");
 
-    await prisma.conf_edicion.create({
+    const res = await prisma.conf_edicion.create({
       data: {
         fecha_inicio: new Date(data.fecha_inicio).toISOString(),
         fecha_fin: new Date(data.fecha_fin).toISOString(),
       },
     });
+    if (!res) throw new Error("Error al crear la configuracion de edicion.");
 
-    return { success: true, message: "Configuracion de edicion creada correctamente." };
+    return { success: true, message: "Configuracion de edicion creada correctamente.", data: { id: res.id } };
   } catch (error: unknown) {
     return { success: false, message: error instanceof Error ? error.message : "Error al crear la configuracion de edicion." };
   }

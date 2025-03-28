@@ -9,7 +9,6 @@ import { AuthError } from "next-auth";
 import { z } from "zod";
 import { signIn as nextAuthSignIn } from "@/auth";
 
-// Define el tipo de resultado, extendiéndolo para incluir los campos adicionales
 type LoginResult = {
   success: boolean;
   message?: string;
@@ -30,7 +29,6 @@ export async function loginAction(values: ZLoginS): Promise<LoginResult> {
       };
     }
 
-    // Usar la versión server-side de signIn
     const result = await nextAuthSignIn("credentials", {
       email: values.email,
       password: values.password,
@@ -44,7 +42,6 @@ export async function loginAction(values: ZLoginS): Promise<LoginResult> {
       };
     }
 
-    // Retornar los datos adicionales y la redirección basada en el rol
     return {
       success: true,
       must_change_pwd: user.must_change_pwd,
@@ -64,7 +61,7 @@ export async function loginAction(values: ZLoginS): Promise<LoginResult> {
         message: "Credenciales inválidas",
       };
     }
-    // eslint-disable-next-line no-console
+    // oxlint-disable-next-line no-console
     console.error("Error de autenticación:", error);
     return {
       success: false,
