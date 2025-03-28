@@ -29,9 +29,7 @@ export const ContentData = ({ session }: { session: Session }) => {
           setShowCreate(true);
         }
       } else toast.error(response.message || "No se pudieron obtener los contratos.");
-
-      // eslint-disable-next-line no-unused-vars
-    } catch (e: unknown) {
+    } catch {
       toast.error("Error al obtener los contratos.");
     } finally {
       setLoading(false);
