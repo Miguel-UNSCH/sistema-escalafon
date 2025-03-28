@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 
-import { cond_lab_op, reg_lab_op } from "@/utils/options";
+import { cond_lab_op, reg_lab_op, TContratoOp } from "@/utils/options";
 import { getFile } from "@/actions/file-action";
 import { Pagination } from "@/components/pagination";
 import { ContractRecord } from "./content-data";
@@ -63,6 +63,7 @@ export const Table: React.FC<TableProps> = ({ items, loading, selectedItem, setS
                     onClick={() => setSelectedItem(item)}
                   >
                     <td className="px-4 lg:px-6 py-3 rounded-s-md">{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                    <td className="px-4 lg:px-6 py-3">{TContratoOp.find((i) => i.key === item.tipo_contrato)?.value || "N/A"}</td>
                     <td className="px-4 lg:px-6 py-3">
                       {cond_lab_op[item.tipo_contrato as keyof typeof cond_lab_op]?.find((i) => i.key === item.condicion_laboral)?.value || "N/A"}
                     </td>
