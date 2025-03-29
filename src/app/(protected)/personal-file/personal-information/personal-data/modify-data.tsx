@@ -77,7 +77,7 @@ export const ModifyData = ({ personalData, onRefresh }: { personalData: personal
 
   return (
     <div className="flex flex-col gap-5 w-full">
-      <p className="font-primary font-bold text-mauve text-xl uppercase">Modificar o Eliminar</p>
+      <p className="font-primary font-bold text-mauve text-xl uppercase">Modificar o Vaciar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8 pb-5">
           <div className="flex flex-col gap-2">
@@ -115,7 +115,7 @@ export const ModifyData = ({ personalData, onRefresh }: { personalData: personal
 
           <div className="flex justify-end gap-3">
             <Button onClick={handleDelete}>
-              <Trash /> Eliminar
+              <Trash /> Vaciar
             </Button>
             <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
               <Edit /> {isPending ? "Guardando..." : "Modificar"}

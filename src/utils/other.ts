@@ -1,5 +1,7 @@
 export const admin_routes = ["/dashboard", "/user", "/merits-demerits/demerits", "/reports"];
 
+export const special_routes = ["/acknowledgment"];
+
 export interface BreadcrumbItem {
   label: string;
   path: string;
@@ -64,6 +66,7 @@ export const breadcrumbs_options: BreadcrumbItem[] = [
         items: [
           { label: "bonificación personal", path: "/personal" },
           { label: "bonificación familiar", path: "/family" },
+          { label: "reconocimientos", path: "/acknowledgment" },
         ],
       },
       { label: "evaluaciones", path: "/evaluations" },
