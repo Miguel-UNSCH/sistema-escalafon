@@ -6,10 +6,8 @@ import { desplazamientoRecord, getDesplazamientos } from "@/actions/desplazamien
 import { Table } from "./table-data";
 import { Create } from "./form-data";
 import { Modify } from "./modify-data";
-import { Session } from "next-auth";
 
-// eslint-disable-next-line no-unused-vars
-export const ContentData = ({ session }: { session: Session }) => {
+export const ContentData = () => {
   const [items, setItems] = useState<desplazamientoRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItem, setSelectedItem] = useState<desplazamientoRecord | null>(null);
@@ -25,8 +23,7 @@ export const ContentData = ({ session }: { session: Session }) => {
       } else {
         toast.error(response.message || "No se pudieron obtener los desplazamientos.");
       }
-      // eslint-disable-next-line no-unused-vars
-    } catch (e: unknown) {
+    } catch {
       toast.error("Error al obtener los desplazamientos.");
     } finally {
       setLoading(false);

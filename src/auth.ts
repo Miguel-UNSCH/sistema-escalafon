@@ -93,7 +93,7 @@ const callbacks = {
   async jwt({ token, user }: JWTParams) {
     if (user) {
       token.sub = user.id;
-      token.role = user.role; // Agrega el role al tokenk
+      token.role = (user as User).role; // Agrega el role al tokenk
     }
     return token;
   },

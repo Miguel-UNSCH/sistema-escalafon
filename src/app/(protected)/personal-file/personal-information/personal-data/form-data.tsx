@@ -14,7 +14,7 @@ import { SelectField } from "@/components/custom-fields/select-field";
 import { SwitchField } from "@/components/custom-fields/switch-field";
 import { UbigeoField } from "@/components/custom-fields/ubigeo-field";
 import { personalSchema, ZPersonal } from "@/lib/schemas/personal-schema";
-import { estadoCivilOp, grupoSanguineoOp, sexoOp } from "@/utils/options";
+import { estadoCivilOp, grupoSanguineoOp, lic_condOp, sexoOp } from "@/utils/options";
 import toast from "react-hot-toast";
 
 export const CreateData = ({ onRefresh }: { onRefresh: () => void }) => {
@@ -25,7 +25,7 @@ export const CreateData = ({ onRefresh }: { onRefresh: () => void }) => {
     sexo: undefined,
     grupo_sanguineo: undefined,
     n_autogenerado: "",
-    licencia_conducir: "",
+    licencia_conducir: undefined,
     fecha_ingreso: undefined,
     anios_servicio: 0,
     fecha_nacimiento: undefined,
@@ -49,8 +49,7 @@ export const CreateData = ({ onRefresh }: { onRefresh: () => void }) => {
           toast.success("Personal registrado exitosamente.");
           onRefresh();
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al procesar la información.");
       }
     });
@@ -81,7 +80,7 @@ export const CreateData = ({ onRefresh }: { onRefresh: () => void }) => {
 
           <div className="gap-2 grid grid-cols-2">
             <InputField control={form.control} name="n_autogenerado" label="Numero Autogenerado" placeholder="Ingrese el numero autogenerado" />
-            <InputField control={form.control} name="licencia_conducir" label="Licencia de Conducir" placeholder="Ingrese la licencia" />
+            <SelectField control={form.control} name="licencia_conducir" label="Licencia de Conducir" placeholder="Seleccione la licnecia" options={lic_condOp} disabled={false} />
           </div>
 
           <div className="gap-2 grid grid-cols-2">
