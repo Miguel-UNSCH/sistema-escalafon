@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Inter, Poppins, Montserrat } from "next/font/google";
 import "./globals.css";
 import clsx from "clsx";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -12,10 +11,6 @@ export const metadata: Metadata = {
   description: "gobierno regional de ayacucho",
 };
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const poppins = Poppins({ weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"], variable: "--font-poppins" });
-const montserrat = Montserrat({ weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"], variable: "--font-montserrat" });
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -23,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" suppressHydrationWarning>
-      <body className={clsx(inter.variable, poppins.variable, montserrat.variable, "antialiased h-screen bg-background text-text")}>
+      <body className={clsx("bg-background h-screen text-text antialiased")}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <SessionProvider>
             <main className="h-full">

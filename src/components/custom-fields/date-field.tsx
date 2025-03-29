@@ -43,7 +43,7 @@ export const DateField = ({ control, name, label, disabled, dateLimit = "past" }
       name={name}
       render={({ field }) => (
         <FormItem className="flex flex-col">
-          <FormLabel>{label} *</FormLabel>
+          <FormLabel className="py-1">{label} *</FormLabel>
           <Popover>
             <PopoverTrigger asChild disabled={disabled}>
               <FormControl>

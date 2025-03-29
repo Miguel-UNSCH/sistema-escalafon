@@ -19,7 +19,7 @@ export const InputField = ({ control, name, label, placeholder, description, dis
       name={name}
       render={({ field }) => (
         <FormItem>
-          {label && <FormLabel>{label}</FormLabel>}
+          {label && <FormLabel className="py-1">{label}</FormLabel>}
           <FormControl>
             <Input
               placeholder={placeholder}

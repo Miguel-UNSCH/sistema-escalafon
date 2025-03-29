@@ -3,14 +3,14 @@ import fs from "fs";
 import path from "path";
 import { NextResponse } from "next/server";
 
-export const GET = async (req: Request, { params }: { params: { id: string } }) => {
+export const GET = async (req: Request, { params }: { params: Promise<{ id: string }> }) => {
   try {
-    const fileId = params.id;
+    const { id } = await params;
 
-    const file = await prisma.file.findUnique({ where: { id: fileId } });
+    const file = await prisma.file.findUnique({ where: { id } });
     if (!file) return NextResponse.json({ message: "Archivo no encontrado" }, { status: 404 });
 
-    const filePath = path.join(process.cwd(), file.path, `${fileId}${file.extension}`);
+    const filePath = path.join(process.cwd(), file.path, `${id}${file.extension}`);
     if (!fs.existsSync(filePath)) {
       return NextResponse.json({ message: "El archivo no existe en el servidor" }, { status: 404 });
     }
@@ -23,6 +23,7 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
         fileStream.on("error", (err) => controller.error(err));
       },
     });
+
     return new Response(readableStream, {
       headers: {
         "Content-Type": "application/octet-stream",

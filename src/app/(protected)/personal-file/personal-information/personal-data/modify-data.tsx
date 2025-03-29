@@ -9,7 +9,7 @@ import { UbigeoField } from "@/components/custom-fields/ubigeo-field";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { personalSchema, ZPersonal } from "@/lib/schemas/personal-schema";
-import { estadoCivilOp, grupoSanguineoOp, sexoOp } from "@/utils/options";
+import { estadoCivilOp, grupoSanguineoOp, lic_condOp, sexoOp } from "@/utils/options";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Edit, Trash } from "lucide-react";
 import { useTransition } from "react";
@@ -52,8 +52,7 @@ export const ModifyData = ({ personalData, onRefresh }: { personalData: personal
           toast.success("personal actualizado exitosamente.");
           onRefresh();
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al actualizar los datos del personal.");
       }
     });
@@ -70,8 +69,7 @@ export const ModifyData = ({ personalData, onRefresh }: { personalData: personal
           toast.success("personal eliminado exitosamente.");
           onRefresh();
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al eliminar el personal.");
       }
     });
@@ -101,7 +99,7 @@ export const ModifyData = ({ personalData, onRefresh }: { personalData: personal
 
           <div className="gap-2 grid grid-cols-2">
             <InputField control={form.control} name="n_autogenerado" label="Numero Autogenerado" placeholder="Ingrese el numero autogenerado" />
-            <InputField control={form.control} name="licencia_conducir" label="Licencia de Conducir" placeholder="Ingrese la licencia" />
+            <SelectField control={form.control} name="licencia_conducir" label="Licencia de Conducir" placeholder="Seleccione la licnecia" options={lic_condOp} disabled={false} />
           </div>
 
           <div className="gap-2 grid grid-cols-2">

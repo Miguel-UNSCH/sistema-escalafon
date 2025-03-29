@@ -39,7 +39,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
     pap: 0,
     cnp: 0,
     meta: "",
-    obre: "",
+    obra: "",
     periodo: { from: undefined, to: undefined },
     cargo_id: "",
     dependencia_id: "",
@@ -85,7 +85,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <SelectField control={form.control} name="tipo_contrato" label="Tipo de Contrato *" options={TContratoOp} />
 
-          {["dl_276", "cas", "pro_inv", "prac"].includes(tipoContrato) && (
+          {["dl_276", "cas", "pro_inv", "pra"].includes(tipoContrato) && (
             <SelectField control={form.control} name="condicion_laboral" label="Condición Laboral *" options={cond_lab_op[tipoContrato as keyof typeof cond_lab_op]} />
           )}
 

@@ -142,3 +142,15 @@ export const tipo_sancionOp = [
   { key: "sus", value: "SUSPENSIÓN DE LABOR SIN GOCE DE HABERES" },
   { key: "dest", value: "DESTITUCIÓN" },
 ];
+
+export const lic_condOp = [
+  { key: "a_i", value: "LICENCIA A-I" },
+  { key: "a_ii_a", value: "LICENCIA A-IIA" },
+  { key: "a_ii_b", value: "LICENCIA A-IIB" },
+  { key: "a_iii_a", value: "LICENCIA A-IIIA" },
+  { key: "a_iii_b", value: "LICENCIA A-IIIB" },
+  { key: "a_iii_c", value: "LICENCIA A-IIIC" },
+  { key: "b_i", value: "LICENCIA B-I" },
+  { key: "b_ii_a", value: "LICENCIA B-IIA" },
+  { key: "b_ii_b", value: "LICENCIA B-IIB" },
+];
