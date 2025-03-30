@@ -27,11 +27,6 @@ export const getDocumentos = async (): Promise<{ success: boolean; message?: str
     const user = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
 
-    if (user.role !== "admin") {
-      const check = await checkEditable();
-      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
-    }
-
     const response: documentRecord[] | null = await prisma.documento.findMany({
       where: { user_id: user.id },
       include: {
