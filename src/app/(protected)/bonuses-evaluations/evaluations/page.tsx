@@ -7,7 +7,7 @@ import { auth } from "@/auth";
 const page = async () => {
   const session = await auth();
 
-  if (!session || !session?.user?.email) return <p>No autorizado!</p>;
+  if (!session || !session?.user) return <p>No autorizado!</p>;
   return (
     <div className="flex justify-center w-full">
       <ContentData session={session} />

@@ -7,6 +7,7 @@ import { ZDesplazamientoS } from "@/lib/schemas/w-situation-schema";
 import { Prisma, User } from "@prisma/client";
 import fs from "fs/promises";
 import path from "path";
+import { checkEditable } from "./limit-time";
 
 export type desplazamientoRecord = Prisma.desplazamientoGetPayload<{
   include: {
@@ -19,9 +20,9 @@ export type desplazamientoRecord = Prisma.desplazamientoGetPayload<{
 export const getDesplazamientos = async (): Promise<{ success: boolean; message?: string; data?: Array<desplazamientoRecord> }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const response: desplazamientoRecord[] | null = await prisma.desplazamiento.findMany({
@@ -45,12 +46,15 @@ export const getDesplazamientos = async (): Promise<{ success: boolean; message?
 export const createDesplazamiento = async (data: ZDesplazamientoS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    });
-    if (!user) throw new Error("Usuario no encontrado");
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const currentCargo = await prisma.cargo.findUnique({
       where: { id: Number(data.current_cargo_id) },
@@ -71,12 +75,12 @@ export const createDesplazamiento = async (data: ZDesplazamientoS & { file_id: s
 
     let currentUCD = await prisma.usuarioCargoDependencia.findUnique({
       where: {
-        userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: currentCargoDependencia.id },
+        userId_cargoDependenciaId: { userId: currentUser.id, cargoDependenciaId: currentCargoDependencia.id },
       },
     });
     if (!currentUCD) {
       currentUCD = await prisma.usuarioCargoDependencia.create({
-        data: { userId: user.id, cargoDependenciaId: currentCargoDependencia.id },
+        data: { userId: currentUser.id, cargoDependenciaId: currentCargoDependencia.id },
       });
     }
 
@@ -99,12 +103,12 @@ export const createDesplazamiento = async (data: ZDesplazamientoS & { file_id: s
 
     let newUCD = await prisma.usuarioCargoDependencia.findUnique({
       where: {
-        userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: newCargoDependencia.id },
+        userId_cargoDependenciaId: { userId: currentUser.id, cargoDependenciaId: newCargoDependencia.id },
       },
     });
     if (!newUCD) {
       newUCD = await prisma.usuarioCargoDependencia.create({
-        data: { userId: user.id, cargoDependenciaId: newCargoDependencia.id },
+        data: { userId: currentUser.id, cargoDependenciaId: newCargoDependencia.id },
       });
     }
 
@@ -115,7 +119,7 @@ export const createDesplazamiento = async (data: ZDesplazamientoS & { file_id: s
 
     await prisma.desplazamiento.create({
       data: {
-        user_id: user.id,
+        user_id: currentUser.id,
         tipo_desplazamiento: data.tipo_desplazamiento,
         fecha: new Date(data.fecha).toISOString(),
         tipo_file: data.tipo_file.toUpperCase(),
@@ -136,12 +140,15 @@ export const createDesplazamiento = async (data: ZDesplazamientoS & { file_id: s
 export const updateDesplazamiento = async (id: string, data: ZDesplazamientoS & { file?: File | null; file_id?: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    });
-    if (!user) throw new Error("Usuario no encontrado");
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const current_model = await prisma.desplazamiento.findUnique({
       where: { id },
@@ -171,12 +178,12 @@ export const updateDesplazamiento = async (id: string, data: ZDesplazamientoS & 
 
     let currentUCD = await prisma.usuarioCargoDependencia.findUnique({
       where: {
-        userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: currentCargoDependencia.id },
+        userId_cargoDependenciaId: { userId: currentUser.id, cargoDependenciaId: currentCargoDependencia.id },
       },
     });
     if (!currentUCD) {
       currentUCD = await prisma.usuarioCargoDependencia.create({
-        data: { userId: user.id, cargoDependenciaId: currentCargoDependencia.id },
+        data: { userId: currentUser.id, cargoDependenciaId: currentCargoDependencia.id },
       });
     }
 
@@ -197,12 +204,12 @@ export const updateDesplazamiento = async (id: string, data: ZDesplazamientoS & 
 
     let newUCD = await prisma.usuarioCargoDependencia.findUnique({
       where: {
-        userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: newCargoDependencia.id },
+        userId_cargoDependenciaId: { userId: currentUser.id, cargoDependenciaId: newCargoDependencia.id },
       },
     });
     if (!newUCD) {
       newUCD = await prisma.usuarioCargoDependencia.create({
-        data: { userId: user.id, cargoDependenciaId: newCargoDependencia.id },
+        data: { userId: currentUser.id, cargoDependenciaId: newCargoDependencia.id },
       });
     }
 
@@ -239,6 +246,17 @@ export const updateDesplazamiento = async (id: string, data: ZDesplazamientoS & 
 
 export const deleteDesplazamiento = async (id: string, file_id: string): Promise<{ success: boolean; message: string }> => {
   try {
+    const session = await auth();
+    if (!session || !session?.user) throw new Error("No autorizado");
+
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
+
     const current_model = await prisma.desplazamiento.findUnique({ where: { id }, include: { file: true } });
     if (!current_model) throw new Error("Desplazamiento no encontrado");
 

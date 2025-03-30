@@ -6,6 +6,7 @@ import { ZDemerito, ZMerito } from "@/lib/schemas/m-d-schema";
 import { Prisma, User } from "@prisma/client";
 import fs from "fs/promises";
 import path from "path";
+import { checkEditable } from "./limit-time";
 
 export type meritoRecord = Prisma.meritoGetPayload<{
   include: { user: true; file: true; usuarioCargoDependencia: { include: { cargoDependencia: { include: { cargo: true; dependencia: true } } } } };
@@ -17,9 +18,9 @@ export type demeritoRecord = Prisma.demeritoGetPayload<{
 export const getMeritos = async (): Promise<{ success: boolean; message?: string; data?: Array<meritoRecord> }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const response: meritoRecord[] | null = await prisma.merito.findMany({
@@ -61,10 +62,15 @@ export const getDemeritos = async (): Promise<{ success: boolean; message?: stri
 export const createMerito = async (data: ZMerito & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
+
+    if (user.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const cargo = await prisma.cargo.findUnique({ where: { id: Number(data.cargo_id) } });
     if (!cargo) throw new Error("Cargo no encontrado");
@@ -151,10 +157,20 @@ export const createDemerito = async (data: ZDemerito & { file_id: string }): Pro
 export const updateMerito = async (id: string, data: ZMerito & { file?: File | null; file_id?: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
+
+    if (user.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
+
+    if (user.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const currentMerito = await prisma.merito.findUnique({ where: { id }, include: { file: true } });
     if (!currentMerito || !currentMerito.file) throw new Error("Mérito o archivo no encontrado");
@@ -254,6 +270,17 @@ export const updateDemerito = async (id: string, data: ZDemerito & { file?: File
 
 export const deleteMerito = async (id: string, file_id: string): Promise<{ success: boolean; message: string }> => {
   try {
+    const session = await auth();
+    if (!session || !session?.user) throw new Error("No autorizado");
+
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!user) throw new Error("Usuario no encontrado");
+
+    if (user.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
+
     const current_merito = await prisma.merito.findUnique({ where: { id } });
     if (!current_merito) throw new Error("Mérito no encontrado");
 

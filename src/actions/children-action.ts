@@ -3,17 +3,17 @@
 import { auth } from "@/auth";
 import { prisma } from "@/config/prisma.config";
 import { ZChildren } from "@/lib/schemas/personal-schema";
-import { edit } from "@/utils/edit-utils";
-import { Children, Personal, Prisma, Ubigeo, User } from "@prisma/client";
+import { Children, Personal, Prisma } from "@prisma/client";
+import { checkEditable } from "./limit-time";
 
 export type childrenRecord = Prisma.ChildrenGetPayload<{ include: { ubigeo: true } }>;
 
 export const getChilds = async (): Promise<{ success: boolean; message?: string; data?: Children[] }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const personal: Personal | null = await prisma.personal.findUnique({ where: { user_id: user.id } });
@@ -31,18 +31,20 @@ export const getChilds = async (): Promise<{ success: boolean; message?: string;
 export const createChild = async (data: ZChildren): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session || !session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const currentUser: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
 
-    const permitido = await edit(currentUser.id);
-    if (!permitido) throw new Error("No puedes registrar hijos. Tiempo de edición expirado.");
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const currentPersonal: Personal | null = await prisma.personal.findUnique({ where: { user_id: currentUser.id } });
     if (!currentPersonal) throw new Error("Personal no encontrado");
 
-    const ubigeo: Ubigeo | null = await prisma.ubigeo.findUnique({ where: { inei: data.ubigeo.inei } });
+    const ubigeo = await prisma.ubigeo.findUnique({ where: { inei: data.ubigeo.inei } });
     if (!ubigeo) throw new Error("El ubigeo proporcionado no existe.");
 
     const newChild: Children = await prisma.children.create({
@@ -57,10 +59,7 @@ export const createChild = async (data: ZChildren): Promise<{ success: boolean; 
     });
 
     await prisma.personalChildren.create({
-      data: {
-        personal_id: currentPersonal.id,
-        children_id: newChild.id,
-      },
+      data: { personal_id: currentPersonal.id, children_id: newChild.id },
     });
 
     return { success: true, message: "Hijo registrado exitosamente." };
@@ -73,18 +72,20 @@ export const createChild = async (data: ZChildren): Promise<{ success: boolean; 
 export const updateChildren = async (id: string, data: ZChildren): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session || !session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const currentUser: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
 
-    const permitido = await edit(currentUser.id);
-    if (!permitido) throw new Error("No puedes modificar hijos. Tiempo de edición expirado.");
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const current_model = await prisma.children.findUnique({ where: { id } });
     if (!current_model) throw new Error("Discapacidad no encontrado");
 
-    const ubigeo: Ubigeo | null = await prisma.ubigeo.findUnique({ where: { inei: data.ubigeo.inei } });
+    const ubigeo = await prisma.ubigeo.findUnique({ where: { inei: data.ubigeo.inei } });
     if (!ubigeo) throw new Error("El ubigeo proporcionado no existe.");
 
     await prisma.children.update({
@@ -110,13 +111,15 @@ export const updateChildren = async (id: string, data: ZChildren): Promise<{ suc
 export const deleteChildren = async (id: string): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session || !session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const currentUser: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
 
-    const permitido = await edit(currentUser.id);
-    if (!permitido) throw new Error("No puedes modificar hijos. Tiempo de edición expirado.");
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const current_model = await prisma.children.findUnique({ where: { id } });
     if (!current_model) throw new Error("children no encontrado");

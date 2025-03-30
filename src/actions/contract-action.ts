@@ -6,6 +6,7 @@ import { ZContratoS } from "@/lib/schemas/w-situation-schema";
 import { Prisma, User } from "@prisma/client";
 import fs from "fs/promises";
 import path from "path";
+import { checkEditable } from "./limit-time";
 
 export type contractRecord = Prisma.ContratoGetPayload<{
   include: {
@@ -17,7 +18,7 @@ export type contractRecord = Prisma.ContratoGetPayload<{
 export const getContracts = async (): Promise<{ success: boolean; message?: string; data?: contractRecord[] }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session?.user) throw new Error("No autorizado");
 
     const user: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
@@ -42,10 +43,15 @@ export const getContracts = async (): Promise<{ success: boolean; message?: stri
 export const createContract = async (data: ZContratoS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
-    if (!user) throw new Error("Usuario no encontrado");
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const cargo = await prisma.cargo.findUnique({ where: { id: Number(data.cargo_id) } });
     if (!cargo) throw new Error("Cargo no encontrado");
@@ -58,16 +64,17 @@ export const createContract = async (data: ZContratoS & { file_id: string }): Pr
     if (!cargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia seleccionada.");
 
     let usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
-      where: { userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: cargoDependencia.id } },
+      where: { userId_cargoDependenciaId: { userId: currentUser.id, cargoDependenciaId: cargoDependencia.id } },
     });
-    if (!usuarioCargoDependencia) usuarioCargoDependencia = await prisma.usuarioCargoDependencia.create({ data: { userId: user.id, cargoDependenciaId: cargoDependencia.id } });
+    if (!usuarioCargoDependencia)
+      usuarioCargoDependencia = await prisma.usuarioCargoDependencia.create({ data: { userId: currentUser.id, cargoDependenciaId: cargoDependencia.id } });
 
     const file = await prisma.file.findUnique({ where: { id: data.file_id } });
     if (!file) throw new Error("Archivo no encontrado");
 
     await prisma.contrato.create({
       data: {
-        user_id: user.id,
+        user_id: currentUser.id,
         tipo_contrato: data.tipo_contrato,
         condicion_laboral: data.condicion_laboral,
         regimen_laboral: data.regimen_laboral || null,
@@ -94,10 +101,15 @@ export const createContract = async (data: ZContratoS & { file_id: string }): Pr
 export const updateContract = async (id: string, data: ZContratoS & { file?: File | null; file_id?: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
-    if (!user) throw new Error("Usuario no encontrado");
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const current_model = await prisma.contrato.findUnique({ where: { id }, include: { file: true } });
     if (!current_model) throw new Error("Contrato no encontrado");
@@ -112,10 +124,10 @@ export const updateContract = async (id: string, data: ZContratoS & { file?: Fil
     if (!cargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia seleccionada.");
 
     let usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
-      where: { userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: cargoDependencia.id } },
+      where: { userId_cargoDependenciaId: { userId: currentUser.id, cargoDependenciaId: cargoDependencia.id } },
     });
     if (!usuarioCargoDependencia) {
-      usuarioCargoDependencia = await prisma.usuarioCargoDependencia.create({ data: { userId: user.id, cargoDependenciaId: cargoDependencia.id } });
+      usuarioCargoDependencia = await prisma.usuarioCargoDependencia.create({ data: { userId: currentUser.id, cargoDependenciaId: cargoDependencia.id } });
     }
 
     const file = await prisma.file.findUnique({ where: { id: data.file_id } });
@@ -157,6 +169,17 @@ export const updateContract = async (id: string, data: ZContratoS & { file?: Fil
 
 export const deleteContract = async (id: string, file_id: string): Promise<{ success: boolean; message: string }> => {
   try {
+    const session = await auth();
+    if (!session || !session?.user) throw new Error("No autorizado");
+
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
+
     const current_model = await prisma.contrato.findUnique({ where: { id }, include: { file: true } });
     if (!current_model) throw new Error("Contrato no encontrado");
 

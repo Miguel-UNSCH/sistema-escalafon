@@ -1,12 +1,13 @@
 "use server";
 
-import { Prisma, User } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 
 import { auth } from "@/auth";
 import { prisma } from "@/config/prisma.config";
 import { ZDocumentS } from "@/lib/schemas/documents-schema";
 import fs from "fs/promises";
 import path from "path";
+import { checkEditable } from "./limit-time";
 
 export type documentRecord = Prisma.documentoGetPayload<{
   include: {
@@ -21,10 +22,15 @@ export type documentRecord = Prisma.documentoGetPayload<{
 export const getDocumentos = async (): Promise<{ success: boolean; message?: string; data?: Array<documentRecord> }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
+
+    if (user.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const response: documentRecord[] | null = await prisma.documento.findMany({
       where: { user_id: user.id },
@@ -49,10 +55,15 @@ export const getDocumentos = async (): Promise<{ success: boolean; message?: str
 export const createDocumento = async (data: ZDocumentS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
+
+    if (user.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const cargo = await prisma.cargo.findUnique({ where: { id: Number(data.cargo_id) } });
     if (!cargo) throw new Error("Cargo no encontrado");
@@ -107,10 +118,15 @@ export const createDocumento = async (data: ZDocumentS & { file_id: string }): P
 export const updateDocumento = async (id: string, data: ZDocumentS & { file?: File | null; file_id?: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
+
+    if (user.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const current_model = await prisma.documento.findUnique({ where: { id }, include: { file: true } });
     if (!current_model) throw new Error("Docuemnto no encontrado");
@@ -173,6 +189,17 @@ export const updateDocumento = async (id: string, data: ZDocumentS & { file?: Fi
 
 export const deleteDocumento = async (id: string, file_id: string): Promise<{ success: boolean; message: string }> => {
   try {
+    const session = await auth();
+    if (!session || !session?.user) throw new Error("No autorizado");
+
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!user) throw new Error("Usuario no encontrado");
+
+    if (user.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
+
     const current_model = await prisma.documento.findUnique({ where: { id } });
     if (!current_model) throw new Error("DOcuemnto no encontrada");
 

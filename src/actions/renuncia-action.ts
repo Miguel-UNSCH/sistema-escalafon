@@ -6,6 +6,7 @@ import { ZRenunciaS } from "@/lib/schemas/w-situation-schema";
 import { Prisma, User } from "@prisma/client";
 import fs from "fs/promises";
 import path from "path";
+import { checkEditable } from "./limit-time";
 
 export type renunciaRecord = Prisma.renunciaGetPayload<{
   include: { file: true; usuarioCargoDependencia: { include: { cargoDependencia: { include: { cargo: true; dependencia: true } } } } };
@@ -14,9 +15,9 @@ export type renunciaRecord = Prisma.renunciaGetPayload<{
 export const getRenuncias = async (): Promise<{ success: boolean; message?: string; data?: renunciaRecord[] }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const renuncias: renunciaRecord[] | null = await prisma.renuncia.findMany({
@@ -36,10 +37,15 @@ export const getRenuncias = async (): Promise<{ success: boolean; message?: stri
 export const createRenuncia = async (data: ZRenunciaS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
-    if (!user) throw new Error("Usuario no encontrado");
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const cargo = await prisma.cargo.findUnique({ where: { id: Number(data.cargo_id) } });
     if (!cargo) throw new Error("Cargo no encontrado");
@@ -55,13 +61,13 @@ export const createRenuncia = async (data: ZRenunciaS & { file_id: string }): Pr
     if (!file) throw new Error("Archivo no encontrado");
 
     const usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
-      where: { userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: cargoDependencia.id } },
+      where: { userId_cargoDependenciaId: { userId: currentUser.id, cargoDependenciaId: cargoDependencia.id } },
     });
     if (!usuarioCargoDependencia) throw new Error("No existe la relación entre el usuario y el cargo-dependencia seleccionado.");
 
     await prisma.renuncia.create({
       data: {
-        user_id: user.id,
+        user_id: currentUser.id,
         motivo: data.motivo.toUpperCase(),
         fecha: new Date(data.fecha).toISOString(),
         usuarioCargoDependenciaId: usuarioCargoDependencia.id,
@@ -80,10 +86,15 @@ export const createRenuncia = async (data: ZRenunciaS & { file_id: string }): Pr
 export const updateRenuncia = async (id: string, data: ZRenunciaS & { file?: File | null; file_id?: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-    if (!user) throw new Error("Usuario no encontrado");
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const current_renuncia = await prisma.renuncia.findUnique({ where: { id }, include: { file: true } });
     if (!current_renuncia) throw new Error("Renuncia no encontrada");
@@ -103,7 +114,7 @@ export const updateRenuncia = async (id: string, data: ZRenunciaS & { file?: Fil
 
     const usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
       where: {
-        userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: cargoDependencia.id },
+        userId_cargoDependenciaId: { userId: currentUser.id, cargoDependenciaId: cargoDependencia.id },
       },
     });
     if (!usuarioCargoDependencia) throw new Error("No existe la relación entre el usuario y el cargo-dependencia seleccionado.");
@@ -139,6 +150,17 @@ export const updateRenuncia = async (id: string, data: ZRenunciaS & { file?: Fil
 
 export const deleteRenuncia = async (id: string, file_id: string): Promise<{ success: boolean; message: string }> => {
   try {
+    const session = await auth();
+    if (!session || !session?.user) throw new Error("No autorizado");
+
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
+
     const current_renuncia = await prisma.renuncia.findUnique({ where: { id } });
     if (!current_renuncia) throw new Error("Renuncia no encontrada");
 

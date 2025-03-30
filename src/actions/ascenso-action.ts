@@ -4,9 +4,10 @@ import { auth } from "@/auth";
 import { prisma } from "@/config/prisma.config";
 import { isUCDInUse } from "@/lib/db-utils";
 import { ZAscensoS } from "@/lib/schemas/w-situation-schema";
-import { Prisma, User } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import fs from "fs/promises";
 import path from "path";
+import { checkEditable } from "./limit-time";
 
 export type ascensoRecord = Prisma.ascensoGetPayload<{
   include: {
@@ -18,9 +19,9 @@ export type ascensoRecord = Prisma.ascensoGetPayload<{
 export const getAscensos = async (): Promise<{ success: boolean; message?: string; data?: ascensoRecord[] }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const response: ascensoRecord[] | null = await prisma.ascenso.findMany({
@@ -44,10 +45,15 @@ export const getAscensos = async (): Promise<{ success: boolean; message?: strin
 export const createAscenso = async (data: ZAscensoS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
+
+    if (user.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const current_c = await prisma.cargo.findUnique({ where: { id: Number(data.current_cargo_id) } });
     if (!current_c) throw new Error("Cargo actual no encontrado");
@@ -101,12 +107,15 @@ export const createAscenso = async (data: ZAscensoS & { file_id: string }): Prom
 export const updateAscenso = async (id: string, data: ZAscensoS & { file?: File | null; file_id?: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    });
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
+
+    if (user.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const currentAscenso = await prisma.ascenso.findUnique({
       where: { id },
@@ -215,6 +224,17 @@ export const updateAscenso = async (id: string, data: ZAscensoS & { file?: File 
 
 export const deleteAscenso = async (id: string, file_id: string): Promise<{ success: boolean; message: string }> => {
   try {
+    const session = await auth();
+    if (!session || !session?.user) throw new Error("No autorizado");
+
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!user) throw new Error("Usuario no encontrado");
+
+    if (user.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
+
     const current_model = await prisma.ascenso.findUnique({ where: { id } });
     if (!current_model) throw new Error("Ascenso no encontrado");
 

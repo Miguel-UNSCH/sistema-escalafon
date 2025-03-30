@@ -3,16 +3,17 @@
 import { auth } from "@/auth";
 import { prisma } from "@/config/prisma.config";
 import { ZConyuge } from "@/lib/schemas/personal-schema";
-import { Conyuge, Personal, Prisma, Ubigeo, User } from "@prisma/client";
+import { Conyuge, Personal, Prisma } from "@prisma/client";
+import { checkEditable } from "./limit-time";
 
 export type spouseRecord = Prisma.ConyugeGetPayload<{ include: { ubigeo: true } }>;
 
 export const getCurrentSpouse = async (): Promise<{ success: boolean; message?: string; data?: spouseRecord }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const personal: Personal | null = await prisma.personal.findUnique({ where: { user_id: user.id } });
@@ -32,16 +33,21 @@ export const getCurrentSpouse = async (): Promise<{ success: boolean; message?: 
 export const createSpouse = async (data: ZConyuge): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session || !session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const currentUser: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const currentPersonal: Personal | null = await prisma.personal.findUnique({ where: { user_id: currentUser.id } });
     if (!currentPersonal) throw new Error("Personal no encontrado");
     if (currentPersonal.estado_civil !== "c") throw new Error("No se puede agregar cónyuge a personal que no es casado.");
 
-    const ubigeo: Ubigeo | null = await prisma.ubigeo.findUnique({ where: { inei: data.ubigeo.inei } });
+    const ubigeo = await prisma.ubigeo.findUnique({ where: { inei: data.ubigeo.inei } });
     if (!ubigeo) throw new Error("El ubigeo proporcionado no existe.");
 
     await prisma.conyuge.create({
@@ -67,18 +73,23 @@ export const createSpouse = async (data: ZConyuge): Promise<{ success: boolean; 
 export const updateSpouse = async (data: ZConyuge): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
-    if (!user) throw new Error("Usuario no encontrado");
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
 
-    const personal: Personal | null = await prisma.personal.findUnique({ where: { user_id: user.id } });
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
+
+    const personal: Personal | null = await prisma.personal.findUnique({ where: { user_id: currentUser.id } });
     if (!personal) throw new Error("Personal no encontrado");
 
     const spouse: Conyuge | null = await prisma.conyuge.findUnique({ where: { personal_id: personal.id } });
     if (!spouse) throw new Error("Cónyuge no encontrado");
 
-    const ubigeo: Ubigeo | null = await prisma.ubigeo.findUnique({ where: { inei: data.ubigeo.inei } });
+    const ubigeo = await prisma.ubigeo.findUnique({ where: { inei: data.ubigeo.inei } });
     if (!ubigeo) throw new Error("El ubigeo proporcionado no existe.");
 
     await prisma.conyuge.update({
@@ -104,12 +115,17 @@ export const updateSpouse = async (data: ZConyuge): Promise<{ success: boolean; 
 export const deleteSpouse = async (): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
-    if (!user) throw new Error("Usuario no encontrado");
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
 
-    const personal: Personal | null = await prisma.personal.findUnique({ where: { user_id: user.id } });
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
+
+    const personal: Personal | null = await prisma.personal.findUnique({ where: { user_id: currentUser.id } });
     if (!personal) throw new Error("Personal no encontrado");
 
     const spouse: Conyuge | null = await prisma.conyuge.findUnique({ where: { personal_id: personal.id } });

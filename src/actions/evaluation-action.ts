@@ -6,6 +6,7 @@ import { ZEvaluation } from "@/lib/schemas/bonus-schema";
 import { Prisma, User } from "@prisma/client";
 import fs from "fs/promises";
 import path from "path";
+import { checkEditable } from "./limit-time";
 
 export type evaluationRecord = Prisma.evaluationGetPayload<{
   include: {
@@ -19,9 +20,9 @@ export type evaluationRecord = Prisma.evaluationGetPayload<{
 export const getEvaluations = async (): Promise<{ success: boolean; message?: string; data?: evaluationRecord[] }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const response: evaluationRecord[] | null = await prisma.evaluation.findMany({
@@ -46,10 +47,15 @@ export const getEvaluations = async (): Promise<{ success: boolean; message?: st
 export const createEvaluation = async (data: ZEvaluation & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
+
+    if (user.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const cargo = await prisma.cargo.findUnique({ where: { id: Number(data.cargo_id) } });
     if (!cargo) throw new Error("Cargo no encontrado");
@@ -103,10 +109,15 @@ export const createEvaluation = async (data: ZEvaluation & { file_id: string }):
 export const updateEvaliation = async (id: string, data: ZEvaluation & { file?: File | null; file_id?: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
+
+    if (user.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const current_model = await prisma.evaluation.findUnique({ where: { id }, include: { file: true } });
     if (!current_model) throw new Error("Evaluacion no encontrada");
@@ -169,6 +180,17 @@ export const updateEvaliation = async (id: string, data: ZEvaluation & { file?: 
 
 export const deleteEvaluation = async (id: string, file_id: string): Promise<{ success: boolean; message: string }> => {
   try {
+    const session = await auth();
+    if (!session || !session?.user) throw new Error("No autorizado");
+
+    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!user) throw new Error("Usuario no encontrado");
+
+    if (user.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
+
     const current_model = await prisma.evaluation.findUnique({ where: { id } });
     if (!current_model) throw new Error("Evaluacion no encontrada");
 

@@ -8,6 +8,7 @@ import { ZExpS } from "@/lib/schemas/user-schema";
 import fs from "fs/promises";
 import path from "path";
 import { isUCDInUse } from "@/lib/db-utils";
+import { checkEditable } from "./limit-time";
 
 export type expRecord = Prisma.ExperienceGetPayload<{
   include: { file: true; usuarioCargoDependencia: { include: { cargoDependencia: { include: { cargo: true; dependencia: true } } } } };
@@ -16,9 +17,9 @@ export type expRecord = Prisma.ExperienceGetPayload<{
 export const getExperiences = async (): Promise<{ success: boolean; message?: string; data?: expRecord[] }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const experiencias: expRecord[] | null = await prisma.experience.findMany({
@@ -38,10 +39,15 @@ export const getExperiences = async (): Promise<{ success: boolean; message?: st
 export const createExp = async (data: ZExpS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-    if (!user) throw new Error("Usuario no encontrado");
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const cargo = await prisma.cargo.findUnique({ where: { id: Number(data.cargo_id) } });
     if (!cargo) throw new Error("Cargo no encontrado");
@@ -54,16 +60,16 @@ export const createExp = async (data: ZExpS & { file_id: string }): Promise<{ su
     if (!cargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia seleccionada.");
 
     let usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
-      where: { userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: cargoDependencia.id } },
+      where: { userId_cargoDependenciaId: { userId: currentUser.id, cargoDependenciaId: cargoDependencia.id } },
     });
 
     if (!usuarioCargoDependencia) {
-      usuarioCargoDependencia = await prisma.usuarioCargoDependencia.create({ data: { userId: user.id, cargoDependenciaId: cargoDependencia.id } });
+      usuarioCargoDependencia = await prisma.usuarioCargoDependencia.create({ data: { userId: currentUser.id, cargoDependenciaId: cargoDependencia.id } });
     }
 
     await prisma.experience.create({
       data: {
-        user_id: user.id,
+        user_id: currentUser.id,
         usuarioCargoDependenciaId: usuarioCargoDependencia.id,
         centro_labor: data.centro_labor.toUpperCase(),
         periodo: { from: new Date(data.periodo.from).toISOString(), to: new Date(data.periodo.to).toISOString() },
@@ -82,10 +88,15 @@ export const createExp = async (data: ZExpS & { file_id: string }): Promise<{ su
 export const updateExp = async (id: string, data: ZExpS & { file_id?: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user = await prisma.user.findUnique({ where: { email: session.user.email } });
-    if (!user) throw new Error("Usuario no encontrado");
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const current_model = await prisma.experience.findUnique({ where: { id }, include: { file: true } });
     if (!current_model) throw new Error("Experiencia no encontrada");
@@ -105,12 +116,12 @@ export const updateExp = async (id: string, data: ZExpS & { file_id?: string }):
 
     let usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
       where: {
-        userId_cargoDependenciaId: { userId: user.id, cargoDependenciaId: cargoDependencia.id },
+        userId_cargoDependenciaId: { userId: currentUser.id, cargoDependenciaId: cargoDependencia.id },
       },
     });
     if (!usuarioCargoDependencia) {
       usuarioCargoDependencia = await prisma.usuarioCargoDependencia.create({
-        data: { userId: user.id, cargoDependenciaId: cargoDependencia.id },
+        data: { userId: currentUser.id, cargoDependenciaId: cargoDependencia.id },
       });
     }
 
@@ -127,7 +138,7 @@ export const updateExp = async (id: string, data: ZExpS & { file_id?: string }):
     await prisma.experience.update({
       where: { id },
       data: {
-        user_id: user.id,
+        user_id: currentUser.id,
         usuarioCargoDependenciaId: usuarioCargoDependencia.id,
         centro_labor: data.centro_labor.toUpperCase(),
         periodo: {
@@ -153,6 +164,17 @@ export const updateExp = async (id: string, data: ZExpS & { file_id?: string }):
 
 export const deleteExp = async (id: string, file_id: string): Promise<{ success: boolean; message: string }> => {
   try {
+    const session = await auth();
+    if (!session || !session?.user) throw new Error("No autorizado");
+
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
+
     const current_model = await prisma.experience.findUnique({ where: { id }, include: { file: true } });
     if (!current_model) throw new Error("Experiencia no encontrado");
 

@@ -6,15 +6,16 @@ import { ZDisabilityS } from "@/lib/schemas/user-schema";
 import { Prisma, User } from "@prisma/client";
 import fs from "fs/promises";
 import path from "path";
+import { checkEditable } from "./limit-time";
 
 export type discapacidadRecord = Prisma.discapacidadGetPayload<{ include: { file: true } }>;
 
 export const getDisabilities = async (): Promise<{ success: boolean; message?: string; data?: discapacidadRecord[] }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const disabilities: discapacidadRecord[] | null = await prisma.discapacidad.findMany({ where: { user_id: user.id }, include: { file: true } });
@@ -31,14 +32,19 @@ export const getDisabilities = async (): Promise<{ success: boolean; message?: s
 export const createDisability = async (data: ZDisabilityS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
-    if (!user) throw new Error("Usuario no encontrado");
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     await prisma.discapacidad.create({
       data: {
-        user_id: user.id,
+        user_id: currentUser.id,
         tipo: data.tipo,
         discapacidad: data.discapacidad.toUpperCase(),
         entidad_certificadora: data.entidad_certificadora,
@@ -57,6 +63,17 @@ export const createDisability = async (data: ZDisabilityS & { file_id: string })
 
 export const updateDisability = async (id: string, data: ZDisabilityS & { file?: File | null; file_id?: string }): Promise<{ success: boolean; message: string }> => {
   try {
+    const session = await auth();
+    if (!session || !session?.user) throw new Error("No autorizado");
+
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
+
     const current_model = await prisma.discapacidad.findUnique({ where: { id }, include: { file: true } });
     if (!current_model) throw new Error("Discapacidad no encontrado");
 
@@ -89,6 +106,17 @@ export const updateDisability = async (id: string, data: ZDisabilityS & { file?:
 
 export const deleteDisability = async (id: string, file_id: string): Promise<{ success: boolean; message: string }> => {
   try {
+    const session = await auth();
+    if (!session || !session?.user) throw new Error("No autorizado");
+
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
+
     const current_model = await prisma.discapacidad.findUnique({ where: { id }, include: { file: true } });
     if (!current_model) throw new Error("Discapacidad no encontrado");
 

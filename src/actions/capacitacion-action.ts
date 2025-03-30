@@ -6,15 +6,16 @@ import { ZCapacitacionS } from "@/lib/schemas/user-schema";
 import { Prisma, User } from "@prisma/client";
 import fs from "fs/promises";
 import path from "path";
+import { checkEditable } from "./limit-time";
 
 export type capacitacionRecord = Prisma.CapacitacionGetPayload<{ include: { file: true } }>;
 
 export const getCapacitaciones = async (): Promise<{ success: boolean; message?: string; data?: capacitacionRecord[] }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const user: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const capacitacion: capacitacionRecord[] | null = await prisma.capacitacion.findMany({ where: { user_id: user.id }, include: { file: true } });
@@ -31,14 +32,19 @@ export const getCapacitaciones = async (): Promise<{ success: boolean; message?:
 export const createCapacitacion = async (data: ZCapacitacionS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user: User | null = await prisma.user.findUnique({ where: { email: session.user.email } });
-    if (!user) throw new Error("Usuario no encontrado");
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     await prisma.capacitacion.create({
       data: {
-        user_id: user.id,
+        user_id: currentUser.id,
         tipe: data.tipe,
         centro_capacitacion: data.centro_capacitacion.toUpperCase(),
         materia: data.materia.toUpperCase(),
@@ -59,6 +65,17 @@ export const createCapacitacion = async (data: ZCapacitacionS & { file_id: strin
 
 export const updateCapacitacion = async (id: string, data: ZCapacitacionS & { file?: File | null; file_id?: string }): Promise<{ success: boolean; message: string }> => {
   try {
+    const session = await auth();
+    if (!session || !session?.user) throw new Error("No autorizado");
+
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
+
     const current_model = await prisma.capacitacion.findUnique({ where: { id }, include: { file: true } });
     if (!current_model) throw new Error("Estudio no encontrado");
 
@@ -92,6 +109,17 @@ export const updateCapacitacion = async (id: string, data: ZCapacitacionS & { fi
 
 export const deleteCapacitacion = async (id: string, file_id: string): Promise<{ success: boolean; message: string }> => {
   try {
+    const session = await auth();
+    if (!session || !session?.user) throw new Error("No autorizado");
+
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
+
     const current_model = await prisma.capacitacion.findUnique({ where: { id } });
     if (!current_model) throw new Error("Capacitación no encontrada");
 

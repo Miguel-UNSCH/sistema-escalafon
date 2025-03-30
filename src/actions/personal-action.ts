@@ -30,7 +30,7 @@ export const getCurrentPersonal = async (email: string): Promise<{ success: bool
 export const createPersonal = async (data: ZPersonal): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session || !session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
     const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
@@ -72,7 +72,7 @@ export const createPersonal = async (data: ZPersonal): Promise<{ success: boolea
 export const updatePersonal = async (id: string, data: ZPersonal): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session || !session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
     const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
@@ -114,7 +114,7 @@ export const updatePersonal = async (id: string, data: ZPersonal): Promise<{ suc
 export const deletePersonal = async (id: string): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
-    if (!session || !session?.user?.email) throw new Error("No autorizado");
+    if (!session || !session?.user) throw new Error("No autorizado");
 
     const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!currentUser) throw new Error("Usuario no encontrado");

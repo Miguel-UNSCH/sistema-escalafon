@@ -24,9 +24,7 @@ export const ContentData = ({ session }: { session: Session }) => {
           setShowCreate(true);
         }
       } else toast.error(response.message || "No se pudieron obtener las evaluaciones.");
-
-      // eslint-disable-next-line no-unused-vars
-    } catch (e: unknown) {
+    } catch {
       toast.error("Error al obtener las evaluaciones.");
     } finally {
       setLoading(false);
