@@ -19,9 +19,10 @@ type ModifyProps = {
   item: childrenRecord;
   onUpdated: () => void;
   setSelectedItem: React.Dispatch<React.SetStateAction<childrenRecord | null>>;
+  edit?: boolean;
 };
 
-export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem }) => {
+export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem, edit }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
@@ -76,35 +77,40 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
           <div className="gap-2 grid grid-cols-2">
-            <InputField control={form.control} name="nombres" label="Nombres *" placeholder="Ingrese los nombres" />
-            <InputField control={form.control} name="apellidos" label="Apellidos *" placeholder="Ingrese los apellidos" />
+            <InputField control={form.control} name="nombres" label="Nombres *" placeholder="Ingrese los nombres" disabled={!edit} />
+            <InputField control={form.control} name="apellidos" label="Apellidos *" placeholder="Ingrese los apellidos" disabled={!edit} />
           </div>
 
           <div className="gap-2 grid grid-cols-2">
             <InputField control={form.control} name="dni" label="DNI *" placeholder="Ingrese el DNI" />
-            <DateField control={form.control} name="fecha_nacimiento" label="Fecha de nacimiento" disabled={false} />
+            <DateField control={form.control} name="fecha_nacimiento" label="Fecha de nacimiento" disabled={!edit} />
           </div>
 
           <div className="flex flex-col gap-2">
             <p className="font-inter font-semibold">Lugar de nacimiento</p>
             <div className="gap-2 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3">
-              <UbigeoField control={form.control} setValue={form.setValue} watch={form.watch} isCompleteFromDB={false} />
+              <UbigeoField control={form.control} setValue={form.setValue} watch={form.watch} disabled={!edit} />
             </div>
           </div>
 
-          <SelectField control={form.control} name="grado_instruccion" label="Grado de Instrucción *" options={gradoInstruccionOp} disabled={false} />
+          <SelectField control={form.control} name="grado_instruccion" label="Grado de Instrucción *" options={gradoInstruccionOp} disabled={!edit} />
+
           <div className="flex sm:flex-row flex-col justify-end gap-4">
             <Button variant="outline" onClick={() => setSelectedItem(null)}>
               cancelar
             </Button>
-            <Button onClick={onDelete} type="button" disabled={isPending} className="flex flex-row items-center gap-2 bg-maroon">
-              <Trash size={16} />
-              {isPending ? "Eliminando..." : "Eliminar"}
-            </Button>
-            <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2 bg-teal hover:bg-green">
-              <Save size={16} />
-              {isPending ? "Guardando..." : "Actualizar"}
-            </Button>
+            {edit && (
+              <>
+                <Button onClick={onDelete} type="button" disabled={isPending} className="flex flex-row items-center gap-2 bg-maroon">
+                  <Trash size={16} />
+                  {isPending ? "Eliminando..." : "Eliminar"}
+                </Button>
+                <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2 bg-teal hover:bg-green">
+                  <Save size={16} />
+                  {isPending ? "Guardando..." : "Actualizar"}
+                </Button>
+              </>
+            )}
           </div>
         </form>
       </Form>

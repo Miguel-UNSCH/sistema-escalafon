@@ -7,7 +7,7 @@ import { ContentData } from "./content-data";
 const page = async () => {
   const session = await auth();
 
-  if (!session || !session?.user?.email) return <p>No autorizado!</p>;
+  if (!session || !session?.user) return <p>No autorizado!</p>;
 
   return (
     <div className="flex justify-center py-2 w-full">

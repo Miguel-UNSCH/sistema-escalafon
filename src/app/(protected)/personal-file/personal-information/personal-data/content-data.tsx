@@ -37,8 +37,8 @@ export const ContentData = ({ session }: { session: Session }) => {
 
   useEffect(() => {
     fnData();
-    if (session?.user?.email) checkEditableClient();
-  }, [session?.user?.email]);
+    if (session?.user) checkEditableClient();
+  }, [session?.user]);
 
   const handleRefresh = () => {
     fnData();

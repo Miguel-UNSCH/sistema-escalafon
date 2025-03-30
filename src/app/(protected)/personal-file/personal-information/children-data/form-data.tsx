@@ -21,9 +21,10 @@ type CreateProps = {
   setSelectedItem: React.Dispatch<React.SetStateAction<childrenRecord | null>>;
   onCancel?: () => void;
   showCancel?: boolean;
+  edit: boolean;
 };
 
-export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, edit }) => {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<ZChildren>({
@@ -61,23 +62,23 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <div className="gap-2 grid grid-cols-2">
-            <InputField control={form.control} name="nombres" label="Nombres *" placeholder="Ingrese los nombres" />
-            <InputField control={form.control} name="apellidos" label="Apellidos *" placeholder="Ingrese los apellidos" />
+            <InputField control={form.control} name="nombres" label="Nombres *" placeholder="Ingrese los nombres" disabled={!edit} />
+            <InputField control={form.control} name="apellidos" label="Apellidos *" placeholder="Ingrese los apellidos" disabled={!edit} />
           </div>
 
           <div className="gap-2 grid grid-cols-2">
-            <InputField control={form.control} name="dni" label="DNI *" placeholder="Ingrese el DNI" />
-            <DateField control={form.control} name="fecha_nacimiento" label="Fecha de nacimiento" disabled={false} />
+            <InputField control={form.control} name="dni" label="DNI *" placeholder="Ingrese el DNI" disabled={!edit} />
+            <DateField control={form.control} name="fecha_nacimiento" label="Fecha de nacimiento" disabled={!edit} />
           </div>
 
           <div className="flex flex-col gap-2">
             <p className="font-inter font-semibold">Lugar de nacimiento</p>
             <div className="gap-2 grid grid-cols-3">
-              <UbigeoField control={form.control} setValue={form.setValue} watch={form.watch} isCompleteFromDB={false} />
+              <UbigeoField control={form.control} setValue={form.setValue} watch={form.watch} disabled={!edit} />
             </div>
           </div>
 
-          <SelectField control={form.control} name="grado_instruccion" label="Grado de Instrucción *" options={gradoInstruccionOp} disabled={false} />
+          <SelectField control={form.control} name="grado_instruccion" label="Grado de Instrucción *" options={gradoInstruccionOp} disabled={!edit} />
 
           <div className="flex justify-end gap-2">
             {showCancel && onCancel && (
@@ -85,10 +86,12 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
                 Cancelar
               </Button>
             )}
-            <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
-              <Save />
-              {isPending ? "Guardando..." : "Guardar"}
-            </Button>
+            {edit && (
+              <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
+                <Save />
+                {isPending ? "Guardando..." : "Guardar"}
+              </Button>
+            )}
           </div>
         </form>
       </Form>

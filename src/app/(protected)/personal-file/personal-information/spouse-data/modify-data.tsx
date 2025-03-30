@@ -15,7 +15,7 @@ import { UbigeoField } from "@/components/custom-fields/ubigeo-field";
 import { conyugeSchema, ZConyuge } from "@/lib/schemas/personal-schema";
 import { updateSpouse, deleteSpouse, spouseRecord } from "@/actions/conyuge-action";
 
-export const ModifyData = ({ spouseData, onRefresh }: { spouseData: spouseRecord; onRefresh: () => void }) => {
+export const ModifyData = ({ spouseData, onRefresh, edit }: { spouseData: spouseRecord; onRefresh: () => void; edit: boolean }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
@@ -73,32 +73,34 @@ export const ModifyData = ({ spouseData, onRefresh }: { spouseData: spouseRecord
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8 pb-5">
           <div className="gap-2 grid grid-cols-2">
-            <InputField control={form.control} name="nombres" label="Nombres *" placeholder="Ingrese sus nombres" />
-            <InputField control={form.control} name="apellidos" label="Apellidos *" placeholder="Ingrese sus apellidos" />
+            <InputField control={form.control} name="nombres" label="Nombres *" placeholder="Ingrese sus nombres" disabled={!edit} />
+            <InputField control={form.control} name="apellidos" label="Apellidos *" placeholder="Ingrese sus apellidos" disabled={!edit} />
           </div>
 
           <div className="gap-2 grid grid-cols-2">
-            <InputField control={form.control} name="dni" label="DNI *" placeholder="Ingrese su DNI" />
-            <DateField control={form.control} name="fecha_nacimiento" label="Fecha de nacimiento" disabled={false} />
+            <InputField control={form.control} name="dni" label="DNI *" placeholder="Ingrese su DNI" disabled={!edit} />
+            <DateField control={form.control} name="fecha_nacimiento" label="Fecha de nacimiento" disabled={!edit} />
           </div>
 
           <div className="flex flex-col gap-2">
             <p className="font-inter font-semibold">Lugar de nacimiento</p>
             <div className="gap-2 grid grid-cols-3">
-              <UbigeoField control={form.control} setValue={form.setValue} watch={form.watch} isCompleteFromDB={false} />
+              <UbigeoField control={form.control} setValue={form.setValue} watch={form.watch} disabled={!edit} />
             </div>
           </div>
 
-          <SelectField control={form.control} name="grado_instruccion" label="Grado de Instrucción *" options={gradoInstruccionOp} disabled={false} />
+          <SelectField control={form.control} name="grado_instruccion" label="Grado de Instrucción *" options={gradoInstruccionOp} disabled={!edit} />
 
-          <div className="flex justify-end gap-3">
-            <Button onClick={handleDelete}>
-              <Trash /> Eliminar
-            </Button>
-            <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
-              <Edit /> {isPending ? "Guardando..." : "Modificar"}
-            </Button>
-          </div>
+          {edit && (
+            <div className="flex justify-end gap-3">
+              <Button onClick={handleDelete}>
+                <Trash /> Eliminar
+              </Button>
+              <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
+                <Edit /> {isPending ? "Guardando..." : "Modificar"}
+              </Button>
+            </div>
+          )}
         </form>
       </Form>
     </div>

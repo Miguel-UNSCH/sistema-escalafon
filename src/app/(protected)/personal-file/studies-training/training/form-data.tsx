@@ -23,9 +23,10 @@ type CreateProps = {
   setSelectedItem: React.Dispatch<React.SetStateAction<CapacitacionRecord | null>>;
   onCancel?: () => void;
   showCancel?: boolean;
+  edit: boolean;
 };
 
-export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, edit }) => {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<ZCapacitacionS>({
@@ -64,8 +65,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
           onCreated();
           setSelectedItem(null);
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al registrar la capacitación.");
       }
     });
@@ -76,24 +76,30 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
       <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
-          <SelectField control={form.control} label="Tipo de Capacitacion *" name="tipe" options={tCapacitacionOp} />
+          <SelectField control={form.control} label="Tipo de Capacitacion *" name="tipe" options={tCapacitacionOp} disabled={!edit} />
 
           <div className="gap-4 grid grid-cols-2">
-            <InputField control={form.control} name="centro_capacitacion" label="Centro de Capacitación *" placeholder="Ingrese el nombre del centro de capacitación" />
-            <InputField control={form.control} name="materia" label="Materia *" placeholder="Ingrese la materia" />
+            <InputField
+              control={form.control}
+              name="centro_capacitacion"
+              label="Centro de Capacitación *"
+              placeholder="Ingrese el nombre del centro de capacitación"
+              disabled={!edit}
+            />
+            <InputField control={form.control} name="materia" label="Materia *" placeholder="Ingrese la materia" disabled={!edit} />
           </div>
 
           <div className="gap-4 grid grid-cols-2">
-            <InputField control={form.control} name="especialidad" label="Especialidad *" placeholder="Ingrese la especialidad" />
-            <InputField control={form.control} name="horas_lectivas" label="Horas Lectivas *" type="number" placeholder="Ingrese las horas lectivas" />
+            <InputField control={form.control} name="especialidad" label="Especialidad *" placeholder="Ingrese la especialidad" disabled={!edit} />
+            <InputField control={form.control} name="horas_lectivas" label="Horas Lectivas *" type="number" placeholder="Ingrese las horas lectivas" disabled={!edit} />
           </div>
 
           <div className="gap-4 grid grid-cols-2">
-            <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={false} />
-            <DateField control={form.control} name="periodo.to" label="Fecha de culminacion" disabled={false} />
+            <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={!edit} />
+            <DateField control={form.control} name="periodo.to" label="Fecha de culminacion" disabled={!edit} />
           </div>
 
-          <UploadField control={form.control} name="file" label="Documento" allowedTypes={["pdf"]} />
+          <UploadField control={form.control} name="file" label="Documento" allowedTypes={["pdf"]} disabled={!edit} />
 
           <div className="flex justify-end gap-2">
             {showCancel && onCancel && (
@@ -101,10 +107,12 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
                 Cancelar
               </Button>
             )}
-            <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
-              <Save />
-              {isPending ? "Guardando..." : "Guardar"}
-            </Button>
+            {edit && (
+              <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
+                <Save />
+                {isPending ? "Guardando..." : "Guardar"}
+              </Button>
+            )}
           </div>
         </form>
       </Form>

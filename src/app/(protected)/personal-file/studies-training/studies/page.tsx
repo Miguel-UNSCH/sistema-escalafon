@@ -10,7 +10,7 @@ const page = async () => {
   if (!session) return <p>No autenticado</p>;
   return (
     <div className="flex justify-center py-2 w-full">
-      <ContentData />
+      <ContentData session={session} />
     </div>
   );
 };

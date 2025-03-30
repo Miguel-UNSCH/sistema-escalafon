@@ -8,6 +8,7 @@ import { getCurrentPersonal } from "@/actions/personal-action";
 import { Session } from "next-auth";
 import { CreateData } from "./form-data";
 import { ModifyData } from "./modify-data";
+import { checkEditable } from "@/actions/limit-time";
 
 export const ContentData = ({ session }: { session: Session }) => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -15,6 +16,8 @@ export const ContentData = ({ session }: { session: Session }) => {
   const [personalExists, setPersonalExists] = useState<boolean>(true);
   const [spouseExists, setSpouseExists] = useState<boolean>(false);
   const [spouseData, setSpouseData] = useState<spouseRecord>({} as spouseRecord);
+  const [canEdit, setCanEdit] = useState<boolean>(false);
+
   const router = useRouter();
 
   const fetchPersonalData = async () => {
@@ -34,8 +37,18 @@ export const ContentData = ({ session }: { session: Session }) => {
     }
   };
 
+  const checkEditableClient = async () => {
+    try {
+      const res = await checkEditable();
+      if (res.success && res.editable) setCanEdit(res.editable);
+    } catch {
+      setCanEdit(false);
+    }
+  };
+
   useEffect(() => {
     fetchPersonalData();
+    if (session?.user) checkEditableClient();
   }, [session]);
 
   const fetchSpouseData = async () => {
@@ -94,7 +107,7 @@ export const ContentData = ({ session }: { session: Session }) => {
   return (
     <div className="flex flex-col gap-5 mx-auto p-2 w-full max-w-5xl">
       <p className="font-primary font-semibold text-2xl text-center uppercase">Datos del conyuge</p>
-      {spouseExists ? <ModifyData spouseData={spouseData} onRefresh={handleRefresh} /> : <CreateData onRefresh={handleRefresh} />}
+      {spouseExists ? <ModifyData spouseData={spouseData} onRefresh={handleRefresh} edit={canEdit} /> : <CreateData onRefresh={handleRefresh} edit={canEdit} />}
     </div>
   );
 };

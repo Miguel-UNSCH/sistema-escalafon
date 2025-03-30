@@ -22,9 +22,10 @@ type CreateProps = {
   setSelectedItem: React.Dispatch<React.SetStateAction<discapacidadRecord | null>>;
   onCancel?: () => void;
   showCancel?: boolean;
+  edit: boolean;
 };
 
-export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, edit }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
@@ -71,15 +72,15 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
       <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
-          <SelectField control={form.control} name="tipo" label="Tipo *" options={tDscapacidadOp} />
-          <InputField control={form.control} name="discapacidad" label="Discapacidad *" placeholder="Ingrese la discapacidad" />
+          <SelectField control={form.control} name="tipo" label="Tipo *" options={tDscapacidadOp} disabled={!edit} />
+          <InputField control={form.control} name="discapacidad" label="Discapacidad *" placeholder="Ingrese la discapacidad" disabled={!edit} />
 
           <div className="gap-2 grid grid-cols-2">
-            <SelectField control={form.control} name="entidad_certificadora" label="Entidad certificadora *" options={entidad_certificadoraOp} />
-            <DateField control={form.control} name="fecha_certificacion" label="Fecha de certificación" disabled={false} />
+            <SelectField control={form.control} name="entidad_certificadora" label="Entidad certificadora *" options={entidad_certificadoraOp} disabled={!edit} />
+            <DateField control={form.control} name="fecha_certificacion" label="Fecha de certificación" disabled={!edit} />
           </div>
 
-          <UploadField control={form.control} name="file" label="Documento" allowedTypes={["pdf"]} />
+          <UploadField control={form.control} name="file" label="Documento" allowedTypes={["pdf"]} disabled={!edit} />
 
           <div className="flex justify-end gap-2">
             {showCancel && onCancel && (
@@ -87,10 +88,12 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
                 Cancelar
               </Button>
             )}
-            <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
-              <Save />
-              {isPending ? "Guardando..." : "Guardar"}
-            </Button>
+            {edit && (
+              <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
+                <Save />
+                {isPending ? "Guardando..." : "Guardar"}
+              </Button>
+            )}
           </div>
         </form>
       </Form>

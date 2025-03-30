@@ -9,6 +9,7 @@ import { getCurrentPersonal } from "@/actions/personal-action";
 import { Table } from "./table-data";
 import { Modify } from "./modify-data";
 import { Create } from "./form-data";
+import { checkEditable } from "@/actions/limit-time";
 
 export const ContentData = ({ session }: { session: any }) => {
   const [items, setItems] = useState<childrenRecord[]>([]);
@@ -18,6 +19,7 @@ export const ContentData = ({ session }: { session: any }) => {
   const [personalExists, setPersonalExists] = useState<boolean>(true);
   const [showCreate, setShowCreate] = useState<boolean>(false);
   const router = useRouter();
+  const [canEdit, setCanEdit] = useState<boolean>(false);
 
   const fetchPersonalData = async () => {
     setLoading(true);
@@ -36,6 +38,15 @@ export const ContentData = ({ session }: { session: any }) => {
     }
   };
 
+  const checkEditableClient = async () => {
+    try {
+      const res = await checkEditable();
+      if (res.success && res.editable) setCanEdit(res.editable);
+    } catch {
+      setCanEdit(false);
+    }
+  };
+
   useEffect(() => {
     fetchPersonalData();
   }, [session]);
@@ -46,9 +57,7 @@ export const ContentData = ({ session }: { session: any }) => {
       const response = await getChilds();
       if (response.success && response.data) {
         setItems(response.data as childrenRecord[]);
-        if (response.data.length === 0) {
-          setShowCreate(true);
-        }
+        if (response.data.length === 0) setShowCreate(true);
       } else toast.error(response.message || "No se pudieron obtener los hijos.");
     } catch {
       toast.error("Error al obtener los hijos.");
@@ -59,7 +68,8 @@ export const ContentData = ({ session }: { session: any }) => {
 
   useEffect(() => {
     fnChildren();
-  }, []);
+    if (session?.user) checkEditableClient();
+  }, [session?.user]);
 
   const handleRefresh = async () => {
     await fetchPersonalData();
@@ -108,7 +118,7 @@ export const ContentData = ({ session }: { session: any }) => {
         <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
       )}
 
-      {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} />}
+      {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} edit={canEdit} />}
       {items.length < (numeroHijos ?? 0) ? (
         <>
           {!showCreate && items.length > 0 && (
@@ -119,7 +129,7 @@ export const ContentData = ({ session }: { session: any }) => {
               <p>datos de otro hijo.</p>
             </div>
           )}
-          {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} />}
+          {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} edit={canEdit} />}
         </>
       ) : (
         <div className="flex flex-row justify-center items-center font-text">

@@ -7,16 +7,19 @@ import { formAcRecord, getStudies } from "@/actions/studies-action";
 import { Table } from "./table-data";
 import { Create } from "./form-data";
 import { Modify } from "./modify-data";
+import { checkEditable } from "@/actions/limit-time";
+import { Session } from "next-auth";
 
 export type StudyRecord = Omit<formAcRecord, "periodo"> & {
   periodo: { from: string; to: string };
 };
 
-export const ContentData = () => {
+export const ContentData = ({ session }: { session: Session }) => {
   const [items, setItems] = useState<StudyRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItem, setSelectedItem] = useState<StudyRecord | null>(null);
   const [showCreate, setShowCreate] = useState<boolean>(false);
+  const [canEdit, setCanEdit] = useState<boolean>(false);
 
   const fnFormAc = async () => {
     setLoading(true);
@@ -26,18 +29,26 @@ export const ContentData = () => {
         setItems(response.data as StudyRecord[]);
         if (response.data.length === 0) setShowCreate(true);
       } else toast.error(response.message || "No se pudieron obtener los estudios.");
-
-      // eslint-disable-next-line no-unused-vars
-    } catch (e: unknown) {
+    } catch {
       toast.error("Error al obtener los estudios.");
     } finally {
       setLoading(false);
     }
   };
 
+  const checkEditableClient = async () => {
+    try {
+      const res = await checkEditable();
+      if (res.success && res.editable) setCanEdit(res.editable);
+    } catch {
+      setCanEdit(false);
+    }
+  };
+
   useEffect(() => {
     fnFormAc();
-  }, []);
+    if (session?.user) checkEditableClient();
+  }, [session?.user]);
 
   const handleRefresh = () => {
     fnFormAc();
@@ -54,7 +65,7 @@ export const ContentData = () => {
         <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
       )}
 
-      {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} />}
+      {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} edit={canEdit} />}
 
       {!showCreate && items.length > 0 && (
         <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
@@ -65,7 +76,7 @@ export const ContentData = () => {
         </div>
       )}
 
-      {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} />}
+      {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} edit={canEdit} />}
     </div>
   );
 };

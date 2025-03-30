@@ -23,9 +23,10 @@ type CreateProps = {
   setSelectedItem: React.Dispatch<React.SetStateAction<StudyRecord | null>>;
   onCancel?: () => void;
   showCancel?: boolean;
+  edit: boolean;
 };
 
-export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, edit }) => {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<ZEstudioS>({
@@ -65,8 +66,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
           onCreated();
           setSelectedItem(null);
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al registrar el estudio.");
       }
     });
@@ -77,19 +77,19 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
       <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
-          <SelectField control={form.control} name="nivel" label="Formacion Academica *" options={nivelEducativoOp} />
+          <SelectField control={form.control} name="nivel" label="Formacion Academica *" options={nivelEducativoOp} disabled={!edit} />
 
           <div className="gap-2 grid grid-cols-2">
-            <InputField control={form.control} name="institucion" label="Nombre de la Institucion *" placeholder="Ingrese el nombre de la institucion" />
-            <InputField control={form.control} name="carrera" label="Carrera/Especialidad *" placeholder="Ingrese el nombre de la carrera" disabled={!requiereCarrera} />
+            <InputField control={form.control} name="institucion" label="Nombre de la Institucion *" placeholder="Ingrese el nombre de la institucion" disabled={!edit} />
+            <InputField control={form.control} name="carrera" label="Carrera/Especialidad *" placeholder="Ingrese el nombre de la carrera" disabled={!edit || !requiereCarrera} />
           </div>
 
           <div className="gap-4 grid grid-cols-2">
-            <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={false} />
-            <DateField control={form.control} name="periodo.to" label="Fecha de culminacion" disabled={false} />
+            <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={!edit} />
+            <DateField control={form.control} name="periodo.to" label="Fecha de culminacion" disabled={!edit} />
           </div>
 
-          <UploadField control={form.control} name="file" label="Documento" allowedTypes={["pdf"]} />
+          <UploadField control={form.control} name="file" label="Documento" allowedTypes={["pdf"]} disabled={!edit} />
 
           <div className="flex justify-end gap-2">
             {showCancel && onCancel && (
@@ -97,10 +97,12 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
                 Cancelar
               </Button>
             )}
-            <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
-              <Save />
-              {isPending ? "Guardando..." : "Guardar"}
-            </Button>
+            {edit && (
+              <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
+                <Save />
+                {isPending ? "Guardando..." : "Guardar"}
+              </Button>
+            )}
           </div>
         </form>
       </Form>

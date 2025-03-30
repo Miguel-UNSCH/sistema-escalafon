@@ -8,17 +8,18 @@ import { expRecord, getExperiences } from "@/actions/exp-action";
 import { Create } from "./form-data";
 import { Modify } from "./modify-data";
 import { Session } from "next-auth";
+import { checkEditable } from "@/actions/limit-time";
 
 export type ExperienceRecord = Omit<expRecord, "periodo"> & {
   periodo: { from: string; to: string };
 };
 
-// eslint-disable-next-line no-unused-vars
 export const ContentData = ({ session }: { session: Session }) => {
   const [items, setItems] = useState<ExperienceRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItem, setSelectedItem] = useState<ExperienceRecord | null>(null);
-  const [showCreate, setShowCreate] = useState<boolean>(items.length === 0); // auto-show si está vacío
+  const [showCreate, setShowCreate] = useState<boolean>(items.length === 0);
+  const [canEdit, setCanEdit] = useState<boolean>(false);
 
   const fnExperiences = async () => {
     setLoading(true);
@@ -28,12 +29,19 @@ export const ContentData = ({ session }: { session: Session }) => {
         setItems(response.data as ExperienceRecord[]);
         if (response.data.length === 0) setShowCreate(true);
       } else toast.error(response.message || "No se pudieron obtener las experiencias.");
-
-      // eslint-disable-next-line no-unused-vars
-    } catch (e: unknown) {
+    } catch {
       toast.error("Error al obtener las experiencias.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const checkEditableClient = async () => {
+    try {
+      const res = await checkEditable();
+      if (res.success && res.editable) setCanEdit(res.editable);
+    } catch {
+      setCanEdit(false);
     }
   };
 
@@ -44,7 +52,8 @@ export const ContentData = ({ session }: { session: Session }) => {
 
   useEffect(() => {
     fnExperiences();
-  }, []);
+    if (session?.user) checkEditableClient();
+  }, [session?.user]);
 
   const handleRefresh = () => {
     fnExperiences();
@@ -62,7 +71,7 @@ export const ContentData = ({ session }: { session: Session }) => {
         <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
       )}
 
-      {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} user_id={session.user.id} />}
+      {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} user_id={session.user.id} edit={canEdit} />}
 
       {!showCreate && items.length > 0 && (
         <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
@@ -73,7 +82,7 @@ export const ContentData = ({ session }: { session: Session }) => {
         </div>
       )}
 
-      {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} />}
+      {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} edit={canEdit} />}
     </div>
   );
 };

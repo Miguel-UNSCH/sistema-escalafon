@@ -1,4 +1,3 @@
-// eslint-disable no-unused-vars
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -11,6 +10,7 @@ import { Session } from "next-auth";
 import { getCurrentPersonal } from "@/actions/personal-action";
 import { Create } from "./form-data";
 import { Modify } from "./modify-data";
+import { checkEditable } from "@/actions/limit-time";
 
 export const ContentData = ({ session }: { session: Session }) => {
   const [items, setItems] = useState<discapacidadRecord[]>([]);
@@ -18,8 +18,9 @@ export const ContentData = ({ session }: { session: Session }) => {
   const [disability, setDisability] = useState<boolean | null>(null);
   const [personalData, setPersonalData] = useState<Personal | null>(null);
   const [selectedItem, setSelectedItem] = useState<discapacidadRecord | null>(null);
-  const [showCreate, setShowCreate] = useState<boolean>(false); // auto-show si está vacío
+  const [showCreate, setShowCreate] = useState<boolean>(false);
   const router = useRouter();
+  const [canEdit, setCanEdit] = useState<boolean>(false);
 
   useEffect(() => {
     const fnPersonalData = async () => {
@@ -43,15 +44,22 @@ export const ContentData = ({ session }: { session: Session }) => {
     fnPersonalData();
   }, [session]);
 
+  const checkEditableClient = async () => {
+    try {
+      const res = await checkEditable();
+      if (res.success && res.editable) setCanEdit(res.editable);
+    } catch {
+      setCanEdit(false);
+    }
+  };
+
   const fnDisabilities = async () => {
     setLoading(true);
     try {
       const response = await getDisabilities();
       if (response.success && response.data) {
         setItems(response.data);
-        if (response.data.length === 0) {
-          setShowCreate(true); // Mostrar automáticamente si está vacío
-        }
+        if (response.data.length === 0) setShowCreate(true);
       } else toast.error(response.message || "No se pudieron obtener las discapacidades.");
     } catch {
       toast.error("Error al obtener las discapacidades.");
@@ -62,7 +70,8 @@ export const ContentData = ({ session }: { session: Session }) => {
 
   useEffect(() => {
     fnDisabilities();
-  }, []);
+    if (session?.user) checkEditableClient();
+  }, [session?.user]);
 
   const handleRefresh = () => {
     fnDisabilities();
@@ -110,7 +119,7 @@ export const ContentData = ({ session }: { session: Session }) => {
             <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
           )}
 
-          {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} />}
+          {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} edit={canEdit} />}
 
           {!showCreate && items.length > 0 && (
             <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
@@ -121,7 +130,7 @@ export const ContentData = ({ session }: { session: Session }) => {
             </div>
           )}
 
-          {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} />}
+          {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} edit={canEdit} />}
         </>
       )}
     </div>
