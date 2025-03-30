@@ -5,12 +5,12 @@ import { SelectField } from "./select-field";
 
 interface UbigeoFieldProps {
   control: Control<any>;
-  isCompleteFromDB: boolean;
+  disabled: boolean;
   setValue: UseFormSetValue<any>;
   watch: UseFormWatch<any>;
 }
 
-export const UbigeoField = ({ control, isCompleteFromDB, setValue, watch }: UbigeoFieldProps) => {
+export const UbigeoField = ({ control, disabled, setValue, watch }: UbigeoFieldProps) => {
   const [departamentos, setDepartamentos] = useState<string[]>([]);
   const [provincias, setProvincias] = useState<string[]>([]);
   const [distritos, setDistritos] = useState<string[]>([]);
@@ -107,7 +107,7 @@ export const UbigeoField = ({ control, isCompleteFromDB, setValue, watch }: Ubig
         label="Departamento *"
         options={convertArrayToObjects(departamentos)}
         placeholder="Seleccione el departamento"
-        disabled={isCompleteFromDB}
+        disabled={disabled}
       />
       <SelectField
         control={control}
@@ -115,7 +115,7 @@ export const UbigeoField = ({ control, isCompleteFromDB, setValue, watch }: Ubig
         label="Provincia *"
         options={convertArrayToObjects(provincias)}
         placeholder="Seleccione la provincia"
-        disabled={isCompleteFromDB || !selectedDepartamento}
+        disabled={disabled || !selectedDepartamento}
       />
       <SelectField
         control={control}
@@ -123,7 +123,7 @@ export const UbigeoField = ({ control, isCompleteFromDB, setValue, watch }: Ubig
         label="Distrito *"
         options={convertArrayToObjects(distritos)}
         placeholder="Seleccione el distrito"
-        disabled={isCompleteFromDB || !selectedProvincia || distritos.length === 0}
+        disabled={disabled || !selectedProvincia || distritos.length === 0}
       />
     </>
   );

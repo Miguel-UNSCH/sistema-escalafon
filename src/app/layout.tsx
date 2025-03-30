@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "react-hot-toast";
 import { CircleCheckBig, CircleX, Loader } from "lucide-react";
+import { EditTimeProvider } from "@/context/edit-time-context";
 
 export const metadata: Metadata = {
   title: "sistema escalafon",
@@ -21,38 +22,40 @@ export default function RootLayout({
       <body className={clsx("bg-background h-screen text-text antialiased")}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <SessionProvider>
-            <main className="h-full">
-              {children}
-              <Toaster
-                position="bottom-right"
-                toastOptions={{
-                  duration: 2000,
-                  style: {
-                    background: "var(--ctp-crust)",
-                    color: "var(--ctp-text)",
-                    padding: "8px 16px",
-                  },
-                  success: {
+            <EditTimeProvider>
+              <main className="h-full">
+                {children}
+                <Toaster
+                  position="bottom-right"
+                  toastOptions={{
+                    duration: 2000,
                     style: {
-                      color: "var(--ctp-green)",
+                      background: "var(--ctp-crust)",
+                      color: "var(--ctp-text)",
+                      padding: "8px 16px",
                     },
-                    icon: <CircleCheckBig size={16} />,
-                  },
-                  error: {
-                    style: {
-                      color: "var(--ctp-red)",
+                    success: {
+                      style: {
+                        color: "var(--ctp-green)",
+                      },
+                      icon: <CircleCheckBig size={16} />,
                     },
-                    icon: <CircleX size={16} />,
-                  },
-                  loading: {
-                    style: {
-                      color: "var(--ctp-mauve)",
+                    error: {
+                      style: {
+                        color: "var(--ctp-red)",
+                      },
+                      icon: <CircleX size={16} />,
                     },
-                    icon: <Loader size={16} />,
-                  },
-                }}
-              />
-            </main>
+                    loading: {
+                      style: {
+                        color: "var(--ctp-mauve)",
+                      },
+                      icon: <Loader size={16} />,
+                    },
+                  }}
+                />
+              </main>
+            </EditTimeProvider>
           </SessionProvider>
         </ThemeProvider>
       </body>

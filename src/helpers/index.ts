@@ -1,3 +1,4 @@
-export function flattenObjectToArray(obj: any) {
-  return Object.values(obj).flat();
-}
+export const canEdit = (modificationStart: Date, modificationEnd: Date): boolean => {
+  const now = new Date();
+  return now >= modificationStart && now <= modificationEnd;
+};

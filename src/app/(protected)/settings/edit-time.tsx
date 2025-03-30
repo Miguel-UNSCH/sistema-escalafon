@@ -4,6 +4,7 @@ import { createConfEdit, deleteConfEdit, getConfEdit, updateConfEdit } from "@/a
 import { DateField } from "@/components/custom-fields/date-field";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+import { useEditTime } from "@/context/edit-time-context";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save, Trash2, Pencil } from "lucide-react";
 import React, { useEffect, useState, useTransition } from "react";
@@ -11,16 +12,22 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 
-const editSchema = z.object({
-  fecha_inicio: z
-    .string({ required_error: "Fecha de inicio es requerida" })
-    .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
-    .transform((date) => new Date(date)),
-  fecha_fin: z
-    .string({ required_error: "Fecha de culminación es requerida" })
-    .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
-    .transform((date) => new Date(date)),
-});
+export const editSchema = z
+  .object({
+    fecha_inicio: z
+      .string({ required_error: "Fecha de inicio es requerida" })
+      .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
+      .transform((date) => new Date(date)),
+
+    fecha_fin: z
+      .string({ required_error: "Fecha de culminación es requerida" })
+      .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
+      .transform((date) => new Date(date)),
+  })
+  .refine((data) => data.fecha_fin > data.fecha_inicio, {
+    message: "La fecha de culminación debe ser posterior a la fecha de inicio.",
+    path: ["fecha_fin"], // Apunta el error directamente al campo fecha_fin
+  });
 
 export type ZEdit = z.infer<typeof editSchema>;
 
@@ -28,6 +35,7 @@ export const EditTime = () => {
   const [isPending, startTransition] = useTransition();
   const [showForm, setShowForm] = useState(false);
   const [confId, setConfId] = useState<number | null>(null);
+  const { updateVersion } = useEditTime();
 
   const form = useForm<ZEdit>({
     resolver: zodResolver(editSchema),
@@ -48,23 +56,12 @@ export const EditTime = () => {
 
   const onSubmit = async (data: ZEdit) => {
     startTransition(async () => {
-      if (confId !== null) {
-        const res = await updateConfEdit(confId, data as any);
-        if (res.success) {
-          toast.success(res.message);
-        } else {
-          toast.error(res.message);
-        }
-      } else {
-        const res = await createConfEdit(data as any);
-        if (res.success) {
-          toast.success(res.message);
-          setConfId(res.data?.id || null);
-          setShowForm(true);
-        } else {
-          toast.error(res.message);
-        }
-      }
+      const res = confId !== null ? await updateConfEdit(confId, data as any) : await createConfEdit(data as any);
+      if (res.success) {
+        toast.success(res.message);
+        if (!confId && res.data?.id) setConfId(res.data.id);
+        updateVersion();
+      } else toast.error(res.message);
     });
   };
 
@@ -96,8 +93,8 @@ export const EditTime = () => {
       {showForm && (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
-            <DateField control={form.control} name="fecha_inicio" label="Fecha de inicio" disabled={false} dateLimit="past" />
-            <DateField control={form.control} name="fecha_fin" label="Fecha de culminación" disabled={false} dateLimit="past" />
+            <DateField control={form.control} name="fecha_inicio" label="Fecha de inicio" disabled={false} dateLimit="any" />
+            <DateField control={form.control} name="fecha_fin" label="Fecha de culminación" disabled={false} dateLimit="future" />
 
             <div className="flex justify-end gap-4">
               {confId && (
