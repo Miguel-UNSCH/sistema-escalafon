@@ -19,9 +19,10 @@ type ModifyProps = {
   item: ascensoRecord;
   onUpdated: () => void;
   setSelectedItem: React.Dispatch<React.SetStateAction<ascensoRecord | null>>;
+  edit: boolean;
 };
 
-export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem }) => {
+export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem, edit }) => {
   const [isPending, startTransition] = useTransition();
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [isChangingFile, setIsChangingFile] = useState(false);
@@ -67,8 +68,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al modificar.");
       }
     });
@@ -85,8 +85,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al eliminar.");
       }
     });
@@ -98,20 +97,20 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
           <div className="gap-2 grid grid-cols-2">
-            <InputField control={form.control} name="resolucion_ascenso" label="Resolucion de Ascenso *" placeholder="Ingrese la resolucion de ascenso" />
-            <InputField control={form.control} name="cnp" label="CNP *" type="number" />
+            <InputField control={form.control} name="resolucion_ascenso" label="Resolucion de Ascenso *" placeholder="Ingrese la resolucion de ascenso" disabled={!edit} />
+            <InputField control={form.control} name="cnp" label="CNP *" type="number" disabled={!edit} />
           </div>
 
           <div className="gap-2 grid grid-cols-2">
-            <InputField control={form.control} name="nivel_remunerativo" label="Nivel Remunerativo *" placeholder="Ingrese el nivel remunerativo" />
-            <DateField control={form.control} name="fecha" label="Fecha" disabled={false} />
+            <InputField control={form.control} name="nivel_remunerativo" label="Nivel Remunerativo *" placeholder="Ingrese el nivel remunerativo" disabled={!edit} />
+            <DateField control={form.control} name="fecha" label="Fecha" disabled={!edit} />
           </div>
 
-          <DependenciaIdField control={form.control} name="current_dependencia_id" label="Dependencia Actual *" />
-          <CargoIdDependenciaField control={form.control} name="current_cargo_id" dependencia_id={form.watch("current_dependencia_id")} label="Cargo Actual *" />
+          <DependenciaIdField control={form.control} name="current_dependencia_id" label="Dependencia Actual *" disabled={!edit} />
+          <CargoIdDependenciaField control={form.control} name="current_cargo_id" dependencia_id={form.watch("current_dependencia_id")} label="Cargo Actual *" disabled={!edit} />
 
-          <DependenciaIdField control={form.control} name="new_dependencia_id" label="Nueva Dependencia *" />
-          <CargoIdDependenciaField control={form.control} name="new_cargo_id" dependencia_id={form.watch("new_dependencia_id")} label="Nuevo Cargo *" />
+          <DependenciaIdField control={form.control} name="new_dependencia_id" label="Nueva Dependencia *" disabled={!edit} />
+          <CargoIdDependenciaField control={form.control} name="new_cargo_id" dependencia_id={form.watch("new_dependencia_id")} label="Nuevo Cargo *" disabled={!edit} />
 
           {fileUrl && !isChangingFile ? (
             <div className="flex md:flex-row flex-col items-center gap-4 md:text-left text-center">
@@ -120,13 +119,13 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
                 <p className="bg-mantle p-4 py-3 rounded-md w-full">{item.file?.name}</p>
               </div>
               <div className="flex md:flex-row flex-col gap-2 w-full md:w-auto">
-                <Button variant="outline" asChild>
-                  {/* eslint-disable-next-line jsx-no-target-blank */}
+                <Button variant="outline" asChild disabled={!edit}>
+                  {/* oxlint-disable-next-line jsx-no-target-blank */}
                   <a href={fileUrl} download target="_blank">
                     <Download size={16} /> Descargar
                   </a>
                 </Button>
-                <Button onClick={() => setIsChangingFile(true)} variant="outline">
+                <Button onClick={() => setIsChangingFile(true)} variant="outline" disabled={!edit}>
                   Cambiar archivo
                 </Button>
               </div>
@@ -134,9 +133,9 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           ) : (
             <div className="flex md:flex-row flex-col items-end gap-2 w-full">
               <div className="w-full">
-                <UploadField control={form.control} name="file" label="Subir nuevo archivo" allowedTypes={["pdf"]} />
+                <UploadField control={form.control} name="file" label="Subir nuevo archivo" allowedTypes={["pdf"]} disabled={!edit} />
               </div>
-              <Button variant="outline" onClick={() => setIsChangingFile(false)}>
+              <Button variant="outline" onClick={() => setIsChangingFile(false)} disabled={!edit}>
                 Cancelar
               </Button>
             </div>
@@ -146,14 +145,18 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
             <Button variant="outline" onClick={() => setSelectedItem(null)}>
               cancelar
             </Button>
-            <Button onClick={onDelete} type="button" disabled={isPending} className="flex flex-row items-center gap-2 bg-maroon">
-              <Trash size={16} />
-              {isPending ? "Eliminando..." : "Eliminar"}
-            </Button>
-            <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2 bg-teal hover:bg-green">
-              <Save size={16} />
-              {isPending ? "Guardando..." : "Actualizar"}
-            </Button>
+            {edit && (
+              <>
+                <Button onClick={onDelete} type="button" disabled={isPending} className="flex flex-row items-center gap-2 bg-maroon">
+                  <Trash size={16} />
+                  {isPending ? "Eliminando..." : "Eliminar"}
+                </Button>
+                <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2 bg-teal hover:bg-green">
+                  <Save size={16} />
+                  {isPending ? "Guardando..." : "Actualizar"}
+                </Button>
+              </>
+            )}
           </div>
         </form>
       </Form>

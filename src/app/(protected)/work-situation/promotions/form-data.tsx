@@ -19,9 +19,10 @@ type CreateProps = {
   setSelectedItem: React.Dispatch<React.SetStateAction<ascensoRecord | null>>;
   onCancel?: () => void;
   showCancel?: boolean;
+  edit: boolean;
 };
 
-export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, edit }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
@@ -60,8 +61,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
           onCreated();
           setSelectedItem(null);
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al registrar el ascenso.");
       }
     });
@@ -73,22 +73,22 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <div className="gap-2 grid grid-cols-2">
-            <InputField control={form.control} name="resolucion_ascenso" label="Resolucion de Ascenso *" placeholder="Ingrese la resolucion de ascenso" />
-            <InputField control={form.control} name="cnp" label="CNP *" type="number" />
+            <InputField control={form.control} name="resolucion_ascenso" label="Resolucion de Ascenso *" placeholder="Ingrese la resolucion de ascenso" disabled={!edit} />
+            <InputField control={form.control} name="cnp" label="CNP *" type="number" disabled={!edit} />
           </div>
 
           <div className="gap-2 grid grid-cols-2">
-            <InputField control={form.control} name="nivel_remunerativo" label="Nivel Remunerativo *" placeholder="Ingrese el nivel remunerativo" />
-            <DateField control={form.control} name="fecha" label="Fecha" disabled={false} />
+            <InputField control={form.control} name="nivel_remunerativo" label="Nivel Remunerativo *" placeholder="Ingrese el nivel remunerativo" disabled={!edit} />
+            <DateField control={form.control} name="fecha" label="Fecha" disabled={!edit} dateLimit="any" />
           </div>
 
-          <DependenciaIdField control={form.control} name="current_dependencia_id" label="Dependencia Actual *" />
-          <CargoIdDependenciaField control={form.control} name="current_cargo_id" dependencia_id={form.watch("current_dependencia_id")} label="Cargo Actual *" />
+          <DependenciaIdField control={form.control} name="current_dependencia_id" label="Dependencia Actual *" disabled={!edit} />
+          <CargoIdDependenciaField control={form.control} name="current_cargo_id" dependencia_id={form.watch("current_dependencia_id")} label="Cargo Actual *" disabled={!edit} />
 
-          <DependenciaIdField control={form.control} name="new_dependencia_id" label="Nueva Dependencia *" />
-          <CargoIdDependenciaField control={form.control} name="new_cargo_id" dependencia_id={form.watch("new_dependencia_id")} label="Nuevo Cargo *" />
+          <DependenciaIdField control={form.control} name="new_dependencia_id" label="Nueva Dependencia *" disabled={!edit} />
+          <CargoIdDependenciaField control={form.control} name="new_cargo_id" dependencia_id={form.watch("new_dependencia_id")} label="Nuevo Cargo *" disabled={!edit} />
 
-          <UploadField control={form.control} name="file" label="Documento *" allowedTypes={["pdf"]} />
+          <UploadField control={form.control} name="file" label="Documento *" allowedTypes={["pdf"]} disabled={!edit} />
 
           <div className="flex justify-end gap-2">
             {showCancel && onCancel && (
@@ -96,10 +96,12 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
                 Cancelar
               </Button>
             )}
-            <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
-              <Save />
-              {isPending ? "Guardando..." : "Guardar"}
-            </Button>
+            {edit && (
+              <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
+                <Save />
+                {isPending ? "Guardando..." : "Guardar"}
+              </Button>
+            )}
           </div>
         </form>
       </Form>

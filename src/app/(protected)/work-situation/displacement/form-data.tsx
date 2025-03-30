@@ -22,8 +22,9 @@ type CreateProps = {
   setSelectedItem: React.Dispatch<React.SetStateAction<desplazamientoRecord | null>>;
   onCancel?: () => void;
   showCancel?: boolean;
+  edit: boolean;
 };
-export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, edit }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
@@ -72,20 +73,20 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
       <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
-          <SelectField control={form.control} name="tipo_desplazamiento" label="Tipo de Desplazamiento" options={tipoDesplazamientoOp} />
+          <SelectField control={form.control} name="tipo_desplazamiento" label="Tipo de Desplazamiento" options={tipoDesplazamientoOp} disabled={!edit} />
 
           <div className="gap-2 grid grid-cols-2">
-            <InputField control={form.control} name="tipo_file" label="Tipo de Documento" placeholder="Ingrese el tipo de documento" />
-            <DateField control={form.control} name="fecha" label="Fecha" disabled={false} />
+            <InputField control={form.control} name="tipo_file" label="Tipo de Documento" placeholder="Ingrese el tipo de documento" disabled={!edit} />
+            <DateField control={form.control} name="fecha" label="Fecha" disabled={!edit} />
           </div>
 
-          <DependenciaIdField control={form.control} name="current_dependencia_id" label="Dependencia Actual *" />
-          <CargoIdDependenciaField control={form.control} name="current_cargo_id" dependencia_id={form.watch("current_dependencia_id")} label="Cargo Actual *" />
+          <DependenciaIdField control={form.control} name="current_dependencia_id" label="Dependencia Actual *" disabled={!edit} />
+          <CargoIdDependenciaField control={form.control} name="current_cargo_id" dependencia_id={form.watch("current_dependencia_id")} label="Cargo Actual *" disabled={!edit} />
 
-          <DependenciaIdField control={form.control} name="new_dependencia_id" label="Nueva Dependencia *" />
-          <CargoIdDependenciaField control={form.control} name="new_cargo_id" dependencia_id={form.watch("new_dependencia_id")} label="Nuevo Cargo *" />
+          <DependenciaIdField control={form.control} name="new_dependencia_id" label="Nueva Dependencia *" disabled={!edit} />
+          <CargoIdDependenciaField control={form.control} name="new_cargo_id" dependencia_id={form.watch("new_dependencia_id")} label="Nuevo Cargo *" disabled={!edit} />
 
-          <UploadField control={form.control} name="file" label="Documento" allowedTypes={["pdf"]} />
+          <UploadField control={form.control} name="file" label="Documento" allowedTypes={["pdf"]} disabled={!edit} />
 
           <div className="flex justify-end gap-2">
             {showCancel && onCancel && (
@@ -93,10 +94,12 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
                 Cancelar
               </Button>
             )}
-            <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
-              <Save />
-              {isPending ? "Guardando..." : "Guardar"}
-            </Button>
+            {edit && (
+              <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
+                <Save />
+                {isPending ? "Guardando..." : "Guardar"}
+              </Button>
+            )}
           </div>
         </form>
       </Form>

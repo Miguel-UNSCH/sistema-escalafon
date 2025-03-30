@@ -7,13 +7,14 @@ import { Table } from "./table-data";
 import { Create } from "./form-data";
 import { Modify } from "./modify-data";
 import { Session } from "next-auth";
+import { checkEditable } from "@/actions/limit-time";
 
-// eslint-disable-next-line no-unused-vars
 export const ContentData = ({ session }: { session: Session }) => {
   const [items, setItems] = useState<ascensoRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItem, setSelectedItem] = useState<ascensoRecord | null>(null);
   const [showCreate, setShowCreate] = useState<boolean>(false);
+  const [canEdit, setCanEdit] = useState<boolean>(false);
 
   const fnAscensos = async () => {
     setLoading(true);
@@ -23,18 +24,26 @@ export const ContentData = ({ session }: { session: Session }) => {
         setItems(response.data);
         if (response.data.length === 0) setShowCreate(true);
       } else toast.error(response.message || "No se pudieron obtener los ascensos.");
-
-      // eslint-disable-next-line no-unused-vars
-    } catch (e: unknown) {
+    } catch {
       toast.error("Error al obtener los ascensos.");
     } finally {
       setLoading(false);
     }
   };
 
+  const checkEditableClient = async () => {
+    try {
+      const res = await checkEditable();
+      if (res.success && res.editable) setCanEdit(res.editable);
+    } catch {
+      setCanEdit(false);
+    }
+  };
+
   useEffect(() => {
     fnAscensos();
-  }, []);
+    if (session?.user) checkEditableClient();
+  }, [session?.user]);
 
   const handleRefresh = () => {
     fnAscensos();
@@ -51,7 +60,7 @@ export const ContentData = ({ session }: { session: Session }) => {
         <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
       )}
 
-      {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} />}
+      {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} edit={canEdit} />}
       {!showCreate && items.length > 0 && (
         <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
           <p className="border-mauve border-b-2 hover:border-b-4 font-special hover:font-bold text-mauve cursor-pointer" onClick={() => setShowCreate(true)}>
@@ -61,7 +70,7 @@ export const ContentData = ({ session }: { session: Session }) => {
         </div>
       )}
 
-      {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} />}
+      {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} edit={canEdit} />}
     </div>
   );
 };

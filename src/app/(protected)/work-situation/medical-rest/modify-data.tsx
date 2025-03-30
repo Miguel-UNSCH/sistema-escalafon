@@ -23,9 +23,10 @@ type ModifyProps = {
   onUpdated: () => void;
   setSelectedMedical: React.Dispatch<React.SetStateAction<DescansoMedicoRecord | null>>;
   user_id: string;
+  edit: boolean;
 };
 
-export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedMedical, user_id }) => {
+export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedMedical, user_id, edit }) => {
   const [isPending, startTransition] = useTransition();
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [isChangingFile, setIsChangingFile] = useState(false);
@@ -96,16 +97,16 @@ export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedM
       <p className="font-primary font-bold text-mauve text-xl uppercase">Modificar Descanso Medico</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
-          <SelectField control={form.control} name="tipo_descanso" label="Tipo de Descanso" options={tipoDescansoOp} />
+          <SelectField control={form.control} name="tipo_descanso" label="Tipo de Descanso" options={tipoDescansoOp} disabled={!edit} />
 
-          <InputField control={form.control} name="detalle" label="Detalle *" placeholder="Detalle" />
+          <InputField control={form.control} name="detalle" label="Detalle *" placeholder="Detalle" disabled={!edit} />
 
-          <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" />
-          <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} />
+          <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" disabled={!edit} />
+          <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} disabled={!edit} />
 
           <div className="gap-4 grid grid-cols-2">
-            <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={false} />
-            <DateField control={form.control} name="periodo.to" label="Fecha de culminacion" disabled={false} />
+            <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={!edit} />
+            <DateField control={form.control} name="periodo.to" label="Fecha de culminacion" disabled={!edit} />
           </div>
 
           {fileUrl && !isChangingFile ? (
@@ -115,13 +116,13 @@ export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedM
                 <p className="bg-mantle p-4 py-3 rounded-md w-full">{medical.file?.name}</p>
               </div>
               <div className="flex md:flex-row flex-col gap-2 w-full md:w-auto">
-                <Button variant="outline" asChild>
-                  {/*  oxlint-disable-next-line jsx-no-target-blank */}
+                <Button variant="outline" asChild disabled={!edit}>
+                  {/* oxlint-disable-next-line jsx-no-target-blank */}
                   <a href={fileUrl} download target="_blank">
                     <Download size={16} /> Descargar
                   </a>
                 </Button>
-                <Button onClick={() => setIsChangingFile(true)} variant="outline">
+                <Button onClick={() => setIsChangingFile(true)} variant="outline" disabled={!edit}>
                   Cambiar archivo
                 </Button>
               </div>
@@ -129,9 +130,9 @@ export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedM
           ) : (
             <div className="flex md:flex-row flex-col items-end gap-2 w-full">
               <div className="w-full">
-                <UploadField control={form.control} name="file" label="Subir nuevo archivo" allowedTypes={["pdf"]} />
+                <UploadField control={form.control} name="file" label="Subir nuevo archivo" allowedTypes={["pdf"]} disabled={!edit} />
               </div>
-              <Button variant="outline" onClick={() => setIsChangingFile(false)}>
+              <Button variant="outline" onClick={() => setIsChangingFile(false)} disabled={!edit}>
                 Cancelar
               </Button>
             </div>
@@ -141,14 +142,18 @@ export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedM
             <Button variant="outline" onClick={() => setSelectedMedical(null)}>
               cancelar
             </Button>
-            <Button onClick={onDelete} type="button" disabled={isPending} className="flex flex-row items-center gap-2 bg-maroon">
-              <Trash size={16} />
-              {isPending ? "Eliminando..." : "Eliminar"}
-            </Button>
-            <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2 bg-teal hover:bg-green">
-              <Save size={16} />
-              {isPending ? "Guardando..." : "Actualizar"}
-            </Button>
+            {edit && (
+              <>
+                <Button onClick={onDelete} type="button" disabled={isPending} className="flex flex-row items-center gap-2 bg-maroon">
+                  <Trash size={16} />
+                  {isPending ? "Eliminando..." : "Eliminar"}
+                </Button>
+                <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2 bg-teal hover:bg-green">
+                  <Save size={16} />
+                  {isPending ? "Guardando..." : "Actualizar"}
+                </Button>
+              </>
+            )}
           </div>
         </form>
       </Form>

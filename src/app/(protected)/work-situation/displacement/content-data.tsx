@@ -6,12 +6,15 @@ import { desplazamientoRecord, getDesplazamientos } from "@/actions/desplazamien
 import { Table } from "./table-data";
 import { Create } from "./form-data";
 import { Modify } from "./modify-data";
+import { Session } from "next-auth";
+import { checkEditable } from "@/actions/limit-time";
 
-export const ContentData = () => {
+export const ContentData = ({ session }: { session: Session }) => {
   const [items, setItems] = useState<desplazamientoRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItem, setSelectedItem] = useState<desplazamientoRecord | null>(null);
   const [showCreate, setShowCreate] = useState<boolean>(false);
+  const [canEdit, setCanEdit] = useState<boolean>(false);
 
   const fnDesplazamientos = async () => {
     setLoading(true);
@@ -30,9 +33,19 @@ export const ContentData = () => {
     }
   };
 
+  const checkEditableClient = async () => {
+    try {
+      const res = await checkEditable();
+      if (res.success && res.editable) setCanEdit(res.editable);
+    } catch {
+      setCanEdit(false);
+    }
+  };
+
   useEffect(() => {
     fnDesplazamientos();
-  }, []);
+    if (session?.user) checkEditableClient();
+  }, [session?.user]);
 
   const handleRefresh = () => {
     fnDesplazamientos();
@@ -49,7 +62,7 @@ export const ContentData = () => {
         <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
       )}
 
-      {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} />}
+      {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} edit={canEdit} />}
 
       {!showCreate && items.length > 0 && (
         <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
@@ -60,7 +73,7 @@ export const ContentData = () => {
         </div>
       )}
 
-      {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} />}
+      {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} edit={canEdit} />}
     </div>
   );
 };

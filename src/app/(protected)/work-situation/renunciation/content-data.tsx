@@ -7,12 +7,14 @@ import { getRenuncias, renunciaRecord } from "@/actions/renuncia-action";
 import { Create } from "./form-data";
 import { Modify } from "./modify-data";
 import { Session } from "next-auth";
+import { checkEditable } from "@/actions/limit-time";
 
 export const ContentData = ({ session }: { session: Session }) => {
   const [renuncias, setRenuncias] = useState<renunciaRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedRenuncia, setSelectedRenuncia] = useState<renunciaRecord | null>(null);
   const [showCreate, setShowCreate] = useState<boolean>(false);
+  const [canEdit, setCanEdit] = useState<boolean>(false);
 
   const fnRenuncias = async () => {
     setLoading(true);
@@ -24,17 +26,26 @@ export const ContentData = ({ session }: { session: Session }) => {
           setShowCreate(true);
         }
       } else toast.error(response.message || "No se pudieron obtener las renuncias.");
-      // eslint-disable-next-line no-unused-vars
-    } catch (e: unknown) {
+    } catch {
       toast.error("Error al obtener las renuncias.");
     } finally {
       setLoading(false);
     }
   };
 
+  const checkEditableClient = async () => {
+    try {
+      const res = await checkEditable();
+      if (res.success && res.editable) setCanEdit(res.editable);
+    } catch {
+      setCanEdit(false);
+    }
+  };
+
   useEffect(() => {
     fnRenuncias();
-  }, []);
+    if (session?.user) checkEditableClient();
+  }, [session?.user]);
 
   const handleRefresh = () => {
     fnRenuncias();
@@ -51,7 +62,7 @@ export const ContentData = ({ session }: { session: Session }) => {
         <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
       )}
 
-      {selectedRenuncia && <Modify renuncia={selectedRenuncia} onUpdated={handleRefresh} setSelectedRenuncia={setSelectedRenuncia} user_id={session.user.id} />}
+      {selectedRenuncia && <Modify renuncia={selectedRenuncia} onUpdated={handleRefresh} setSelectedRenuncia={setSelectedRenuncia} user_id={session.user.id} edit={canEdit} />}
 
       {!showCreate && renuncias.length > 0 && (
         <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
@@ -69,6 +80,7 @@ export const ContentData = ({ session }: { session: Session }) => {
           onCancel={() => setShowCreate(false)}
           showCancel={renuncias.length > 0}
           user_id={session.user.id}
+          edit={canEdit}
         />
       )}
     </div>

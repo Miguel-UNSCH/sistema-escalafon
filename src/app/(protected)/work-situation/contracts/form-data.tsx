@@ -25,9 +25,10 @@ type CreateProps = {
   onCancel?: () => void;
   showCancel?: boolean;
   user_id: string;
+  edit: boolean;
 };
 
-export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, edit }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
@@ -83,14 +84,20 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
       <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
-          <SelectField control={form.control} name="tipo_contrato" label="Tipo de Contrato *" options={TContratoOp} />
+          <SelectField control={form.control} name="tipo_contrato" label="Tipo de Contrato *" options={TContratoOp} disabled={!edit} />
 
           {["dl_276", "cas", "pro_inv", "pra"].includes(tipoContrato) && (
-            <SelectField control={form.control} name="condicion_laboral" label="Condición Laboral *" options={cond_lab_op[tipoContrato as keyof typeof cond_lab_op]} />
+            <SelectField
+              control={form.control}
+              name="condicion_laboral"
+              label="Condición Laboral *"
+              options={cond_lab_op[tipoContrato as keyof typeof cond_lab_op]}
+              disabled={!edit}
+            />
           )}
 
           {["dl_276", "cas", "pro_inv"].includes(tipoContrato) && (
-            <SelectField control={form.control} name="regimen_laboral" label="Régimen Laboral *" options={reg_lab_op[tipoContrato as keyof typeof reg_lab_op]} />
+            <SelectField control={form.control} name="regimen_laboral" label="Régimen Laboral *" options={reg_lab_op[tipoContrato as keyof typeof reg_lab_op]} disabled={!edit} />
           )}
 
           {(tipoContrato === "dl_276" || tipoContrato === "pro_inv" || tipoContrato === "cas") && (
@@ -99,37 +106,38 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
               name="resolucion_contrato"
               label={tipoContrato === "cas" ? "Contrato CAS *" : "Resolución de Nombramiento *"}
               placeholder="Ingrese la resolución o contrato"
+              disabled={!edit}
             />
           )}
 
           {tipoContrato === "dl_276" && (
             <>
-              <InputField control={form.control} name="nivel_remuneracion" label="Nivel Remunerativo *" placeholder="Ingrese el nivel" />
+              <InputField control={form.control} name="nivel_remuneracion" label="Nivel Remunerativo *" placeholder="Ingrese el nivel" disabled={!edit} />
               <div className="gap-2 grid grid-cols-2">
-                <InputField control={form.control} name="pap" label="PAP" placeholder="Ingrese el PAP" type="number" />
-                <InputField control={form.control} name="cnp" label="CNP" placeholder="Ingrese el CNP" type="number" />
+                <InputField control={form.control} name="pap" label="PAP" placeholder="Ingrese el PAP" type="number" disabled={!edit} />
+                <InputField control={form.control} name="cnp" label="CNP" placeholder="Ingrese el CNP" type="number" disabled={!edit} />
               </div>
             </>
           )}
 
           {tipoContrato === "pro_inv" && (
             <>
-              <InputField control={form.control} name="meta" label="Meta *" placeholder="Ingrese la meta" />
-              <InputField control={form.control} name="obra" label="Obra *" placeholder="Ingrese la obra" />
+              <InputField control={form.control} name="meta" label="Meta *" placeholder="Ingrese la meta" disabled={!edit} />
+              <InputField control={form.control} name="obra" label="Obra *" placeholder="Ingrese la obra" disabled={!edit} />
             </>
           )}
 
-          {tipoContrato === "pra" && <InputField control={form.control} name="resolucion_contrato" label="Convenio *" placeholder="Ingrese el convenio" />}
+          {tipoContrato === "pra" && <InputField control={form.control} name="resolucion_contrato" label="Convenio *" placeholder="Ingrese el convenio" disabled={!edit} />}
 
-          <DependenciaIdField control={form.control} name="dependencia_id" label="Dependencia *" />
-          <CargoIdDependenciaField control={form.control} name="cargo_id" dependencia_id={form.watch("dependencia_id")} />
+          <DependenciaIdField control={form.control} name="dependencia_id" label="Dependencia *" disabled={!edit} />
+          <CargoIdDependenciaField control={form.control} name="cargo_id" dependencia_id={form.watch("dependencia_id")} disabled={!edit} />
 
           <div className="gap-4 grid grid-cols-2">
-            <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={false} />
-            <DateField control={form.control} name="periodo.to" label="Fecha de culminación" disabled={false} />
+            <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={!edit} />
+            <DateField control={form.control} name="periodo.to" label="Fecha de culminación" disabled={!edit} />
           </div>
 
-          <UploadField control={form.control} name="file" label="Documento" allowedTypes={["pdf"]} />
+          <UploadField control={form.control} name="file" label="Documento" allowedTypes={["pdf"]} disabled={!edit} />
 
           <div className="flex justify-end gap-2">
             {showCancel && onCancel && (
@@ -137,10 +145,12 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
                 Cancelar
               </Button>
             )}
-            <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
-              <Save />
-              {isPending ? "Guardando..." : "Guardar"}
-            </Button>
+            {edit && (
+              <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
+                <Save />
+                {isPending ? "Guardando..." : "Guardar"}
+              </Button>
+            )}
           </div>
         </form>
       </Form>
