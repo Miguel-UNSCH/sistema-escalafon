@@ -11,7 +11,6 @@ export const personalSchema = z.object({
     .string({ required_error: "Fecha de ingreso es requerida" })
     .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")
     .transform((date) => new Date(date)),
-  anios_servicio: z.number({ required_error: "" }),
   fecha_nacimiento: z
     .string({ required_error: "Fecha de nacimiento es requerida" })
     .refine((date) => !isNaN(Date.parse(date)), "Fecha inválida")

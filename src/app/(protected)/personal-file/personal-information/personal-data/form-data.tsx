@@ -27,7 +27,6 @@ export const CreateData = ({ onRefresh }: { onRefresh: () => void }) => {
     n_autogenerado: "",
     licencia_conducir: undefined,
     fecha_ingreso: undefined,
-    anios_servicio: 0,
     fecha_nacimiento: undefined,
     domicilio: "",
     numero_contacto: "",
@@ -83,10 +82,7 @@ export const CreateData = ({ onRefresh }: { onRefresh: () => void }) => {
             <SelectField control={form.control} name="licencia_conducir" label="Licencia de Conducir" placeholder="Seleccione la licnecia" options={lic_condOp} disabled={false} />
           </div>
 
-          <div className="gap-2 grid grid-cols-2">
-            <DateField control={form.control} name="fecha_ingreso" label="Fecha de Ingreso al GRA" disabled={false} />
-            <InputField control={form.control} name="anios_servicio" label="Anios de servicio" placeholder="Ingrese los anios de servicio" type="number" />
-          </div>
+          <DateField control={form.control} name="fecha_ingreso" label="Fecha de Ingreso al GRA" disabled={false} />
 
           <InputField control={form.control} name="numero_contacto" label="Numero de Contacto" placeholder="Ingrese el numero de contacto" />
 

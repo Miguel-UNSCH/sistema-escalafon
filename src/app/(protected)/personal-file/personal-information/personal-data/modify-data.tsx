@@ -32,7 +32,6 @@ export const ModifyData = ({ personalData, onRefresh }: { personalData: personal
     n_autogenerado: personalData.n_autogenerado || "",
     licencia_conducir: personalData.licencia_conducir || "",
     fecha_ingreso: personalData.fecha_nacimiento.toISOString(),
-    anios_servicio: personalData.anios_servicio,
     fecha_nacimiento: personalData.fecha_nacimiento.toISOString(),
     domicilio: personalData.domicilio,
     numero_contacto: personalData.numero_contacto,
@@ -102,10 +101,7 @@ export const ModifyData = ({ personalData, onRefresh }: { personalData: personal
             <SelectField control={form.control} name="licencia_conducir" label="Licencia de Conducir" placeholder="Seleccione la licnecia" options={lic_condOp} disabled={false} />
           </div>
 
-          <div className="gap-2 grid grid-cols-2">
-            <DateField control={form.control} name="fecha_ingreso" label="Fecha de Ingreso al GRA" disabled={false} />
-            <InputField control={form.control} name="anios_servicio" label="Anios de servicio" placeholder="Ingrese los anios de servicio" type="number" />
-          </div>
+          <DateField control={form.control} name="fecha_ingreso" label="Fecha de Ingreso al GRA" disabled={false} />
 
           <InputField control={form.control} name="numero_contacto" label="Numero de Contacto" placeholder="Ingrese el numero de contacto" />
 

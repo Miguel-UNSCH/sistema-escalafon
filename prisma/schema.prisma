@@ -223,7 +223,6 @@ model Personal {
   n_autogenerado    String
   licencia_conducir String?        @db.Citext
   fecha_ingreso     DateTime
-  anios_servicio    Int
   fecha_nacimiento  DateTime
   domicilio         String         @db.Citext
   numero_contacto   String
