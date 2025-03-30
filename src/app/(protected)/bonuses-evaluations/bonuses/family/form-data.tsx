@@ -21,8 +21,9 @@ type CreateProps = {
   onCancel?: () => void;
   showCancel?: boolean;
   user_id: string;
+  edit: boolean;
 };
-export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, user_id }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, user_id, edit }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
@@ -59,8 +60,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
           onCreated();
           setSelectedItem(null);
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al registrar la bonificación familiar.");
       }
     });
@@ -71,15 +71,15 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
       <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
-          <InputField control={form.control} name="tipo" label="Tipo *" placeholder="Ingrese el tipo de bonificacion familiar" />
-          <InputField control={form.control} name="resolucion_bonus" label="Resolucion Bonus *" placeholder="Ingrese la resolucion" />
+          <InputField control={form.control} name="tipo" label="Tipo *" placeholder="Ingrese el tipo de bonificacion familiar" disabled={!edit} />
+          <InputField control={form.control} name="resolucion_bonus" label="Resolucion Bonus *" placeholder="Ingrese la resolucion" disabled={!edit} />
 
-          <DateField control={form.control} name="fecha" label="Fecha de la bonificacion" disabled={false} />
+          <DateField control={form.control} name="fecha" label="Fecha de la bonificacion" disabled={!edit} />
 
-          <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" />
-          <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} />
+          <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" disabled={!edit} />
+          <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} disabled={!edit} />
 
-          <UploadField control={form.control} name="file" label="Documento *" allowedTypes={["pdf"]} />
+          <UploadField control={form.control} name="file" label="Documento *" allowedTypes={["pdf"]} disabled={!edit} />
 
           <div className="flex justify-end gap-2">
             {showCancel && onCancel && (
@@ -87,10 +87,12 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
                 Cancelar
               </Button>
             )}
-            <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
-              <Save />
-              {isPending ? "Guardando..." : "Guardar"}
-            </Button>
+            {edit && (
+              <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
+                <Save />
+                {isPending ? "Guardando..." : "Guardar"}
+              </Button>
+            )}
           </div>
         </form>
       </Form>

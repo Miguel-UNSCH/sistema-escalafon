@@ -7,12 +7,14 @@ import { Table } from "./table-data";
 import { Create } from "./form-data";
 import { Modify } from "./modify.data";
 import { Session } from "next-auth";
+import { checkEditable } from "@/actions/limit-time";
 
 export const ContentData = ({ session }: { session: Session }) => {
   const [bonuses, setBonuses] = useState<bonusFamiliarRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedBonus, setSelectedBonus] = useState<bonusFamiliarRecord | null>(null);
   const [showCreate, setShowCreate] = useState<boolean>(false);
+  const [canEdit, setCanEdit] = useState<boolean>(false);
 
   const fnBonuses = async () => {
     setLoading(true);
@@ -22,18 +24,26 @@ export const ContentData = ({ session }: { session: Session }) => {
         setBonuses(response.data);
         if (response.data.length === 0) setShowCreate(true);
       } else toast.error(response.message || "No se pudieron obtener los bonos familiares.");
-
-      // eslint-disable-next-line no-unused-vars
-    } catch (e: unknown) {
+    } catch {
       toast.error("Error al obtener los bonos familiares.");
     } finally {
       setLoading(false);
     }
   };
 
+  const checkEditableClient = async () => {
+    try {
+      const res = await checkEditable();
+      if (res.success && res.editable) setCanEdit(res.editable);
+    } catch {
+      setCanEdit(false);
+    }
+  };
+
   useEffect(() => {
     fnBonuses();
-  }, []);
+    if (session?.user) checkEditableClient();
+  }, [session?.user]);
 
   const handleRefresh = () => {
     fnBonuses();
@@ -50,7 +60,7 @@ export const ContentData = ({ session }: { session: Session }) => {
         <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
       )}
 
-      {selectedBonus && <Modify item={selectedBonus} onUpdated={handleRefresh} setSelectedItem={setSelectedBonus} user_id={session.user.id} />}
+      {selectedBonus && <Modify item={selectedBonus} onUpdated={handleRefresh} setSelectedItem={setSelectedBonus} user_id={session.user.id} edit={canEdit} />}
 
       {!showCreate && bonuses.length > 0 && (
         <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
@@ -62,7 +72,14 @@ export const ContentData = ({ session }: { session: Session }) => {
       )}
 
       {showCreate && (
-        <Create onCreated={handleRefresh} setSelectedItem={setSelectedBonus} onCancel={() => setShowCreate(false)} showCancel={bonuses.length > 0} user_id={session.user.id} />
+        <Create
+          onCreated={handleRefresh}
+          setSelectedItem={setSelectedBonus}
+          onCancel={() => setShowCreate(false)}
+          showCancel={bonuses.length > 0}
+          user_id={session.user.id}
+          edit={canEdit}
+        />
       )}
     </div>
   );

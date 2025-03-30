@@ -22,9 +22,10 @@ type CreateProps = {
   onCancel?: () => void;
   showCancel?: boolean;
   user_id: string;
+  edit: boolean;
 };
 
-export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, user_id }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, user_id, edit }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
@@ -69,8 +70,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
           onCreated();
           setSelectedItem(null);
         }
-        // eslint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al registrar la evaluación.");
       }
     });
@@ -88,21 +88,21 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <div className="gap-2 grid grid-cols-2">
-            <DateField control={form.control} name="fecha" label="Fecha de la evaluacion" disabled={false} />
-            <SelectField control={form.control} name="etapa" label="Etapa" options={selectValues} />
+            <DateField control={form.control} name="fecha" label="Fecha de la evaluacion" disabled={!edit} />
+            <SelectField control={form.control} name="etapa" label="Etapa" options={selectValues} disabled={!edit} />
           </div>
 
-          <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" />
-          <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} label="Cargo *" />
+          <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" disabled={!edit} />
+          <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} label="Cargo *" disabled={!edit} />
 
           <div className="flex flex-col gap-4">
             <p className="font-primary font-semibold">Datos del Evaluador</p>
-            <UserField control={form.control} name="evaluador" label="Numbre *" />
-            <DependenciasUserField control={form.control} name="ev_dependencia_id" user_id={evaluadorId} label="Dependencia *" />
-            <CargosUserField control={form.control} name="ev_cargo_id" user_id={evaluadorId} dependencia_id={form.watch("ev_dependencia_id")} label="Cargo *" />
+            <UserField control={form.control} name="evaluador" label="Numbre *" disabled={!edit} />
+            <DependenciasUserField control={form.control} name="ev_dependencia_id" user_id={evaluadorId} label="Dependencia *" disabled={!edit} />
+            <CargosUserField control={form.control} name="ev_cargo_id" user_id={evaluadorId} dependencia_id={form.watch("ev_dependencia_id")} label="Cargo *" disabled={!edit} />
           </div>
 
-          <UploadField control={form.control} name="file" label="Documento *" allowedTypes={["pdf"]} />
+          <UploadField control={form.control} name="file" label="Documento *" allowedTypes={["pdf"]} disabled={!edit} />
 
           <div className="flex justify-end gap-2">
             {showCancel && onCancel && (
@@ -110,10 +110,12 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
                 Cancelar
               </Button>
             )}
-            <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
-              <Save />
-              {isPending ? "Guardando..." : "Guardar"}
-            </Button>
+            {edit && (
+              <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
+                <Save />
+                {isPending ? "Guardando..." : "Guardar"}
+              </Button>
+            )}
           </div>
         </form>
       </Form>

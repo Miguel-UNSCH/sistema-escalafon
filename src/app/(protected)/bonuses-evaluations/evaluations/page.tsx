@@ -1,15 +1,15 @@
 "use server";
 
 import React from "react";
-import { ContentData } from "./content-data";
 import { auth } from "@/auth";
+import { ContentData } from "./content-data";
 
 const page = async () => {
   const session = await auth();
 
-  if (!session || !session?.user) return <p>No autorizado!</p>;
+  if (!session) return <p>No autenticado</p>;
   return (
-    <div className="flex justify-center w-full">
+    <div className="flex justify-center py-2 w-full">
       <ContentData session={session} />
     </div>
   );
