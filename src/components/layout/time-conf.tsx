@@ -54,7 +54,7 @@ export const TimeConf = () => {
               }
               return prev - 1000;
             });
-          }, 1000);
+          }, 2000);
           return () => clearInterval(interval);
         }
       } else toast.error(res?.message || "Error al obtener el tiempo límite");

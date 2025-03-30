@@ -59,9 +59,7 @@ export const UbigeoField = ({ control, disabled, setValue, watch }: UbigeoFieldP
           const uniqueDistritos = Array.from(new Set(response.data.map((ubi) => ubi.distrito)));
           setDistritos(uniqueDistritos);
 
-          if (!uniqueDistritos.includes(selectedDistrito)) {
-            setValue("ubigeo.distrito", "");
-          }
+          if (!uniqueDistritos.includes(selectedDistrito)) setValue("ubigeo.distrito", "");
         }
       }
     };
@@ -85,15 +83,11 @@ export const UbigeoField = ({ control, disabled, setValue, watch }: UbigeoFieldP
     const initializeUbigeo = async () => {
       if (selectedDepartamento && !provincias.length) {
         const response = await getUbigeosField({ departamento: selectedDepartamento });
-        if (response.success && response.data) {
-          setProvincias(Array.from(new Set(response.data.map((ubi) => ubi.provincia))));
-        }
+        if (response.success && response.data) setProvincias(Array.from(new Set(response.data.map((ubi) => ubi.provincia))));
       }
       if (selectedProvincia && !distritos.length) {
         const response = await getUbigeosField({ departamento: selectedDepartamento, provincia: selectedProvincia });
-        if (response.success && response.data) {
-          setDistritos(Array.from(new Set(response.data.map((ubi) => ubi.distrito))));
-        }
+        if (response.success && response.data) setDistritos(Array.from(new Set(response.data.map((ubi) => ubi.distrito))));
       }
     };
     initializeUbigeo();

@@ -49,9 +49,8 @@ export const ModifyData = ({ personalData, onRefresh, edit }: { personalData: pe
     startTransition(async () => {
       try {
         const result = await updatePersonal(personalData.id, data);
-        if (!result.success) {
-          toast.error(result.message);
-        } else {
+        if (!result.success) toast.error(result.message);
+        else {
           toast.success("Personal actualizado exitosamente.");
           onRefresh();
         }
@@ -65,9 +64,8 @@ export const ModifyData = ({ personalData, onRefresh, edit }: { personalData: pe
     startTransition(async () => {
       try {
         const result = await deletePersonal(personalData.id);
-        if (!result.success) {
-          toast.error(result.message);
-        } else {
+        if (!result.success) toast.error(result.message);
+        else {
           form.reset();
           toast.success("Personal eliminado exitosamente.");
           onRefresh();

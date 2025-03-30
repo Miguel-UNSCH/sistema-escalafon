@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/config/prisma.config";
 import { ZPersonal } from "@/lib/schemas/personal-schema";
 import { Prisma } from "@prisma/client";
+import { checkEditable } from "./limit-time";
 
 export type personalRecord = Prisma.PersonalGetPayload<{ include: { user: true; ubigeo: true } }>;
 
@@ -31,8 +32,13 @@ export const createPersonal = async (data: ZPersonal): Promise<{ success: boolea
     const session = await auth();
     if (!session || !session?.user?.email) throw new Error("No autorizado");
 
-    const currentUser = await prisma.user.findUnique({ where: { email: session.user.email } });
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
 
     const ubigeo = await prisma.ubigeo.findFirst({ where: { inei: data.ubigeo.inei } });
     if (!ubigeo) throw new Error("El ubigeo proporcionado no existe.");
@@ -65,6 +71,17 @@ export const createPersonal = async (data: ZPersonal): Promise<{ success: boolea
 
 export const updatePersonal = async (id: string, data: ZPersonal): Promise<{ success: boolean; message: string }> => {
   try {
+    const session = await auth();
+    if (!session || !session?.user?.email) throw new Error("No autorizado");
+
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
+
     const ubigeo = await prisma.ubigeo.findFirst({ where: { inei: data.ubigeo.inei } });
     if (!ubigeo) throw new Error("El ubigeo proporcionado no existe.");
 
@@ -96,6 +113,17 @@ export const updatePersonal = async (id: string, data: ZPersonal): Promise<{ suc
 
 export const deletePersonal = async (id: string): Promise<{ success: boolean; message: string }> => {
   try {
+    const session = await auth();
+    if (!session || !session?.user?.email) throw new Error("No autorizado");
+
+    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
+
+    if (currentUser.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
+
     const currentPeronal = await prisma.personal.findUnique({ where: { id } });
     if (!currentPeronal) throw new Error("El personal especificado no existe.");
 

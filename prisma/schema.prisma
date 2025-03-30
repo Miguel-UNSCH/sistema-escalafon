@@ -220,7 +220,7 @@ model Personal {
   id                String         @id @default(cuid())
   sexo              Sexo
   grupo_sanguineo   GrupoSanguineo
-  n_autogenerado    String
+  n_autogenerado    String         @unique
   licencia_conducir String?        @db.Citext
   fecha_ingreso     DateTime
   fecha_nacimiento  DateTime

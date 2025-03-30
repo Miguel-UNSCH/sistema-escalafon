@@ -18,9 +18,7 @@ export const ContentData = ({ session }: { session: Session }) => {
     try {
       if (!session?.user?.email) return;
       const response = await getCurrentPersonal(session.user.email);
-      if (response.success && response.data) {
-        setItems(response.data);
-      }
+      if (response.success && response.data) setItems(response.data);
     } catch {
       toast.error("Error al cargar los datos del personal.");
     } finally {
@@ -31,9 +29,7 @@ export const ContentData = ({ session }: { session: Session }) => {
   const checkEditableClient = async () => {
     try {
       const res = await checkEditable();
-      if (res.success && res.editable) {
-        setCanEdit(res.editable);
-      }
+      if (res.success && res.editable) setCanEdit(res.editable);
     } catch {
       setCanEdit(false);
     }
@@ -41,9 +37,7 @@ export const ContentData = ({ session }: { session: Session }) => {
 
   useEffect(() => {
     fnData();
-    if (session?.user?.email) {
-      checkEditableClient();
-    }
+    if (session?.user?.email) checkEditableClient();
   }, [session?.user?.email]);
 
   const handleRefresh = () => {

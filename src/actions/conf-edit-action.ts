@@ -32,10 +32,7 @@ export const createConfEdit = async (data: conf_edicion): Promise<{ success: boo
     if (!user) throw new Error("Usuario no encontrado");
 
     const res = await prisma.conf_edicion.create({
-      data: {
-        fecha_inicio: new Date(data.fecha_inicio).toISOString(),
-        fecha_fin: new Date(data.fecha_fin).toISOString(),
-      },
+      data: { fecha_inicio: new Date(data.fecha_inicio).toISOString(), fecha_fin: new Date(data.fecha_fin).toISOString() },
     });
     if (!res) throw new Error("Error al crear la configuracion de edicion.");
 
@@ -45,24 +42,6 @@ export const createConfEdit = async (data: conf_edicion): Promise<{ success: boo
   }
 };
 
-// export const updateConfEdit = async (id: number, data: conf_edicion): Promise<{ success: boolean; message: string }> => {
-//   try {
-//     const current_model = await prisma.conf_edicion.findUnique({ where: { id } });
-//     if (!current_model) throw new Error("Configuracion de edicion no encontrada.");
-
-//     await prisma.conf_edicion.update({
-//       where: { id },
-//       data: {
-//         fecha_inicio: data.fecha_inicio,
-//         fecha_fin: data.fecha_fin,
-//       },
-//     });
-
-//     return { success: true, message: "Configuracion de edicion actualizada correctamente." };
-//   } catch (error: unknown) {
-//     return { success: false, message: error instanceof Error ? error.message : "Error al actualizar la configuracion de edicion." };
-//   }
-// };
 export const updateConfEdit = async (id: number, data: conf_edicion): Promise<{ success: boolean; message: string; data?: { id: number } }> => {
   try {
     const current_model = await prisma.conf_edicion.findUnique({ where: { id } });
@@ -70,10 +49,7 @@ export const updateConfEdit = async (id: number, data: conf_edicion): Promise<{ 
 
     const updated = await prisma.conf_edicion.update({
       where: { id },
-      data: {
-        fecha_inicio: data.fecha_inicio,
-        fecha_fin: data.fecha_fin,
-      },
+      data: { fecha_inicio: data.fecha_inicio, fecha_fin: data.fecha_fin },
     });
 
     return { success: true, message: "Configuracion de edicion actualizada correctamente.", data: { id: updated.id } };

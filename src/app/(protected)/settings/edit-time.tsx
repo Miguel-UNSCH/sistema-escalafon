@@ -26,7 +26,7 @@ export const editSchema = z
   })
   .refine((data) => data.fecha_fin > data.fecha_inicio, {
     message: "La fecha de culminación debe ser posterior a la fecha de inicio.",
-    path: ["fecha_fin"], // Apunta el error directamente al campo fecha_fin
+    path: ["fecha_fin"],
   });
 
 export type ZEdit = z.infer<typeof editSchema>;
@@ -47,8 +47,8 @@ export const EditTime = () => {
       const res = await getConfEdit();
       if (res.success && res.data) {
         setConfId(res.data.id);
-        form.setValue("fecha_inicio", res.data.fecha_inicio);
-        form.setValue("fecha_fin", res.data.fecha_fin);
+        form.setValue("fecha_inicio", res.data.fecha_inicio.toISOString() as any);
+        form.setValue("fecha_fin", res.data.fecha_fin.toISOString() as any);
         setShowForm(true);
       }
     });
