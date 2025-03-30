@@ -21,9 +21,10 @@ type CreateProps = {
   onCancel?: () => void;
   showCancel?: boolean;
   user_id: string;
+  edit: boolean;
 };
 
-export const Create: React.FC<CreateProps> = ({ onMeritoCreated, setSelectedMerito, onCancel, showCancel, user_id }) => {
+export const Create: React.FC<CreateProps> = ({ onMeritoCreated, setSelectedMerito, onCancel, showCancel, user_id, edit }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
@@ -70,13 +71,13 @@ export const Create: React.FC<CreateProps> = ({ onMeritoCreated, setSelectedMeri
       <p className="font-primary font-bold text-mauve text-xl uppercase">Registrar</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
-          <InputField control={form.control} name="motivo" label="Motivo *" placeholder="Motivo del merito" />
-          <DateField control={form.control} name="fecha" label="Fecha" disabled={false} />
+          <InputField control={form.control} name="motivo" label="Motivo *" placeholder="Motivo del merito" disabled={!edit} />
+          <DateField control={form.control} name="fecha" label="Fecha" disabled={!edit} />
 
-          <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" />
-          <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} />
+          <DependenciasUserField control={form.control} name="dependencia_id" user_id={user_id} label="Dependencia *" disabled={!edit} />
+          <CargosUserField control={form.control} name="cargo_id" user_id={user_id} dependencia_id={form.watch("dependencia_id")} disabled={!edit} />
 
-          <UploadField control={form.control} name="file" label="Documento *" allowedTypes={["pdf"]} />
+          <UploadField control={form.control} name="file" label="Documento *" allowedTypes={["pdf"]} disabled={!edit} />
 
           <div className="flex justify-end gap-2">
             {showCancel && onCancel && (
@@ -84,10 +85,12 @@ export const Create: React.FC<CreateProps> = ({ onMeritoCreated, setSelectedMeri
                 Cancelar
               </Button>
             )}
-            <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
-              <Save />
-              {isPending ? "Guardando..." : "Guardar"}
-            </Button>
+            {edit && (
+              <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2">
+                <Save />
+                {isPending ? "Guardando..." : "Guardar"}
+              </Button>
+            )}
           </div>
         </form>
       </Form>
