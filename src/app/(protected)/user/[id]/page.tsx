@@ -1,13 +1,13 @@
 "use server";
 
-import { DropdownMenuDemo } from "./content-data";
+import { ContentData } from "./content-data";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   return (
     <div>
       {id}
-      <DropdownMenuDemo />
+      <ContentData />
     </div>
   );
 }

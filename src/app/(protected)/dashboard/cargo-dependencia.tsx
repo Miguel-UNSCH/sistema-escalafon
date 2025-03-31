@@ -49,12 +49,10 @@ export const CargoDependencia = () => {
       <p className="font-primary font-bold text-lg md:text-xl">Dependencias con cargos</p>
       <SearchField description="Buscar dependencias por nombre o código" value={search} onSearch={handleSearch} />
 
-      <div className="flex xl:flex-row flex-col md:flex-col gap-4">
-        <div className="w-full xl:w-2/3">
-          <Table loading={loading} dependencias={dependencias} selectedDependencia={selectedDependencia} setSelectedDependencia={setSelectedDependencia} />
-        </div>
+      <div className="flex flex-col gap-2 w-full">
+        <Table loading={loading} dependencias={dependencias} selectedDependencia={selectedDependencia} setSelectedDependencia={setSelectedDependencia} />
 
-        <div className="w-full xl:w-1/3">
+        <div className="flex flex-col gap-5 p-4 w-full">
           {selectedDependencia && (
             <ModifyDependencia key={selectedDependencia.id} dependencia={selectedDependencia} onUpdated={handleRefresh} setSelectedDependencia={setSelectedDependencia} />
           )}

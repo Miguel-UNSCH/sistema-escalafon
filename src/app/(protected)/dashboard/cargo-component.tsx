@@ -57,10 +57,10 @@ export const CargoComponent = () => {
       <p className="font-primary font-bold text-lg md:text-xl">Cargos</p>
       <SearchField description="Buscar cargos por nombre" value={search} onSearch={handleSearch} />
 
-      <div className="flex xl:flex-row flex-col gap-2 w-full">
+      <div className="flex flex-col gap-2 w-full">
         <Table loading={loading} cargos={cargos} selectedCargo={selectedCargo} setSelectedCargo={setSelectedCargo} />
 
-        <div className="flex flex-col gap-5 p-4 w-full xl:w-1/2">
+        <div className="flex flex-col gap-5 p-4 w-full">
           <CreateCargoComponent onCargoCreated={handleRefresh} setSelectedCargo={setSelectedCargo} />
           {selectedCargo && <ModifyCargoComponent key={selectedCargo.id} cargo={selectedCargo} onUpdated={handleRefresh} setSelectedCargo={setSelectedCargo} />}
         </div>

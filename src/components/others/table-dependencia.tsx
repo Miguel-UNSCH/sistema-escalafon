@@ -19,7 +19,7 @@ export const Table = ({
   const paginatedDependencias = useMemo(() => dependencias.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [dependencias, currentPage]);
 
   return (
-    <div className="flex flex-col gap-2 border-2 border-mantle rounded-md w-full xl:w-1/2">
+    <div className="flex flex-col gap-2 border-2 border-mantle rounded-md w-full">
       {loading ? (
         <p className="py-4 text-subtext0 text-center">Cargando datos...</p>
       ) : dependencias.length === 0 ? (

@@ -56,10 +56,10 @@ export const DependenciaComponent = () => {
       <p className="font-primary font-bold text-lg md:text-xl">Dependencias</p>
       <SearchField description="Buscar dependencias por nombre o código" value={search} onSearch={handleSearch} />
 
-      <div className="flex xl:flex-row flex-col gap-2 w-full">
+      <div className="flex flex-col gap-2 w-full">
         <Table loading={loading} dependencias={dependencias} selectedDependencia={selectedDependencia} setSelectedDependencia={setSelectedDependencia} />
 
-        <div className="flex flex-col gap-5 p-4 w-full xl:w-1/2">
+        <div className="flex flex-col gap-5 p-4 w-full">
           <CreateDependencia onDependenciaCreated={handleRefresh} setSelectedDependencia={setSelectedDependencia} />
           {selectedDependencia && (
             <ModifyDependencia key={selectedDependencia.id} dependencia={selectedDependencia} onUpdated={handleRefresh} setSelectedDependencia={setSelectedDependencia} />

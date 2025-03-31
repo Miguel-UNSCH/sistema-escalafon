@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function DropdownMenuDemo() {
+export function ContentData() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
