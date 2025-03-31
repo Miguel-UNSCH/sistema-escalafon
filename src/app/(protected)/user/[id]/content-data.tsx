@@ -1,112 +1,149 @@
+"use client";
+"use client";
+
+import { useState, JSX } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuPortal,
-  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function ContentData() {
+import { ModulePersonal } from "./personal-data";
+import { ModuleConyuge } from "./conyuge-data";
+import { ModuleChildren } from "./children-data";
+
+type ModuleItem = {
+  name: string;
+  component?: JSX.Element;
+  children?: ModuleItem[];
+};
+
+const moduleTree: ModuleItem[] = [
+  {
+    name: "Ficha Personal",
+    children: [
+      {
+        name: "Informacion Personal",
+        children: [
+          { name: "Datos Personales", component: <ModulePersonal /> },
+          { name: "Datos del Conyugue", component: <ModuleConyuge /> },
+          { name: "Datos de los hijos", component: <ModuleChildren /> },
+        ],
+      },
+      {
+        name: "Estudios y Capacitacion",
+        children: [
+          { name: "Estudios", component: <div>Estudios</div> },
+          { name: "Capacitacion", component: <div>Capacitacion</div> },
+        ],
+      },
+      { name: "Experiencia Laboral", component: <div>Experiencia Laboral</div> },
+      { name: "Discapacidad", component: <div>Discapacidad</div> },
+    ],
+  },
+  {
+    name: "Situacion Personal",
+    children: [
+      { name: "Contratos y Nombramiento", component: <div>Contratos y Nombramiento</div> },
+      { name: "Renuncia", component: <div>Renuncia</div> },
+      { name: "Desplazamiento", component: <div>Desplazamiento</div> },
+      { name: "Descanso Medico", component: <div>Descanso Medico</div> },
+      { name: "Permisos / Licencias", component: <div>Permisos / Licencias</div> },
+      { name: "Ascensos", component: <div>Ascensos</div> },
+    ],
+  },
+  {
+    name: "Bonificaciones y Evaluaciones",
+    children: [
+      {
+        name: "Bonificaciones",
+        children: [
+          { name: "Bonificaciones Personales", component: <div>Bonificaciones Personales</div> },
+          { name: "Bonificaciones Familiares", component: <div>Bonificaciones Familiares</div> },
+          { name: "Reconocimientos", component: <div>Reconocimientos</div> },
+        ],
+      },
+      { name: "Evaluaciones", component: <div>Evaluaciones</div> },
+    ],
+  },
+  {
+    name: "Meritos y Demeritos",
+    children: [
+      { name: "Meritos", component: <div>Meritos</div> },
+      { name: "Demeritos", component: <div>Demeritos</div> },
+    ],
+  },
+  {
+    name: "Documentos / Otros",
+    children: [
+      { name: "Documentos", component: <div>Documentos</div> },
+      { name: "Constancias", component: <div>Constancias</div> },
+    ],
+  },
+];
+
+function RenderMenuItems({ items, onSelect }: { items: ModuleItem[]; onSelect: (component: JSX.Element) => void }) {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline">Modulos</Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>Modulos</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Ficha Personal</DropdownMenuSubTrigger>
+    <>
+      {items.map((item) =>
+        item.children ? (
+          <DropdownMenuSub key={item.name}>
+            <DropdownMenuSubTrigger>{item.name}</DropdownMenuSubTrigger>
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>Informacion Personal</DropdownMenuSubTrigger>
-                  <DropdownMenuPortal>
-                    <DropdownMenuSubContent>
-                      <DropdownMenuItem>Datos Personales</DropdownMenuItem>
-                      <DropdownMenuItem>Datos del Conyugue</DropdownMenuItem>
-                      <DropdownMenuItem>Datos de los hijos</DropdownMenuItem>
-                    </DropdownMenuSubContent>
-                  </DropdownMenuPortal>
-                </DropdownMenuSub>
-
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>Estudios y Capacitacion</DropdownMenuSubTrigger>
-                  <DropdownMenuPortal>
-                    <DropdownMenuSubContent>
-                      <DropdownMenuItem>Estudios</DropdownMenuItem>
-                      <DropdownMenuItem>Capacitacion</DropdownMenuItem>
-                    </DropdownMenuSubContent>
-                  </DropdownMenuPortal>
-                </DropdownMenuSub>
-                <DropdownMenuItem>Experiencia Laboral</DropdownMenuItem>
-                <DropdownMenuItem>Discapacidad</DropdownMenuItem>
+                <RenderMenuItems items={item.children} onSelect={onSelect} />
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
+        ) : (
+          <DropdownMenuItem key={item.name} onClick={() => item.component && onSelect(item.component)}>
+            {item.name}
+          </DropdownMenuItem>
+        )
+      )}
+    </>
+  );
+}
 
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Situacion Personal</DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem>Contratos y Nombramiento</DropdownMenuItem>
-                <DropdownMenuItem>Renuncia</DropdownMenuItem>
-                <DropdownMenuItem>Desplazamiento</DropdownMenuItem>
-                <DropdownMenuItem>Descanso Medico</DropdownMenuItem>
-                <DropdownMenuItem>Permisos / Licencias</DropdownMenuItem>
-                <DropdownMenuItem>Ascensos</DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
+export function ContentData({ id }: { id: string }) {
+  const [selectedModule, setSelectedModule] = useState<JSX.Element | null>(null);
 
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Bonificaciones y Evaluaciones</DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>Bonificaciones</DropdownMenuSubTrigger>
-                  <DropdownMenuPortal>
-                    <DropdownMenuSubContent>
-                      <DropdownMenuItem>Bonificaciones Personales</DropdownMenuItem>
-                      <DropdownMenuItem>Bonificaciones Familiares</DropdownMenuItem>
-                      <DropdownMenuItem>Reconocimientos</DropdownMenuItem>
-                    </DropdownMenuSubContent>
-                  </DropdownMenuPortal>
-                </DropdownMenuSub>
-                <DropdownMenuItem>Evaluaciones</DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
+  return (
+    <div className="flex flex-col gap-2 w-5/6 h-full">
+      <p className="font-primary font-semibold text-peach text-xl uppercase">Informacion basica del personal</p>
+      <div className="flex flex-col p-2">
+        <p>nombres</p>
+        <p>apellidos</p>
+        <p>correo electronico</p>
+        <p>role</p>
+        <p>contrasenia</p>
+      </div>
 
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Meritos y Demeritos</DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem>Meritos</DropdownMenuItem>
-                <DropdownMenuItem>Demeritos</DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
+      <div className="flex flex-row items-center gap-4">
+        <p className="font-primary font-semibold text-peach text-xl uppercase">modificar modulos</p>
 
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Docuemntos / Otros</DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem>Documentos</DropdownMenuItem>
-                <DropdownMenuItem>Constancias</DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        <div className="">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">Modulos</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-72">
+              <DropdownMenuGroup>
+                <RenderMenuItems items={moduleTree} onSelect={setSelectedModule} />
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      <div className="mt-4">{selectedModule ?? <div>Selecciona un módulo para ver los datos. {id}</div>}</div>
+    </div>
   );
 }
