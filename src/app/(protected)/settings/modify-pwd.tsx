@@ -24,10 +24,7 @@ export const ModifyPwd: React.FC<ModifyPwdProps> = ({ userId }) => {
     repeat_new_pwd: "",
   };
 
-  const form = useForm<ChangePwd>({
-    resolver: zodResolver(cPwdSchema),
-    defaultValues,
-  });
+  const form = useForm<ChangePwd>({ resolver: zodResolver(cPwdSchema), defaultValues });
 
   const onSubmit = (data: ChangePwd) => {
     startTransition(async () => {
@@ -58,12 +55,14 @@ export const ModifyPwd: React.FC<ModifyPwdProps> = ({ userId }) => {
                 </div>
                 <p className="pl-4 w-1/3 font-primary capitalize">contraseña actual</p>
               </div>
+
               <div className="flex flex-row-reverse items-center gap-4 w-full">
                 <div className="w-full">
                   <InputField control={form.control} name="new_pwd" label="" placeholder="**********" type="password" />
                 </div>
                 <p className="pl-4 w-1/3 font-primary capitalize">nueva contraseña</p>
               </div>
+
               <div className="flex flex-row-reverse items-center gap-4 w-full">
                 <div className="w-full">
                   <InputField control={form.control} name="repeat_new_pwd" label="" placeholder="**********" type="password" />
@@ -71,6 +70,7 @@ export const ModifyPwd: React.FC<ModifyPwdProps> = ({ userId }) => {
                 <p className="pl-4 w-1/3 font-primary capitalize">repita la nueva contraseña</p>
               </div>
             </div>
+
             <div className="flex justify-end">
               <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2 font-special">
                 <Key />

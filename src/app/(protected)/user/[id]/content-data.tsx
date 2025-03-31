@@ -1,7 +1,6 @@
 "use client";
-"use client";
 
-import { useState, JSX } from "react";
+import { useState, JSX, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -18,6 +17,13 @@ import {
 import { ModulePersonal } from "./personal-data";
 import { ModuleConyuge } from "./conyuge-data";
 import { ModuleChildren } from "./children-data";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form } from "@/components/ui/form";
+import { InputField } from "@/components/custom-fields/input-field";
+import { SelectField } from "@/components/custom-fields/select-field";
+import { Hexagon, Key, KeyRound } from "lucide-react";
 
 type ModuleItem = {
   name: string;
@@ -87,6 +93,10 @@ const moduleTree: ModuleItem[] = [
       { name: "Constancias", component: <div>Constancias</div> },
     ],
   },
+  {
+    name: "xd",
+    component: <div>xd</div>,
+  },
 ];
 
 function RenderMenuItems({ items, onSelect }: { items: ModuleItem[]; onSelect: (component: JSX.Element) => void }) {
@@ -112,17 +122,94 @@ function RenderMenuItems({ items, onSelect }: { items: ModuleItem[]; onSelect: (
   );
 }
 
+const userSchema = z.object({
+  name: z.string(),
+  last_name: z.string(),
+  email: z.string().email(),
+  dni: z.string(),
+  role: z.string(),
+});
+
+export type ZUser = z.infer<typeof userSchema>;
+
 export function ContentData({ id }: { id: string }) {
   const [selectedModule, setSelectedModule] = useState<JSX.Element | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const defaultValues = {
+    name: "",
+    last_name: "",
+    email: "",
+    dni: "",
+    role: "admin",
+  };
+
+  const form = useForm<ZUser>({ resolver: zodResolver(userSchema), defaultValues });
+
+  const onSubmit = (data: ZUser) => {
+    console.log("Form data:", data);
+  };
+
+  const rlValues = [
+    { key: "admin", value: "Administrador" },
+    { key: "personal", value: "Personal" },
+  ];
 
   return (
     <div className="flex flex-col gap-2 w-5/6 h-full">
       <p className="font-primary font-semibold text-peach text-xl uppercase">Informacion basica del personal</p>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
+          <div className="flex flex-col gap-4 w-full text-[1rem]">
+            <div className="flex flex-row-reverse items-center gap-4 w-full">
+              <div className="w-full">
+                <InputField control={form.control} name="name" label="" placeholder="nombres" type="text" />
+              </div>
+              <p className="pl-4 w-1/3 font-primary uppercase">Nombres</p>
+            </div>
+
+            <div className="flex flex-row-reverse items-center gap-4 w-full">
+              <div className="w-full">
+                <InputField control={form.control} name="last_name" label="" placeholder="apellidos" type="text" />
+              </div>
+              <p className="pl-4 w-1/3 font-primary uppercase">Apellidos</p>
+            </div>
+
+            <div className="flex flex-row-reverse items-center gap-4 w-full">
+              <div className="w-full">
+                <InputField control={form.control} name="email" label="" placeholder="correo electronico" type="email" />
+              </div>
+              <p className="pl-4 w-1/3 font-primary uppercase">Correo Electronico</p>
+            </div>
+
+            <div className="flex flex-row-reverse items-center gap-4 w-full">
+              <div className="w-full">
+                <InputField control={form.control} name="dni" label="" placeholder="dni" type="text" />
+              </div>
+              <p className="pl-4 w-1/3 font-primary uppercase">dni</p>
+            </div>
+
+            <div className="flex flex-row-reverse items-center gap-4 w-full">
+              <div className="w-full">
+                <SelectField control={form.control} name="role" label="" placeholder="role" options={rlValues} />
+              </div>
+              <p className="pl-4 w-1/3 font-primary uppercase">Rol</p>
+            </div>
+
+            <div className="flex justify-end gap-4">
+              <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2 font-special">
+                <KeyRound />
+                {isPending ? "Cargando..." : "Restablecer contraseña"}
+              </Button>
+              <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2 font-special">
+                <Hexagon />
+                {isPending ? "Cargando..." : "Actualizar datos"}
+              </Button>
+            </div>
+          </div>
+        </form>
+      </Form>
+
       <div className="flex flex-col p-2">
-        <p>nombres</p>
-        <p>apellidos</p>
-        <p>correo electronico</p>
-        <p>role</p>
         <p>contrasenia</p>
       </div>
 
