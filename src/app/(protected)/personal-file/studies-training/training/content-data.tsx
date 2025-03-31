@@ -40,7 +40,6 @@ export const ContentData = ({ session }: { session: Session }) => {
     try {
       const res = await checkEditable();
       if (res.success && res.editable) setCanEdit(res.editable);
-      if (session?.user) checkEditableClient();
     } catch {
       setCanEdit(false);
     }

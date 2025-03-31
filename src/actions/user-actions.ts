@@ -48,6 +48,7 @@ export const getPerUsers = async (search?: string): Promise<{ success: boolean; 
             OR: [{ name: { contains: search, mode: "insensitive" } }, { last_name: { contains: search, mode: "insensitive" } }, { dni: { contains: search } }],
           }
         : {},
+      include: { ascenso: true, contrato: true, Desplazamiento: true },
     });
     if (!users) throw new Error("No hay usuarios registrados");
 

@@ -260,14 +260,7 @@ export const getCargosDependenciasUser = async (id: string): Promise<{ success: 
 
     const relaciones = await prisma.usuarioCargoDependencia.findMany({
       where: { userId: id },
-      include: {
-        cargoDependencia: {
-          include: {
-            cargo: true,
-            dependencia: true,
-          },
-        },
-      },
+      include: { cargoDependencia: { include: { cargo: true, dependencia: true } } },
     });
 
     if (!relaciones.length) throw new Error("No se encontraron dependencias asociadas a este usuario.");
@@ -305,6 +298,23 @@ export const getCargosDependenciasUser = async (id: string): Promise<{ success: 
   }
 };
 
+export type ucdRecord = Prisma.UsuarioCargoDependenciaGetPayload<{ include: { cargoDependencia: { include: { cargo: true; dependencia: true } } } }>;
+export const get_ucd_by_id = async (id: number): Promise<{ success: boolean; message?: string; data?: ucdRecord }> => {
+  try {
+    const response = await prisma.usuarioCargoDependencia.findUnique({
+      where: { id },
+      include: { cargoDependencia: { include: { cargo: true, dependencia: true } } },
+    });
+    if (!response) throw new Error("No se encontró la relación.");
+
+    return { success: true, data: response };
+  } catch (error: unknown) {
+    let errorMessage = "Error al obtener la dependencia con cargos.";
+    if (error instanceof Error) errorMessage = error.message;
+    return { success: false, message: errorMessage };
+  }
+};
+
 export const getDependenciasUser = async (userId: string, search?: string): Promise<{ success: boolean; message?: string; data?: Dependencia[] }> => {
   try {
     const current_user = await prisma.user.findUnique({ where: { id: userId } });
@@ -312,11 +322,7 @@ export const getDependenciasUser = async (userId: string, search?: string): Prom
 
     const relaciones = await prisma.usuarioCargoDependencia.findMany({
       where: { userId },
-      include: {
-        cargoDependencia: {
-          include: { dependencia: true },
-        },
-      },
+      include: { cargoDependencia: { include: { dependencia: true } } },
     });
 
     if (!relaciones.length) throw new Error("No se encontraron dependencias asociadas al usuario.");
@@ -328,9 +334,7 @@ export const getDependenciasUser = async (userId: string, search?: string): Prom
 
       const matchesSearch = !search || dep.nombre.toLowerCase().includes(search.toLowerCase()) || dep.codigo.toLowerCase().includes(search.toLowerCase());
 
-      if (matchesSearch && !dependenciaMap.has(dep.id)) {
-        dependenciaMap.set(dep.id, dep);
-      }
+      if (matchesSearch && !dependenciaMap.has(dep.id)) dependenciaMap.set(dep.id, dep);
     }
 
     const result = Array.from(dependenciaMap.values());
@@ -349,30 +353,16 @@ export const getCargosUser = async (userId: string, dependenciaId: number): Prom
   try {
     const relaciones = await prisma.usuarioCargoDependencia.findMany({
       where: { userId },
-      include: {
-        cargoDependencia: {
-          include: {
-            dependencia: true,
-            cargo: true,
-          },
-        },
-      },
+      include: { cargoDependencia: { include: { dependencia: true, cargo: true } } },
     });
 
-    if (!relaciones.length) {
-      throw new Error("El usuario no tiene cargos registrados.");
-    }
+    if (!relaciones.length) throw new Error("El usuario no tiene cargos registrados.");
 
     const cargosFiltrados = relaciones.filter((rel) => rel.cargoDependencia.dependencia.id === dependenciaId).map((rel) => rel.cargoDependencia.cargo);
 
-    if (!cargosFiltrados.length) {
-      throw new Error("El usuario no tiene cargos en la dependencia indicada.");
-    }
+    if (!cargosFiltrados.length) throw new Error("El usuario no tiene cargos en la dependencia indicada.");
 
-    return {
-      success: true,
-      data: cargosFiltrados,
-    };
+    return { success: true, data: cargosFiltrados };
   } catch (error: unknown) {
     let errorMessage = "Error al obtener los cargos del usuario en la dependencia.";
     if (error instanceof Error) errorMessage = error.message;
