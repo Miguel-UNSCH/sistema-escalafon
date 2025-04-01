@@ -15,11 +15,14 @@ import {
   TDiscapacidad as TDiscapacidadPrisma,
   TipoCapacitacion as TCapacitacionPrisma,
   TEntCertDic as TEntCertDicdPrisma,
+  Role as RolePrisma,
   tipo_doc as tipo_docPrisma,
   tipo_sancion as tipo_sancionPrisma,
 } from "@prisma/client";
 
 export const EstadoCivil = z.nativeEnum(EstadoCivilPrisma);
+
+export const Role = z.nativeEnum(RolePrisma);
 
 export const GrupoSanguineo = z.nativeEnum(GrupoSanguineoPrisma);
 

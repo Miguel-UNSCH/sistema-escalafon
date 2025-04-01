@@ -28,6 +28,11 @@ export const TContratoOp = [
   { key: "pra", value: "PRACTICANTE" },
 ];
 
+export const TRoleOp = [
+  { key: "admin", value: "ADMINISTRADOR" },
+  { key: "personal", value: "PERSONAL" },
+];
+
 export const cond_lab_op = {
   dl_276: [
     { key: "dl_con", value: "CONTRATADO" },

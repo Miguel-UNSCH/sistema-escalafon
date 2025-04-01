@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Control, useController } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { getusers } from "@/actions/user-actions";
+import { getUsers } from "@/actions/user-actions";
 import { User } from "@prisma/client";
 import { cn } from "@/lib/utils";
 
@@ -36,10 +36,10 @@ export const UserField = ({ control, name, label, disabled = false }: UserFieldP
 
       setLoading(true);
       try {
-        const response = await getusers(search);
+        const response = await getUsers(search);
         if (response.success && response.data) setUsers(response.data);
       } catch (error) {
-        // eslint-disable-next-line no-console
+        // oxlint-disable-next-line no-console
         console.error("Error al obtener usuarios:", error);
       } finally {
         setLoading(false);

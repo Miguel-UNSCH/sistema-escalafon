@@ -1,4 +1,3 @@
-/* oxlint-disable no-unused-vars */
 "use server";
 
 import { prisma } from "@/config/prisma.config";
@@ -22,12 +21,7 @@ export async function loginAction(values: ZLoginS): Promise<LoginResult> {
     const user = await prisma.user.findUnique({
       where: { email: values.email },
     });
-    if (!user) {
-      return {
-        success: false,
-        message: "Usuario no encontrado.",
-      };
-    }
+    if (!user) return { success: false, message: "Usuario no encontrado." };
 
     const result = await nextAuthSignIn("credentials", {
       email: values.email,
@@ -35,12 +29,7 @@ export async function loginAction(values: ZLoginS): Promise<LoginResult> {
       redirect: false,
     });
 
-    if (!result || result.error) {
-      return {
-        success: false,
-        message: result?.error || "Error al iniciar sesión",
-      };
-    }
+    if (!result || result.error) return { success: false, message: result?.error || "Error al iniciar sesión" };
 
     return {
       success: true,
@@ -49,24 +38,13 @@ export async function loginAction(values: ZLoginS): Promise<LoginResult> {
       redirectTo: user.role === "admin" ? "/dashboard" : "/personal-file",
     };
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return {
-        success: false,
-        message: error.errors[0].message,
-      };
-    }
-    if (error instanceof AuthError) {
-      return {
-        success: false,
-        message: "Credenciales inválidas",
-      };
-    }
+    if (error instanceof z.ZodError) return { success: false, message: error.errors[0].message };
+
+    if (error instanceof AuthError) return { success: false, message: "Credenciales inválidas" };
+
     // oxlint-disable-next-line no-console
     console.error("Error de autenticación:", error);
-    return {
-      success: false,
-      message: "Error del servidor",
-    };
+    return { success: false, message: "Error del servidor" };
   }
 }
 
@@ -96,7 +74,7 @@ export const registerAction = async (values: ZRegisterS, days: number = 3) => {
     });
 
     return { success: true, message: "Usuario creado con éxito." };
-  } catch (error: unknown) {
+  } catch {
     return { error: "Error en el servidor. Intente nuevamente más tarde." };
   }
 };
@@ -117,7 +95,7 @@ export const patchPassword = async (email: string, currentPassword: string, newP
     });
 
     return { success: true, message: "Contraseña actualizada exitosamente." };
-  } catch (error: unknown) {
+  } catch {
     return { error: "Error en el servidor. Intente nuevamente más tarde." };
   }
 };
