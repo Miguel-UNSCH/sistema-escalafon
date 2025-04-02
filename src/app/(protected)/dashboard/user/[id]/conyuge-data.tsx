@@ -8,9 +8,5 @@ export const ModuleConyuge = () => {
   const pathname = usePathname();
   const userId = pathname.split("/").pop();
 
-  return (
-    <div>
-      <ContentData user_id={userId} />
-    </div>
-  );
+  return <ContentData user_id={userId} />;
 };

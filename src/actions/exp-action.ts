@@ -36,12 +36,9 @@ export const getExperiences = async (): Promise<{ success: boolean; message?: st
   }
 };
 
-export const createExp = async (data: ZExpS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
+export const createExp = async (id: string, data: ZExpS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
-    const session = await auth();
-    if (!session || !session?.user) throw new Error("No autorizado");
-
-    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const currentUser = await prisma.user.findUnique({ where: { id: id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
 
     if (currentUser.role !== "admin") {
@@ -69,7 +66,7 @@ export const createExp = async (data: ZExpS & { file_id: string }): Promise<{ su
 
     await prisma.experience.create({
       data: {
-        user_id: currentUser.id,
+        user_id: id,
         usuarioCargoDependenciaId: usuarioCargoDependencia.id,
         centro_labor: data.centro_labor.toUpperCase(),
         periodo: { from: new Date(data.periodo.from).toISOString(), to: new Date(data.periodo.to).toISOString() },

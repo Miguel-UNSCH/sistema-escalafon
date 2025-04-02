@@ -86,7 +86,7 @@ export const ContentData = ({ userId, user_id }: ContentDataProps) => {
   };
 
   return (
-    <div className="flex flex-col gap-5 p-2 w-4/5">
+    <div className="flex flex-col gap-5 mx-auto p-2 w-full max-w-5xl">
       <p className="font-primary font-semibold text-2xl text-center uppercase">Discapacidad</p>
 
       {loading ? (

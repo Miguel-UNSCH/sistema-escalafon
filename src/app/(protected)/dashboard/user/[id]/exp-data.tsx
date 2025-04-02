@@ -1,10 +1,10 @@
 "use client";
 
-import { ContentData } from "@/app/(protected)/personal-file/personal-information/children-data/content-data";
+import { ContentData } from "@/app/(protected)/personal-file/experience/content-data";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-export const ModuleChildren = () => {
+export const ModuleExp = () => {
   const pathname = usePathname();
   const userId = pathname.split("/").pop();
 

@@ -11,7 +11,7 @@ const page = async () => {
 
   return (
     <div className="flex justify-center w-full">
-      <ContentData session={session} />
+      <ContentData userId={session.user.id} />
     </div>
   );
 };

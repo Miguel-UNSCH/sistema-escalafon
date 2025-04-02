@@ -7,19 +7,25 @@ import { Table } from "./table-data";
 import { expRecord, getExperiences } from "@/actions/exp-action";
 import { Create } from "./form-data";
 import { Modify } from "./modify-data";
-import { Session } from "next-auth";
 import { checkEditable } from "@/actions/limit-time";
 
 export type ExperienceRecord = Omit<expRecord, "periodo"> & {
   periodo: { from: string; to: string };
 };
 
-export const ContentData = ({ session }: { session: Session }) => {
+interface ContentDataProps {
+  userId?: string;
+  user_id?: string;
+}
+
+export const ContentData = ({ userId, user_id }: ContentDataProps) => {
   const [items, setItems] = useState<ExperienceRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItem, setSelectedItem] = useState<ExperienceRecord | null>(null);
   const [showCreate, setShowCreate] = useState<boolean>(items.length === 0);
   const [canEdit, setCanEdit] = useState<boolean>(false);
+
+  const id = (user_id ?? userId) || "";
 
   const fnExperiences = async () => {
     setLoading(true);
@@ -52,8 +58,8 @@ export const ContentData = ({ session }: { session: Session }) => {
 
   useEffect(() => {
     fnExperiences();
-    if (session?.user) checkEditableClient();
-  }, [session?.user]);
+    if (id) checkEditableClient();
+  }, [id]);
 
   const handleRefresh = () => {
     fnExperiences();
@@ -71,7 +77,7 @@ export const ContentData = ({ session }: { session: Session }) => {
         <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
       )}
 
-      {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} user_id={session.user.id} edit={canEdit} />}
+      {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} user_id={id} edit={canEdit} />}
 
       {!showCreate && items.length > 0 && (
         <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
@@ -82,7 +88,9 @@ export const ContentData = ({ session }: { session: Session }) => {
         </div>
       )}
 
-      {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} edit={canEdit} />}
+      {showCreate && (
+        <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} edit={canEdit} id={id} />
+      )}
     </div>
   );
 };

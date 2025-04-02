@@ -1,6 +1,7 @@
 import { ModuleChildren } from "@/app/(protected)/dashboard/user/[id]/children-data";
 import { ModuleConyuge } from "@/app/(protected)/dashboard/user/[id]/conyuge-data";
 import { ModuleDisability } from "@/app/(protected)/dashboard/user/[id]/disability-data";
+import { ModuleExp } from "@/app/(protected)/dashboard/user/[id]/exp-data";
 import { ModulePersonal } from "@/app/(protected)/dashboard/user/[id]/personal-data";
 import { JSX } from "react";
 
@@ -29,7 +30,7 @@ export const moduleTree: ModuleItem[] = [
           { name: "Capacitacion", component: <div>Capacitacion</div> },
         ],
       },
-      { name: "Experiencia Laboral", component: <div>Experiencia Laboral</div> },
+      { name: "Experiencia Laboral", component: <ModuleExp /> },
       { name: "Discapacidad", component: <ModuleDisability /> },
     ],
   },
