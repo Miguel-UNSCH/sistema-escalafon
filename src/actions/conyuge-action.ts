@@ -8,12 +8,9 @@ import { checkEditable } from "./limit-time";
 
 export type spouseRecord = Prisma.ConyugeGetPayload<{ include: { ubigeo: true } }>;
 
-export const getCurrentSpouse = async (): Promise<{ success: boolean; message?: string; data?: spouseRecord }> => {
+export const getCurrentSpouse = async (user_id: string): Promise<{ success: boolean; message?: string; data?: spouseRecord }> => {
   try {
-    const session = await auth();
-    if (!session?.user) throw new Error("No autorizado");
-
-    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const user = await prisma.user.findUnique({ where: { id: user_id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const personal: Personal | null = await prisma.personal.findUnique({ where: { user_id: user.id } });
@@ -30,12 +27,9 @@ export const getCurrentSpouse = async (): Promise<{ success: boolean; message?: 
   }
 };
 
-export const createSpouse = async (data: ZConyuge): Promise<{ success: boolean; message: string }> => {
+export const createSpouse = async (data: ZConyuge, id: string): Promise<{ success: boolean; message: string }> => {
   try {
-    const session = await auth();
-    if (!session || !session?.user) throw new Error("No autorizado");
-
-    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const currentUser = await prisma.user.findUnique({ where: { id: id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
 
     if (currentUser.role !== "admin") {
@@ -70,12 +64,12 @@ export const createSpouse = async (data: ZConyuge): Promise<{ success: boolean; 
   }
 };
 
-export const updateSpouse = async (data: ZConyuge): Promise<{ success: boolean; message: string }> => {
+export const updateSpouse = async (id: string, data: ZConyuge): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
     if (!session || !session?.user) throw new Error("No autorizado");
 
-    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const currentUser = await prisma.user.findUnique({ where: { id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
 
     if (currentUser.role !== "admin") {

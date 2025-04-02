@@ -15,7 +15,7 @@ import { UbigeoField } from "@/components/custom-fields/ubigeo-field";
 import { conyugeSchema, ZConyuge } from "@/lib/schemas/personal-schema";
 import { createSpouse } from "@/actions/conyuge-action";
 
-export const CreateData = ({ onRefresh, edit }: { onRefresh: () => void; edit: boolean }) => {
+export const CreateData = ({ onRefresh, edit, id }: { onRefresh: () => void; edit: boolean; id: string }) => {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<ZConyuge>({
@@ -33,7 +33,7 @@ export const CreateData = ({ onRefresh, edit }: { onRefresh: () => void; edit: b
   const onSubmit = (data: ZConyuge) => {
     startTransition(async () => {
       try {
-        const result = await createSpouse(data);
+        const result = await createSpouse(data, id);
         if (!result.success) {
           toast.error(result.message);
         } else {

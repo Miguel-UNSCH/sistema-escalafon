@@ -31,7 +31,6 @@ export const createPersonal = async (data: ZPersonal, user_id: string): Promise<
     const currentUser = await prisma.user.findUnique({ where: { id: user_id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
 
-    // Verificación editable solo si no es admin
     if (currentUser.role !== "admin") {
       const check = await checkEditable();
       if (!check.success || !check.editable) {

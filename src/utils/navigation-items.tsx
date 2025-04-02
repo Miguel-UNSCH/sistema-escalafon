@@ -1,5 +1,5 @@
 import { MenuItem } from "@/interfaces";
-import { Banknote, BriefcaseBusiness, ChartColumn, File, FileScan, IdCard, LayoutDashboard, LogOut, Trophy, UserRound, UserRoundCog, UsersRound } from "lucide-react";
+import { Banknote, BriefcaseBusiness, ChartColumn, File, FileScan, IdCard, LayoutDashboard, LogOut, Scroll, Trophy, UserRound, UserRoundCog, UsersRound } from "lucide-react";
 
 interface NavigationItems {
   title: string;
@@ -12,7 +12,8 @@ export const navigationItems: NavigationItems[] = [
     title: "Inicio",
     path: "/dashboard",
     menuItem: [
-      { label: "Dashboard", icon: <LayoutDashboard size={16} />, path: "/", submenus: [{ label: "Documentación", path: "/doc" }] },
+      { label: "Dashboard", icon: <LayoutDashboard size={16} />, path: "/" },
+      { label: "Documentación", icon: <Scroll size={16} />, path: "/doc" },
       { label: "Administrar Usuario", icon: <UsersRound size={16} />, path: "/user" },
     ],
   },

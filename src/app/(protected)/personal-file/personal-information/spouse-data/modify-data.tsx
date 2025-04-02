@@ -15,7 +15,7 @@ import { UbigeoField } from "@/components/custom-fields/ubigeo-field";
 import { conyugeSchema, ZConyuge } from "@/lib/schemas/personal-schema";
 import { updateSpouse, deleteSpouse, spouseRecord } from "@/actions/conyuge-action";
 
-export const ModifyData = ({ spouseData, onRefresh, edit }: { spouseData: spouseRecord; onRefresh: () => void; edit: boolean }) => {
+export const ModifyData = ({ spouseData, onRefresh, edit, id }: { spouseData: spouseRecord; onRefresh: () => void; edit: boolean; id: string }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
@@ -37,7 +37,7 @@ export const ModifyData = ({ spouseData, onRefresh, edit }: { spouseData: spouse
   const handleSubmit = (data: ZConyuge) => {
     startTransition(async () => {
       try {
-        const result = await updateSpouse(data);
+        const result = await updateSpouse(id, data);
         if (!result.success) {
           toast.error(result.message);
         } else {
