@@ -92,7 +92,6 @@ export const UserData = ({ userId }: { userId: string }) => {
 
   return (
     <div className="flex flex-col gap-2 w-full">
-      <p className="pb-2 font-primary font-semibold text-peach text-xl uppercase">Información básica del personal</p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
           <div className="flex flex-row-reverse items-center gap-4 w-full">
@@ -125,12 +124,12 @@ export const UserData = ({ userId }: { userId: string }) => {
 
           <div className="flex justify-end gap-4 p-2">
             {showRestorePwd && (
-              <Button type="button" onClick={handleRestorePassword} disabled={isPending} className="flex flex-row items-center gap-2 font-special">
+              <Button type="button" onClick={handleRestorePassword} disabled={isPending} className="flex flex-row items-center gap-2 font-special text-xs uppercase">
                 <KeyRound />
                 {isPending ? "Cargando..." : "Restablecer contraseña"}
               </Button>
             )}
-            <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2 font-special">
+            <Button type="submit" disabled={isPending} className="flex flex-row items-center gap-2 font-special text-xs uppercase">
               <Hexagon />
               {isPending ? "Cargando..." : "Actualizar datos"}
             </Button>

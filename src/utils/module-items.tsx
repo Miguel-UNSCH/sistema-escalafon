@@ -1,6 +1,6 @@
-import { ModuleChildren } from "@/app/(protected)/user/[id]/children-data";
-import { ModuleConyuge } from "@/app/(protected)/user/[id]/conyuge-data";
-import { ModulePersonal } from "@/app/(protected)/user/[id]/personal-data";
+import { ModuleChildren } from "@/app/(protected)/dashboard/user/[id]/children-data";
+import { ModuleConyuge } from "@/app/(protected)/dashboard/user/[id]/conyuge-data";
+import { ModulePersonal } from "@/app/(protected)/dashboard/user/[id]/personal-data";
 import { JSX } from "react";
 
 type ModuleItem = {

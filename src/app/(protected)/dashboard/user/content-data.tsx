@@ -18,7 +18,7 @@ export const ContentData = () => {
 
   const handleClick = (id: string) => {
     toast.success("Redirigiendo...");
-    router.push(`/user/${id}`, { scroll: false });
+    router.push(`/dashboard/user/${id}`, { scroll: false });
   };
 
   const fnUsers = async (query = "") => {

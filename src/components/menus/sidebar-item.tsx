@@ -6,7 +6,8 @@ import { usePathname, useRouter } from "next/navigation";
 
 import { MenuItem } from "@/interfaces";
 import { Session } from "next-auth";
-import { admin_routes, special_routes } from "@/utils/other";
+// import { admin_routes, special_routes } from "@/utils/other";
+import { admin_routes } from "@/utils/other";
 
 export const SidebarMenuItem: React.FC<SidebarMenuItemProps> = ({ item, parentPath, openMenu, setOpenMenu, session }) => {
   const router = useRouter();

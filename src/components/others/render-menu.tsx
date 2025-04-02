@@ -7,7 +7,7 @@ type ModuleItem = {
   children?: ModuleItem[];
 };
 
-export const RenderMenuItems = ({ items, onSelect }: { items: ModuleItem[]; onSelect: (component: JSX.Element) => void }) => {
+export const RenderMenuItems = ({ items, onSelect }: { items: ModuleItem[]; onSelect: (name: string, component: JSX.Element) => void }) => {
   return (
     <>
       {items.map((item) =>
@@ -21,7 +21,7 @@ export const RenderMenuItems = ({ items, onSelect }: { items: ModuleItem[]; onSe
             </DropdownMenuPortal>
           </DropdownMenuSub>
         ) : (
-          <DropdownMenuItem key={item.name} onClick={() => item.component && onSelect(item.component)}>
+          <DropdownMenuItem key={item.name} onClick={() => item.component && onSelect(item.name, item.component)}>
             {item.name}
           </DropdownMenuItem>
         )
