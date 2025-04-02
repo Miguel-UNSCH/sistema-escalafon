@@ -1,5 +1,15 @@
-import React from "react";
+"use client";
+
+import { usePathname } from "next/navigation";
+import { ContentData } from "@/app/(protected)/personal-file/personal-information/personal-data/content-data";
 
 export const ModulePersonal = () => {
-  return <div>personal-data</div>;
+  const pathname = usePathname();
+  const userId = pathname.split("/").pop();
+
+  return (
+    <div>
+      <ContentData user_id={userId} />
+    </div>
+  );
 };

@@ -7,7 +7,7 @@ import { Table } from "./table-data";
 import { discapacidadRecord, getDisabilities } from "@/actions/disability-action";
 import { Personal } from "@prisma/client";
 import { Session } from "next-auth";
-import { getCurrentPersonal } from "@/actions/personal-action";
+import { get_current_personal } from "@/actions/personal-action";
 import { Create } from "./form-data";
 import { Modify } from "./modify-data";
 import { checkEditable } from "@/actions/limit-time";
@@ -27,7 +27,7 @@ export const ContentData = ({ session }: { session: Session }) => {
       setLoading(true);
       try {
         if (!session.user.email) throw new Error("No se encontró el email en la sesión.");
-        const response = await getCurrentPersonal(session.user.email);
+        const response = await get_current_personal(session.user.id);
         if (!response.success || !response.data) {
           setPersonalData(null);
           throw new Error("Datos personales aún no registrados.");

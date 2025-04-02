@@ -69,7 +69,7 @@ export function ContentData({ id }: { id: string }) {
             </DropdownMenu>
           </div>
 
-          {selectedModule && <div className="mt-4 font-code text-sm italic">{selectedModule}</div>}
+          {selectedModule && <div className="mt-4 font-code text-sm">{selectedModule}</div>}
         </div>
       )}
 

@@ -2,22 +2,28 @@
 
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { Session } from "next-auth";
-import { getCurrentPersonal, personalRecord } from "@/actions/personal-action";
+import { get_current_personal, personalRecord } from "@/actions/personal-action";
 import { CreateData } from "./form-data";
 import { ModifyData } from "./modify-data";
 import { checkEditable } from "@/actions/limit-time";
 
-export const ContentData = ({ session }: { session: Session }) => {
+interface ContentDataProps {
+  userId?: string;
+  user_id?: string;
+}
+
+export const ContentData = ({ userId, user_id }: ContentDataProps) => {
   const [loading, setLoading] = useState(true);
   const [items, setItems] = useState<personalRecord | null>(null);
   const [canEdit, setCanEdit] = useState<boolean>(false);
 
+  const id = (user_id ?? userId) || "";
+
   const fnData = async () => {
     setLoading(true);
     try {
-      if (!session?.user?.email) return;
-      const response = await getCurrentPersonal(session.user.email);
+      if (!id) return;
+      const response = await get_current_personal(id);
       if (response.success && response.data) setItems(response.data);
     } catch {
       toast.error("Error al cargar los datos del personal.");
@@ -27,6 +33,11 @@ export const ContentData = ({ session }: { session: Session }) => {
   };
 
   const checkEditableClient = async () => {
+    if (user_id) {
+      setCanEdit(true);
+      return;
+    }
+
     try {
       const res = await checkEditable();
       if (res.success && res.editable) setCanEdit(res.editable);
@@ -37,8 +48,8 @@ export const ContentData = ({ session }: { session: Session }) => {
 
   useEffect(() => {
     fnData();
-    if (session?.user) checkEditableClient();
-  }, [session?.user]);
+    checkEditableClient();
+  }, [id]);
 
   const handleRefresh = () => {
     fnData();
@@ -49,7 +60,7 @@ export const ContentData = ({ session }: { session: Session }) => {
   return (
     <div className="flex justify-center py-2 w-full">
       <div className="flex p-2 w-4/5">
-        {items ? <ModifyData personalData={items} onRefresh={handleRefresh} edit={canEdit} /> : <CreateData onRefresh={handleRefresh} edit={canEdit} />}
+        {items ? <ModifyData personalData={items} onRefresh={handleRefresh} edit={canEdit} /> : <CreateData onRefresh={handleRefresh} edit={canEdit} id={id} />}
       </div>
     </div>
   );

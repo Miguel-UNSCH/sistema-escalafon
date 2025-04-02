@@ -17,7 +17,7 @@ import { personalSchema, ZPersonal } from "@/lib/schemas/personal-schema";
 import { estadoCivilOp, grupoSanguineoOp, lic_condOp, sexoOp } from "@/utils/options";
 import toast from "react-hot-toast";
 
-export const CreateData = ({ onRefresh, edit }: { onRefresh: () => void; edit: boolean }) => {
+export const CreateData = ({ onRefresh, edit, id }: { onRefresh: () => void; edit: boolean; id: string }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
@@ -40,10 +40,10 @@ export const CreateData = ({ onRefresh, edit }: { onRefresh: () => void; edit: b
   const onSubmit = (data: ZPersonal) => {
     startTransition(async () => {
       try {
-        const result = await createPersonal(data);
+        const response = await createPersonal(data, id);
 
-        if (!result.success) {
-          toast.error(result.message);
+        if (!response.success) {
+          toast.error(response.message);
         } else {
           form.reset();
           toast.success("Personal registrado exitosamente.");

@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { childrenRecord, getChilds } from "@/actions/children-action";
-import { getCurrentPersonal } from "@/actions/personal-action";
+import { get_current_personal } from "@/actions/personal-action";
 import { Table } from "./table-data";
 import { Modify } from "./modify-data";
 import { Create } from "./form-data";
@@ -25,7 +25,7 @@ export const ContentData = ({ session }: { session: any }) => {
     setLoading(true);
     try {
       if (!session?.user?.email) throw new Error("No se encontró el email en la sesión.");
-      const response = await getCurrentPersonal(session.user.email);
+      const response = await get_current_personal(session.user.id);
       if (!response.success || !response.data) {
         setPersonalExists(false);
         return;

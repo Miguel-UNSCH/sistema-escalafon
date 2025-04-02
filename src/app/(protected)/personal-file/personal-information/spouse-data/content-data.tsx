@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { getCurrentSpouse, spouseRecord } from "@/actions/conyuge-action";
-import { getCurrentPersonal } from "@/actions/personal-action";
+import { get_current_personal } from "@/actions/personal-action";
 import { Session } from "next-auth";
 import { CreateData } from "./form-data";
 import { ModifyData } from "./modify-data";
@@ -24,7 +24,7 @@ export const ContentData = ({ session }: { session: Session }) => {
     setLoading(true);
     try {
       if (!session.user.email) throw new Error("No se encontró el email en la sesión.");
-      const response = await getCurrentPersonal(session.user.email);
+      const response = await get_current_personal(session.user.id);
       if (!response.success || !response.data) {
         setPersonalExists(false);
         return;

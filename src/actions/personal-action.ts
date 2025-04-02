@@ -8,9 +8,9 @@ import { checkEditable } from "./limit-time";
 
 export type personalRecord = Prisma.PersonalGetPayload<{ include: { user: true; ubigeo: true } }>;
 
-export const getCurrentPersonal = async (email: string): Promise<{ success: boolean; message?: string; data?: personalRecord }> => {
+export const get_current_personal = async (id: string): Promise<{ success: boolean; message?: string; data?: personalRecord }> => {
   try {
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await prisma.user.findUnique({ where: { id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const personal: personalRecord | null = await prisma.personal.findUnique({
@@ -26,18 +26,17 @@ export const getCurrentPersonal = async (email: string): Promise<{ success: bool
     return { success: false, message: errorMessage };
   }
 };
-
-export const createPersonal = async (data: ZPersonal): Promise<{ success: boolean; message: string }> => {
+export const createPersonal = async (data: ZPersonal, user_id: string): Promise<{ success: boolean; message: string }> => {
   try {
-    const session = await auth();
-    if (!session || !session?.user) throw new Error("No autorizado");
-
-    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const currentUser = await prisma.user.findUnique({ where: { id: user_id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
 
+    // Verificación editable solo si no es admin
     if (currentUser.role !== "admin") {
       const check = await checkEditable();
-      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+      if (!check.success || !check.editable) {
+        throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+      }
     }
 
     const ubigeo = await prisma.ubigeo.findFirst({ where: { inei: data.ubigeo.inei } });
@@ -45,7 +44,7 @@ export const createPersonal = async (data: ZPersonal): Promise<{ success: boolea
 
     await prisma.personal.create({
       data: {
-        user_id: currentUser.id,
+        user_id,
         sexo: data.sexo,
         grupo_sanguineo: data.grupo_sanguineo,
         n_autogenerado: data.n_autogenerado,
