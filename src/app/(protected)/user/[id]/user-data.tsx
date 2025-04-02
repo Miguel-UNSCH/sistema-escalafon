@@ -36,7 +36,6 @@ export const UserData = ({ userId }: { userId: string }) => {
     },
   });
 
-  // Obtener datos y resetear el formulario
   useEffect(() => {
     startTransition(() => {
       getUserById(userId).then((res) => {
