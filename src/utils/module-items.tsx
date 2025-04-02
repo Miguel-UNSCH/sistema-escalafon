@@ -1,5 +1,6 @@
 import { ModuleChildren } from "@/app/(protected)/dashboard/user/[id]/children-data";
 import { ModuleConyuge } from "@/app/(protected)/dashboard/user/[id]/conyuge-data";
+import { ModuleDisability } from "@/app/(protected)/dashboard/user/[id]/disability-data";
 import { ModulePersonal } from "@/app/(protected)/dashboard/user/[id]/personal-data";
 import { JSX } from "react";
 
@@ -18,7 +19,7 @@ export const moduleTree: ModuleItem[] = [
         children: [
           { name: "Datos Personales", component: <ModulePersonal /> },
           { name: "Datos del Conyugue", component: <ModuleConyuge /> },
-          { name: "Datos de los hijos", component: <ModuleChildren /> },
+          { name: "Datos de los Hijos", component: <ModuleChildren /> },
         ],
       },
       {
@@ -29,7 +30,7 @@ export const moduleTree: ModuleItem[] = [
         ],
       },
       { name: "Experiencia Laboral", component: <div>Experiencia Laboral</div> },
-      { name: "Discapacidad", component: <div>Discapacidad</div> },
+      { name: "Discapacidad", component: <ModuleDisability /> },
     ],
   },
   {

@@ -6,13 +6,17 @@ import toast from "react-hot-toast";
 import { Table } from "./table-data";
 import { discapacidadRecord, getDisabilities } from "@/actions/disability-action";
 import { Personal } from "@prisma/client";
-import { Session } from "next-auth";
 import { get_current_personal } from "@/actions/personal-action";
 import { Create } from "./form-data";
 import { Modify } from "./modify-data";
 import { checkEditable } from "@/actions/limit-time";
 
-export const ContentData = ({ session }: { session: Session }) => {
+interface ContentDataProps {
+  userId?: string;
+  user_id?: string;
+}
+
+export const ContentData = ({ userId, user_id }: ContentDataProps) => {
   const [items, setItems] = useState<discapacidadRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [disability, setDisability] = useState<boolean | null>(null);
@@ -22,12 +26,14 @@ export const ContentData = ({ session }: { session: Session }) => {
   const router = useRouter();
   const [canEdit, setCanEdit] = useState<boolean>(false);
 
+  const id = (user_id ?? userId) || "";
+
   useEffect(() => {
     const fnPersonalData = async () => {
       setLoading(true);
       try {
-        if (!session.user.email) throw new Error("No se encontró el email en la sesión.");
-        const response = await get_current_personal(session.user.id);
+        if (!id) return;
+        const response = await get_current_personal(id);
         if (!response.success || !response.data) {
           setPersonalData(null);
           throw new Error("Datos personales aún no registrados.");
@@ -42,7 +48,7 @@ export const ContentData = ({ session }: { session: Session }) => {
     };
 
     fnPersonalData();
-  }, [session]);
+  }, [id]);
 
   const checkEditableClient = async () => {
     try {
@@ -70,8 +76,8 @@ export const ContentData = ({ session }: { session: Session }) => {
 
   useEffect(() => {
     fnDisabilities();
-    if (session?.user) checkEditableClient();
-  }, [session?.user]);
+    if (id) checkEditableClient();
+  }, [id]);
 
   const handleRefresh = () => {
     fnDisabilities();
@@ -130,7 +136,9 @@ export const ContentData = ({ session }: { session: Session }) => {
             </div>
           )}
 
-          {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} edit={canEdit} />}
+          {showCreate && (
+            <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} edit={canEdit} id={id} />
+          )}
         </>
       )}
     </div>
