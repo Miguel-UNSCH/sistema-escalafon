@@ -11,12 +11,10 @@ export const navigationItems: NavigationItems[] = [
   {
     title: "Inicio",
     path: "/dashboard",
-    menuItem: [{ label: "Dashboard", icon: <LayoutDashboard size={16} />, path: "/", submenus: [{ label: "Documentación", path: "/doc" }] }],
-  },
-  {
-    title: "Gestión de Usuarios",
-    path: "/user",
-    menuItem: [{ label: "Administrar Usuario", icon: <UsersRound size={16} />, path: "/" }],
+    menuItem: [
+      { label: "Dashboard", icon: <LayoutDashboard size={16} />, path: "/", submenus: [{ label: "Documentación", path: "/doc" }] },
+      { label: "Administrar Usuario", icon: <UsersRound size={16} />, path: "/user" },
+    ],
   },
   {
     title: "Ficha Personal",

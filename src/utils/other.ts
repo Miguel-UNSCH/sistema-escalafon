@@ -12,12 +12,10 @@ export const breadcrumbs_options: BreadcrumbItem[] = [
   {
     label: "Inicio",
     path: "/dashboard",
-    items: [{ label: "documentación", path: "/doc" }],
-  },
-  {
-    label: "Gestión de Usuarios",
-    path: "/user",
-    items: [{ label: "administrar usuario", path: "" }],
+    items: [
+      { label: "documentación", path: "/doc" },
+      { label: "administrar usuario", path: "/user" },
+    ],
   },
   {
     label: "ficha personal",
