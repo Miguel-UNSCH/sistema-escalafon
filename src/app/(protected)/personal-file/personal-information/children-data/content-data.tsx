@@ -11,7 +11,12 @@ import { Modify } from "./modify-data";
 import { Create } from "./form-data";
 import { checkEditable } from "@/actions/limit-time";
 
-export const ContentData = ({ session }: { session: any }) => {
+interface ContentDataProps {
+  userId?: string;
+  user_id?: string;
+}
+
+export const ContentData = ({ userId, user_id }: ContentDataProps) => {
   const [items, setItems] = useState<childrenRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItem, setSelectedItem] = useState<childrenRecord | null>(null);
@@ -21,11 +26,13 @@ export const ContentData = ({ session }: { session: any }) => {
   const router = useRouter();
   const [canEdit, setCanEdit] = useState<boolean>(false);
 
+  const id = (user_id ?? userId) || "";
+
   const fetchPersonalData = async () => {
     setLoading(true);
     try {
-      if (!session?.user?.email) throw new Error("No se encontró el email en la sesión.");
-      const response = await get_current_personal(session.user.id);
+      if (!id) return;
+      const response = await get_current_personal(id);
       if (!response.success || !response.data) {
         setPersonalExists(false);
         return;
@@ -39,6 +46,11 @@ export const ContentData = ({ session }: { session: any }) => {
   };
 
   const checkEditableClient = async () => {
+    if (user_id) {
+      setCanEdit(true);
+      return;
+    }
+
     try {
       const res = await checkEditable();
       if (res.success && res.editable) setCanEdit(res.editable);
@@ -49,7 +61,8 @@ export const ContentData = ({ session }: { session: any }) => {
 
   useEffect(() => {
     fetchPersonalData();
-  }, [session]);
+    if (id) checkEditableClient();
+  }, [id]);
 
   const fnChildren = async () => {
     setLoading(true);
@@ -68,8 +81,8 @@ export const ContentData = ({ session }: { session: any }) => {
 
   useEffect(() => {
     fnChildren();
-    if (session?.user) checkEditableClient();
-  }, [session?.user]);
+    if (id) checkEditableClient();
+  }, [id]);
 
   const handleRefresh = async () => {
     await fetchPersonalData();
@@ -129,12 +142,14 @@ export const ContentData = ({ session }: { session: any }) => {
               <p>datos de otro hijo.</p>
             </div>
           )}
-          {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} edit={canEdit} />}
+          {showCreate && (
+            <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} edit={canEdit} id={id} />
+          )}
         </>
       ) : (
         <div className="flex flex-row justify-center items-center font-text">
           <p className="font-semibold text-subtext0 text-lg text-center">
-            Has alcanzado el límite de hijos registrados según tus datos personales.{" "}
+            Has alcanzado el límite de hijos registrados según tus datos personales.
             <span
               className="mx-2 hover:border-mauve hover:border-b-2 font-semibold text-mauve cursor-pointer"
               onClick={() => router.push("/personal-file/personal-information/personal-data")}

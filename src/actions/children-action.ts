@@ -28,12 +28,9 @@ export const getChilds = async (): Promise<{ success: boolean; message?: string;
   }
 };
 
-export const createChild = async (data: ZChildren): Promise<{ success: boolean; message: string }> => {
+export const createChild = async (id: string, data: ZChildren): Promise<{ success: boolean; message: string }> => {
   try {
-    const session = await auth();
-    if (!session || !session?.user) throw new Error("No autorizado");
-
-    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const currentUser = await prisma.user.findUnique({ where: { id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
 
     if (currentUser.role !== "admin") {

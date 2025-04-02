@@ -43,6 +43,11 @@ export const ContentData = ({ userId, user_id }: ContentDataProps) => {
   };
 
   const checkEditableClient = async () => {
+    if (user_id) {
+      setCanEdit(true);
+      return;
+    }
+
     try {
       const res = await checkEditable();
       if (res.success && res.editable) setCanEdit(res.editable);
@@ -91,7 +96,9 @@ export const ContentData = ({ userId, user_id }: ContentDataProps) => {
   if (estadoCivil !== "c") {
     return (
       <div className="flex flex-row justify-center items-center font-text">
-        <p className="font-semibold text-subtext0 text-lg text-center">No puedes registrar, porque no estás casado.</p>
+        <p className="font-semibold text-subtext0 text-lg text-center">
+          {userId ? "No puedes registrar, porque no estás casado." : "No se puede registrar, el personal no se encuentra casado."}
+        </p>
         <button
           className="mx-2 hover:border-mauve hover:border-b-2 font-semibold text-mauve cursor-pointer"
           onClick={() => router.push("/personal-file/personal-information/personal-data")}

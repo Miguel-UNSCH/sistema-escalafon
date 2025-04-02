@@ -22,9 +22,10 @@ type CreateProps = {
   onCancel?: () => void;
   showCancel?: boolean;
   edit: boolean;
+  id: string;
 };
 
-export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, edit }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, edit, id }) => {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<ZChildren>({
@@ -42,7 +43,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
   const onSubmit = (data: ZChildren) => {
     startTransition(async () => {
       try {
-        const result = await createChild(data);
+        const result = await createChild(id, data);
         if (!result.success) toast.error(result.message);
         else {
           toast.success("Hijo registrado exitosamente.");
