@@ -20,9 +20,10 @@ type ModifyProps = {
   onUpdated: () => void;
   setSelectedItem: React.Dispatch<React.SetStateAction<ascensoRecord | null>>;
   edit: boolean;
+  id: string;
 };
 
-export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem, edit }) => {
+export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem, edit, id }) => {
   const [isPending, startTransition] = useTransition();
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [isChangingFile, setIsChangingFile] = useState(false);
@@ -60,7 +61,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
 
         if (isChangingFile && data.file) updateData.file = data.file;
 
-        const response = await updateAscenso(item.id, updateData);
+        const response = await updateAscenso(item.id, id, updateData);
         if (!response.success) toast.error(response.message);
         else {
           toast.success("Actualizacion exitosa.");

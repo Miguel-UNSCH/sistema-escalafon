@@ -5,6 +5,7 @@ import { ModuleExp } from "@/app/(protected)/dashboard/user/[id]/exp-data";
 import { ModuleMedicalRest } from "@/app/(protected)/dashboard/user/[id]/medical-rest-data";
 import { ModulePermissions } from "@/app/(protected)/dashboard/user/[id]/permissions-data";
 import { ModulePersonal } from "@/app/(protected)/dashboard/user/[id]/personal-data";
+import { ModulePromotions } from "@/app/(protected)/dashboard/user/[id]/promotions-data";
 import { ModuleRenunciation } from "@/app/(protected)/dashboard/user/[id]/renunciation-data";
 import { ModuleStudy } from "@/app/(protected)/dashboard/user/[id]/study-data";
 import { ModuleTraining } from "@/app/(protected)/dashboard/user/[id]/training-data";
@@ -47,7 +48,7 @@ export const moduleTree: ModuleItem[] = [
       { name: "Desplazamiento", component: <div>Desplazamiento</div> },
       { name: "Descanso Medico", component: <ModuleMedicalRest /> },
       { name: "Permisos / Licencias", component: <ModulePermissions /> },
-      { name: "Ascensos", component: <div>Ascensos</div> },
+      { name: "Ascensos", component: <ModulePromotions /> },
     ],
   },
   {

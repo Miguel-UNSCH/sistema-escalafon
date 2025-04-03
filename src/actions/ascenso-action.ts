@@ -16,12 +16,9 @@ export type ascensoRecord = Prisma.ascensoGetPayload<{
     newUCD: { include: { cargoDependencia: { include: { cargo: true; dependencia: true } } } };
   };
 }>;
-export const getAscensos = async (): Promise<{ success: boolean; message?: string; data?: ascensoRecord[] }> => {
+export const getAscensos = async (id: string): Promise<{ success: boolean; message?: string; data?: ascensoRecord[] }> => {
   try {
-    const session = await auth();
-    if (!session?.user) throw new Error("No autorizado");
-
-    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const user = await prisma.user.findUnique({ where: { id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const response: ascensoRecord[] | null = await prisma.ascenso.findMany({
@@ -42,12 +39,9 @@ export const getAscensos = async (): Promise<{ success: boolean; message?: strin
   }
 };
 
-export const createAscenso = async (data: ZAscensoS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
+export const createAscenso = async (id: string, data: ZAscensoS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
-    const session = await auth();
-    if (!session || !session?.user) throw new Error("No autorizado");
-
-    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const user = await prisma.user.findUnique({ where: { id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     if (user.role !== "admin") {
@@ -104,18 +98,21 @@ export const createAscenso = async (data: ZAscensoS & { file_id: string }): Prom
   }
 };
 
-export const updateAscenso = async (id: string, data: ZAscensoS & { file?: File | null; file_id?: string }): Promise<{ success: boolean; message: string }> => {
+export const updateAscenso = async (id: string, user_id: string, data: ZAscensoS & { file?: File | null; file_id?: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
     if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
-    if (!user) throw new Error("Usuario no encontrado");
+    const user_edit = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!user_edit) throw new Error("Usuario no encontrado");
 
-    if (user.role !== "admin") {
+    if (user_edit.role !== "admin") {
       const check = await checkEditable();
       if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
     }
+
+    const user = await prisma.user.findUnique({ where: { id: user_id } });
+    if (!user) throw new Error("Usuario no encontrado");
 
     const currentAscenso = await prisma.ascenso.findUnique({
       where: { id },
