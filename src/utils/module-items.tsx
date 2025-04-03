@@ -1,4 +1,5 @@
 import { ModuleBFamily } from "@/app/(protected)/dashboard/user/[id]/b-family-data";
+import { ModuleBPersonal } from "@/app/(protected)/dashboard/user/[id]/b-personal-data";
 import { ModuleChildren } from "@/app/(protected)/dashboard/user/[id]/children-data";
 import { ModuleContracts } from "@/app/(protected)/dashboard/user/[id]/contracts-data";
 import { ModuleConyuge } from "@/app/(protected)/dashboard/user/[id]/conyuge-data";
@@ -61,7 +62,7 @@ export const moduleTree: ModuleItem[] = [
       {
         name: "Bonificaciones",
         children: [
-          { name: "Bonificaciones Personales", component: <div>Bonificaciones Personales</div> },
+          { name: "Bonificaciones Personales", component: <ModuleBPersonal /> },
           { name: "Bonificaciones Familiares", component: <ModuleBFamily /> },
           { name: "Reconocimientos", component: <div>Reconocimientos</div> },
         ],

@@ -12,12 +12,9 @@ export type bonusPersonalRecord = Prisma.bonus_personalGetPayload<{
   include: { file: true; usuarioCargoDependencia: { include: { cargoDependencia: { include: { cargo: true; dependencia: true } } } } };
 }>;
 
-export const getBonusesPer = async (): Promise<{ success: boolean; message?: string; data?: Array<bonusPersonalRecord> }> => {
+export const getBonusesPer = async (id: string): Promise<{ success: boolean; message?: string; data?: Array<bonusPersonalRecord> }> => {
   try {
-    const session = await auth();
-    if (!session?.user) throw new Error("No autorizado");
-
-    const user: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const user: User | null = await prisma.user.findUnique({ where: { id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const response: bonusPersonalRecord[] | null = await prisma.bonus_personal.findMany({
@@ -34,18 +31,21 @@ export const getBonusesPer = async (): Promise<{ success: boolean; message?: str
   }
 };
 
-export const createBonusPer = async (data: ZBonusPersonal & { file_id: string }): Promise<{ success: boolean; message: string }> => {
+export const createBonusPer = async (id: string, data: ZBonusPersonal & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
     if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
-    if (!user) throw new Error("Usuario no encontrado");
+    const user_edit = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!user_edit) throw new Error("Usuario no encontrado");
 
-    if (user.role !== "admin") {
+    if (user_edit.role !== "admin") {
       const check = await checkEditable();
       if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
     }
+
+    const user = await prisma.user.findUnique({ where: { id } });
+    if (!user) throw new Error("Usuario no encontrado");
 
     const cargo = await prisma.cargo.findUnique({ where: { id: Number(data.cargo_id) } });
     if (!cargo) throw new Error("Cargo no encontrado");
@@ -85,18 +85,21 @@ export const createBonusPer = async (data: ZBonusPersonal & { file_id: string })
   }
 };
 
-export const updateBonusPer = async (id: string, data: ZBonusPersonal & { file_id?: string }): Promise<{ success: boolean; message: string }> => {
+export const updateBonusPer = async (id: string, user_id: string, data: ZBonusPersonal & { file_id?: string }): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
     if (!session || !session?.user) throw new Error("No autorizado");
 
-    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
-    if (!user) throw new Error("Usuario no encontrado");
+    const user_edit = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!user_edit) throw new Error("Usuario no encontrado");
 
-    if (user.role !== "admin") {
+    if (user_edit.role !== "admin") {
       const check = await checkEditable();
       if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
     }
+
+    const user = await prisma.user.findUnique({ where: { id: user_id } });
+    if (!user) throw new Error("Usuario no encontrado");
 
     const bonusPersonal = await prisma.bonus_personal.findUnique({ where: { id }, include: { file: true } });
     if (!bonusPersonal) throw new Error("Bono personal no encontrado");
