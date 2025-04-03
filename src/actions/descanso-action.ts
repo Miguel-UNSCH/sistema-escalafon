@@ -15,12 +15,9 @@ export type descanso_medicoRecord = Prisma.descanso_medicoGetPayload<{
   };
 }>;
 
-export const getDescansos = async (): Promise<{ success: boolean; message?: string; data?: descanso_medicoRecord[] }> => {
+export const getDescansos = async (id: string): Promise<{ success: boolean; message?: string; data?: descanso_medicoRecord[] }> => {
   try {
-    const session = await auth();
-    if (!session?.user) throw new Error("No autorizado");
-
-    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const user = await prisma.user.findUnique({ where: { id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const response = await prisma.descanso_medico.findMany({
@@ -38,12 +35,9 @@ export const getDescansos = async (): Promise<{ success: boolean; message?: stri
   }
 };
 
-export const createDescanso = async (data: ZDesMedS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
+export const createDescanso = async (id: string, data: ZDesMedS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
-    const session = await auth();
-    if (!session || !session?.user) throw new Error("No autorizado");
-
-    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const currentUser = await prisma.user.findUnique({ where: { id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
 
     if (currentUser.role !== "admin") {
@@ -100,10 +94,7 @@ export const createDescanso = async (data: ZDesMedS & { file_id: string }): Prom
 
 export const updateDescanso = async (id: string, data: ZDesMedS & { file?: File | null; file_id?: string }): Promise<{ success: boolean; message: string }> => {
   try {
-    const session = await auth();
-    if (!session || !session?.user) throw new Error("No autorizado");
-
-    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const currentUser = await prisma.user.findUnique({ where: { id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
 
     if (currentUser.role !== "admin") {

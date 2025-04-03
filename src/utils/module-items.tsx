@@ -2,6 +2,7 @@ import { ModuleChildren } from "@/app/(protected)/dashboard/user/[id]/children-d
 import { ModuleConyuge } from "@/app/(protected)/dashboard/user/[id]/conyuge-data";
 import { ModuleDisability } from "@/app/(protected)/dashboard/user/[id]/disability-data";
 import { ModuleExp } from "@/app/(protected)/dashboard/user/[id]/exp-data";
+import { ModuleMedicalRest } from "@/app/(protected)/dashboard/user/[id]/medical-rest-data";
 import { ModulePersonal } from "@/app/(protected)/dashboard/user/[id]/personal-data";
 import { ModuleRenunciation } from "@/app/(protected)/dashboard/user/[id]/renunciation-data";
 import { ModuleStudy } from "@/app/(protected)/dashboard/user/[id]/study-data";
@@ -43,7 +44,7 @@ export const moduleTree: ModuleItem[] = [
       { name: "Contratos y Nombramiento", component: <div>Contratos y Nombramiento</div> },
       { name: "Renuncia", component: <ModuleRenunciation /> },
       { name: "Desplazamiento", component: <div>Desplazamiento</div> },
-      { name: "Descanso Medico", component: <div>Descanso Medico</div> },
+      { name: "Descanso Medico", component: <ModuleMedicalRest /> },
       { name: "Permisos / Licencias", component: <div>Permisos / Licencias</div> },
       { name: "Ascensos", component: <div>Ascensos</div> },
     ],

@@ -55,7 +55,7 @@ export const Create: React.FC<CreateProps> = ({ onMedicalCreated, setSelectedMed
           file_id = uploadResponse.data.id;
         }
 
-        const result = await createDescanso({ ...data, file_id });
+        const result = await createDescanso(user_id, { ...data, file_id });
         if (!result.success) toast.error(result.message);
         else {
           toast.success("Descanso médico registrado exitosamente.");
