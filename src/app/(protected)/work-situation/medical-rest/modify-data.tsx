@@ -61,7 +61,7 @@ export const Modify: React.FC<ModifyProps> = ({ medical, onUpdated, setSelectedM
 
         if (isChangingFile && data.file) updateData.file = data.file;
 
-        const response = await updateDescanso(medical.id, updateData);
+        const response = await updateDescanso(medical.id, user_id, updateData);
         if (!response.success) toast.error(response.message);
         else {
           toast.success("Descanso actualizado exitosamente.");

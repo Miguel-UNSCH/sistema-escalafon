@@ -56,7 +56,7 @@ export const Modify: React.FC<ModifyProps> = ({ renuncia, onUpdated, setSelected
 
         if (isChangingFile && data.file) updateData.file = data.file;
 
-        const response = await updateRenuncia(renuncia.id, updateData);
+        const response = await updateRenuncia(renuncia.id, user_id, updateData);
         if (!response.success) toast.error(response.message);
         else {
           toast.success("Renuncia actualizada exitosamente.");

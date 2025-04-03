@@ -14,12 +14,9 @@ export type perLicRecord = Prisma.per_lic_vacGetPayload<{
     usuarioCargoDependencia: { include: { cargoDependencia: { include: { cargo: true; dependencia: true } } } };
   };
 }>;
-export const getPerLicVacs = async (): Promise<{ success: boolean; message?: string; data?: perLicRecord[] }> => {
+export const getPerLicVacs = async (id: string): Promise<{ success: boolean; message?: string; data?: perLicRecord[] }> => {
   try {
-    const session = await auth();
-    if (!session?.user) throw new Error("No autorizado");
-
-    const user: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const user: User | null = await prisma.user.findUnique({ where: { id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const response: perLicRecord[] | null = await prisma.per_lic_vac.findMany({
@@ -39,12 +36,9 @@ export const getPerLicVacs = async (): Promise<{ success: boolean; message?: str
   }
 };
 
-export const createPerLicVac = async (data: ZPerLicVacS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
+export const createPerLicVac = async (id: string, data: ZPerLicVacS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
-    const session = await auth();
-    if (!session || !session?.user) throw new Error("No autorizado");
-
-    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const currentUser = await prisma.user.findUnique({ where: { id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
 
     if (currentUser.role !== "admin") {
@@ -92,18 +86,25 @@ export const createPerLicVac = async (data: ZPerLicVacS & { file_id: string }): 
   }
 };
 
-export const updatePerLicVac = async (id: string, data: ZPerLicVacS & { file?: File | null; file_id?: string }): Promise<{ success: boolean; message: string }> => {
+export const updatePerLicVac = async (
+  id: string,
+  user_id: string,
+  data: ZPerLicVacS & { file?: File | null; file_id?: string }
+): Promise<{ success: boolean; message: string }> => {
   try {
     const session = await auth();
     if (!session || !session?.user) throw new Error("No autorizado");
 
-    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
-    if (!currentUser) throw new Error("Usuario no encontrado");
+    const user_edit = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!user_edit) throw new Error("Usuario no encontrado");
 
-    if (currentUser.role !== "admin") {
+    if (user_edit.role !== "admin") {
       const check = await checkEditable();
       if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
     }
+
+    const currentUser = await prisma.user.findUnique({ where: { id: user_id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
 
     const current_model = await prisma.per_lic_vac.findUnique({ where: { id }, include: { file: true } });
     if (!current_model) throw new Error("permiso no encontrado");
