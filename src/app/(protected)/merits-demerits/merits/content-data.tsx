@@ -6,20 +6,26 @@ import { Table } from "./table-data";
 import { Create } from "./form-data";
 import { getMeritos, meritoRecord } from "@/actions/m-d-action";
 import { Modify } from "./modify-data";
-import { Session } from "next-auth";
 import { checkEditable } from "@/actions/limit-time";
 
-export const ContentData = ({ session }: { session: Session }) => {
+interface ContentDataProps {
+  userId?: string;
+  user_id?: string;
+}
+
+export const ContentData = ({ userId, user_id }: ContentDataProps) => {
   const [meritos, setMeritos] = useState<meritoRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedMerito, setSelectedMerito] = useState<meritoRecord | null>(null);
   const [showCreate, setShowCreate] = useState<boolean>(false);
   const [canEdit, setCanEdit] = useState<boolean>(false);
 
+  const id = (user_id ?? userId) || "";
+
   const fnMeritos = async () => {
     setLoading(true);
     try {
-      const response = await getMeritos();
+      const response = await getMeritos(id);
       if (response.success && response.data) {
         setMeritos(response.data);
         if (response.data.length === 0) setShowCreate(true);
@@ -32,6 +38,11 @@ export const ContentData = ({ session }: { session: Session }) => {
   };
 
   const checkEditableClient = async () => {
+    if (user_id) {
+      setCanEdit(true);
+      return;
+    }
+
     try {
       const res = await checkEditable();
       if (res.success && res.editable) setCanEdit(res.editable);
@@ -42,8 +53,8 @@ export const ContentData = ({ session }: { session: Session }) => {
 
   useEffect(() => {
     fnMeritos();
-    if (session?.user) checkEditableClient();
-  }, [session?.user]);
+    if (id) checkEditableClient();
+  }, [id]);
 
   const handleRefresh = () => {
     fnMeritos();
@@ -60,7 +71,7 @@ export const ContentData = ({ session }: { session: Session }) => {
         <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
       )}
 
-      {selectedMerito && <Modify merito={selectedMerito} onUpdated={handleRefresh} setSelectedMerito={setSelectedMerito} user_id={session.user.id} edit={canEdit} />}
+      {selectedMerito && <Modify merito={selectedMerito} onUpdated={handleRefresh} setSelectedMerito={setSelectedMerito} user_id={id} edit={canEdit} />}
 
       {!showCreate && meritos.length > 0 && (
         <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
@@ -77,7 +88,7 @@ export const ContentData = ({ session }: { session: Session }) => {
           setSelectedMerito={setSelectedMerito}
           onCancel={() => setShowCreate(false)}
           showCancel={meritos.length > 0}
-          user_id={session.user.id}
+          user_id={id}
           edit={canEdit}
         />
       )}

@@ -51,7 +51,7 @@ export const Create: React.FC<CreateProps> = ({ onMeritoCreated, setSelectedMeri
           file_id = uploadResponse.data.id;
         }
 
-        const result = await createMerito({ ...data, file_id });
+        const result = await createMerito(user_id, { ...data, file_id });
 
         if (!result.success) toast.error(result.message);
         else {

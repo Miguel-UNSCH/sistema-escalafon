@@ -8,6 +8,7 @@ import { ModuleDisplacement } from "@/app/(protected)/dashboard/user/[id]/displa
 import { ModuleEvaluations } from "@/app/(protected)/dashboard/user/[id]/evaluations-data";
 import { ModuleExp } from "@/app/(protected)/dashboard/user/[id]/exp-data";
 import { ModuleMedicalRest } from "@/app/(protected)/dashboard/user/[id]/medical-rest-data";
+import { ModuleMerits } from "@/app/(protected)/dashboard/user/[id]/merits-data";
 import { ModulePermissions } from "@/app/(protected)/dashboard/user/[id]/permissions-data";
 import { ModulePersonal } from "@/app/(protected)/dashboard/user/[id]/personal-data";
 import { ModulePromotions } from "@/app/(protected)/dashboard/user/[id]/promotions-data";
@@ -73,7 +74,7 @@ export const moduleTree: ModuleItem[] = [
   {
     name: "Meritos y Demeritos",
     children: [
-      { name: "Meritos", component: <div>Meritos</div> },
+      { name: "Meritos", component: <ModuleMerits /> },
       { name: "Demeritos", component: <div>Demeritos</div> },
     ],
   },
