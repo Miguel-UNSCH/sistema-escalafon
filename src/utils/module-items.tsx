@@ -3,6 +3,7 @@ import { ModuleContracts } from "@/app/(protected)/dashboard/user/[id]/contracts
 import { ModuleConyuge } from "@/app/(protected)/dashboard/user/[id]/conyuge-data";
 import { ModuleDisability } from "@/app/(protected)/dashboard/user/[id]/disability-data";
 import { ModuleDisplacement } from "@/app/(protected)/dashboard/user/[id]/displacement-data";
+import { ModuleEvaluations } from "@/app/(protected)/dashboard/user/[id]/evaluations-data";
 import { ModuleExp } from "@/app/(protected)/dashboard/user/[id]/exp-data";
 import { ModuleMedicalRest } from "@/app/(protected)/dashboard/user/[id]/medical-rest-data";
 import { ModulePermissions } from "@/app/(protected)/dashboard/user/[id]/permissions-data";
@@ -64,7 +65,7 @@ export const moduleTree: ModuleItem[] = [
           { name: "Reconocimientos", component: <div>Reconocimientos</div> },
         ],
       },
-      { name: "Evaluaciones", component: <div>Evaluaciones</div> },
+      { name: "Evaluaciones", component: <ModuleEvaluations /> },
     ],
   },
   {
