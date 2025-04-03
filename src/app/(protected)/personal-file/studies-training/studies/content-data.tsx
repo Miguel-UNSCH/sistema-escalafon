@@ -8,23 +8,29 @@ import { Table } from "./table-data";
 import { Create } from "./form-data";
 import { Modify } from "./modify-data";
 import { checkEditable } from "@/actions/limit-time";
-import { Session } from "next-auth";
 
 export type StudyRecord = Omit<formAcRecord, "periodo"> & {
   periodo: { from: string; to: string };
 };
 
-export const ContentData = ({ session }: { session: Session }) => {
+interface ContentDataProps {
+  userId?: string;
+  user_id?: string;
+}
+
+export const ContentData = ({ userId, user_id }: ContentDataProps) => {
   const [items, setItems] = useState<StudyRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItem, setSelectedItem] = useState<StudyRecord | null>(null);
   const [showCreate, setShowCreate] = useState<boolean>(false);
   const [canEdit, setCanEdit] = useState<boolean>(false);
 
+  const id = (user_id ?? userId) || "";
+
   const fnFormAc = async () => {
     setLoading(true);
     try {
-      const response = await getStudies();
+      const response = await getStudies(id);
       if (response.success && response.data) {
         setItems(response.data as StudyRecord[]);
         if (response.data.length === 0) setShowCreate(true);
@@ -47,8 +53,8 @@ export const ContentData = ({ session }: { session: Session }) => {
 
   useEffect(() => {
     fnFormAc();
-    if (session?.user) checkEditableClient();
-  }, [session?.user]);
+    if (id) checkEditableClient();
+  }, [id]);
 
   const handleRefresh = () => {
     fnFormAc();
@@ -76,7 +82,9 @@ export const ContentData = ({ session }: { session: Session }) => {
         </div>
       )}
 
-      {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} edit={canEdit} />}
+      {showCreate && (
+        <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} edit={canEdit} id={id} />
+      )}
     </div>
   );
 };

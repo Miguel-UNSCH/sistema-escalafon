@@ -8,12 +8,9 @@ import { checkEditable } from "./limit-time";
 
 export type childrenRecord = Prisma.ChildrenGetPayload<{ include: { ubigeo: true } }>;
 
-export const getChilds = async (): Promise<{ success: boolean; message?: string; data?: Children[] }> => {
+export const getChilds = async (id: string): Promise<{ success: boolean; message?: string; data?: Children[] }> => {
   try {
-    const session = await auth();
-    if (!session?.user) throw new Error("No autorizado");
-
-    const user = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const user = await prisma.user.findUnique({ where: { id: id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const personal: Personal | null = await prisma.personal.findUnique({ where: { user_id: user.id } });

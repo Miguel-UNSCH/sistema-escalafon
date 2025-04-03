@@ -10,12 +10,9 @@ import { checkEditable } from "./limit-time";
 
 export type formAcRecord = Prisma.FormacionAcademicaGetPayload<{ include: { file: true } }>;
 
-export const getStudies = async (): Promise<{ success: boolean; message?: string; data?: formAcRecord[] }> => {
+export const getStudies = async (id: string): Promise<{ success: boolean; message?: string; data?: formAcRecord[] }> => {
   try {
-    const session = await auth();
-    if (!session?.user) throw new Error("No autorizado");
-
-    const user: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const user: User | null = await prisma.user.findUnique({ where: { id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const studies: formAcRecord[] | null = await prisma.formacionAcademica.findMany({ where: { user_id: user.id }, include: { file: true } });
@@ -29,12 +26,9 @@ export const getStudies = async (): Promise<{ success: boolean; message?: string
   }
 };
 
-export const createStudy = async (data: ZEstudioS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
+export const createStudy = async (id: string, data: ZEstudioS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
-    const session = await auth();
-    if (!session || !session?.user) throw new Error("No autorizado");
-
-    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const currentUser = await prisma.user.findUnique({ where: { id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
 
     if (currentUser.role !== "admin") {
@@ -44,7 +38,7 @@ export const createStudy = async (data: ZEstudioS & { file_id: string }): Promis
 
     await prisma.formacionAcademica.create({
       data: {
-        user_id: currentUser.id,
+        user_id: id,
         nivel: data.nivel,
         institucion: data.institucion.toUpperCase(),
         carrera: data.carrera?.toUpperCase(),

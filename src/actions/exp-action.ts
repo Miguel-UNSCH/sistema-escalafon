@@ -14,12 +14,9 @@ export type expRecord = Prisma.ExperienceGetPayload<{
   include: { file: true; usuarioCargoDependencia: { include: { cargoDependencia: { include: { cargo: true; dependencia: true } } } } };
 }>;
 
-export const getExperiences = async (): Promise<{ success: boolean; message?: string; data?: expRecord[] }> => {
+export const getExperiences = async (id: string): Promise<{ success: boolean; message?: string; data?: expRecord[] }> => {
   try {
-    const session = await auth();
-    if (!session?.user) throw new Error("No autorizado");
-
-    const user: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const user: User | null = await prisma.user.findUnique({ where: { id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const experiencias: expRecord[] | null = await prisma.experience.findMany({

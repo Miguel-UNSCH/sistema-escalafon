@@ -24,9 +24,10 @@ type CreateProps = {
   onCancel?: () => void;
   showCancel?: boolean;
   edit: boolean;
+  id: string;
 };
 
-export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, edit }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, edit, id }) => {
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<ZEstudioS>({
@@ -57,7 +58,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
           file_id = uploadResponse.data.id;
         }
 
-        const result = await createStudy({ ...data, file_id });
+        const result = await createStudy(id, { ...data, file_id });
 
         if (!result.success) toast.error(result.message);
         else {

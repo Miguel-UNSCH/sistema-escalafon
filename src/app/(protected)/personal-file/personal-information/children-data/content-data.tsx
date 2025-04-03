@@ -67,7 +67,7 @@ export const ContentData = ({ userId, user_id }: ContentDataProps) => {
   const fnChildren = async () => {
     setLoading(true);
     try {
-      const response = await getChilds();
+      const response = await getChilds(id);
       if (response.success && response.data) {
         setItems(response.data as childrenRecord[]);
         if (response.data.length === 0) setShowCreate(true);

@@ -30,7 +30,7 @@ export const ContentData = ({ userId, user_id }: ContentDataProps) => {
   const fnExperiences = async () => {
     setLoading(true);
     try {
-      const response = await getExperiences();
+      const response = await getExperiences(id);
       if (response.success && response.data) {
         setItems(response.data as ExperienceRecord[]);
         if (response.data.length === 0) setShowCreate(true);
