@@ -1,4 +1,5 @@
 import { ModuleChildren } from "@/app/(protected)/dashboard/user/[id]/children-data";
+import { ModuleContracts } from "@/app/(protected)/dashboard/user/[id]/contracts-data";
 import { ModuleConyuge } from "@/app/(protected)/dashboard/user/[id]/conyuge-data";
 import { ModuleDisability } from "@/app/(protected)/dashboard/user/[id]/disability-data";
 import { ModuleDisplacement } from "@/app/(protected)/dashboard/user/[id]/displacement-data";
@@ -44,7 +45,7 @@ export const moduleTree: ModuleItem[] = [
   {
     name: "Situacion Personal",
     children: [
-      { name: "Contratos y Nombramiento", component: <div>Contratos y Nombramiento</div> },
+      { name: "Contratos y Nombramiento", component: <ModuleContracts /> },
       { name: "Renuncia", component: <ModuleRenunciation /> },
       { name: "Desplazamiento", component: <ModuleDisplacement /> },
       { name: "Descanso Medico", component: <ModuleMedicalRest /> },

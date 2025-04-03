@@ -28,7 +28,7 @@ type CreateProps = {
   edit: boolean;
 };
 
-export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, edit }) => {
+export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCancel, showCancel, edit, user_id }) => {
   const [isPending, startTransition] = useTransition();
 
   const defaultValues = {
@@ -64,7 +64,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
           file_id = uploadResponse.data.id;
         }
 
-        const result = await createContract({ ...data, file_id });
+        const result = await createContract(user_id, { ...data, file_id });
 
         if (!result.success) toast.error(result.message);
         else {
