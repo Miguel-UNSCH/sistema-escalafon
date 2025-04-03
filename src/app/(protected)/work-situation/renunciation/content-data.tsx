@@ -6,20 +6,26 @@ import { Table } from "./table-data";
 import { getRenuncias, renunciaRecord } from "@/actions/renuncia-action";
 import { Create } from "./form-data";
 import { Modify } from "./modify-data";
-import { Session } from "next-auth";
 import { checkEditable } from "@/actions/limit-time";
 
-export const ContentData = ({ session }: { session: Session }) => {
+interface ContentDataProps {
+  userId?: string;
+  user_id?: string;
+}
+
+export const ContentData = ({ userId, user_id }: ContentDataProps) => {
   const [renuncias, setRenuncias] = useState<renunciaRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedRenuncia, setSelectedRenuncia] = useState<renunciaRecord | null>(null);
   const [showCreate, setShowCreate] = useState<boolean>(false);
   const [canEdit, setCanEdit] = useState<boolean>(false);
 
+  const id = (user_id ?? userId) || "";
+
   const fnRenuncias = async () => {
     setLoading(true);
     try {
-      const response = await getRenuncias();
+      const response = await getRenuncias(id);
       if (response.success && response.data) {
         setRenuncias(response.data);
         if (response.data.length === 0) {
@@ -34,6 +40,11 @@ export const ContentData = ({ session }: { session: Session }) => {
   };
 
   const checkEditableClient = async () => {
+    if (user_id) {
+      setCanEdit(true);
+      return;
+    }
+
     try {
       const res = await checkEditable();
       if (res.success && res.editable) setCanEdit(res.editable);
@@ -44,8 +55,8 @@ export const ContentData = ({ session }: { session: Session }) => {
 
   useEffect(() => {
     fnRenuncias();
-    if (session?.user) checkEditableClient();
-  }, [session?.user]);
+    if (id) checkEditableClient();
+  }, [id]);
 
   const handleRefresh = () => {
     fnRenuncias();
@@ -62,7 +73,7 @@ export const ContentData = ({ session }: { session: Session }) => {
         <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
       )}
 
-      {selectedRenuncia && <Modify renuncia={selectedRenuncia} onUpdated={handleRefresh} setSelectedRenuncia={setSelectedRenuncia} user_id={session.user.id} edit={canEdit} />}
+      {selectedRenuncia && <Modify renuncia={selectedRenuncia} onUpdated={handleRefresh} setSelectedRenuncia={setSelectedRenuncia} user_id={id} edit={canEdit} />}
 
       {!showCreate && renuncias.length > 0 && (
         <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
@@ -79,7 +90,7 @@ export const ContentData = ({ session }: { session: Session }) => {
           setSelectedRenuncia={setSelectedRenuncia}
           onCancel={() => setShowCreate(false)}
           showCancel={renuncias.length > 0}
-          user_id={session.user.id}
+          user_id={id}
           edit={canEdit}
         />
       )}

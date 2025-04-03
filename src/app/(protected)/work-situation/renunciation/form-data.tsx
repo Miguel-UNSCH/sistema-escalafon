@@ -51,7 +51,7 @@ export const Create: React.FC<CreateProps> = ({ onRenunciaCreated, setSelectedRe
           file_id = uploadResponse.data.id;
         }
 
-        const result = await createRenuncia({ ...data, file_id });
+        const result = await createRenuncia(user_id, { ...data, file_id });
 
         if (!result.success) toast.error(result.message);
         else {

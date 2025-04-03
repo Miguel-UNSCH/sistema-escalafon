@@ -12,12 +12,9 @@ export type renunciaRecord = Prisma.renunciaGetPayload<{
   include: { file: true; usuarioCargoDependencia: { include: { cargoDependencia: { include: { cargo: true; dependencia: true } } } } };
 }>;
 
-export const getRenuncias = async (): Promise<{ success: boolean; message?: string; data?: renunciaRecord[] }> => {
+export const getRenuncias = async (id: string): Promise<{ success: boolean; message?: string; data?: renunciaRecord[] }> => {
   try {
-    const session = await auth();
-    if (!session?.user) throw new Error("No autorizado");
-
-    const user: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const user: User | null = await prisma.user.findUnique({ where: { id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const renuncias: renunciaRecord[] | null = await prisma.renuncia.findMany({
@@ -34,12 +31,9 @@ export const getRenuncias = async (): Promise<{ success: boolean; message?: stri
   }
 };
 
-export const createRenuncia = async (data: ZRenunciaS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
+export const createRenuncia = async (id: string, data: ZRenunciaS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
-    const session = await auth();
-    if (!session || !session?.user) throw new Error("No autorizado");
-
-    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const currentUser = await prisma.user.findUnique({ where: { id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
 
     if (currentUser.role !== "admin") {

@@ -3,6 +3,7 @@ import { ModuleConyuge } from "@/app/(protected)/dashboard/user/[id]/conyuge-dat
 import { ModuleDisability } from "@/app/(protected)/dashboard/user/[id]/disability-data";
 import { ModuleExp } from "@/app/(protected)/dashboard/user/[id]/exp-data";
 import { ModulePersonal } from "@/app/(protected)/dashboard/user/[id]/personal-data";
+import { ModuleRenunciation } from "@/app/(protected)/dashboard/user/[id]/renunciation-data";
 import { ModuleStudy } from "@/app/(protected)/dashboard/user/[id]/study-data";
 import { ModuleTraining } from "@/app/(protected)/dashboard/user/[id]/training-data";
 import { JSX } from "react";
@@ -40,7 +41,7 @@ export const moduleTree: ModuleItem[] = [
     name: "Situacion Personal",
     children: [
       { name: "Contratos y Nombramiento", component: <div>Contratos y Nombramiento</div> },
-      { name: "Renuncia", component: <div>Renuncia</div> },
+      { name: "Renuncia", component: <ModuleRenunciation /> },
       { name: "Desplazamiento", component: <div>Desplazamiento</div> },
       { name: "Descanso Medico", component: <div>Descanso Medico</div> },
       { name: "Permisos / Licencias", component: <div>Permisos / Licencias</div> },
