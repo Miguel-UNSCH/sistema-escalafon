@@ -51,6 +51,11 @@ export const ContentData = ({ userId, user_id }: ContentDataProps) => {
   }, [id]);
 
   const checkEditableClient = async () => {
+    if (user_id) {
+      setCanEdit(true);
+      return;
+    }
+
     try {
       const res = await checkEditable();
       if (res.success && res.editable) setCanEdit(res.editable);

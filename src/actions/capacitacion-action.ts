@@ -10,12 +10,9 @@ import { checkEditable } from "./limit-time";
 
 export type capacitacionRecord = Prisma.CapacitacionGetPayload<{ include: { file: true } }>;
 
-export const getCapacitaciones = async (): Promise<{ success: boolean; message?: string; data?: capacitacionRecord[] }> => {
+export const getCapacitaciones = async (id: string): Promise<{ success: boolean; message?: string; data?: capacitacionRecord[] }> => {
   try {
-    const session = await auth();
-    if (!session?.user) throw new Error("No autorizado");
-
-    const user: User | null = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const user: User | null = await prisma.user.findUnique({ where: { id } });
     if (!user) throw new Error("Usuario no encontrado");
 
     const capacitacion: capacitacionRecord[] | null = await prisma.capacitacion.findMany({ where: { user_id: user.id }, include: { file: true } });
@@ -29,12 +26,9 @@ export const getCapacitaciones = async (): Promise<{ success: boolean; message?:
   }
 };
 
-export const createCapacitacion = async (data: ZCapacitacionS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
+export const createCapacitacion = async (id: string, data: ZCapacitacionS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
-    const session = await auth();
-    if (!session || !session?.user) throw new Error("No autorizado");
-
-    const currentUser = await prisma.user.findUnique({ where: { id: session.user.id } });
+    const currentUser = await prisma.user.findUnique({ where: { id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
 
     if (currentUser.role !== "admin") {

@@ -7,24 +7,30 @@ import { capacitacionRecord, getCapacitaciones } from "@/actions/capacitacion-ac
 import { Table } from "./table-data";
 import { Create } from "./form-data";
 import { Modify } from "./modify-data";
-import { Session } from "next-auth";
 import { checkEditable } from "@/actions/limit-time";
 
 export type CapacitacionRecord = Omit<capacitacionRecord, "periodo"> & {
   periodo: { from: string; to: string };
 };
 
-export const ContentData = ({ session }: { session: Session }) => {
+interface ContentDataProps {
+  userId?: string;
+  user_id?: string;
+}
+
+export const ContentData = ({ userId, user_id }: ContentDataProps) => {
   const [items, setItems] = useState<CapacitacionRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItem, setSelectedItem] = useState<CapacitacionRecord | null>(null);
   const [showCreate, setShowCreate] = useState<boolean>(false);
   const [canEdit, setCanEdit] = useState<boolean>(false);
 
+  const id = (user_id ?? userId) || "";
+
   const fnCapacitaciones = async () => {
     setLoading(true);
     try {
-      const response = await getCapacitaciones();
+      const response = await getCapacitaciones(id);
       if (response.success && response.data) {
         setItems(response.data as CapacitacionRecord[]);
         if (response.data.length === 0) setShowCreate(true);
@@ -37,6 +43,11 @@ export const ContentData = ({ session }: { session: Session }) => {
   };
 
   const checkEditableClient = async () => {
+    if (user_id) {
+      setCanEdit(true);
+      return;
+    }
+
     try {
       const res = await checkEditable();
       if (res.success && res.editable) setCanEdit(res.editable);
@@ -47,8 +58,8 @@ export const ContentData = ({ session }: { session: Session }) => {
 
   useEffect(() => {
     fnCapacitaciones();
-    if (session?.user) checkEditableClient();
-  }, [session?.user]);
+    if (id) checkEditableClient();
+  }, [id]);
 
   const handleRefresh = () => {
     fnCapacitaciones();
@@ -75,7 +86,9 @@ export const ContentData = ({ session }: { session: Session }) => {
           <p>mas capacitaciones.</p>
         </div>
       )}
-      {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} edit={canEdit} />}
+      {showCreate && (
+        <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} edit={canEdit} id={id} />
+      )}
     </div>
   );
 };

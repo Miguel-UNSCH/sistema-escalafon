@@ -4,6 +4,7 @@ import { ModuleDisability } from "@/app/(protected)/dashboard/user/[id]/disabili
 import { ModuleExp } from "@/app/(protected)/dashboard/user/[id]/exp-data";
 import { ModulePersonal } from "@/app/(protected)/dashboard/user/[id]/personal-data";
 import { ModuleStudy } from "@/app/(protected)/dashboard/user/[id]/study-data";
+import { ModuleTraining } from "@/app/(protected)/dashboard/user/[id]/training-data";
 import { JSX } from "react";
 
 type ModuleItem = {
@@ -28,7 +29,7 @@ export const moduleTree: ModuleItem[] = [
         name: "Estudios y Capacitacion",
         children: [
           { name: "Estudios", component: <ModuleStudy /> },
-          { name: "Capacitacion", component: <div>Capacitacion</div> },
+          { name: "Capacitacion", component: <ModuleTraining /> },
         ],
       },
       { name: "Experiencia Laboral", component: <ModuleExp /> },
