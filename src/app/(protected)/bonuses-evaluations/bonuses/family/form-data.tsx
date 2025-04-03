@@ -51,7 +51,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
           file_id = uploadResponse.data.id;
         }
 
-        const result = await createBonusFam({ ...data, file_id });
+        const result = await createBonusFam(user_id, { ...data, file_id });
 
         if (!result.success) toast.error(result.message);
         else {

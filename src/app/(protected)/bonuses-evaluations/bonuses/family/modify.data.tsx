@@ -56,7 +56,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
 
         if (isChangingFile && data.file) updateData.file = data.file;
 
-        const response = await updateBonusFam(item.id, updateData);
+        const response = await updateBonusFam(item.id, user_id, updateData);
         if (!response.success) toast.error(response.message);
         else {
           toast.success("Actualizacion exitosa.");
