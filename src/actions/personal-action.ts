@@ -28,15 +28,19 @@ export const get_current_personal = async (id: string): Promise<{ success: boole
 };
 export const createPersonal = async (data: ZPersonal, user_id: string): Promise<{ success: boolean; message: string }> => {
   try {
+    const session = await auth();
+    if (!session || !session?.user) throw new Error("No autorizado");
+
+    const user_edit = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!user_edit) throw new Error("Usuario no encontrado");
+
+    if (user_edit.role !== "admin") {
+      const check = await checkEditable();
+      if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
+    }
+
     const currentUser = await prisma.user.findUnique({ where: { id: user_id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
-
-    if (currentUser.role !== "admin") {
-      const check = await checkEditable();
-      if (!check.success || !check.editable) {
-        throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
-      }
-    }
 
     const ubigeo = await prisma.ubigeo.findFirst({ where: { inei: data.ubigeo.inei } });
     if (!ubigeo) throw new Error("El ubigeo proporcionado no existe.");

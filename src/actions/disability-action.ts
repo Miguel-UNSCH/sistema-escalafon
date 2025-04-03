@@ -31,13 +31,19 @@ export const getDisabilities = async (): Promise<{ success: boolean; message?: s
 
 export const createDisability = async (id: string, data: ZDisabilityS & { file_id: string }): Promise<{ success: boolean; message: string }> => {
   try {
-    const currentUser = await prisma.user.findUnique({ where: { id } });
-    if (!currentUser) throw new Error("Usuario no encontrado");
+    const session = await auth();
+    if (!session || !session?.user) throw new Error("No autorizado");
 
-    if (currentUser.role !== "admin") {
+    const user_edit = await prisma.user.findUnique({ where: { id: session.user.id } });
+    if (!user_edit) throw new Error("Usuario no encontrado");
+
+    if (user_edit.role !== "admin") {
       const check = await checkEditable();
       if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");
     }
+
+    const currentUser = await prisma.user.findUnique({ where: { id } });
+    if (!currentUser) throw new Error("Usuario no encontrado");
 
     await prisma.discapacidad.create({
       data: {

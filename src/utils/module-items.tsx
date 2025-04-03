@@ -1,6 +1,7 @@
 import { ModuleChildren } from "@/app/(protected)/dashboard/user/[id]/children-data";
 import { ModuleConyuge } from "@/app/(protected)/dashboard/user/[id]/conyuge-data";
 import { ModuleDisability } from "@/app/(protected)/dashboard/user/[id]/disability-data";
+import { ModuleDisplacement } from "@/app/(protected)/dashboard/user/[id]/displacement-data";
 import { ModuleExp } from "@/app/(protected)/dashboard/user/[id]/exp-data";
 import { ModuleMedicalRest } from "@/app/(protected)/dashboard/user/[id]/medical-rest-data";
 import { ModulePermissions } from "@/app/(protected)/dashboard/user/[id]/permissions-data";
@@ -45,7 +46,7 @@ export const moduleTree: ModuleItem[] = [
     children: [
       { name: "Contratos y Nombramiento", component: <div>Contratos y Nombramiento</div> },
       { name: "Renuncia", component: <ModuleRenunciation /> },
-      { name: "Desplazamiento", component: <div>Desplazamiento</div> },
+      { name: "Desplazamiento", component: <ModuleDisplacement /> },
       { name: "Descanso Medico", component: <ModuleMedicalRest /> },
       { name: "Permisos / Licencias", component: <ModulePermissions /> },
       { name: "Ascensos", component: <ModulePromotions /> },
