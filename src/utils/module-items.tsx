@@ -1,6 +1,7 @@
 import { ModuleBFamily } from "@/app/(protected)/dashboard/user/[id]/b-family-data";
 import { ModuleBPersonal } from "@/app/(protected)/dashboard/user/[id]/b-personal-data";
 import { ModuleChildren } from "@/app/(protected)/dashboard/user/[id]/children-data";
+import { ModuleCons } from "@/app/(protected)/dashboard/user/[id]/cons-data";
 import { ModuleContracts } from "@/app/(protected)/dashboard/user/[id]/contracts-data";
 import { ModuleConyuge } from "@/app/(protected)/dashboard/user/[id]/conyuge-data";
 import { ModuleDisability } from "@/app/(protected)/dashboard/user/[id]/disability-data";
@@ -77,7 +78,7 @@ export const moduleTree: ModuleItem[] = [
     name: "Documentos / Otros",
     children: [
       { name: "Documentos", component: <ModuleDocs /> },
-      { name: "Constancias", component: <div>Constancias</div> },
+      { name: "Constancias", component: <ModuleCons /> },
     ],
   },
 ];
