@@ -5,6 +5,7 @@ import { ModuleContracts } from "@/app/(protected)/dashboard/user/[id]/contracts
 import { ModuleConyuge } from "@/app/(protected)/dashboard/user/[id]/conyuge-data";
 import { ModuleDisability } from "@/app/(protected)/dashboard/user/[id]/disability-data";
 import { ModuleDisplacement } from "@/app/(protected)/dashboard/user/[id]/displacement-data";
+import { ModuleDocs } from "@/app/(protected)/dashboard/user/[id]/doc-data";
 import { ModuleEvaluations } from "@/app/(protected)/dashboard/user/[id]/evaluations-data";
 import { ModuleExp } from "@/app/(protected)/dashboard/user/[id]/exp-data";
 import { ModuleMedicalRest } from "@/app/(protected)/dashboard/user/[id]/medical-rest-data";
@@ -71,17 +72,11 @@ export const moduleTree: ModuleItem[] = [
       { name: "Evaluaciones", component: <ModuleEvaluations /> },
     ],
   },
-  {
-    name: "Meritos y Demeritos",
-    children: [
-      { name: "Meritos", component: <ModuleMerits /> },
-      { name: "Demeritos", component: <div>Demeritos</div> },
-    ],
-  },
+  { name: "Meritos", component: <ModuleMerits /> },
   {
     name: "Documentos / Otros",
     children: [
-      { name: "Documentos", component: <div>Documentos</div> },
+      { name: "Documentos", component: <ModuleDocs /> },
       { name: "Constancias", component: <div>Constancias</div> },
     ],
   },

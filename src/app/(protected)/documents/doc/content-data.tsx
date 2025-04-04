@@ -5,21 +5,27 @@ import toast from "react-hot-toast";
 import { Table } from "./table-data";
 import { Modify } from "./modify-data";
 import { documentRecord, getDocumentos } from "@/actions/document-action";
-import { Session } from "next-auth";
 import { Create } from "./form-data";
 import { checkEditable } from "@/actions/limit-time";
 
-export const ContentData = ({ session }: { session: Session }) => {
+interface ContentDataProps {
+  userId?: string;
+  user_id?: string;
+}
+
+export const ContentData = ({ userId, user_id }: ContentDataProps) => {
   const [documentos, setDocumentos] = useState<documentRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedDocumento, setSelectedDocumento] = useState<documentRecord | null>(null);
   const [showCreate, setShowCreate] = useState<boolean>(false);
   const [canEdit, setCanEdit] = useState<boolean>(false);
 
+  const id = (user_id ?? userId) || "";
+
   const fnDocumentos = async () => {
     setLoading(true);
     try {
-      const response = await getDocumentos();
+      const response = await getDocumentos(id);
       if (response.success && response.data) {
         setDocumentos(response.data);
         if (response.data.length === 0) setShowCreate(true);
@@ -32,6 +38,11 @@ export const ContentData = ({ session }: { session: Session }) => {
   };
 
   const checkEditableClient = async () => {
+    if (user_id) {
+      setCanEdit(true);
+      return;
+    }
+
     try {
       const res = await checkEditable();
       if (res.success && res.editable) setCanEdit(res.editable);
@@ -42,8 +53,8 @@ export const ContentData = ({ session }: { session: Session }) => {
 
   useEffect(() => {
     fnDocumentos();
-    if (session?.user) checkEditableClient();
-  }, [session?.user]);
+    if (id) checkEditableClient();
+  }, [id]);
 
   const handleRefresh = () => {
     fnDocumentos();
@@ -61,7 +72,7 @@ export const ContentData = ({ session }: { session: Session }) => {
         <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
       )}
 
-      {selectedDocumento && <Modify item={selectedDocumento} onUpdated={handleRefresh} setSelectedItem={setSelectedDocumento} user_id={session.user.id} edit={canEdit} />}
+      {selectedDocumento && <Modify item={selectedDocumento} onUpdated={handleRefresh} setSelectedItem={setSelectedDocumento} user_id={id} edit={canEdit} />}
 
       {!showCreate && documentos.length > 0 && (
         <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
@@ -78,7 +89,7 @@ export const ContentData = ({ session }: { session: Session }) => {
           setSelectedItem={setSelectedDocumento}
           onCancel={() => setShowCreate(false)}
           showCancel={documentos.length > 0}
-          user_id={session.user.id}
+          user_id={id}
           edit={canEdit}
         />
       )}
