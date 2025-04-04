@@ -1,0 +1,51 @@
+services:
+  geobras:
+    depends_on:
+      - postgres
+    build:
+      context: ./obras-admin
+      dockerfile: Dockerfile
+    container_name: geobras
+    restart: always
+    environment:
+      - NODE_ENV=production
+    env_file:
+      - .env 
+    volumes:
+      - /opt/geobras/data:/app/uploads
+    networks:
+      - web
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres_server
+    restart: always
+    environment:
+      POSTGRES_USER: geobras_server_user
+      POSTGRES_PASSWORD: 9tLsJ1IVneQob02cSlkIA69fjTOINeNL
+      POSTGRES_DB: geobras
+    ports:
+      - "5432:5432"
+    volumes:
+      - /opt/postgresql_data:/var/lib/postgresql/data
+    networks:
+      - web
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./certs/fullchain.pem:/etc/ssl/certs/fullchain.pem
+      - ./certs/wildcard.key:/etc/ssl/private/wildcard.key
+      - ./certs/wildcard.ca_bundle:/etc/ssl/certs/wildcard.ca_bundle
+    networks:
+      - web
+
+networks:
+  web:
+    driver: bridge

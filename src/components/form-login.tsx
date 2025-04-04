@@ -2,18 +2,29 @@
 
 import { loginSchema, ZLoginS } from "@/lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState, useTransition } from "react";
+import React, { useState, useTransition, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Form, FormMessage } from "@/components/ui/form";
 import { loginAction } from "@/actions/auth-action";
 import { useRouter } from "next/navigation";
 import { InputField } from "./custom-fields/input-field";
+import { Session } from "next-auth";
 
-export const FormLogin = () => {
+export const FormLogin = ({ session }: { session: Session | null }) => {
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+
+  useEffect(() => {
+    if (session) {
+      router.push(session.user.role === "admin" ? "/dashboard" : "/personal-file");
+    }
+  }, [session, router]);
+
+  if (session) {
+    return <div>Cargando...</div>;
+  }
 
   const form = useForm<ZLoginS>({
     resolver: zodResolver(loginSchema),
