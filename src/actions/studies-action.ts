@@ -56,9 +56,7 @@ export const createStudy = async (id: string, data: ZEstudioS & { file_id: strin
     return { success: true, message: "Estudio registrado exitosamente." };
   } catch (error: unknown) {
     let errorMessage = "Error al registrar el estudio.";
-
     if (error instanceof Error) errorMessage = error.message;
-
     return { success: false, message: errorMessage };
   }
 };
