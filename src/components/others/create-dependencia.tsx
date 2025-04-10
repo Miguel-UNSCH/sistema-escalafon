@@ -36,9 +36,7 @@ export const CreateDependencia = ({
           onDependenciaCreated();
           setSelectedDependencia(null);
         }
-
-        // eslint-disable-next-line no-unused-vars
-      } catch (e) {
+      } catch {
         toast.error("Error al registrar el cargo.");
       }
     });

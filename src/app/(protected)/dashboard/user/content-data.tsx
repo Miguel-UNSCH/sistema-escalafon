@@ -97,5 +97,3 @@ export const ContentData = () => {
     </div>
   );
 };
-
-/** {TContratoOp.find((item) => item.key === tipo_contrato)?.value || "UNKNOWN"} */

@@ -39,9 +39,7 @@ export const CreateCargoComponent = ({
           onCargoCreated();
           setSelectedCargo(null);
         }
-
-        // oxlint-disable-next-line no-unused-vars
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al registrar el cargo.");
       }
     });

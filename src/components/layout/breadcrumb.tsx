@@ -32,11 +32,11 @@ export const Breadcrumbs: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-row items-center gap-2 font-special text-mauve">
+    <div className="flex flex-row items-center gap-2 font-special text-red">
       {breadcrumbItems.map((item, index) => (
         <div key={index} className="relative flex flex-row items-center transition-colors cursor-pointer" onClick={() => handleNavigation(item.path)}>
           {index > 0 ? <Dot /> : <Home size={14} className="mr-2" />}
-          <p className="font-special hover:font-semibold text-xs uppercase">{item.label}</p>
+          <p className="font-text hover:font-semibold text-sm capitalize x">{item.label}</p>
         </div>
       ))}
     </div>

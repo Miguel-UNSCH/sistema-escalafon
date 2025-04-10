@@ -88,10 +88,10 @@ export const breadcrumbs_options: BreadcrumbItem[] = [
   },
   {
     label: "reportes",
-    path: "/report",
+    path: "/reports",
     items: [
       { label: "reportes mensuales", path: "/monthly" },
-      { label: "reportes anuales", path: "/annual" },
+      { label: "computo de tiempo", path: "/time" },
       { label: "reportes personalizados", path: "/defaults" },
     ],
   },

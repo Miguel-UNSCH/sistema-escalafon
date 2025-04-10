@@ -90,11 +90,11 @@ export const navigationItems: NavigationItems[] = [
     ],
   },
   {
-    title: "reportes",
+    title: "Reportes",
     path: "/reports",
     menuItem: [
       { label: "reportes mensuales", icon: <ChartColumn size={16} />, path: "/monthly" },
-      { label: "reportes anuales", icon: <ChartColumn size={16} />, path: "/annual" },
+      { label: "Computo de Tiempo", icon: <ChartColumn size={16} />, path: "/time" },
       { label: "reportes personalizados", icon: <ChartColumn size={16} />, path: "/defaults" },
     ],
   },

@@ -1,48 +1,35 @@
 services:
-  geobras:
+  escalafon:
     depends_on:
       - postgres
     build:
-      context: ./obras-admin
+      context: ./
       dockerfile: Dockerfile
-    container_name: geobras
+    container_name: escalafon
     restart: always
     environment:
       - NODE_ENV=production
     env_file:
-      - .env 
+      - .env
+    ports:
+      - "3001:3000"
     volumes:
-      - /opt/geobras/data:/app/uploads
+      - /opt/escalafon/data:/app/src/files
     networks:
       - web
 
   postgres:
     image: postgres:latest
-    container_name: postgres_server
+    container_name: postgres_escalafon
     restart: always
     environment:
-      POSTGRES_USER: geobras_server_user
-      POSTGRES_PASSWORD: 9tLsJ1IVneQob02cSlkIA69fjTOINeNL
-      POSTGRES_DB: geobras
+      POSTGRES_USER: escalafon_user
+      POSTGRES_PASSWORD: 9tLsJ1IVneQob02cSlkIA69
+      POSTGRES_DB: escalafon
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - /opt/postgresql_data:/var/lib/postgresql/data
-    networks:
-      - web
-
-  nginx:
-    image: nginx:latest
-    container_name: nginx
-    restart: always
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./certs/fullchain.pem:/etc/ssl/certs/fullchain.pem
-      - ./certs/wildcard.key:/etc/ssl/private/wildcard.key
-      - ./certs/wildcard.ca_bundle:/etc/ssl/certs/wildcard.ca_bundle
     networks:
       - web
 

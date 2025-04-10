@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Control, useController } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
 import { getUsers } from "@/actions/user-actions";
 import { User } from "@prisma/client";
 import { cn } from "@/lib/utils";
@@ -13,9 +13,10 @@ interface UserFieldProps {
   name: string;
   label?: string;
   disabled?: boolean;
+  desc?: string;
 }
 
-export const UserField = ({ control, name, label, disabled = false }: UserFieldProps) => {
+export const UserField = ({ control, name, label, disabled = false, desc }: UserFieldProps) => {
   const [search, setSearch] = useState<string>("");
   const [users, setUsers] = useState<User[]>([]);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
@@ -71,6 +72,9 @@ export const UserField = ({ control, name, label, disabled = false }: UserFieldP
               className="p-2 border rounded w-full"
             />
           </FormControl>
+
+          {desc && <FormDescription>{desc}</FormDescription>}
+
           <FormMessage />
 
           {loading && <p className="mt-1 text-text text-sm">Cargando...</p>}
