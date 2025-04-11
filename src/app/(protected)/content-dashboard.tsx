@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import { ReactNode } from "react";
 import { Session } from "next-auth";
-import { Sidebar } from "@/components/layout/sidebar";
 import { Navbar } from "@/components/layout/nav-bar";
 import { TimeConf } from "@/components/layout/time-conf";
+import { Sidebar } from "@/components/layout/sidebar";
 
 export const ContentData = ({ children, session }: { children: ReactNode; session: Session | null }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
