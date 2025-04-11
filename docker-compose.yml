@@ -29,7 +29,7 @@ services:
     ports:
       - "5433:5432"
     volumes:
-      - /opt/postgresql_data:/var/lib/postgresql/data
+      - /opt/postgresql_escalafon:/var/lib/postgresql/data
     networks:
       - web
 
