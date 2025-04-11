@@ -59,7 +59,7 @@ export const cond_lab_op = {
 
 export const reg_lab_op = {
   dl_276: [{ key: "dl_276", value: "DL 276" }],
-  cas: [{ key: "cas_7057", value: "CAS 7057" }],
+  cas: [{ key: "cas_1057", value: "CAS 1057" }],
   pro_inv: [
     { key: "pi_276", value: "PROYECTO DE INVERSION 276" },
     { key: "pi_728", value: "PROYECTO DE INVERSION 278" },

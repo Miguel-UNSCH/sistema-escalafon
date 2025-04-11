@@ -17,7 +17,7 @@ COMMIT;
 
 -- AlterEnum
 BEGIN;
-CREATE TYPE "RLaboral_new" AS ENUM ('dl_276', 'cas_7057', 'pi_276', 'pi_728');
+CREATE TYPE "RLaboral_new" AS ENUM ('dl_276', 'cas_1057', 'pi_276', 'pi_728');
 ALTER TABLE "contratos" ALTER COLUMN "regimen_laboral" TYPE "RLaboral_new" USING ("regimen_laboral"::text::"RLaboral_new");
 ALTER TYPE "RLaboral" RENAME TO "RLaboral_old";
 ALTER TYPE "RLaboral_new" RENAME TO "RLaboral";
