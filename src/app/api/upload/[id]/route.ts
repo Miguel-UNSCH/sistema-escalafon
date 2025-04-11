@@ -11,9 +11,7 @@ export const GET = async (req: Request, { params }: { params: Promise<{ id: stri
     if (!file) return NextResponse.json({ message: "Archivo no encontrado" }, { status: 404 });
 
     const filePath = path.join(process.cwd(), file.path, `${id}${file.extension}`);
-    if (!fs.existsSync(filePath)) {
-      return NextResponse.json({ message: "El archivo no existe en el servidor" }, { status: 404 });
-    }
+    if (!fs.existsSync(filePath)) return NextResponse.json({ message: "El archivo no existe en el servidor" }, { status: 404 });
 
     const fileStream = fs.createReadStream(filePath);
     const readableStream = new ReadableStream({
