@@ -94,7 +94,6 @@ export const navigationItems: NavigationItems[] = [
     path: "/reports",
     menuItem: [
       { label: "ficha personal", icon: <ChartColumn size={16} />, path: "/ficha-personal" },
-      { label: "informe escalafonario", icon: <ChartColumn size={16} />, path: "/inf-esc" },
       { label: "computo de tiempo", icon: <ChartColumn size={16} />, path: "/time" },
     ],
   },

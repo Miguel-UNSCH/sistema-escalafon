@@ -90,7 +90,6 @@ export const breadcrumbs_options: BreadcrumbItem[] = [
     label: "reportes",
     path: "/reports",
     items: [
-      { label: "informe escalafonario", path: "/inf-esc" },
       { label: "computo de tiempo", path: "/time" },
       { label: "ficha personal", path: "/ficha-personal" },
     ],
