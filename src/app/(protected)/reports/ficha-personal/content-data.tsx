@@ -131,7 +131,6 @@ export const ContentData = ({ user_id }: { user_id: string }) => {
       section: "idiomas",
       title: "Idiomas",
       rows: [
-        // Encabezado
         [
           { key: "idioma", label: "Idioma", value: "", colSpan: 3 },
           { key: "habla", label: "Habla", value: "", colSpan: 1 },
@@ -140,7 +139,6 @@ export const ContentData = ({ user_id }: { user_id: string }) => {
           { key: "no_sabe", label: "No sabe", value: "", colSpan: 2 },
           { key: "donde", label: "Dónde Aprendió y/o Estudió", value: "", colSpan: 4 },
         ],
-        // 3 filas vacías
         ...Array.from({ length: 3 }).map((_, i) => [
           { key: `idioma-${i}`, label: "", value: "", colSpan: 3 },
           { key: `habla-${i}`, label: "", value: "", colSpan: 1 },
@@ -173,6 +171,21 @@ export const ContentData = ({ user_id }: { user_id: string }) => {
     },
   ];
 
+  const col_span: { [key: number]: string } = {
+    1: "col-span-1",
+    2: "col-span-2",
+    3: "col-span-3",
+    4: "col-span-4",
+    5: "col-span-5",
+    6: "col-span-6",
+    7: "col-span-7",
+    8: "col-span-8",
+    9: "col-span-9",
+    10: "col-span-10",
+    11: "col-span-11",
+    12: "col-span-12",
+  };
+
   return (
     <div className="flex flex-col gap-5 p-4 w-full">
       <p>{user_id}</p>
@@ -187,7 +200,7 @@ export const ContentData = ({ user_id }: { user_id: string }) => {
               return (
                 <React.Fragment key={rowIndex}>
                   {isFullRow ? (
-                    <div key={row[0].key} className={`col-span-12 p-2 border-2 font-text uppercase border-surface0`}>
+                    <div key={row[0].key} className={`${col_span[row[0].colSpan]} p-2 border-2 border-surface0 font-text uppercase`}>
                       {row[0].value}
                     </div>
                   ) : (
@@ -195,14 +208,16 @@ export const ContentData = ({ user_id }: { user_id: string }) => {
                       {row.some((cell) => cell.label) &&
                         row.map((cell) =>
                           cell.label ? (
-                            <div key={cell.key} className={`col-span-${cell.colSpan} p-1 py-2 border-2  font-semibold text-text border-surface0`}>
+                            <div key={`${cell.key}-label`} className={`${col_span[cell.colSpan]}  p-1 py-2 border-2 border-surface0 font-semibold text-text`}>
                               {cell.label}
                             </div>
-                          ) : null
+                          ) : (
+                            <div key={`${cell.key}-label-empty`} className={`${col_span[cell.colSpan]} `} />
+                          )
                         )}
 
                       {row.map((cell) => (
-                        <div key={`${cell.key}-value`} className={`col-span-${cell.colSpan} p-2 border-2  border-t-0 text-subtext0 font-text border-surface0 text-xs uppercase`}>
+                        <div key={`${cell.key}-value`} className={`${col_span[cell.colSpan]} p-2  border-2 border-surface0 border-t-0 font-text text-subtext0 text-xs uppercase`}>
                           {cell.value}
                         </div>
                       ))}
