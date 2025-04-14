@@ -23,7 +23,7 @@ const page = () => {
 
           {user_id && (
             <>
-              <ContentPage />
+              <ContentPage user_id={user_id} />
               <div className="flex flex-row justify-end gap-5 font-special text-xs">
                 <Button onClick={handleBack} className="bg-mantle px-4 py-2 text-text hover:text-base">
                   <ArrowLeft />
