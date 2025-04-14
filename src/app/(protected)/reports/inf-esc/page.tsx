@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { FnA } from "../time/fn-a";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CloudDownload } from "lucide-react";
+import { ContentPage } from "./content-page";
 
 const page = () => {
   const [user_id, setuser_id] = useState<string>("");
@@ -22,6 +23,7 @@ const page = () => {
 
           {user_id && (
             <>
+              <ContentPage />
               <div className="flex flex-row justify-end gap-5 font-special text-xs">
                 <Button onClick={handleBack} className="bg-mantle px-4 py-2 text-text hover:text-base">
                   <ArrowLeft />

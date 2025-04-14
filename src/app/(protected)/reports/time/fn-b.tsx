@@ -51,7 +51,7 @@ export const FnB = ({ user_id }: FnProps) => {
       <div className="px-8 w-full">
         <Form {...form}>
           <form className="space-y-4">
-            <InputField control={form.control} name="motivo" label="Motivo del reporte" type="text" />
+            <InputField control={form.control} name="motivo" label="Motivo del reporte" type="text" placeholder="Ingresar el motivo del reporte" />
           </form>
         </Form>
       </div>
