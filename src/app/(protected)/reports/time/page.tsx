@@ -20,27 +20,24 @@ const page = () => {
         </div>
 
         <div className="flex flex-col gap-4 p-4 px-8">
-          {!user_id ? (
-            <FnA setuser_id={setuser_id} />
-          ) : (
-            <div className="flex flex-row justify-end gap-5 font-special text-xs">
-              <Button onClick={handleBack} className="bg-mantle px-4 py-2 text-text hover:text-base">
-                <ArrowLeft />
-                Regresar
-              </Button>
-
-              <Button className="flex flex-row items-center bg-mantle hover:bg-green px-4 py-2 text-text hover:text-base">
-                <CloudDownload />
-                Descargar Reporte
-              </Button>
-            </div>
-          )}
+          {!user_id && <FnA setuser_id={setuser_id} />}
 
           {user_id && (
             <>
               <FnB user_id={user_id} />
               <FnC user_id={user_id} />
               <FnD />
+              <div className="flex flex-row justify-end gap-5 font-special text-xs">
+                <Button onClick={handleBack} className="bg-mantle px-4 py-2 text-text hover:text-base">
+                  <ArrowLeft />
+                  Regresar
+                </Button>
+
+                <Button className="flex flex-row items-center bg-mantle hover:bg-green px-4 py-2 text-text hover:text-base">
+                  <CloudDownload />
+                  Descargar Reporte
+                </Button>
+              </div>
             </>
           )}
         </div>
