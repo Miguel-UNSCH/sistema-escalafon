@@ -50,7 +50,7 @@ export const FnC = ({ user_id }: FnProps) => {
     { anios: 0, meses: 0, dias: 0 }
   );
 
-  const emptyRowCount = Math.max(0, 10 - data.length);
+  // const emptyRowCount = Math.max(0, 10 - data.length);
 
   return (
     <div className="w-full overflow-x-auto">
@@ -73,17 +73,17 @@ export const FnC = ({ user_id }: FnProps) => {
         <tbody>
           {data.map((row, i) => (
             <tr key={i} className="text-subtext1">
-              <td className="px-2 py-1 whitespace-nowrap">{row.documento}</td>
-              <td className="px-2 py-1 whitespace-nowrap">{row.inicio}</td>
-              <td className="px-2 py-1 whitespace-nowrap">{row.termino}</td>
-              <td className="px-2 py-1">{row.anios}</td>
-              <td className="px-2 py-1">{row.meses}</td>
-              <td className="px-2 py-1">{row.dias}</td>
-              <td className="px-2 py-1 whitespace-nowrap">{row.cargo}</td>
+              <td className="p-2 whitespace-nowrap">{row.documento}</td>
+              <td className="p-2 whitespace-nowrap">{row.inicio}</td>
+              <td className="p-2 whitespace-nowrap">{row.termino}</td>
+              <td className="p-2">{row.anios}</td>
+              <td className="p-2">{row.meses}</td>
+              <td className="p-2">{row.dias}</td>
+              <td className="p-2 whitespace-nowrap">{row.cargo}</td>
             </tr>
           ))}
 
-          {Array.from({ length: emptyRowCount }).map((_, i) => (
+          {/* {Array.from({ length: emptyRowCount }).map((_, i) => (
             <tr key={`empty-${i}`}>
               {Array.from({ length: 7 }).map((_, j) => (
                 <td key={j} className="px-2 py-1">
@@ -91,7 +91,7 @@ export const FnC = ({ user_id }: FnProps) => {
                 </td>
               ))}
             </tr>
-          ))}
+          ))} */}
 
           <tr className="font-semibold uppercase">
             <td colSpan={3} className="px-2 py-1 border-crust border-t-2 text-right">

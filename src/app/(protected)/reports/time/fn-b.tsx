@@ -8,13 +8,9 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-export type FnProps = {
-  user_id: string;
-};
+export type FnProps = { user_id: string };
 
-const motivoSchema = z.object({
-  motivo: z.string().min(1, "El motivo es obligatorio"),
-});
+const motivoSchema = z.object({ motivo: z.string().min(1, "El motivo es obligatorio") });
 
 export const FnB = ({ user_id }: FnProps) => {
   const [data, setData] = useState<any>(null);
@@ -48,13 +44,11 @@ export const FnB = ({ user_id }: FnProps) => {
     );
   }
 
-  if (!data) {
-    return <p className="p-4 text-red">No se pudieron cargar los datos.</p>;
-  }
+  if (!data) return <p className="p-4 text-red">No se pudieron cargar los datos.</p>;
 
   return (
     <div className="flex flex-col gap-6 p-4 w-full">
-      <div className="max-w-md">
+      <div className="px-5 w-full">
         <Form {...form}>
           <form className="space-y-4">
             <InputField control={form.control} name="motivo" label="Motivo del reporte" type="text" />
@@ -83,7 +77,7 @@ export const FnB = ({ user_id }: FnProps) => {
         ].map(([label, value], i) => (
           <div key={i} className="flex sm:flex-row flex-col sm:items-center gap-1 sm:gap-4">
             <p className="w-48 font-primary font-semibold text-sm uppercase text-nowrap">{label}</p>
-            <p className="font-text text-xs">{value}</p>
+            <p className="font-text text-xs capitalize">{value || "-----"}</p>
           </div>
         ))}
       </div>
