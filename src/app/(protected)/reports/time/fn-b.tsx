@@ -48,7 +48,7 @@ export const FnB = ({ user_id }: FnProps) => {
 
   return (
     <div className="flex flex-col gap-6 p-4 w-full">
-      <div className="px-5 w-full">
+      <div className="px-8 w-full">
         <Form {...form}>
           <form className="space-y-4">
             <InputField control={form.control} name="motivo" label="Motivo del reporte" type="text" />

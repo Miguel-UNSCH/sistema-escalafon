@@ -93,9 +93,9 @@ export const navigationItems: NavigationItems[] = [
     title: "Reportes",
     path: "/reports",
     menuItem: [
-      { label: "reportes mensuales", icon: <ChartColumn size={16} />, path: "/monthly" },
-      { label: "Computo de Tiempo", icon: <ChartColumn size={16} />, path: "/time" },
-      { label: "reportes personalizados", icon: <ChartColumn size={16} />, path: "/defaults" },
+      { label: "ficha personal", icon: <ChartColumn size={16} />, path: "/ficha-personal" },
+      { label: "informe escalafonario", icon: <ChartColumn size={16} />, path: "/inf-esc" },
+      { label: "computo de tiempo", icon: <ChartColumn size={16} />, path: "/time" },
     ],
   },
   { title: "Mi Cuenta", path: "/settings", menuItem: [{ label: "Configuración", icon: <UserRound size={16} />, path: "/" }] },
