@@ -2,8 +2,8 @@
 
 import { prisma } from "@/config/prisma.config";
 import { fn_date } from "@/helpers";
-import { calculate_age, formatDate, getDuration } from "@/helpers/date-helper";
-import { cond_lab_op, estadoCivilOp, grupoSanguineoOp, lic_condOp, nivelEducativoOp, reg_lab_op, sexoOp, TContratoOp } from "@/constants/options";
+import { calculate_age, formatDate, getDuration, getPeriodoString } from "@/helpers/date-helper";
+import { cond_lab_op, estadoCivilOp, gradoInstruccionOp, grupoSanguineoOp, lic_condOp, nivelEducativoOp, reg_lab_op, sexoOp, TContratoOp } from "@/constants/options";
 import { Prisma } from "@prisma/client";
 
 export const fn_report_time = async (id: string): Promise<{ success: boolean; message?: string; data?: any }> => {
@@ -141,7 +141,6 @@ export type FnFpIp = {
   situacion: string;
   correo: string;
 };
-
 export const fn_fp_ip = async (user_id: string): Promise<{ success: boolean; message?: string; data?: FnFpIp }> => {
   try {
     const current_user = await prisma.user.findUnique({ where: { id: user_id }, include: { Discapacidad: true } });
@@ -161,15 +160,13 @@ export const fn_fp_ip = async (user_id: string): Promise<{ success: boolean; mes
     });
     const latest_contract = contracts_ord.length > 0 ? contracts_ord[0] : null;
 
-    const edad = current_personal.fecha_nacimiento ? calculate_age(new Date(current_personal.fecha_nacimiento)) : 0;
-
     const response = {
       apellido_paterno: current_user.last_name.split(" ")[0] ?? "",
       apellido_materno: current_user.last_name.split(" ")[1] ?? "",
       nombres: current_user.name,
       sexo: sexoOp.find((op) => op.key === current_personal.sexo)?.value ?? "",
       dni: current_user.dni,
-      edad,
+      edad: current_personal.fecha_nacimiento ? calculate_age(new Date(current_personal.fecha_nacimiento)) : 0,
       carnet_extranjeria: "-----",
       autogenerado: current_personal?.n_autogenerado ?? "",
       licencia_conducir: lic_condOp.find((op) => op.key === current_personal.licencia_conducir)?.value ?? "",
@@ -213,17 +210,8 @@ export type FnFpDi = {
   universidad_otros: string;
 };
 export const fn_fp_di = async (user_id: string): Promise<{ success: boolean; message?: string; data?: FnFpDi }> => {
-  function getPeriodoString(periodo?: { from: string; to: string }): string {
-    if (!periodo?.from || !periodo?.to) return "";
-    return `${formatDate(periodo.from)} - ${formatDate(periodo.to)}`;
-  }
-
   try {
-    const current_user = await prisma.user.findUnique({
-      where: { id: user_id },
-      include: { formacion_academica: true },
-    });
-
+    const current_user = await prisma.user.findUnique({ where: { id: user_id }, include: { formacion_academica: true } });
     if (!current_user) throw new Error("Usuario no encontrado.");
 
     const fa = current_user.formacion_academica;
@@ -256,9 +244,51 @@ export const fn_fp_di = async (user_id: string): Promise<{ success: boolean; mes
 
     return { success: true, message: "Reporte generado correctamente", data: response };
   } catch (error: unknown) {
+    return { success: false, message: error instanceof Error ? error.message : "Error al generar el reporte de formación académica." };
+  }
+};
+
+export type FnFpEc = {
+  estado: string;
+  titulo_conyuge: string;
+  conyuge_nombre: string;
+  conyuge_nacimiento: string;
+  conyuge_departamento: string;
+  conyuge_provincia: string;
+  conyuge_distrito: string;
+  conyuge_instruccion: string;
+  conyuge_dni: string;
+};
+export const fn_fp_ec = async (user_id: string): Promise<{ success: boolean; message?: string; data?: FnFpEc }> => {
+  try {
+    const current_user = await prisma.user.findUnique({
+      where: { id: user_id },
+      include: { personal: { include: { conyuge: { include: { ubigeo: true } } } } },
+    });
+    if (!current_user || !current_user.personal) throw new Error("Usuario no encontrado o sin datos personales.");
+
+    const { estado_civil, sexo, conyuge } = current_user.personal;
+    const isCasado = estado_civil === "c";
+    const estado = isCasado ? (sexo === "m" ? "CASADO" : sexo === "f" ? "CASADA" : "CASADO/A") : "";
+    const titulo_conyuge = isCasado ? (sexo === "m" ? "ESPOSA" : sexo === "f" ? "ESPOSO" : "CÓNYUGE") : "";
+
+    const response: FnFpEc = {
+      estado,
+      titulo_conyuge,
+      conyuge_nombre: isCasado && conyuge ? `${conyuge.nombres} ${conyuge.apellidos}` : "",
+      conyuge_nacimiento: isCasado && conyuge?.fecha_nacimiento ? formatDate(conyuge.fecha_nacimiento) : "",
+      conyuge_departamento: conyuge?.ubigeo.departamento || "",
+      conyuge_provincia: conyuge?.ubigeo?.provincia || "",
+      conyuge_distrito: conyuge?.ubigeo.distrito || "",
+      conyuge_instruccion: isCasado && conyuge?.grado_instruccion ? gradoInstruccionOp.find((g) => g.key === conyuge.grado_instruccion)?.value || "" : "",
+      conyuge_dni: (isCasado && conyuge?.dni) || "",
+    };
+
+    return { success: true, message: "Reporte generado correctamente", data: response };
+  } catch (error) {
     return {
       success: false,
-      message: error instanceof Error ? error.message : "Error al generar el reporte de formación académica.",
+      message: error instanceof Error ? error.message : "Error al generar el reporte de estado conyugal.",
     };
   }
 };

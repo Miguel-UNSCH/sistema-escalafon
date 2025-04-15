@@ -1,6 +1,6 @@
-import { FnFpDi, FnFpIp } from "@/actions/reports-action";
+import { FnFpDi, FnFpEc, FnFpIp } from "@/actions/reports-action";
 
-export const buildSections = (fp_ip: FnFpIp, fp_di?: FnFpDi | null) => [
+export const buildSections = (fp_ip: FnFpIp, fp_di?: FnFpDi | null, fp_ec?: FnFpEc | null) => [
   {
     section: "identificacion",
     title: "Identificación del personal",
@@ -73,18 +73,18 @@ export const buildSections = (fp_ip: FnFpIp, fp_di?: FnFpDi | null) => [
     section: "estado_civil",
     title: "Estado civil",
     rows: [
-      [{ key: "estado", label: "", value: "casado", colSpan: 12 }],
-      [{ key: "titulo_conyuge", label: "", value: "datos del conyuge", colSpan: 12 }],
+      [{ key: "estado", label: "", value: fp_ec?.estado ?? "", colSpan: 12 }],
+      [{ key: "titulo_conyuge", label: "", value: fp_ec?.titulo_conyuge ?? "", colSpan: 12 }],
       [
-        { key: "conyuge_nombre", label: "Apellidos y nombres", value: "Apellidos y nombres", colSpan: 3 },
-        { key: "conyuge_nacimiento", label: "Lugar y fecha de nacimiento", value: "lugar y fecha de nacimiento", colSpan: 3 },
-        { key: "conyuge_departamento", label: "Depto/Región", value: "depto/region", colSpan: 2 },
-        { key: "conyuge_provincia", label: "Provincia", value: "provincia", colSpan: 2 },
-        { key: "conyuge_distrito", label: "Distrito", value: "distrito", colSpan: 2 },
+        { key: "conyuge_nombre", label: "Apellidos y nombres", value: fp_ec?.conyuge_nombre ?? "", colSpan: 3 },
+        { key: "conyuge_nacimiento", label: "Lugar y fecha de nacimiento", value: fp_ec?.conyuge_nacimiento ?? "", colSpan: 3 },
+        { key: "conyuge_departamento", label: "Depto/Región", value: fp_ec?.conyuge_departamento ?? "", colSpan: 2 },
+        { key: "conyuge_provincia", label: "Provincia", value: fp_ec?.conyuge_provincia ?? "", colSpan: 2 },
+        { key: "conyuge_distrito", label: "Distrito", value: fp_ec?.conyuge_distrito ?? "", colSpan: 2 },
       ],
       [
-        { key: "conyuge_instruccion", label: "Grado de instrucción", value: "grado de instruccion", colSpan: 6 },
-        { key: "conyuge_dni", label: "DNI", value: "dni", colSpan: 6 },
+        { key: "conyuge_instruccion", label: "Grado de instrucción", value: fp_ec?.conyuge_instruccion ?? "", colSpan: 6 },
+        { key: "conyuge_dni", label: "DNI", value: fp_ec?.conyuge_dni ?? "", colSpan: 6 },
       ],
     ],
   },
@@ -126,28 +126,7 @@ export const buildSections = (fp_ip: FnFpIp, fp_di?: FnFpDi | null) => [
       ]),
     ],
   },
-  {
-    section: "idiomas",
-    title: "Idiomas",
-    rows: [
-      [
-        { key: "idioma", label: "Idioma", value: "", colSpan: 3 },
-        { key: "habla", label: "Habla", value: "", colSpan: 1 },
-        { key: "lee", label: "Lee", value: "", colSpan: 1 },
-        { key: "escribe", label: "Escribe", value: "", colSpan: 1 },
-        { key: "no_sabe", label: "No sabe", value: "", colSpan: 2 },
-        { key: "donde", label: "Dónde Aprendió y/o Estudió", value: "", colSpan: 4 },
-      ],
-      ...Array.from({ length: 3 }).map((_, i) => [
-        { key: `idioma-${i}`, label: "", value: "", colSpan: 3 },
-        { key: `habla-${i}`, label: "", value: "", colSpan: 1 },
-        { key: `lee-${i}`, label: "", value: "", colSpan: 1 },
-        { key: `escribe-${i}`, label: "", value: "", colSpan: 1 },
-        { key: `no_sabe-${i}`, label: "", value: "", colSpan: 2 },
-        { key: `donde-${i}`, label: "", value: "", colSpan: 4 },
-      ]),
-    ],
-  },
+  /** {section: "idiomas",title: "Idiomas",rows: [[{ key: "idioma", label: "Idioma", value: "", colSpan: 3 },{ key: "habla", label: "Habla", value: "", colSpan: 1 },{ key: "lee", label: "Lee", value: "", colSpan: 1 },{ key: "escribe", label: "Escribe", value: "", colSpan: 1 },{ key: "no_sabe", label: "No sabe", value: "", colSpan: 2 },{ key: "donde", label: "Dónde Aprendió y/o Estudió", value: "", colSpan: 4 },],...Array.from({ length: 3 }).map((_, i) => [{ key: `idioma-${i}`, label: "", value: "", colSpan: 3 },{ key: `habla-${i}`, label: "", value: "", colSpan: 1 },{ key: `lee-${i}`, label: "", value: "", colSpan: 1 },{ key: `escribe-${i}`, label: "", value: "", colSpan: 1 },{ key: `no_sabe-${i}`, label: "", value: "", colSpan: 2 },{ key: `donde-${i}`, label: "", value: "", colSpan: 4 },]),],},  */
   {
     section: "capacitacion_reciente",
     title: "Capacitación de los dos últimos años",

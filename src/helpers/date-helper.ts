@@ -35,3 +35,8 @@ export const calculate_age = (birthdate: Date): number => {
 
   return age;
 };
+
+export const getPeriodoString = (periodo?: { from: string; to: string }): string => {
+  if (!periodo?.from || !periodo?.to) return "";
+  return `${formatDate(periodo.from)} - ${formatDate(periodo.to)}`;
+};
