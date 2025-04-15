@@ -16,7 +16,7 @@ import { UploadField } from "@/components/custom-fields/upload-file";
 import { capacitacionSchema, ZCapacitacionS } from "@/lib/schemas/user-schema";
 import { CapacitacionRecord } from "./content-data";
 import { SelectField } from "@/components/custom-fields/select-field";
-import { tCapacitacionOp } from "@/utils/options";
+import { tCapacitacionOp } from "@/constants/options";
 
 type CreateProps = {
   onCreated: () => void;

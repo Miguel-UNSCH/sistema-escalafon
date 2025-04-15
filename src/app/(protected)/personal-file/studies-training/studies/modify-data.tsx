@@ -16,7 +16,7 @@ import { estudiosSchema, ZEstudioS } from "@/lib/schemas/user-schema";
 import { StudyRecord } from "./content-data";
 import { deleteStudy, updateStudy } from "@/actions/studies-action";
 import { SelectField } from "@/components/custom-fields/select-field";
-import { nivelEducativoOp } from "@/utils/options";
+import { nivelEducativoOp } from "@/constants/options";
 
 type ModifyProps = {
   item: StudyRecord;

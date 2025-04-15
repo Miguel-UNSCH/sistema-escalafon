@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { PerLicVacRecord } from "./content-data";
-import { tipoPermisoLicenciaVacacionOp } from "@/utils/options";
+import { tipoPermisoLicenciaVacacionOp } from "@/constants/options";
 import { getFile } from "@/actions/file-action";
 import { Pagination } from "@/components/pagination";
 

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 
-import { cond_lab_op, reg_lab_op, TContratoOp } from "@/utils/options";
+import { cond_lab_op, reg_lab_op, TContratoOp } from "@/constants/options";
 import { getFile } from "@/actions/file-action";
 import { Pagination } from "@/components/pagination";
 import { ContractRecord } from "./content-data";

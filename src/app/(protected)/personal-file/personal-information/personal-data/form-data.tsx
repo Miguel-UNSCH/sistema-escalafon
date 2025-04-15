@@ -14,7 +14,7 @@ import { SelectField } from "@/components/custom-fields/select-field";
 import { SwitchField } from "@/components/custom-fields/switch-field";
 import { UbigeoField } from "@/components/custom-fields/ubigeo-field";
 import { personalSchema, ZPersonal } from "@/lib/schemas/personal-schema";
-import { estadoCivilOp, grupoSanguineoOp, lic_condOp, sexoOp } from "@/utils/options";
+import { estadoCivilOp, grupoSanguineoOp, lic_condOp, sexoOp } from "@/constants/options";
 import toast from "react-hot-toast";
 
 export const CreateData = ({ onRefresh, edit, id }: { onRefresh: () => void; edit: boolean; id: string }) => {

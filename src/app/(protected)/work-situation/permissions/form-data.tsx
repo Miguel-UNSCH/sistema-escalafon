@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { per_lic_vacSchema, ZPerLicVacS } from "@/lib/schemas/w-situation-schema";
 import { uploadFile } from "@/service/file-service";
-import { tipoPermisoLicenciaVacacionOp } from "@/utils/options";
+import { tipoPermisoLicenciaVacacionOp } from "@/constants/options";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save } from "lucide-react";
 import React, { useTransition } from "react";

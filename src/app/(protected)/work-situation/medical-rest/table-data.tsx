@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { DescansoMedicoRecord } from "./content-data";
-import { tipoDescansoOp } from "@/utils/options";
+import { tipoDescansoOp } from "@/constants/options";
 import { getFile } from "@/actions/file-action";
 import { Pagination } from "@/components/pagination";
 

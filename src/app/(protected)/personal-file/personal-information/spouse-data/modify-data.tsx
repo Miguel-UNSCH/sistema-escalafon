@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Edit, Trash } from "lucide-react";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { gradoInstruccionOp } from "@/utils/options";
+import { gradoInstruccionOp } from "@/constants/options";
 import { DateField } from "@/components/custom-fields/date-field";
 import { InputField } from "@/components/custom-fields/input-field";
 import { SelectField } from "@/components/custom-fields/select-field";

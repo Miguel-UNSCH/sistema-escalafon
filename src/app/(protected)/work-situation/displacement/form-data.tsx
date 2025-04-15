@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { desplazamientoSchema, ZDesplazamientoS } from "@/lib/schemas/w-situation-schema";
 import { uploadFile } from "@/service/file-service";
-import { tipoDesplazamientoOp } from "@/utils/options";
+import { tipoDesplazamientoOp } from "@/constants/options";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save } from "lucide-react";
 import React, { useTransition } from "react";

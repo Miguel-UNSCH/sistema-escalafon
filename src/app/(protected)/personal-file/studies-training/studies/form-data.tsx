@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { nivelEducativoOp } from "@/utils/options";
+import { nivelEducativoOp } from "@/constants/options";
 import { uploadFile } from "@/service/file-service";
 import { createStudy } from "@/actions/studies-action";
 import { DateField } from "@/components/custom-fields/date-field";

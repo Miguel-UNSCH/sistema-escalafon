@@ -9,7 +9,7 @@ import { UbigeoField } from "@/components/custom-fields/ubigeo-field";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { personalSchema, ZPersonal } from "@/lib/schemas/personal-schema";
-import { estadoCivilOp, grupoSanguineoOp, lic_condOp, sexoOp } from "@/utils/options";
+import { estadoCivilOp, grupoSanguineoOp, lic_condOp, sexoOp } from "@/constants/options";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Edit, Trash } from "lucide-react";
 import { useTransition } from "react";

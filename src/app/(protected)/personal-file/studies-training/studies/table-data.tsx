@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 
 import { StudyRecord } from "./content-data";
-import { nivelEducativoOp } from "@/utils/options";
+import { nivelEducativoOp } from "@/constants/options";
 import { getFile } from "@/actions/file-action";
 import { Pagination } from "@/components/pagination";
 

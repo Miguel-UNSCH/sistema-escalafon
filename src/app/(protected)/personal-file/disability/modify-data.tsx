@@ -9,7 +9,7 @@ import { UploadField } from "@/components/custom-fields/upload-file";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { disabilitySchema, ZDisabilityS } from "@/lib/schemas/user-schema";
-import { tDscapacidadOp, entidad_certificadoraOp } from "@/utils/options";
+import { tDscapacidadOp, entidad_certificadoraOp } from "@/constants/options";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Download, Save, Trash } from "lucide-react";
 import React from "react";

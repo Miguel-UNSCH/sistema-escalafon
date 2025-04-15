@@ -3,7 +3,7 @@
 
 import { childrenRecord } from "@/actions/children-action";
 import { Pagination } from "@/components/pagination";
-import { gradoInstruccionOp } from "@/utils/options";
+import { gradoInstruccionOp } from "@/constants/options";
 import { Children } from "@prisma/client";
 import React, { useMemo, useState } from "react";
 

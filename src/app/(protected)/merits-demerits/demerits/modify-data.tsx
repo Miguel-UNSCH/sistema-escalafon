@@ -14,7 +14,7 @@ import { SelectField } from "@/components/custom-fields/select-field";
 import { InputField } from "@/components/custom-fields/input-field";
 import { CargosUserField, DependenciasUserField } from "@/components/custom-fields/user-cargos-dependencia";
 import { DateField } from "@/components/custom-fields/date-field";
-import { tipo_sancionOp } from "@/utils/options";
+import { tipo_sancionOp } from "@/constants/options";
 import { deleteDemerito, demeritoRecord, updateDemerito } from "@/actions/m-d-action";
 import toast from "react-hot-toast";
 

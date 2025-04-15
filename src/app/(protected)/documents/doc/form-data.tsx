@@ -7,7 +7,7 @@ import React, { useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Form } from "@/components/ui/form";
-import { tipo_docOp } from "@/utils/options";
+import { tipo_docOp } from "@/constants/options";
 import { Button } from "@/components/ui/button";
 import { uploadFile } from "@/service/file-service";
 import { createDocumento, documentRecord } from "@/actions/document-action";

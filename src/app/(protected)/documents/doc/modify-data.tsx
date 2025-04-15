@@ -11,7 +11,7 @@ import { UserField } from "@/components/custom-fields/user-field";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { documentSchema, ZDocumentS } from "@/lib/schemas/documents-schema";
-import { tipo_docOp } from "@/utils/options";
+import { tipo_docOp } from "@/constants/options";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Download, Save, Trash } from "lucide-react";
 import React, { useEffect, useState, useTransition } from "react";

@@ -13,7 +13,7 @@ import toast from "react-hot-toast";
 import { desplazamientoSchema, ZDesplazamientoS } from "@/lib/schemas/w-situation-schema";
 import { deleteDesplazamiento, desplazamientoRecord, updateDesplazamiento } from "@/actions/desplazamiento-action";
 import { SelectField } from "@/components/custom-fields/select-field";
-import { tipoDesplazamientoOp } from "@/utils/options";
+import { tipoDesplazamientoOp } from "@/constants/options";
 import { InputField } from "@/components/custom-fields/input-field";
 import { CargoIdDependenciaField, DependenciaIdField } from "@/components/custom-fields/cargos-dependencia";
 

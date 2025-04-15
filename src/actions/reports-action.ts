@@ -3,7 +3,7 @@
 import { prisma } from "@/config/prisma.config";
 import { fn_date } from "@/helpers";
 import { calculate_age, formatDate, getDuration } from "@/helpers/date-helper";
-import { cond_lab_op, estadoCivilOp, grupoSanguineoOp, lic_condOp, reg_lab_op, sexoOp, TContratoOp } from "@/utils/options";
+import { cond_lab_op, estadoCivilOp, grupoSanguineoOp, lic_condOp, nivelEducativoOp, reg_lab_op, sexoOp, TContratoOp } from "@/constants/options";
 import { Prisma } from "@prisma/client";
 
 export const fn_report_time = async (id: string): Promise<{ success: boolean; message?: string; data?: any }> => {
@@ -192,5 +192,73 @@ export const fn_fp_ip = async (user_id: string): Promise<{ success: boolean; mes
     return { success: true, message: "Reporte generado correctamente", data: response };
   } catch (error: unknown) {
     return { success: false, message: error instanceof Error ? error.message : "Error al generar el reporte de tiempo." };
+  }
+};
+
+export type FnFpDi = {
+  primaria: string;
+  anio_primaria: string;
+  secundaria: string;
+  anio_secundaria: string;
+  cetpro: string;
+  anio_cetpro: string;
+  educ_sup: string;
+  profesion: string;
+  facultad: string;
+  anio_sup: string;
+  universidad_sup: string;
+  postgrado: string;
+  anio_titulo: string;
+  otros_estudios: string;
+  universidad_otros: string;
+};
+export const fn_fp_di = async (user_id: string): Promise<{ success: boolean; message?: string; data?: FnFpDi }> => {
+  function getPeriodoString(periodo?: { from: string; to: string }): string {
+    if (!periodo?.from || !periodo?.to) return "";
+    return `${formatDate(periodo.from)} - ${formatDate(periodo.to)}`;
+  }
+
+  try {
+    const current_user = await prisma.user.findUnique({
+      where: { id: user_id },
+      include: { formacion_academica: true },
+    });
+
+    if (!current_user) throw new Error("Usuario no encontrado.");
+
+    const fa = current_user.formacion_academica;
+
+    const primaria = fa.find((f) => f.nivel === "p");
+    const secundaria = fa.find((f) => f.nivel === "s");
+    const cetpro = fa.find((f) => f.nivel === "t" && f.institucion?.toLowerCase().includes("cetpro"));
+
+    const superior = fa.find((f) => f.nivel === "u" || f.nivel === "t");
+    const postgrado = fa.find((f) => ["m", "d", "e"].includes(f.nivel));
+    const otros = fa.find((f) => !["p", "s", "t", "u", "m", "d", "e"].includes(f.nivel));
+
+    const response: FnFpDi = {
+      primaria: primaria?.institucion || "",
+      anio_primaria: getPeriodoString(primaria?.periodo as any),
+      secundaria: secundaria?.institucion || "",
+      anio_secundaria: getPeriodoString(secundaria?.periodo as any),
+      cetpro: cetpro?.institucion || "",
+      anio_cetpro: getPeriodoString(cetpro?.periodo as any),
+      educ_sup: superior ? nivelEducativoOp.find((n) => n.key === superior.nivel)?.value || "" : "",
+      profesion: superior?.carrera || "",
+      facultad: "Facultad de Minas Geologia y Civil", // puedes adaptar si lo obtienes en otro campo
+      anio_sup: getPeriodoString(superior?.periodo as any),
+      universidad_sup: superior?.institucion || "",
+      postgrado: postgrado ? nivelEducativoOp.find((n) => n.key === postgrado.nivel)?.value || "" : "",
+      anio_titulo: getPeriodoString(postgrado?.periodo as any),
+      otros_estudios: otros?.tipo || "",
+      universidad_otros: otros?.institucion || "",
+    };
+
+    return { success: true, message: "Reporte generado correctamente", data: response };
+  } catch (error: unknown) {
+    return {
+      success: false,
+      message: error instanceof Error ? error.message : "Error al generar el reporte de formación académica.",
+    };
   }
 };

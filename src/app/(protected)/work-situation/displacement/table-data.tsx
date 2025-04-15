@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { tipoDesplazamientoOp } from "@/utils/options";
+import { tipoDesplazamientoOp } from "@/constants/options";
 import { desplazamientoRecord } from "@/actions/desplazamiento-action";
 import { getFile } from "@/actions/file-action";
 import { Pagination } from "@/components/pagination";

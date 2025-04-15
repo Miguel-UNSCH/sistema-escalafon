@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { per_lic_vacSchema, ZPerLicVacS } from "@/lib/schemas/w-situation-schema";
 import { deletePerLicVac, updatePerLicVac } from "@/actions/per-lic-vac-action";
-import { tipoPermisoLicenciaVacacionOp } from "@/utils/options";
+import { tipoPermisoLicenciaVacacionOp } from "@/constants/options";
 import { SelectField } from "@/components/custom-fields/select-field";
 import { InputField } from "@/components/custom-fields/input-field";
 import { CargosUserField, DependenciasUserField } from "@/components/custom-fields/user-cargos-dependencia";

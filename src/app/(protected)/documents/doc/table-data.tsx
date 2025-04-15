@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 
 import { documentRecord } from "@/actions/document-action";
-import { tipo_docOp } from "@/utils/options";
+import { tipo_docOp } from "@/constants/options";
 import { getFile } from "@/actions/file-action";
 import { Pagination } from "@/components/pagination";
 

@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { discapacidadRecord } from "@/actions/disability-action";
 import { getFile } from "@/actions/file-action";
 import { Pagination } from "@/components/pagination";
-import { entidad_certificadoraOp, tDscapacidadOp } from "@/utils/options";
+import { entidad_certificadoraOp, tDscapacidadOp } from "@/constants/options";
 
 type TableProps = {
   items: discapacidadRecord[];

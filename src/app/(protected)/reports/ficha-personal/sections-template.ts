@@ -1,6 +1,6 @@
-import { FnFpIp } from "@/actions/reports-action";
+import { FnFpDi, FnFpIp } from "@/actions/reports-action";
 
-export const buildSections = (fp_ip: FnFpIp) => [
+export const buildSections = (fp_ip: FnFpIp, fp_di?: FnFpDi | null) => [
   {
     section: "identificacion",
     title: "Identificación del personal",
@@ -47,25 +47,25 @@ export const buildSections = (fp_ip: FnFpIp) => [
     title: "Datos de Instrucción",
     rows: [
       [
-        { key: "primaria", label: "Educación Primaria", value: "Educación Primaria", colSpan: 2 },
-        { key: "anio_primaria", label: "Año Del - Al", value: "Año Del - Al", colSpan: 2 },
-        { key: "secundaria", label: "Educación Secundaria", value: "Educación Secundaria", colSpan: 2 },
-        { key: "anio_secundaria", label: "Año Del - Al", value: "Año Del - Al", colSpan: 2 },
-        { key: "cetpro", label: "CETPRO", value: "CETPRO", colSpan: 2 },
-        { key: "anio_cetpro", label: "Año Del - Al", value: "Año Del - Al", colSpan: 2 },
+        { key: "primaria", label: "Educación Primaria", value: fp_di?.primaria ?? "", colSpan: 2 },
+        { key: "anio_primaria", label: "Año Del - Al", value: fp_di?.anio_primaria ?? "", colSpan: 2 },
+        { key: "secundaria", label: "Educación Secundaria", value: fp_di?.secundaria ?? "", colSpan: 2 },
+        { key: "anio_secundaria", label: "Año Del - Al", value: fp_di?.anio_secundaria ?? "", colSpan: 2 },
+        { key: "cetpro", label: "CETPRO", value: fp_di?.cetpro ?? "", colSpan: 2 },
+        { key: "anio_cetpro", label: "Año Del - Al", value: fp_di?.anio_cetpro ?? "", colSpan: 2 },
       ],
       [
-        { key: "educ_sup", label: "Educ. Sup./Universitaria/Técnica", value: "Educ. Sup./Universitaria/Técnica", colSpan: 3 },
-        { key: "profesion", label: "Profesión", value: "Profesión", colSpan: 2 },
-        { key: "facultad", label: "Facultad", value: "Facultad", colSpan: 2 },
-        { key: "anio_sup", label: "Anio del - al", value: "Anio del - al", colSpan: 2 },
-        { key: "universidad_sup", label: "Universidad / Inst. de A.E", value: "Universidad / Inst. de A.E", colSpan: 3 },
+        { key: "educ_sup", label: "Educ. Sup./Universitaria/Técnica", value: fp_di?.educ_sup ?? "", colSpan: 3 },
+        { key: "profesion", label: "Profesión", value: fp_di?.profesion ?? "", colSpan: 2 },
+        { key: "facultad", label: "Facultad", value: fp_di?.facultad ?? "", colSpan: 2 },
+        { key: "anio_sup", label: "Anio del - al", value: fp_di?.anio_sup ?? "", colSpan: 2 },
+        { key: "universidad_sup", label: "Universidad / Inst. de A.E", value: fp_di?.universidad_sup ?? "", colSpan: 3 },
       ],
       [
-        { key: "postgrado", label: "Post Grado (Especialización)", value: "Post Grado (Especialización)", colSpan: 4 },
-        { key: "anio_titulo", label: "Año / Título", value: "Año / Título", colSpan: 2 },
-        { key: "otros_estudios", label: "Otros Estudios con Certificación", value: "Otros Estudios con Certificación", colSpan: 3 },
-        { key: "universidad_otros", label: "Universidad / Inst. de A.E", value: "Universidad / Inst. de A.E", colSpan: 3 },
+        { key: "postgrado", label: "Post Grado (Especialización)", value: fp_di?.postgrado ?? "", colSpan: 4 },
+        { key: "anio_titulo", label: "Año / Título", value: fp_di?.anio_titulo ?? "", colSpan: 2 },
+        { key: "otros_estudios", label: "Otros Estudios con Certificación", value: fp_di?.otros_estudios ?? "", colSpan: 3 },
+        { key: "universidad_otros", label: "Universidad / Inst. de A.E", value: fp_di?.universidad_otros ?? "", colSpan: 3 },
       ],
     ],
   },

@@ -14,7 +14,7 @@ import { DateField } from "@/components/custom-fields/date-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
 import { Button } from "@/components/ui/button";
 import { Download, Save, Trash } from "lucide-react";
-import { tipoDescansoOp } from "@/utils/options";
+import { tipoDescansoOp } from "@/constants/options";
 import { InputField } from "@/components/custom-fields/input-field";
 import { CargosUserField, DependenciasUserField } from "@/components/custom-fields/user-cargos-dependencia";
 

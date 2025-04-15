@@ -13,7 +13,7 @@ import { createContract } from "@/actions/contract-action";
 import { DateField } from "@/components/custom-fields/date-field";
 import { InputField } from "@/components/custom-fields/input-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
-import { cond_lab_op, reg_lab_op, TContratoOp } from "@/utils/options";
+import { cond_lab_op, reg_lab_op, TContratoOp } from "@/constants/options";
 import { SelectField } from "@/components/custom-fields/select-field";
 import { contratoSchema, ZContratoS } from "@/lib/schemas/w-situation-schema";
 import { ContractRecord } from "./content-data";

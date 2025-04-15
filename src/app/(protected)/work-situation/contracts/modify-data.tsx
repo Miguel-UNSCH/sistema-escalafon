@@ -7,7 +7,7 @@ import { UploadField } from "@/components/custom-fields/upload-file";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { contratoSchema, ZContratoS } from "@/lib/schemas/w-situation-schema";
-import { TContratoOp, reg_lab_op, cond_lab_op } from "@/utils/options";
+import { TContratoOp, reg_lab_op, cond_lab_op } from "@/constants/options";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Download, Save, Trash } from "lucide-react";
 import React from "react";

@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { CapacitacionRecord } from "./content-data";
 import { getFile } from "@/actions/file-action";
 import { Pagination } from "@/components/pagination";
-import { tCapacitacionOp } from "@/utils/options";
+import { tCapacitacionOp } from "@/constants/options";
 
 type TableProps = {
   items: CapacitacionRecord[];

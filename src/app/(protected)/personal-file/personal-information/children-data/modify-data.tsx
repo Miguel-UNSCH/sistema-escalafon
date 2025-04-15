@@ -8,7 +8,7 @@ import { UbigeoField } from "@/components/custom-fields/ubigeo-field";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { childrenSchema, ZChildren } from "@/lib/schemas/personal-schema";
-import { gradoInstruccionOp } from "@/utils/options";
+import { gradoInstruccionOp } from "@/constants/options";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save, Trash } from "lucide-react";
 import { useTransition } from "react";

@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { fn_fp_ip, FnFpIp } from "@/actions/reports-action";
+import { fn_fp_di, fn_fp_ip, FnFpDi, FnFpIp } from "@/actions/reports-action";
 import { buildSections } from "./sections-template";
 
 export const ContentData = ({ user_id }: { user_id: string }) => {
   const [fp_ip, setFp_ip] = useState<FnFpIp | null>(null);
+  const [fp_di, setFp_di] = useState<FnFpDi | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const col_span: { [key: number]: string } = {
@@ -29,13 +30,16 @@ export const ContentData = ({ user_id }: { user_id: string }) => {
       const res = await fn_fp_ip(user_id);
       if (res.success && res.data) setFp_ip(res.data);
 
+      const res2 = await fn_fp_di(user_id);
+      if (res2.success && res2.data) setFp_di(res2.data);
+
       setIsLoading(false);
     };
 
     loadData();
   }, [user_id]);
 
-  const sections = fp_ip ? buildSections(fp_ip) : [];
+  const sections = fp_ip ? buildSections(fp_ip, fp_di) : [];
 
   if (isLoading) {
     return (

@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { gradoInstruccionOp } from "@/utils/options";
+import { gradoInstruccionOp } from "@/constants/options";
 import { childrenRecord, createChild } from "@/actions/children-action";
 import { DateField } from "@/components/custom-fields/date-field";
 import { InputField } from "@/components/custom-fields/input-field";

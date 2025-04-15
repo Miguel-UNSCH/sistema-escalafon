@@ -15,7 +15,7 @@ import toast from "react-hot-toast";
 import { capacitacionSchema, ZCapacitacionS } from "@/lib/schemas/user-schema";
 import { CapacitacionRecord } from "./content-data";
 import { deleteCapacitacion, updateCapacitacion } from "@/actions/capacitacion-action";
-import { tCapacitacionOp } from "@/utils/options";
+import { tCapacitacionOp } from "@/constants/options";
 import { SelectField } from "@/components/custom-fields/select-field";
 
 type ModifyProps = {

@@ -14,7 +14,7 @@ import { DateField } from "@/components/custom-fields/date-field";
 import { InputField } from "@/components/custom-fields/input-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
 import { SelectField } from "@/components/custom-fields/select-field";
-import { entidad_certificadoraOp, tDscapacidadOp } from "@/utils/options";
+import { entidad_certificadoraOp, tDscapacidadOp } from "@/constants/options";
 import { disabilitySchema, ZDisabilityS } from "@/lib/schemas/user-schema";
 
 type CreateProps = {

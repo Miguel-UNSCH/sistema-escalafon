@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { tipo_sancionOp } from "@/utils/options";
+import { tipo_sancionOp } from "@/constants/options";
 import { getFile } from "@/actions/file-action";
 import { Pagination } from "@/components/pagination";
 import { demeritoRecord } from "@/actions/m-d-action";
