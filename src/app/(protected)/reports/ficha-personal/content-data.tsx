@@ -1,45 +1,78 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { fn_fp_ip, FnFpIp } from "@/actions/reports-action";
 
 export const ContentData = ({ user_id }: { user_id: string }) => {
-  const formSections = [
+  const [fp_ip, setFp_ip] = useState<FnFpIp | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const col_span: { [key: number]: string } = {
+    1: "col-span-1",
+    2: "col-span-2",
+    3: "col-span-3",
+    4: "col-span-4",
+    5: "col-span-5",
+    6: "col-span-6",
+    7: "col-span-7",
+    8: "col-span-8",
+    9: "col-span-9",
+    10: "col-span-10",
+    11: "col-span-11",
+    12: "col-span-12",
+  };
+
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      const res = await fn_fp_ip(user_id);
+      if (res.success && res.data) setFp_ip(res.data);
+
+      setIsLoading(false);
+    };
+
+    loadData();
+  }, [user_id]);
+
+  const sections = [
     {
       section: "identificacion",
       title: "Identificación del personal",
       rows: [
         [
-          { key: "apellido_paterno", label: "Apellido Paterno", value: "jalisto", colSpan: 3 },
-          { key: "apellido_materno", label: "Apellido Materno", value: "ataucusi", colSpan: 3 },
-          { key: "nombres", label: "Nombres", value: "noemi", colSpan: 4 },
-          { key: "sexo", label: "Sexo", value: "M", colSpan: 1 },
-          { key: "edad", label: "Edad", value: "22", colSpan: 1 },
+          { key: "apellido_paterno", label: "Apellido Paterno", value: fp_ip?.apellido_paterno, colSpan: 3 },
+          { key: "apellido_materno", label: "Apellido Materno", value: fp_ip?.apellido_materno, colSpan: 3 },
+          { key: "nombres", label: "Nombres", value: fp_ip?.nombres, colSpan: 4 },
+          { key: "sexo", label: "Sexo", value: fp_ip?.sexo, colSpan: 1 },
+          { key: "edad", label: "Edad", value: fp_ip?.edad, colSpan: 1 },
         ],
         [
-          { key: "dni", label: "D.N.I.", value: "45652514", colSpan: 2 },
-          { key: "carnet_extranjeria", label: "Carnet de extranjería", value: "", colSpan: 2 },
-          { key: "autogenerado", label: "N° de Autogenerado", value: "4", colSpan: 4 },
-          { key: "licencia_conducir", label: "Licencia de Conducir", value: "NO", colSpan: 4 },
+          { key: "dni", label: "D.N.I.", value: fp_ip?.dni, colSpan: 2 },
+          { key: "carnet_extranjeria", label: "Carnet de extranjería", value: fp_ip?.carnet_extranjeria, colSpan: 2 },
+          { key: "autogenerado", label: "N° de Autogenerado", value: fp_ip?.autogenerado, colSpan: 4 },
+          { key: "licencia_conducir", label: "Licencia de Conducir", value: fp_ip?.licencia_conducir, colSpan: 4 },
         ],
         [
-          { key: "grupo_sanguineo", label: "Grupo Sanguíneo", value: "A POSITIVO", colSpan: 2 },
-          { key: "fecha_ingreso", label: "Fecha de Ingreso", value: "03/04/2025", colSpan: 3 },
-          { key: "unidad_trabajo", label: "Unidad Estructurada donde Trabaja", value: "Unidad de desarrollo civil", colSpan: 4 },
-          { key: "cargo", label: "Cargo", value: "asistente del residente", colSpan: 3 },
+          { key: "grupo_sanguineo", label: "Grupo Sanguíneo", value: fp_ip?.grupo_sanguineo, colSpan: 2 },
+          { key: "fecha_ingreso", label: "Fecha de Ingreso", value: fp_ip?.fecha_ingreso, colSpan: 3 },
+          { key: "unidad_trabajo", label: "Unidad Estructurada donde Trabaja", value: fp_ip?.unidad_trabajo, colSpan: 4 },
+          { key: "cargo", label: "Cargo", value: fp_ip?.cargo, colSpan: 3 },
         ],
         [
-          { key: "fecha_nacimiento", label: "Fecha de Nacimiento", value: "03/04/2000", colSpan: 3 },
-          { key: "distrito", label: "Distrito", value: "ayacucho", colSpan: 3 },
-          { key: "provincia", label: "Provincia", value: "huamanga", colSpan: 3 },
-          { key: "departamento", label: "Departamento/Región", value: "ayacucho", colSpan: 3 },
+          { key: "fecha_nacimiento", label: "Fecha de Nacimiento", value: fp_ip?.fecha_nacimiento, colSpan: 3 },
+          { key: "distrito", label: "Distrito", value: fp_ip?.distrito, colSpan: 3 },
+          { key: "provincia", label: "Provincia", value: fp_ip?.provincia, colSpan: 3 },
+          { key: "departamento", label: "Departamento/Región", value: fp_ip?.departamento, colSpan: 3 },
         ],
         [
-          { key: "domicilio", label: "Domicilio Av./Jr./Calle", value: "asoc covadonga", colSpan: 4 },
-          { key: "celular", label: "Celular", value: "", colSpan: 2 },
-          { key: "regimen", label: "Régimen Pensionario", value: "D. L. N° 19990", colSpan: 3 },
-          { key: "discapacidad", label: "Personal con discapacidad", value: "no", colSpan: 3 },
+          { key: "domicilio", label: "Domicilio Av./Jr./Calle", value: fp_ip?.domicilio, colSpan: 4 },
+          { key: "celular", label: "Celular", value: fp_ip?.celular, colSpan: 2 },
+          { key: "regimen", label: "Régimen Laboral", value: fp_ip?.regimen, colSpan: 3 },
+          { key: "discapacidad", label: "Personal con discapacidad", value: fp_ip?.discapacidad, colSpan: 3 },
         ],
         [
-          { key: "situacion", label: "Situación Laboral", value: "Contratado en CAS - Temporal D.L. 1057", colSpan: 6 },
-          { key: "correo", label: "Correo Electrónico", value: "noemi.ataucusi@email.com", colSpan: 6 },
+          { key: "situacion", label: "Condición Laboral", value: fp_ip?.situacion, colSpan: 6 },
+          { key: "correo", label: "Correo Electrónico", value: fp_ip?.correo, colSpan: 6 },
         ],
       ],
     },
@@ -171,26 +204,18 @@ export const ContentData = ({ user_id }: { user_id: string }) => {
     },
   ];
 
-  const col_span: { [key: number]: string } = {
-    1: "col-span-1",
-    2: "col-span-2",
-    3: "col-span-3",
-    4: "col-span-4",
-    5: "col-span-5",
-    6: "col-span-6",
-    7: "col-span-7",
-    8: "col-span-8",
-    9: "col-span-9",
-    10: "col-span-10",
-    11: "col-span-11",
-    12: "col-span-12",
-  };
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center p-6">
+        <div className="border-mantle border-b-2 rounded-full w-8 h-8 animate-spin" />
+        <span className="ml-3 text-text text-sm">Cargando datos...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-5 p-4 w-full">
-      <p>{user_id}</p>
-
-      {formSections.map((section) => (
+      {sections.map((section) => (
         <div key={section.section} className="flex flex-col gap-2 p-2 w-full text-xs sm:text-sm">
           <p className="mb-2 font-bold uppercase">{section.title}</p>
           <div className="grid grid-cols-12 border-2 border-surface0">

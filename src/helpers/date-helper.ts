@@ -26,3 +26,12 @@ export const formatDate = (d: Date | string): string => {
   const date = new Date(d);
   return date.toLocaleDateString("es-PE", { day: "2-digit", month: "2-digit", year: "numeric" });
 };
+
+export const calculate_age = (birthdate: Date): number => {
+  const today = new Date();
+  let age = today.getFullYear() - birthdate.getFullYear();
+  const m = today.getMonth() - birthdate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthdate.getDate())) age--;
+
+  return age;
+};

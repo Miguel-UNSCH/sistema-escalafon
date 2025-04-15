@@ -2,8 +2,8 @@
 
 import { prisma } from "@/config/prisma.config";
 import { fn_date } from "@/helpers";
-import { formatDate, getDuration } from "@/helpers/date-helper";
-import { cond_lab_op, estadoCivilOp, reg_lab_op, TContratoOp } from "@/utils/options";
+import { calculate_age, formatDate, getDuration } from "@/helpers/date-helper";
+import { cond_lab_op, estadoCivilOp, grupoSanguineoOp, lic_condOp, reg_lab_op, sexoOp, TContratoOp } from "@/utils/options";
 import { Prisma } from "@prisma/client";
 
 export const fn_report_time = async (id: string): Promise<{ success: boolean; message?: string; data?: any }> => {
@@ -111,6 +111,85 @@ export const fn_rt_c = async (user_id: string): Promise<{ success: boolean; mess
       });
 
     return { success: true, message: "Reporte generado correctamente", data: contracts_ord };
+  } catch (error: unknown) {
+    return { success: false, message: error instanceof Error ? error.message : "Error al generar el reporte de tiempo." };
+  }
+};
+
+export type FnFpIp = {
+  apellido_paterno: string;
+  apellido_materno: string;
+  nombres: string;
+  sexo: string;
+  dni: string;
+  edad: number;
+  carnet_extranjeria: string;
+  autogenerado: string;
+  licencia_conducir: string;
+  grupo_sanguineo: string;
+  fecha_ingreso: string;
+  unidad_trabajo: string;
+  cargo: string;
+  fecha_nacimiento: string;
+  distrito: string;
+  provincia: string;
+  departamento: string;
+  domicilio: string;
+  celular: string;
+  regimen: string;
+  discapacidad: string;
+  situacion: string;
+  correo: string;
+};
+
+export const fn_fp_ip = async (user_id: string): Promise<{ success: boolean; message?: string; data?: FnFpIp }> => {
+  try {
+    const current_user = await prisma.user.findUnique({ where: { id: user_id }, include: { Discapacidad: true } });
+    if (!current_user) throw new Error("Usuario no encontrado.");
+
+    const current_personal = await prisma.personal.findUnique({ where: { user_id }, include: { ubigeo: true } });
+    if (!current_personal) throw new Error("Usuario no encontrado.");
+
+    const contracts = await prisma.contrato.findMany({
+      where: { user_id },
+      include: { ucd: { include: { cargoDependencia: { include: { cargo: true, dependencia: true } } } } },
+    });
+    const contracts_ord = contracts.sort((a, b) => {
+      const dateA = new Date((a as ContractRecord).periodo.from);
+      const dateB = new Date((b as ContractRecord).periodo.from);
+      return dateB.getTime() - dateA.getTime();
+    });
+    const latest_contract = contracts_ord.length > 0 ? contracts_ord[0] : null;
+
+    const edad = current_personal.fecha_nacimiento ? calculate_age(new Date(current_personal.fecha_nacimiento)) : 0;
+
+    const response = {
+      apellido_paterno: current_user.last_name.split(" ")[0] ?? "",
+      apellido_materno: current_user.last_name.split(" ")[1] ?? "",
+      nombres: current_user.name,
+      sexo: sexoOp.find((op) => op.key === current_personal.sexo)?.value ?? "",
+      dni: current_user.dni,
+      edad,
+      carnet_extranjeria: "-----",
+      autogenerado: current_personal?.n_autogenerado ?? "",
+      licencia_conducir: lic_condOp.find((op) => op.key === current_personal.licencia_conducir)?.value ?? "",
+      grupo_sanguineo: grupoSanguineoOp.find((op) => op.key === current_personal.grupo_sanguineo)?.value ?? "",
+      fecha_ingreso: current_personal.fecha_ingreso ? fn_date(current_personal.fecha_ingreso) : "",
+      unidad_trabajo: latest_contract?.ucd?.cargoDependencia?.dependencia?.nombre ?? "",
+      cargo: latest_contract?.ucd?.cargoDependencia?.cargo?.nombre ?? "",
+      fecha_nacimiento: current_personal.fecha_nacimiento ? fn_date(current_personal.fecha_nacimiento) : "",
+      distrito: current_personal.ubigeo.distrito,
+      provincia: current_personal.ubigeo.provincia,
+      departamento: current_personal.ubigeo.departamento,
+      domicilio: current_personal.domicilio ?? "",
+      celular: current_personal.numero_contacto ?? "",
+      regimen: latest_contract?.regimen_laboral ?? "",
+      discapacidad: current_user.Discapacidad.length ? current_user.Discapacidad[0].discapacidad : "N/A",
+      situacion: (latest_contract && cond_lab_op[latest_contract?.tipo_contrato ?? ""]?.find((c) => c.key === latest_contract?.condicion_laboral)?.value) ?? "",
+      correo: current_user.email ?? "",
+    };
+
+    return { success: true, message: "Reporte generado correctamente", data: response };
   } catch (error: unknown) {
     return { success: false, message: error instanceof Error ? error.message : "Error al generar el reporte de tiempo." };
   }
