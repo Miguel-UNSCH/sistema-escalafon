@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { fn_fp_di, fn_fp_ec, fn_fp_ip, FnFpDi, FnFpEc, FnFpIp } from "@/actions/reports-action";
+import { fn_fp_dh, fn_fp_di, fn_fp_ec, fn_fp_ip, FnFpDh, FnFpDi, FnFpEc, FnFpIp } from "@/actions/reports-action";
 import { buildSections } from "./sections-template";
 
 export const ContentData = ({ user_id }: { user_id: string }) => {
   const [fp_ip, setFp_ip] = useState<FnFpIp | null>(null);
   const [fp_di, setFp_di] = useState<FnFpDi | null>(null);
   const [fp_ec, setFp_ec] = useState<FnFpEc | null>(null);
+  const [fp_dh, setFp_dh] = useState<FnFpDh | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const col_span: { [key: number]: string } = {
@@ -37,13 +38,16 @@ export const ContentData = ({ user_id }: { user_id: string }) => {
       const res3 = await fn_fp_ec(user_id);
       if (res3.success && res3.data) setFp_ec(res3.data);
 
+      const res4 = await fn_fp_dh(user_id);
+      if (res4.success && res4.data) setFp_dh(res4.data);
+
       setIsLoading(false);
     };
 
     loadData();
   }, [user_id]);
 
-  const sections = fp_ip ? buildSections(fp_ip, fp_di, fp_ec) : [];
+  const sections = fp_ip ? buildSections(fp_ip, fp_di, fp_ec, fp_dh) : [];
 
   if (isLoading) {
     return (
@@ -60,38 +64,66 @@ export const ContentData = ({ user_id }: { user_id: string }) => {
         <div key={section.section} className="flex flex-col gap-2 p-2 w-full text-xs sm:text-sm">
           <p className="mb-2 font-bold uppercase">{section.title}</p>
           <div className="grid grid-cols-12 border-2 border-surface0">
-            {section.rows.map((row, rowIndex) => {
-              const isFullRow = row.length === 1 && row[0].colSpan === 12;
+            {section.rows &&
+              section.rows.map((row, rowIndex) => {
+                const isFullRow = row.length === 1 && row[0].colSpan === 12;
 
-              return (
-                <React.Fragment key={rowIndex}>
-                  {isFullRow ? (
-                    <div key={row[0].key} className={`${col_span[row[0].colSpan]} p-2 border-2 border-surface0 font-text uppercase`}>
-                      {row[0].value}
-                    </div>
-                  ) : (
-                    <>
-                      {row.some((cell) => cell.label) &&
-                        row.map((cell) =>
-                          cell.label ? (
-                            <div key={`${cell.key}-label`} className={`${col_span[cell.colSpan]}  p-1 py-2 border-2 border-surface0 font-semibold text-text`}>
-                              {cell.label}
-                            </div>
-                          ) : (
-                            <div key={`${cell.key}-label-empty`} className={`${col_span[cell.colSpan]} `} />
-                          )
-                        )}
+                return (
+                  <React.Fragment key={rowIndex}>
+                    {isFullRow ? (
+                      <div key={row[0].key} className={`${col_span[row[0].colSpan]} p-2 border-2 border-surface0 font-text uppercase`}>
+                        {row[0].value}
+                      </div>
+                    ) : (
+                      <>
+                        {row.some((cell) => cell.label) &&
+                          row.map((cell) =>
+                            cell.label ? (
+                              <div key={`${cell.key}-label`} className={`${col_span[cell.colSpan]} p-1 py-2 border-2 border-surface0 font-semibold text-text`}>
+                                {cell.label}
+                              </div>
+                            ) : (
+                              <div key={`${cell.key}-label-empty`} className={`${col_span[cell.colSpan]}`} />
+                            )
+                          )}
 
-                      {row.map((cell) => (
-                        <div key={`${cell.key}-value`} className={`${col_span[cell.colSpan]} p-2  border-2 border-surface0 border-t-0 font-text text-subtext0 text-xs uppercase`}>
-                          {cell.value}
+                        {row.map((cell) => (
+                          <div key={`${cell.key}-value`} className={`${col_span[cell.colSpan]} p-2 border-2 border-surface0 border-t-0 font-text text-subtext0 text-xs uppercase`}>
+                            {cell.value}
+                          </div>
+                        ))}
+                      </>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+
+            {!section.rows && section.table && (
+              <>
+                {section.table.map((cell) => (
+                  <div key={`${cell.key}-header`} className={`${col_span[cell.colSpan]} p-1 py-2 border-2 border-surface0 font-semibold text-text`}>
+                    {cell.label}
+                  </div>
+                ))}
+
+                {(() => {
+                  const maxLength = Math.max(...section.table.map((cell) => (Array.isArray(cell.value) ? cell.value.length : 0)));
+
+                  return Array.from({ length: maxLength }).map((_, rowIndex) => (
+                    <React.Fragment key={`table-row-${rowIndex}`}>
+                      {section.table.map((cell) => (
+                        <div
+                          key={`${cell.key}-row-${rowIndex}`}
+                          className={`${col_span[cell.colSpan]} p-2 border border-l-2 border-surface0 font-text text-subtext0 text-xs uppercase`}
+                        >
+                          {Array.isArray(cell.value) ? cell.value[rowIndex] ?? "" : ""}
                         </div>
                       ))}
-                    </>
-                  )}
-                </React.Fragment>
-              );
-            })}
+                    </React.Fragment>
+                  ));
+                })()}
+              </>
+            )}
           </div>
         </div>
       ))}

@@ -1,6 +1,6 @@
-import { FnFpDi, FnFpEc, FnFpIp } from "@/actions/reports-action";
+import { FnFpDh, FnFpDi, FnFpEc, FnFpIp } from "@/actions/reports-action";
 
-export const buildSections = (fp_ip: FnFpIp, fp_di?: FnFpDi | null, fp_ec?: FnFpEc | null) => [
+export const buildSections = (fp_ip: FnFpIp, fp_di?: FnFpDi | null, fp_ec?: FnFpEc | null, fp_dh?: FnFpDh | null) => [
   {
     section: "identificacion",
     title: "Identificación del personal",
@@ -91,21 +91,12 @@ export const buildSections = (fp_ip: FnFpIp, fp_di?: FnFpDi | null, fp_ec?: FnFp
   {
     section: "datos_hijos",
     title: "Datos de los hijos",
-    rows: [
-      [
-        { key: "n", label: "Nº", value: "", colSpan: 1 },
-        { key: "nombre", label: "Apellidos y Nombres", value: "", colSpan: 4 },
-        { key: "lugar_fecha_nacimiento", label: "Lugar y fecha de nacimiento", value: "", colSpan: 4 },
-        { key: "edad", label: "Edad", value: "", colSpan: 1 },
-        { key: "instruccion", label: "Grado de Instrucción", value: "", colSpan: 2 },
-      ],
-      ...Array.from({ length: 5 }).map((_, i) => [
-        { key: `n-${i}`, label: "", value: `${i + 1}`, colSpan: 1 },
-        { key: `nombre-${i}`, label: "", value: "", colSpan: 4 },
-        { key: `lugar_fecha_nacimiento-${i}`, label: "", value: "", colSpan: 4 },
-        { key: `edad-${i}`, label: "", value: "", colSpan: 1 },
-        { key: `instruccion-${i}`, label: "", value: "", colSpan: 2 },
-      ]),
+    table: [
+      { key: "n", label: "Nº", value: ["1", "2", "3"], colSpan: 1 },
+      { key: "nombre", label: "Apellidos y Nombres", value: fp_dh?.nombre, colSpan: 4 },
+      { key: "lugar_fecha_nacimiento", label: "Lugar y fecha de nacimiento", value: fp_dh?.lugar_fecha_nacimiento, colSpan: 4 },
+      { key: "edad", label: "Edad", value: fp_dh?.edad, colSpan: 1 },
+      { key: "instruccion", label: "Grado de Instrucción", value: fp_dh?.instruccion, colSpan: 2 },
     ],
   },
   {
