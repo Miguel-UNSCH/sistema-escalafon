@@ -26,8 +26,7 @@ export type ZCapacitacionS = z.infer<typeof capacitacionSchema>;
 export const expSchema = z.object({
   centro_labor: z.string({ required_error: "Centro laboral es requerido" }),
   periodo: periodoSchema,
-  cargo_id: z.string(),
-  dependencia_id: z.string(),
+  cargo: z.string(),
   file: fileSchema.optional(),
 });
 export type ZExpS = z.infer<typeof expSchema>;

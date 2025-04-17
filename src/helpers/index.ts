@@ -4,9 +4,5 @@ export const canEdit = (modificationStart: Date, modificationEnd: Date): boolean
 };
 
 export const fn_date = (fechaISO: Date) => {
-  return new Date(fechaISO).toLocaleDateString("es-PE", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  return new Date(fechaISO).toLocaleDateString("es-PE", { year: "numeric", month: "long", day: "numeric" });
 };

@@ -7,11 +7,10 @@ import { prisma } from "@/config/prisma.config";
 import { ZExpS } from "@/lib/schemas/user-schema";
 import fs from "fs/promises";
 import path from "path";
-import { isUCDInUse } from "@/lib/db-utils";
 import { checkEditable } from "./limit-time";
 
 export type expRecord = Prisma.ExperienceGetPayload<{
-  include: { file: true; usuarioCargoDependencia: { include: { cargoDependencia: { include: { cargo: true; dependencia: true } } } } };
+  include: { file: true };
 }>;
 
 export const getExperiences = async (id: string): Promise<{ success: boolean; message?: string; data?: expRecord[] }> => {
@@ -20,8 +19,8 @@ export const getExperiences = async (id: string): Promise<{ success: boolean; me
     if (!user) throw new Error("Usuario no encontrado");
 
     const experiencias: expRecord[] | null = await prisma.experience.findMany({
-      where: { user_id: user.id },
-      include: { file: true, usuarioCargoDependencia: { include: { cargoDependencia: { include: { cargo: true, dependencia: true } } } } },
+      where: { user_id: id },
+      include: { file: true },
     });
     if (!experiencias) throw new Error("No hay experiencias registradas");
 
@@ -49,28 +48,10 @@ export const createExp = async (id: string, data: ZExpS & { file_id: string }): 
     const currentUser = await prisma.user.findUnique({ where: { id: id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
 
-    const cargo = await prisma.cargo.findUnique({ where: { id: Number(data.cargo_id) } });
-    if (!cargo) throw new Error("Cargo no encontrado");
-
-    const dependencia = await prisma.dependencia.findUnique({ where: { id: Number(data.dependencia_id) } });
-    if (!dependencia) throw new Error("Dependencia no encontrada");
-
-    const cargoDependencia = await prisma.cargoDependencia.findUnique({ where: { cargoId_dependenciaId: { cargoId: cargo.id, dependenciaId: dependencia.id } } });
-
-    if (!cargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia seleccionada.");
-
-    let usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
-      where: { userId_cargoDependenciaId: { userId: currentUser.id, cargoDependenciaId: cargoDependencia.id } },
-    });
-
-    if (!usuarioCargoDependencia) {
-      usuarioCargoDependencia = await prisma.usuarioCargoDependencia.create({ data: { userId: currentUser.id, cargoDependenciaId: cargoDependencia.id } });
-    }
-
     await prisma.experience.create({
       data: {
         user_id: id,
-        usuarioCargoDependenciaId: usuarioCargoDependencia.id,
+        cargo: data.cargo.toUpperCase(),
         centro_labor: data.centro_labor.toUpperCase(),
         periodo: { from: new Date(data.periodo.from).toISOString(), to: new Date(data.periodo.to).toISOString() },
         file_id: data.file_id,
@@ -101,30 +82,6 @@ export const updateExp = async (id: string, data: ZExpS & { file_id?: string }):
     const current_model = await prisma.experience.findUnique({ where: { id }, include: { file: true } });
     if (!current_model) throw new Error("Experiencia no encontrada");
 
-    const cargo = await prisma.cargo.findUnique({ where: { id: Number(data.cargo_id) } });
-    if (!cargo) throw new Error("Cargo no encontrado");
-
-    const dependencia = await prisma.dependencia.findUnique({ where: { id: Number(data.dependencia_id) } });
-    if (!dependencia) throw new Error("Dependencia no encontrada");
-
-    const cargoDependencia = await prisma.cargoDependencia.findUnique({
-      where: {
-        cargoId_dependenciaId: { cargoId: cargo.id, dependenciaId: dependencia.id },
-      },
-    });
-    if (!cargoDependencia) throw new Error("No existe la relación entre el cargo y la dependencia seleccionada.");
-
-    let usuarioCargoDependencia = await prisma.usuarioCargoDependencia.findUnique({
-      where: {
-        userId_cargoDependenciaId: { userId: currentUser.id, cargoDependenciaId: cargoDependencia.id },
-      },
-    });
-    if (!usuarioCargoDependencia) {
-      usuarioCargoDependencia = await prisma.usuarioCargoDependencia.create({
-        data: { userId: currentUser.id, cargoDependenciaId: cargoDependencia.id },
-      });
-    }
-
     if (data.file) {
       const filePath = path.resolve(process.cwd(), current_model.file.path, `${current_model.file.id}${current_model.file.extension}`);
       const fileBuffer = Buffer.from(await data.file.arrayBuffer());
@@ -133,14 +90,11 @@ export const updateExp = async (id: string, data: ZExpS & { file_id?: string }):
       await prisma.file.update({ where: { id: current_model.file.id }, data: { name: data.file?.name, size: fileBuffer.length } });
     }
 
-    const previousUCDId = current_model.usuarioCargoDependenciaId;
-
     await prisma.experience.update({
       where: { id },
       data: {
-        user_id: currentUser.id,
-        usuarioCargoDependenciaId: usuarioCargoDependencia.id,
         centro_labor: data.centro_labor.toUpperCase(),
+        cargo: data.cargo.toUpperCase(),
         periodo: {
           from: new Date(data.periodo.from).toISOString(),
           to: new Date(data.periodo.to).toISOString(),
@@ -148,11 +102,6 @@ export const updateExp = async (id: string, data: ZExpS & { file_id?: string }):
         ...(data.file_id && { file_id: data.file_id }),
       },
     });
-
-    if (previousUCDId !== usuarioCargoDependencia.id) {
-      const stillInUse = await isUCDInUse(previousUCDId);
-      if (!stillInUse) await prisma.usuarioCargoDependencia.delete({ where: { id: previousUCDId } });
-    }
 
     return { success: true, message: "Experiencia actualizada exitosamente." };
   } catch (error: unknown) {
@@ -188,18 +137,12 @@ export const deleteExp = async (id: string, file_id: string): Promise<{ success:
       await fs.unlink(filePath);
       // oxlint-disable-next-line no-console
       console.log("Archivo eliminado correctamente.");
-      // oxlint-disable-next-line no-unused-vars
-    } catch (e: unknown) {
+    } catch {
       throw new Error("No se pudo eliminar el archivo físico.");
     }
 
-    const usuarioCargoDependenciaId = current_model.usuarioCargoDependenciaId;
-
     await prisma.experience.delete({ where: { id } });
     await prisma.file.delete({ where: { id: file_id } });
-
-    const stillInUse = await isUCDInUse(usuarioCargoDependenciaId);
-    if (!stillInUse) await prisma.usuarioCargoDependencia.delete({ where: { id: usuarioCargoDependenciaId } });
 
     return { success: true, message: "Experiencia eliminado exitosamente." };
   } catch (error: unknown) {

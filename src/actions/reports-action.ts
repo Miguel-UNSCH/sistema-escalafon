@@ -369,6 +369,35 @@ export const fn_fp_et_gr = async (user_id: string): Promise<{ success: boolean; 
 
     return { success: true, message: "Reporte generado correctamente", data: response };
   } catch (error) {
+    return { success: false, message: error instanceof Error ? error.message : "Error al generar el reporte de experiencia laboral dentro del gobierno regional." };
+  }
+};
+
+export type FnFpEt = {
+  centro_trabajo: string[];
+  cargo: string[];
+  documento: string[];
+  periodo: string[];
+};
+export const fn_ep_et = async (user_id: string): Promise<{ success: boolean; message?: string; data?: FnFpEt }> => {
+  try {
+    const current_user = await prisma.user.findUnique({ where: { id: user_id }, include: { experience: { include: { file: true } } } });
+    if (!current_user) throw new Error("Usuario no encontrado.");
+
+    const experience_ord = current_user.experience.sort((a, b) => {
+      const dateA = new Date((a as any).periodo.from);
+      const dateB = new Date((b as any).periodo.to);
+      return dateB.getTime() - dateA.getTime();
+    });
+    const response = {
+      centro_trabajo: experience_ord.map((c) => c.centro_labor ?? ""),
+      cargo: experience_ord.map((c) => c.cargo ?? ""),
+      documento: experience_ord.map((c) => c.file?.name ?? ""),
+      periodo: experience_ord.map((c) => `${fn_date((c as any).periodo.from)} - ${fn_date((c as any).periodo.to)}`),
+    };
+
+    return { success: true, message: "Reporte generado correctamente", data: response };
+  } catch (error) {
     return { success: false, message: error instanceof Error ? error.message : "Error al generar el reporte de experiencia laboral." };
   }
 };

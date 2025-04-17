@@ -15,7 +15,6 @@ import { DateField } from "@/components/custom-fields/date-field";
 import { InputField } from "@/components/custom-fields/input-field";
 import { UploadField } from "@/components/custom-fields/upload-file";
 import { ExperienceRecord } from "./content-data";
-import { CargoIdDependenciaField, DependenciaIdField } from "@/components/custom-fields/cargos-dependencia";
 
 type CreateProps = {
   onCreated: () => void;
@@ -34,8 +33,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
     defaultValues: {
       centro_labor: "",
       periodo: { from: undefined, to: undefined },
-      cargo_id: "",
-      dependencia_id: "",
+      cargo: "",
       file: undefined,
     },
   });
@@ -77,8 +75,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <InputField control={form.control} name="centro_labor" label="Centro de Labor *" placeholder="Ingrese el centro de labor" disabled={!edit} />
 
-          <DependenciaIdField control={form.control} name="dependencia_id" label="Dependencia *" disabled={!edit} />
-          <CargoIdDependenciaField control={form.control} name="cargo_id" dependencia_id={form.watch("dependencia_id")} disabled={!edit} />
+          <InputField control={form.control} name="cargo" label="Cargo *" placeholder="Ingrese el cargo" disabled={!edit} />
 
           <div className="gap-4 grid grid-cols-2">
             <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={!edit} />

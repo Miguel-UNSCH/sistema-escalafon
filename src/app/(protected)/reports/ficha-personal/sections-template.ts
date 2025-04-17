@@ -1,6 +1,6 @@
-import { FnFpDh, FnFpDi, FnFpEc, FnFpEtGr, FnFpIp } from "@/actions/reports-action";
+import { FnFpDh, FnFpDi, FnFpEc, FnFpEt, FnFpEtGr, FnFpIp } from "@/actions/reports-action";
 
-export const buildSections = (fp_ip: FnFpIp, fp_di?: FnFpDi | null, fp_ec?: FnFpEc | null, fp_dh?: FnFpDh | null, fp_et_gr?: FnFpEtGr | null) => [
+export const buildSections = (fp_ip: FnFpIp, fp_di?: FnFpDi | null, fp_ec?: FnFpEc | null, fp_dh?: FnFpDh | null, fp_et_gr?: FnFpEtGr | null, fp_et?: FnFpEt | null) => [
   {
     section: "identificacion",
     title: "Identificación del personal",
@@ -112,19 +112,11 @@ export const buildSections = (fp_ip: FnFpIp, fp_di?: FnFpDi | null, fp_ec?: FnFp
   {
     section: "experiencia_trabajo",
     title: "Experiencia de trabajo",
-    rows: [
-      [
-        { key: "centro_trabajo", label: "Centro de Trabajo", value: "", colSpan: 3 },
-        { key: "cargo", label: "Cargo", value: "", colSpan: 3 },
-        { key: "documento", label: "Documento que sustenta", value: "", colSpan: 4 },
-        { key: "anio", label: "Año que laboró", value: "", colSpan: 2 },
-      ],
-      ...Array.from({ length: 5 }).map((_, i) => [
-        { key: `centro-${i}`, label: "", value: "", colSpan: 3 },
-        { key: `cargo-${i}`, label: "", value: "", colSpan: 3 },
-        { key: `documento-${i}`, label: "", value: "", colSpan: 4 },
-        { key: `anio-${i}`, label: "", value: "", colSpan: 2 },
-      ]),
+    table: [
+      { key: "centro_trabajo", label: "Centro de Trabajo", value: fp_et?.centro_trabajo, colSpan: 3 },
+      { key: "cargo", label: "Cargo", value: fp_et?.cargo, colSpan: 2 },
+      { key: "documento", label: "Documento que sustenta", value: fp_et?.documento, colSpan: 4 },
+      { key: "periodo", label: "Año que laboró", value: fp_et?.periodo, colSpan: 3 },
     ],
   },
   /** {section: "idiomas",title: "Idiomas",rows: [[{ key: "idioma", label: "Idioma", value: "", colSpan: 3 },{ key: "habla", label: "Habla", value: "", colSpan: 1 },{ key: "lee", label: "Lee", value: "", colSpan: 1 },{ key: "escribe", label: "Escribe", value: "", colSpan: 1 },{ key: "no_sabe", label: "No sabe", value: "", colSpan: 2 },{ key: "donde", label: "Dónde Aprendió y/o Estudió", value: "", colSpan: 4 },],...Array.from({ length: 3 }).map((_, i) => [{ key: `idioma-${i}`, label: "", value: "", colSpan: 3 },{ key: `habla-${i}`, label: "", value: "", colSpan: 1 },{ key: `lee-${i}`, label: "", value: "", colSpan: 1 },{ key: `escribe-${i}`, label: "", value: "", colSpan: 1 },{ key: `no_sabe-${i}`, label: "", value: "", colSpan: 2 },{ key: `donde-${i}`, label: "", value: "", colSpan: 4 },]),],},  */

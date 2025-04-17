@@ -1,4 +1,3 @@
-// eslint-disable no-unused-vars
 "use client";
 
 import { getFile } from "@/actions/file-action";
@@ -16,7 +15,6 @@ import toast from "react-hot-toast";
 import { ExperienceRecord } from "./content-data";
 import { expSchema, ZExpS } from "@/lib/schemas/user-schema";
 import { deleteExp, updateExp } from "@/actions/exp-action";
-import { CargoIdDependenciaField, DependenciaIdField } from "@/components/custom-fields/cargos-dependencia";
 
 type ModifyProps = {
   item: ExperienceRecord;
@@ -26,7 +24,7 @@ type ModifyProps = {
   edit: boolean;
 };
 
-export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem, user_id, edit }) => {
+export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem, edit }) => {
   const [isPending, startTransition] = useTransition();
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [isChangingFile, setIsChangingFile] = useState(false);
@@ -41,8 +39,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
   const defaultValues = {
     centro_labor: item.centro_labor,
     periodo: { from: new Date(item.periodo.from), to: new Date(item.periodo.to) },
-    cargo_id: item.usuarioCargoDependencia.cargoDependencia.cargo.id.toString(),
-    dependencia_id: item.usuarioCargoDependencia.cargoDependencia.dependencia.id.toString(),
+    cargo: item.cargo,
     file: undefined,
   };
 
@@ -67,7 +64,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
-      } catch (e: unknown) {
+      } catch {
         toast.error("Error al modificar.");
       }
     });
@@ -84,7 +81,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           setSelectedItem(null);
           form.reset();
         }
-      } catch (e) {
+      } catch {
         toast.error("Error al eliminar.");
       }
     });
@@ -97,9 +94,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
           <InputField control={form.control} name="centro_labor" label="Centro de Labor *" placeholder="Ingrese el centro de labor" disabled={!edit} />
 
-          <DependenciaIdField control={form.control} name="dependencia_id" label="Dependencia *" disabled={!edit} />
-
-          <CargoIdDependenciaField control={form.control} name="cargo_id" dependencia_id={form.watch("dependencia_id")} disabled={!edit} />
+          <InputField control={form.control} name="cargo" label="Cargo *" placeholder="Ingrese el cargo" disabled={!edit} />
 
           <div className="gap-4 grid grid-cols-2">
             <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={!edit} />

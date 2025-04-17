@@ -9,9 +9,7 @@ import { Create } from "./form-data";
 import { Modify } from "./modify-data";
 import { checkEditable } from "@/actions/limit-time";
 
-export type ExperienceRecord = Omit<expRecord, "periodo"> & {
-  periodo: { from: string; to: string };
-};
+export type ExperienceRecord = Omit<expRecord, "periodo"> & { periodo: { from: string; to: string } };
 
 interface ContentDataProps {
   userId?: string;
@@ -22,7 +20,7 @@ export const ContentData = ({ userId, user_id }: ContentDataProps) => {
   const [items, setItems] = useState<ExperienceRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItem, setSelectedItem] = useState<ExperienceRecord | null>(null);
-  const [showCreate, setShowCreate] = useState<boolean>(items.length === 0);
+  const [showCreate, setShowCreate] = useState<boolean>(!items.length);
   const [canEdit, setCanEdit] = useState<boolean>(false);
 
   const id = (user_id ?? userId) || "";
@@ -55,6 +53,7 @@ export const ContentData = ({ userId, user_id }: ContentDataProps) => {
       setCanEdit(false);
     }
   };
+
   useEffect(() => {
     if (items.length === 0) setShowCreate(true);
     else setShowCreate(false);
