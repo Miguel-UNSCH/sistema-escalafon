@@ -300,10 +300,7 @@ export type FnFpDh = {
 
 export const fn_fp_dh = async (user_id: string): Promise<{ success: boolean; message?: string; data?: FnFpDh }> => {
   try {
-    const current_user = await prisma.user.findUnique({
-      where: { id: user_id },
-      include: { personal: true },
-    });
+    const current_user = await prisma.user.findUnique({ where: { id: user_id }, include: { personal: true } });
 
     if (!current_user) throw new Error("Usuario no encontrado.");
     const personal = current_user.personal;
@@ -317,13 +314,7 @@ export const fn_fp_dh = async (user_id: string): Promise<{ success: boolean; mes
       orderBy: { child: { fecha_nacimiento: "asc" } },
     });
 
-    const response: FnFpDh = {
-      n: [],
-      nombre: [],
-      lugar_fecha_nacimiento: [],
-      edad: [],
-      instruccion: [],
-    };
+    const response: FnFpDh = { n: [], nombre: [], lugar_fecha_nacimiento: [], edad: [], instruccion: [] };
 
     Array.from({ length: numero_hijos }).forEach((_, i) => {
       const child = children[i]?.child;
