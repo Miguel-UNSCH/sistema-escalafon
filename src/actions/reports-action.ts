@@ -336,3 +336,39 @@ export const fn_fp_dh = async (user_id: string): Promise<{ success: boolean; mes
     return { success: false, message: error instanceof Error ? error.message : "Error al generar el reporte de hijos." };
   }
 };
+
+export type FnFpEtGr = {
+  centro_trabajo: string[];
+  cargo: string[];
+  documento: string[];
+  periodo: string[];
+};
+
+export const fn_fp_et_gr = async (user_id: string): Promise<{ success: boolean; message?: string; data?: FnFpEtGr }> => {
+  try {
+    const current_user = await prisma.user.findUnique({ where: { id: user_id } });
+    if (!current_user) throw new Error("Usuario no encontrado.");
+
+    const contracts = await prisma.contrato.findMany({
+      where: { user_id },
+      include: { ucd: { include: { cargoDependencia: { include: { cargo: true, dependencia: true } } } } },
+    });
+
+    const contracts_ord = contracts.sort((a, b) => {
+      const dateA = new Date((a as ContractRecord).periodo.from);
+      const dateB = new Date((b as ContractRecord).periodo.from);
+      return dateB.getTime() - dateA.getTime();
+    });
+
+    const response = {
+      centro_trabajo: contracts_ord.map((c) => c.ucd?.cargoDependencia?.dependencia?.nombre ?? ""),
+      cargo: contracts_ord.map((c) => c.ucd?.cargoDependencia?.cargo?.nombre ?? ""),
+      documento: contracts_ord.map((c) => c.resolucion_contrato ?? ""),
+      periodo: contracts_ord.map((c) => `${fn_date((c as any).periodo.from)} - ${fn_date((c as any).periodo.to)}`),
+    };
+
+    return { success: true, message: "Reporte generado correctamente", data: response };
+  } catch (error) {
+    return { success: false, message: error instanceof Error ? error.message : "Error al generar el reporte de experiencia laboral." };
+  }
+};

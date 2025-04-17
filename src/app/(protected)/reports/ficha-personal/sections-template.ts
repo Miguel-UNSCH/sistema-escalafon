@@ -1,6 +1,6 @@
-import { FnFpDh, FnFpDi, FnFpEc, FnFpIp } from "@/actions/reports-action";
+import { FnFpDh, FnFpDi, FnFpEc, FnFpEtGr, FnFpIp } from "@/actions/reports-action";
 
-export const buildSections = (fp_ip: FnFpIp, fp_di?: FnFpDi | null, fp_ec?: FnFpEc | null, fp_dh?: FnFpDh | null) => [
+export const buildSections = (fp_ip: FnFpIp, fp_di?: FnFpDi | null, fp_ec?: FnFpEc | null, fp_dh?: FnFpDh | null, fp_et_gr?: FnFpEtGr | null) => [
   {
     section: "identificacion",
     title: "Identificación del personal",
@@ -97,6 +97,16 @@ export const buildSections = (fp_ip: FnFpIp, fp_di?: FnFpDi | null, fp_ec?: FnFp
       { key: "lugar_fecha_nacimiento", label: "Lugar y fecha de nacimiento", value: fp_dh?.lugar_fecha_nacimiento, colSpan: 4 },
       { key: "edad", label: "Edad", value: fp_dh?.edad, colSpan: 1 },
       { key: "instruccion", label: "Grado de Instrucción", value: fp_dh?.instruccion, colSpan: 2 },
+    ],
+  },
+  {
+    section: "experiencia_trabajo_gr",
+    title: "Experiencia de trabajo dentro del gobierno regional",
+    table: [
+      { key: "centro_trabajo", label: "Dependencia / oficina", value: fp_et_gr?.centro_trabajo, colSpan: 3 },
+      { key: "cargo", label: "Cargo", value: fp_et_gr?.cargo, colSpan: 3 },
+      { key: "documento", label: "Documento que sustenta", value: fp_et_gr?.documento, colSpan: 4 },
+      { key: "periodo", label: "periodo", value: fp_et_gr?.periodo, colSpan: 2 },
     ],
   },
   {

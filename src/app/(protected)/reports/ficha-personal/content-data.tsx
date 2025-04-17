@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { fn_fp_dh, fn_fp_di, fn_fp_ec, fn_fp_ip, FnFpDh, FnFpDi, FnFpEc, FnFpIp } from "@/actions/reports-action";
+import { fn_fp_dh, fn_fp_di, fn_fp_ec, fn_fp_et_gr, fn_fp_ip, FnFpDh, FnFpDi, FnFpEc, FnFpEtGr, FnFpIp } from "@/actions/reports-action";
 import { buildSections } from "./sections-template";
 
 export const ContentData = ({ user_id }: { user_id: string }) => {
@@ -9,6 +9,7 @@ export const ContentData = ({ user_id }: { user_id: string }) => {
   const [fp_di, setFp_di] = useState<FnFpDi | null>(null);
   const [fp_ec, setFp_ec] = useState<FnFpEc | null>(null);
   const [fp_dh, setFp_dh] = useState<FnFpDh | null>(null);
+  const [fp_et_gr, setFp_et_gr] = useState<FnFpEtGr | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const col_span: { [key: number]: string } = {
@@ -41,13 +42,16 @@ export const ContentData = ({ user_id }: { user_id: string }) => {
       const res4 = await fn_fp_dh(user_id);
       if (res4.success && res4.data) setFp_dh(res4.data);
 
+      const res5 = await fn_fp_et_gr(user_id);
+      if (res5.success && res5.data) setFp_et_gr(res5.data);
+
       setIsLoading(false);
     };
 
     loadData();
   }, [user_id]);
 
-  const sections = fp_ip ? buildSections(fp_ip, fp_di, fp_ec, fp_dh) : [];
+  const sections = fp_ip ? buildSections(fp_ip, fp_di, fp_ec, fp_dh, fp_et_gr) : [];
 
   if (isLoading) {
     return (
