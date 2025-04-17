@@ -294,20 +294,51 @@ export type FnFpDh = {
   n: string[];
   nombre: string[];
   lugar_fecha_nacimiento: string[];
-  edad: string[];
+  edad: (string | number)[];
   instruccion: string[];
 };
 
 export const fn_fp_dh = async (user_id: string): Promise<{ success: boolean; message?: string; data?: FnFpDh }> => {
   try {
-    console.log(user_id);
-    const response = {
-      n: ["1", "2", "3"],
-      nombre: ["Ana", "Luis", "Carlos"],
-      lugar_fecha_nacimiento: ["Ayacucho/Huamanga/Ayacucho --- 14 de abril del 2002", "Lima", "Cusco"],
-      edad: ["10", "8", "5"],
-      instruccion: ["Inicial", "Inicial", "Ninguno"],
+    const current_user = await prisma.user.findUnique({
+      where: { id: user_id },
+      include: { personal: true },
+    });
+
+    if (!current_user) throw new Error("Usuario no encontrado.");
+    const personal = current_user.personal;
+    if (!personal) throw new Error("No se encontró información personal.");
+
+    const numero_hijos = personal.numero_hijos ?? 0;
+
+    const children = await prisma.personalChildren.findMany({
+      where: { personal_id: personal.id },
+      include: { child: { include: { ubigeo: true } } },
+      orderBy: { child: { fecha_nacimiento: "asc" } },
+    });
+
+    const response: FnFpDh = {
+      n: [],
+      nombre: [],
+      lugar_fecha_nacimiento: [],
+      edad: [],
+      instruccion: [],
     };
+
+    Array.from({ length: numero_hijos }).forEach((_, i) => {
+      const child = children[i]?.child;
+
+      const nombreCompleto = child ? `${child.apellidos} ${child.nombres}` : "";
+      const lugarNacimiento = child?.ubigeo ? `${child.ubigeo.departamento}/${child.ubigeo.provincia}/${child.ubigeo.distrito} --- ${fn_date(child.fecha_nacimiento)}` : "";
+      const edad = child?.fecha_nacimiento ? calculate_age(child.fecha_nacimiento) : "";
+      const instruccionLabel = child?.grado_instruccion ? gradoInstruccionOp.find((g) => g.key === child.grado_instruccion)?.value ?? "" : "";
+
+      response.n.push((i + 1).toString());
+      response.nombre.push(nombreCompleto);
+      response.lugar_fecha_nacimiento.push(lugarNacimiento);
+      response.edad.push(edad);
+      response.instruccion.push(instruccionLabel);
+    });
 
     return { success: true, message: "Reporte generado correctamente", data: response };
   } catch (error) {

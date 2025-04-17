@@ -92,7 +92,7 @@ export const buildSections = (fp_ip: FnFpIp, fp_di?: FnFpDi | null, fp_ec?: FnFp
     section: "datos_hijos",
     title: "Datos de los hijos",
     table: [
-      { key: "n", label: "Nº", value: ["1", "2", "3"], colSpan: 1 },
+      { key: "n", label: "Nº", value: fp_dh?.n, colSpan: 1 },
       { key: "nombre", label: "Apellidos y Nombres", value: fp_dh?.nombre, colSpan: 4 },
       { key: "lugar_fecha_nacimiento", label: "Lugar y fecha de nacimiento", value: fp_dh?.lugar_fecha_nacimiento, colSpan: 4 },
       { key: "edad", label: "Edad", value: fp_dh?.edad, colSpan: 1 },
