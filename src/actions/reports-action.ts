@@ -5,6 +5,7 @@ import { fn_date } from "@/helpers";
 import { calculate_age, formatDate, getDuration, getDurationFormatted, getPeriodoString } from "@/helpers/date-helper";
 import { cond_lab_op, estadoCivilOp, gradoInstruccionOp, grupoSanguineoOp, lic_condOp, nivelEducativoOp, reg_lab_op, sexoOp, TContratoOp } from "@/constants/options";
 import { Prisma } from "@prisma/client";
+import { FnFpC, FnFpDh, FnFpDi, FnFpEc, FnFpEt, FnFpEtGr, FnFpIp } from "@/types/reports";
 
 export const fn_report_time = async (id: string): Promise<{ success: boolean; message?: string; data?: any }> => {
   try {
@@ -116,31 +117,6 @@ export const fn_rt_c = async (user_id: string): Promise<{ success: boolean; mess
   }
 };
 
-export type FnFpIp = {
-  apellido_paterno: string;
-  apellido_materno: string;
-  nombres: string;
-  sexo: string;
-  dni: string;
-  edad: number;
-  carnet_extranjeria: string;
-  autogenerado: string;
-  licencia_conducir: string;
-  grupo_sanguineo: string;
-  fecha_ingreso: string;
-  unidad_trabajo: string;
-  cargo: string;
-  fecha_nacimiento: string;
-  distrito: string;
-  provincia: string;
-  departamento: string;
-  domicilio: string;
-  celular: string;
-  regimen: string;
-  discapacidad: string;
-  situacion: string;
-  correo: string;
-};
 export const fn_fp_ip = async (user_id: string): Promise<{ success: boolean; message?: string; data?: FnFpIp }> => {
   try {
     const current_user = await prisma.user.findUnique({ where: { id: user_id }, include: { Discapacidad: true } });
@@ -192,23 +168,6 @@ export const fn_fp_ip = async (user_id: string): Promise<{ success: boolean; mes
   }
 };
 
-export type FnFpDi = {
-  primaria: string;
-  anio_primaria: string;
-  secundaria: string;
-  anio_secundaria: string;
-  cetpro: string;
-  anio_cetpro: string;
-  educ_sup: string;
-  profesion: string;
-  facultad: string;
-  anio_sup: string;
-  universidad_sup: string;
-  postgrado: string;
-  anio_titulo: string;
-  otros_estudios: string;
-  universidad_otros: string;
-};
 export const fn_fp_di = async (user_id: string): Promise<{ success: boolean; message?: string; data?: FnFpDi }> => {
   try {
     const current_user = await prisma.user.findUnique({ where: { id: user_id }, include: { formacion_academica: true } });
@@ -248,17 +207,6 @@ export const fn_fp_di = async (user_id: string): Promise<{ success: boolean; mes
   }
 };
 
-export type FnFpEc = {
-  estado: string;
-  titulo_conyuge: string;
-  conyuge_nombre: string;
-  conyuge_nacimiento: string;
-  conyuge_departamento: string;
-  conyuge_provincia: string;
-  conyuge_distrito: string;
-  conyuge_instruccion: string;
-  conyuge_dni: string;
-};
 export const fn_fp_ec = async (user_id: string): Promise<{ success: boolean; message?: string; data?: FnFpEc }> => {
   try {
     const current_user = await prisma.user.findUnique({
@@ -288,14 +236,6 @@ export const fn_fp_ec = async (user_id: string): Promise<{ success: boolean; mes
   } catch (error) {
     return { success: false, message: error instanceof Error ? error.message : "Error al generar el reporte de estado conyugal." };
   }
-};
-
-export type FnFpDh = {
-  n: string[];
-  nombre: string[];
-  lugar_fecha_nacimiento: string[];
-  edad: (string | number)[];
-  instruccion: string[];
 };
 
 export const fn_fp_dh = async (user_id: string): Promise<{ success: boolean; message?: string; data?: FnFpDh }> => {
@@ -337,13 +277,6 @@ export const fn_fp_dh = async (user_id: string): Promise<{ success: boolean; mes
   }
 };
 
-export type FnFpEtGr = {
-  centro_trabajo: string[];
-  cargo: string[];
-  documento: string[];
-  periodo: string[];
-};
-
 export const fn_fp_et_gr = async (user_id: string): Promise<{ success: boolean; message?: string; data?: FnFpEtGr }> => {
   try {
     const current_user = await prisma.user.findUnique({ where: { id: user_id } });
@@ -373,12 +306,6 @@ export const fn_fp_et_gr = async (user_id: string): Promise<{ success: boolean; 
   }
 };
 
-export type FnFpEt = {
-  centro_trabajo: string[];
-  cargo: string[];
-  documento: string[];
-  periodo: string[];
-};
 export const fn_ep_et = async (user_id: string): Promise<{ success: boolean; message?: string; data?: FnFpEt }> => {
   try {
     const current_user = await prisma.user.findUnique({ where: { id: user_id }, include: { experience: { include: { file: true } } } });
@@ -400,14 +327,6 @@ export const fn_ep_et = async (user_id: string): Promise<{ success: boolean; mes
   } catch (error) {
     return { success: false, message: error instanceof Error ? error.message : "Error al generar el reporte de experiencia laboral." };
   }
-};
-
-export type FnFpC = {
-  nro: string[];
-  descripcion: string[];
-  horas: string[];
-  duracion: string[];
-  periodo: string[];
 };
 
 export const fn_fp_c = async (user_id: string): Promise<{ success: boolean; message?: string; data?: FnFpC }> => {
