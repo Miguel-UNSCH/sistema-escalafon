@@ -6,6 +6,8 @@ import { Session } from "next-auth";
 import TextAnimate from "./ui/text-animate";
 import { admin_routes } from "@/utils/other";
 import { CardField } from "./custom-fields/card-field";
+import { useTransition } from "react";
+import { generatePDF } from "@/actions/genrate-pdf";
 
 export interface PageContent {
   title: string;
@@ -22,8 +24,20 @@ export interface PageContent {
 }
 
 export const PageContent = ({ content, session, color }: { content: PageContent; session: Session; color: string }) => {
+  const [isPending, startTransition] = useTransition();
+
+  const handleClick = () => {
+    startTransition(async () => {
+      const url = await generatePDF("mi_documento");
+      window.open(url, "_blank");
+    });
+  };
+
   return (
     <div className="flex flex-col gap-5 p-2 px-4 w-full max-w-4xl">
+      <button onClick={handleClick} disabled={isPending} className="bg-blue-600 px-4 py-2 rounded text-white">
+        {isPending ? "Generando..." : "Abrir PDF"}
+      </button>
       <h2 className={`font-primary font-black text-${color} text-3xl tracking-tigh capitalize`}>
         <TextAnimate textList={[content.title]} />
       </h2>
