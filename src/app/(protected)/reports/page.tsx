@@ -14,8 +14,8 @@ const pageContent = {
       description:
         "Responsible for organisation-wide matters. Such as setting the direction of the organisation, approving new ports, adding new maintainers, and cultivating a healthy community.",
       cards: [
+        { title: "ficha personal", description: "Learn how to create full-stack web applications with the Next.js App Router.", path: "/reports/ficha-personal" },
         { title: "computo de tiempo", description: "Learn how to create full-stack web applications with the Next.js App Router.", path: "/reports/time" },
-        { title: "reportes personalizados", description: "Learn how to create full-stack web applications with the Next.js App Router.", path: "/reports/defaults" },
       ],
     },
   ],
