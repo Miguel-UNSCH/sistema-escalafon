@@ -22,6 +22,33 @@ export const getDuration = (from: Date, to: Date) => {
   };
 };
 
+export const getDurationFormatted = (from: Date, to: Date): string => {
+  const start = new Date(from);
+  const end = new Date(to);
+
+  let years = end.getFullYear() - start.getFullYear();
+  let months = end.getMonth() - start.getMonth();
+  let days = end.getDate() - start.getDate();
+
+  if (days < 0) {
+    months -= 1;
+    days += new Date(end.getFullYear(), end.getMonth(), 0).getDate();
+  }
+
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+
+  const parts: string[] = [];
+
+  if (years > 0) parts.push(`${years} ${years === 1 ? "año" : "años"}`);
+  if (months > 0) parts.push(`${months} ${months === 1 ? "mes" : "meses"}`);
+  if (days > 0) parts.push(`${days} ${days === 1 ? "día" : "días"}`);
+
+  return parts.join(" ") || "0 días";
+};
+
 export const formatDate = (d: Date | string): string => {
   const date = new Date(d);
   return date.toLocaleDateString("es-PE", { day: "2-digit", month: "2-digit", year: "numeric" });

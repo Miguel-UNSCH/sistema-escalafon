@@ -1,6 +1,14 @@
-import { FnFpDh, FnFpDi, FnFpEc, FnFpEt, FnFpEtGr, FnFpIp } from "@/actions/reports-action";
+import { FnFpC, FnFpDh, FnFpDi, FnFpEc, FnFpEt, FnFpEtGr, FnFpIp } from "@/actions/reports-action";
 
-export const buildSections = (fp_ip: FnFpIp, fp_di?: FnFpDi | null, fp_ec?: FnFpEc | null, fp_dh?: FnFpDh | null, fp_et_gr?: FnFpEtGr | null, fp_et?: FnFpEt | null) => [
+export const buildSections = (
+  fp_ip: FnFpIp,
+  fp_di?: FnFpDi | null,
+  fp_ec?: FnFpEc | null,
+  fp_dh?: FnFpDh | null,
+  fp_et_gr?: FnFpEtGr | null,
+  fp_et?: FnFpEt | null,
+  fp_c?: FnFpC | null
+) => [
   {
     section: "identificacion",
     title: "Identificación del personal",
@@ -123,21 +131,12 @@ export const buildSections = (fp_ip: FnFpIp, fp_di?: FnFpDi | null, fp_ec?: FnFp
   {
     section: "capacitacion_reciente",
     title: "Capacitación de los dos últimos años",
-    rows: [
-      [
-        { key: "nro", label: "Nº", value: "", colSpan: 1 },
-        { key: "descripcion", label: "Descripción", value: "", colSpan: 5 },
-        { key: "horas", label: "Horas Lectivas", value: "", colSpan: 2 },
-        { key: "duracion", label: "Duración", value: "", colSpan: 2 },
-        { key: "fecha", label: "Fecha", value: "", colSpan: 2 },
-      ],
-      ...Array.from({ length: 5 }).map((_, i) => [
-        { key: `nro-${i}`, label: "", value: `${i + 1}`, colSpan: 1 },
-        { key: `descripcion-${i}`, label: "", value: "", colSpan: 5 },
-        { key: `horas-${i}`, label: "", value: "", colSpan: 2 },
-        { key: `duracion-${i}`, label: "", value: "", colSpan: 2 },
-        { key: `fecha-${i}`, label: "", value: "", colSpan: 2 },
-      ]),
+    table: [
+      { key: "nro", label: "Nº", value: fp_c?.nro, colSpan: 1 },
+      { key: "descripcion", label: "Descripción", value: fp_c?.descripcion, colSpan: 5 },
+      { key: "horas", label: "Horas Lectivas", value: fp_c?.horas, colSpan: 1 },
+      { key: "duracion", label: "Duración", value: fp_c?.duracion, colSpan: 2 },
+      { key: "periodo", label: "Periodo", value: fp_c?.periodo, colSpan: 3 },
     ],
   },
 ];

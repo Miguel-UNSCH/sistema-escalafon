@@ -2,7 +2,7 @@
 
 import { prisma } from "@/config/prisma.config";
 import { fn_date } from "@/helpers";
-import { calculate_age, formatDate, getDuration, getPeriodoString } from "@/helpers/date-helper";
+import { calculate_age, formatDate, getDuration, getDurationFormatted, getPeriodoString } from "@/helpers/date-helper";
 import { cond_lab_op, estadoCivilOp, gradoInstruccionOp, grupoSanguineoOp, lic_condOp, nivelEducativoOp, reg_lab_op, sexoOp, TContratoOp } from "@/constants/options";
 import { Prisma } from "@prisma/client";
 
@@ -399,5 +399,32 @@ export const fn_ep_et = async (user_id: string): Promise<{ success: boolean; mes
     return { success: true, message: "Reporte generado correctamente", data: response };
   } catch (error) {
     return { success: false, message: error instanceof Error ? error.message : "Error al generar el reporte de experiencia laboral." };
+  }
+};
+
+export type FnFpC = {
+  nro: string[];
+  descripcion: string[];
+  horas: string[];
+  duracion: string[];
+  periodo: string[];
+};
+
+export const fn_fp_c = async (user_id: string): Promise<{ success: boolean; message?: string; data?: FnFpC }> => {
+  try {
+    const current_user = await prisma.user.findUnique({ where: { id: user_id }, include: { capacitacion: true } });
+    if (!current_user) throw new Error("Usuario no encontrado.");
+
+    const response = {
+      nro: current_user.capacitacion.map((_, i) => (i + 1).toString()),
+      descripcion: current_user.capacitacion.map((c) => c.materia ?? ""),
+      horas: current_user.capacitacion.map((c) => c.horas_lectivas.toString() ?? ""),
+      duracion: current_user.capacitacion.map((c) => getDurationFormatted((c as any).periodo.from, (c as any).periodo.to)),
+      periodo: current_user.capacitacion.map((c) => `${fn_date((c as any).periodo.from)} - ${fn_date((c as any).periodo.to)}`),
+    };
+
+    return { success: true, message: "Reporte generado correctamente", data: response };
+  } catch (error) {
+    return { success: false, message: error instanceof Error ? error.message : "Error al generar el reporte de capacitación." };
   }
 };
