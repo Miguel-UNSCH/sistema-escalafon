@@ -17,7 +17,7 @@ type TableProps = {
 export const Table: React.FC<TableProps> = ({ items, loading, selectedItem, setSelectedItem }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const tableHeaders = ["N", "Nivel", "Institución", "Carrera/Especialidad", "Periodo", "Archivo"];
+  const tableHeaders = ["N", "Nivel", "Institución", "Carrera/Especialidad", "Facultad", "Periodo", "Archivo"];
 
   const [fileUrls, setFileUrls] = useState<{ [key: string]: string | null }>({});
 
@@ -66,6 +66,7 @@ export const Table: React.FC<TableProps> = ({ items, loading, selectedItem, setS
                     <td className="px-4 lg:px-6 py-3">{nivelEducativoOp.find((i) => i.key === item.nivel)?.value}</td>
                     <td className="px-4 lg:px-6 py-3">{item.institucion}</td>
                     <td className="px-4 lg:px-6 py-3">{item.carrera || "N/A"}</td>
+                    <td className="px-4 lg:px-6 py-3">{item.facultad || "N/A"}</td>
                     <td className="px-4 lg:px-6 py-3">{`${new Date(item.periodo.from).toLocaleDateString()} - ${new Date(item.periodo.to).toLocaleDateString()}`}</td>
                     <td className="px-4 lg:px-6 py-3 rounded-e-md">
                       {fileUrls[item.file.id] ? (

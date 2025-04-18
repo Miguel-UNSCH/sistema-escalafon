@@ -192,10 +192,10 @@ export const fn_fp_di = async (user_id: string): Promise<{ success: boolean; mes
       anio_cetpro: getPeriodoString(cetpro?.periodo as any),
       educ_sup: superior ? nivelEducativoOp.find((n) => n.key === superior.nivel)?.value || "" : "",
       profesion: superior?.carrera || "",
-      facultad: "Facultad de Minas Geologia y Civil", // puedes adaptar si lo obtienes en otro campo
+      facultad: superior?.facultad || "",
       anio_sup: getPeriodoString(superior?.periodo as any),
       universidad_sup: superior?.institucion || "",
-      postgrado: postgrado ? nivelEducativoOp.find((n) => n.key === postgrado.nivel)?.value || "" : "",
+      postgrado: postgrado ? [nivelEducativoOp.find((n) => n.key === postgrado.nivel)?.value, postgrado.carrera].filter(Boolean).join(" - ") : "",
       anio_titulo: getPeriodoString(postgrado?.periodo as any),
       otros_estudios: otros?.tipo || "",
       universidad_otros: otros?.institucion || "",

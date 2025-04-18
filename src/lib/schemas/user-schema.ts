@@ -6,6 +6,7 @@ import { NivelEducativo, TCapacitacion, TDiscapacidad, TEntCertDic } from "./enu
 export const estudiosSchema = z.object({
   institucion: z.string({ required_error: "Institución es requerida" }),
   carrera: z.string().optional(),
+  facultad: z.string().optional(),
   periodo: periodoSchema,
   file: fileSchema.optional(),
   nivel: NivelEducativo,

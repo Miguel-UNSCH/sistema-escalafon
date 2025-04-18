@@ -345,6 +345,7 @@ model FormacionAcademica {
   nivel       NivelEducativo
   institucion String         @db.Citext
   carrera     String?        @db.Citext
+  facultad    String?        @db.Citext
   periodo     Json // {from: DateTime, to: DateTime}
   tipo        String         @default("certificado")
 

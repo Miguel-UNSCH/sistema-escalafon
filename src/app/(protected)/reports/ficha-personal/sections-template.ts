@@ -64,8 +64,8 @@ export const buildSections = ({ ip, di, ec, dh, et_gr, et, c }: FpDataInput) => 
           { key: "educ_sup", label: "Educ. Sup./Universitaria/Técnica", value: di.educ_sup, colSpan: 3 },
           { key: "profesion", label: "Profesión", value: di.profesion, colSpan: 2 },
           { key: "facultad", label: "Facultad", value: di.facultad, colSpan: 2 },
-          { key: "anio_sup", label: "Anio del - al", value: di.anio_sup, colSpan: 2 },
           { key: "universidad_sup", label: "Universidad / Inst. de A.E", value: di.universidad_sup, colSpan: 3 },
+          { key: "anio_sup", label: "Anio del - al", value: di.anio_sup, colSpan: 2 },
         ],
         [
           { key: "postgrado", label: "Post Grado (Especialización)", value: di.postgrado, colSpan: 4 },

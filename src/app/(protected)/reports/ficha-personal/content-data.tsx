@@ -6,15 +6,7 @@ import { buildSections } from "./sections-template";
 import { FpData } from "@/types/reports";
 
 export const ContentData = ({ user_id }: { user_id: string }) => {
-  const [fpData, setFpData] = useState<FpData>({
-    ip: null,
-    di: null,
-    ec: null,
-    dh: null,
-    et_gr: null,
-    et: null,
-    c: null,
-  });
+  const [fpData, setFpData] = useState<FpData>({ ip: null, di: null, ec: null, dh: null, et_gr: null, et: null, c: null });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

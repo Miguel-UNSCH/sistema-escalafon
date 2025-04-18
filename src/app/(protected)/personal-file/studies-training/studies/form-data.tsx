@@ -35,6 +35,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
     defaultValues: {
       institucion: "",
       carrera: "",
+      facultad: "",
       periodo: { from: undefined, to: undefined },
       file: undefined,
       nivel: undefined,
@@ -43,6 +44,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
 
   const nivelSeleccionado = form.watch("nivel");
   const requiereCarrera = ["t", "u", "m", "d", "e"].includes(nivelSeleccionado || "");
+  const requiereFacultad = ["u", "m", "d", "e"].includes(nivelSeleccionado || "");
 
   const onSubmit = async (data: ZEstudioS) => {
     startTransition(async () => {
@@ -80,10 +82,14 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <SelectField control={form.control} name="nivel" label="Formacion Academica *" options={nivelEducativoOp} disabled={!edit} />
 
-          <div className="gap-2 grid grid-cols-2">
-            <InputField control={form.control} name="institucion" label="Nombre de la Institucion *" placeholder="Ingrese el nombre de la institucion" disabled={!edit} />
-            <InputField control={form.control} name="carrera" label="Carrera/Especialidad *" placeholder="Ingrese el nombre de la carrera" disabled={!edit || !requiereCarrera} />
-          </div>
+          <InputField control={form.control} name="institucion" label="Nombre de la Institucion *" placeholder="Ingrese el nombre de la institucion" disabled={!edit} />
+
+          {(requiereCarrera || requiereFacultad) && (
+            <div className="gap-2 grid grid-cols-2">
+              <InputField control={form.control} name="carrera" label="Carrera/Especialidad *" placeholder="Ingrese el nombre de la carrera" disabled={!edit || !requiereCarrera} />
+              <InputField control={form.control} name="facultad" label="Facultad *" placeholder="Ingrese el nombre de la facultad" disabled={!edit || !requiereFacultad} />
+            </div>
+          )}
 
           <div className="gap-4 grid grid-cols-2">
             <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={!edit} />
