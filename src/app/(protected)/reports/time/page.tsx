@@ -8,10 +8,10 @@ import { FnA } from "./fn-a";
 import { FnB, report_timeSchema } from "./fn-b";
 import { FnC } from "./fn-c";
 import { FnD } from "./fn-d";
-// import { time_report } from "@/actions/reports-gn-action";
 import { ContractReportItem, FnData, FnRtBResponse } from "@/types/reports";
 import { fn_report_time } from "@/actions/reports-action";
 import { z } from "zod";
+import toast from "react-hot-toast";
 
 const page = () => {
   const [user_id, setuser_id] = useState<string>("");
@@ -30,9 +30,11 @@ const page = () => {
 
   const handleClick = () => {
     startTransition(async () => {
-      // eslint-disable-next-line no-unused-vars
-      const url = await fn_report_time("time_report", fn_data);
-      // window.open(url, "_blank");
+      const res = await fn_report_time(user_id, fn_data);
+      if (res.success && res.url) {
+        window.open(res.url, "_blank");
+        toast.success("PDF generado correctamente");
+      } else toast.error(res.message || "Error al generar el PDF");
     });
   };
 

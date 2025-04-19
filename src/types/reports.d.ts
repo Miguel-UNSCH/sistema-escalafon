@@ -1,3 +1,6 @@
+export type Rect = { x: number; y: number; width: number; height: number };
+export type PrepareRowFn = (row?: any, indexColumn?: number, indexRow?: number, rectRow?: Rect, rectCell?: Rect) => PDFDocumentWithTables;
+
 export type FnData = {
   fnB?: FnRtBResponse;
   fnC?: ContractReportItem[];
