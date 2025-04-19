@@ -47,3 +47,5 @@ next-env.d.ts
 bun.lock
 package-lock.json
 pnpm-lock.yaml
+
+public/pdf

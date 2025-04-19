@@ -8,17 +8,8 @@ import { FnA } from "./fn-a";
 import { FnB } from "./fn-b";
 import { FnC } from "./fn-c";
 import { FnD } from "./fn-d";
-import { ContractReportItem } from "@/actions/reports-action";
 import { time_report } from "@/actions/reports-gn-action";
-import { FnRtBResponse } from "@/types/reports";
-
-type FnData = {
-  fnB?: {
-    data: FnRtBResponse;
-    motivo: string;
-  };
-  fnC?: ContractReportItem[];
-};
+import { FnData, FnRtBResponse } from "@/types/reports";
 
 const page = () => {
   const [user_id, setuser_id] = useState<string>("");

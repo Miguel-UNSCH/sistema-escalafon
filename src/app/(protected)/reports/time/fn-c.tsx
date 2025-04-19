@@ -1,6 +1,7 @@
 "use client";
 
-import { ContractReportItem, fn_rt_c } from "@/actions/reports-action";
+import { fn_rt_c } from "@/actions/reports-action";
+import { ContractReportItem } from "@/types/reports";
 import { useEffect, useState } from "react";
 
 export type FnProps = {

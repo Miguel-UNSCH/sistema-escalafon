@@ -1,3 +1,21 @@
+export type FnData = {
+  fnB?: {
+    data: FnRtBResponse;
+    motivo: string;
+  };
+  fnC?: ContractReportItem[];
+};
+
+export type ContractReportItem = {
+  documento: string;
+  inicio: string;
+  termino: string;
+  anios: string;
+  meses: string;
+  dias: string;
+  cargo: string;
+};
+
 export interface FnRtBResponse {
   name_lastname: string;
   t_contract: string;

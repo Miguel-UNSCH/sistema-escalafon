@@ -1,10 +1,10 @@
 "use server";
 
+import { ContractReportItem } from "@/types/reports";
 import fs from "fs/promises";
 import path from "path";
 import PDFDocumentWithTables from "pdfkit-table";
 import PDFDocument from "pdfkit-table";
-import { ContractReportItem } from "./reports-action";
 
 type FnData = {
   fnB?: {
