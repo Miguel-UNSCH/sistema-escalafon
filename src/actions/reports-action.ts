@@ -17,6 +17,7 @@ import PDFDocument from "pdfkit-table";
 
 export const fn_report_time = async (user_id: string, data: FnData): Promise<{ success: boolean; message?: string; url?: string }> => {
   try {
+    const res_esc = "fredy almicar navarro ramos";
     const filename = `${user_id}`;
     const { fnB, fnC } = data;
 
@@ -35,6 +36,9 @@ export const fn_report_time = async (user_id: string, data: FnData): Promise<{ s
       await fs.writeFile(outputPath, finalBuffer);
     });
 
+    doc.registerFont("Poppins", path.resolve("public", "fonts", "poppins", "Poppins-Regular.ttf"));
+    doc.registerFont("Poppins-Bold", path.resolve("public", "fonts", "poppins", "Poppins-Bold.ttf"));
+
     const pageWidth = doc.page.width - doc.page.margins.left - doc.page.margins.right;
 
     doc.image(brandLogoPath, doc.page.margins.left, 30, {
@@ -43,8 +47,8 @@ export const fn_report_time = async (user_id: string, data: FnData): Promise<{ s
     });
 
     doc.moveDown(3);
-    doc.fontSize(12).text("COMPUTO DE TIEMPO", { align: "center" });
-    doc.moveDown(1);
+    doc.font("Poppins-Bold").fontSize(12).text("COMPUTO DE TIEMPO", { align: "center" });
+    doc.moveDown(0.5);
 
     const options = {
       hideHeader: true,
@@ -56,9 +60,9 @@ export const fn_report_time = async (user_id: string, data: FnData): Promise<{ s
         }
 
         if ([0, 1, 3, 4].includes(iCol)) {
-          doc.font("Helvetica-Bold");
+          doc.font("Poppins-Bold");
         } else {
-          doc.font("Helvetica");
+          doc.font("Poppins");
         }
 
         return doc;
@@ -76,70 +80,14 @@ export const fn_report_time = async (user_id: string, data: FnData): Promise<{ s
           { property: "col6", width: 170 },
         ],
         datas: [
-          {
-            col1: "APELLIDOS Y NOMBRES",
-            col2: ":",
-            col3: fnB?.name_lastname ?? "",
-            col4: "REG. LAB.",
-            col5: ":",
-            col6: fnB?.reg_lab ?? "",
-          },
-          {
-            col1: "CONDICIÓN LABORAL",
-            col2: ":",
-            col3: fnB?.cond_lab ?? "",
-            col4: "CARGO",
-            col5: ":",
-            col6: fnB?.cargo ?? "",
-          },
-          {
-            col1: "OFICINA",
-            col2: ":",
-            col3: fnB?.oficina ?? "",
-            col4: "LUG. NAC.",
-            col5: ":",
-            col6: fnB?.lug_nac ?? "",
-          },
-          {
-            col1: "TIPO DE CONTRATO",
-            col2: ":",
-            col3: fnB?.t_contract ?? "",
-            col4: "EST. CIVIL",
-            col5: ":",
-            col6: fnB?.est_civil ?? "",
-          },
-          {
-            col1: "PROFESIÓN",
-            col2: ":",
-            col3: fnB?.profesion ?? "",
-            col4: "DOMICILIO",
-            col5: ":",
-            col6: fnB?.domicilio ?? "",
-          },
-          {
-            col1: "NIVEL REMUNERATIVO",
-            col2: ":",
-            col3: fnB?.n_rem ?? "",
-            col4: "",
-            col5: "",
-            col6: "",
-          },
-          {
-            col1: "FECHA NACIMIENTO",
-            col2: ":",
-            col3: fnB?.fecha_nac.toUpperCase() ?? "",
-            col4: "MOTIVO",
-            col5: ":",
-            col6: fnB?.motivo.toUpperCase() ?? "",
-          },
-          {
-            col1: "N° DNI",
-            col2: ":",
-            col3: fnB?.dni ?? "",
-            col4: "FECHA",
-            col5: ":",
-            col6: fnB?.fecha.toUpperCase() ?? "",
-          },
+          { col1: "APELLIDOS Y NOMBRES", col2: ":", col3: fnB?.name_lastname ?? "", col4: "REG. LAB.", col5: ":", col6: fnB?.reg_lab ?? "" },
+          { col1: "CONDICIÓN LABORAL", col2: ":", col3: fnB?.cond_lab ?? "", col4: "CARGO", col5: ":", col6: fnB?.cargo ?? "" },
+          { col1: "OFICINA", col2: ":", col3: fnB?.oficina ?? "", col4: "LUG. NAC.", col5: ":", col6: fnB?.lug_nac ?? "" },
+          { col1: "TIPO DE CONTRATO", col2: ":", col3: fnB?.t_contract ?? "", col4: "EST. CIVIL", col5: ":", col6: fnB?.est_civil ?? "" },
+          { col1: "PROFESIÓN", col2: ":", col3: fnB?.profesion ?? "", col4: "DOMICILIO", col5: ":", col6: fnB?.domicilio ?? "" },
+          { col1: "NIVEL REMUNERATIVO", col2: ":", col3: fnB?.n_rem ?? "", col4: "", col5: "", col6: "" },
+          { col1: "FECHA NACIMIENTO", col2: ":", col3: fnB?.fecha_nac.toUpperCase() ?? "", col4: "MOTIVO", col5: ":", col6: fnB?.motivo.toUpperCase() ?? "" },
+          { col1: "N° DNI", col2: ":", col3: fnB?.dni ?? "", col4: "FECHA", col5: ":", col6: fnB?.fecha.toUpperCase() ?? "" },
         ],
       },
       options
@@ -176,7 +124,7 @@ export const fn_report_time = async (user_id: string, data: FnData): Promise<{ s
       cargo: item.cargo,
     }));
 
-    for (let i = tableData.length; i < 15; i++) {
+    for (let i = tableData.length; i < 10; i++) {
       tableData.push({
         doc: "",
         start: "",
@@ -220,8 +168,8 @@ export const fn_report_time = async (user_id: string, data: FnData): Promise<{ s
 
           if (rectRow) doc.strokeColor("#ffffff").lineWidth(5).rect(rectRow.x, rectRow.y, rectRow.width, rectRow.height).stroke();
 
-          if (isHeader || isTotalRow) doc.font("Helvetica-Bold").fillColor("#000000");
-          else doc.font("Helvetica").fillColor("#000000");
+          if (isHeader || isTotalRow) doc.font("Poppins-Bold").fillColor("#000000");
+          else doc.font("Poppins").fillColor("#000000");
 
           return doc;
         },
@@ -231,9 +179,9 @@ export const fn_report_time = async (user_id: string, data: FnData): Promise<{ s
     doc.moveDown(4);
     const pageWidth_i = doc.page.width - doc.page.margins.left - doc.page.margins.right;
 
-    doc.font("Helvetica-Bold").fontSize(10).text("GOBIERNO REGIONAL DE AYACUCHO", { align: "center", width: pageWidth_i });
+    doc.font("Poppins-Bold").fontSize(10).text("GOBIERNO REGIONAL DE AYACUCHO", { align: "center", width: pageWidth_i });
 
-    doc.font("Helvetica-Bold").fontSize(10).text("DIRECCIÓN REGIONAL DE RECURSOS HUMANOS", { align: "center", width: pageWidth_i });
+    doc.font("Poppins-Bold").fontSize(10).text("DIRECCIÓN REGIONAL DE RECURSOS HUMANOS", { align: "center", width: pageWidth_i });
 
     doc.moveDown(2);
 
@@ -245,9 +193,12 @@ export const fn_report_time = async (user_id: string, data: FnData): Promise<{ s
       .stroke();
 
     doc.moveDown(0.3);
-    doc.font("Helvetica-Bold").fontSize(10).text("FREDY ALMICAR NAVARRO RAMOS", { align: "center", width: pageWidth_i });
+    doc
+      .font("Poppins-Bold")
+      .fontSize(10)
+      .text(res_esc.toUpperCase() ?? "", { align: "center", width: pageWidth_i });
 
-    doc.font("Helvetica").fontSize(10).text("Resp. de Escalafón", { align: "center", width: pageWidth_i });
+    doc.font("Poppins").fontSize(10).text("Resp. de Escalafón", { align: "center", width: pageWidth_i });
 
     doc.end();
 
