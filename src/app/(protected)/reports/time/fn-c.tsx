@@ -3,7 +3,12 @@
 import { ContractReportItem, fn_rt_c } from "@/actions/reports-action";
 import { useEffect, useState } from "react";
 
-export const FnC = ({ user_id }: FnProps) => {
+export type FnProps = {
+  user_id: string;
+  setFn_data?: (data: ContractReportItem[]) => void;
+};
+
+export const FnC = ({ user_id, setFn_data }: FnProps) => {
   const [data, setData] = useState<ContractReportItem[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -15,15 +20,17 @@ export const FnC = ({ user_id }: FnProps) => {
     { label: "Fecha de Inicio", props: { rowSpan: 2 } },
     { label: "Fecha de Término", props: { rowSpan: 2 } },
     { label: "Total", props: { colSpan: 3 } },
-    { label: "Observaciones", props: { rowSpan: 2 } },
+    { label: "Cargo", props: { rowSpan: 2 } },
   ];
 
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
       const res = await fn_rt_c(user_id);
-      if (res.success && res.data) setData(res.data);
-
+      if (res.success && res.data) {
+        setData(res.data);
+        setFn_data?.(res.data); // <--- aquí notificamos al padre
+      }
       setIsLoading(false);
     };
 
@@ -115,8 +122,4 @@ export const FnC = ({ user_id }: FnProps) => {
       </table>
     </div>
   );
-};
-
-export type FnProps = {
-  user_id: string;
 };

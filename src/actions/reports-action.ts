@@ -5,7 +5,7 @@ import { fn_date } from "@/helpers";
 import { calculate_age, formatDate, getDuration, getDurationFormatted, getPeriodoString } from "@/helpers/date-helper";
 import { cond_lab_op, estadoCivilOp, gradoInstruccionOp, grupoSanguineoOp, lic_condOp, nivelEducativoOp, reg_lab_op, sexoOp, TContratoOp } from "@/constants/options";
 import { Prisma } from "@prisma/client";
-import { FnFpC, FnFpDh, FnFpDi, FnFpEc, FnFpEt, FnFpEtGr, FnFpIp } from "@/types/reports";
+import { FnFpC, FnFpDh, FnFpDi, FnFpEc, FnFpEt, FnFpEtGr, FnFpIp, FnRtBResponse } from "@/types/reports";
 
 export const fn_report_time = async (id: string): Promise<{ success: boolean; message?: string; data?: any }> => {
   try {
@@ -17,7 +17,7 @@ export const fn_report_time = async (id: string): Promise<{ success: boolean; me
   }
 };
 
-export const fn_rt_b = async (user_id: string): Promise<{ success: boolean; message?: string; data?: any }> => {
+export const fn_rt_b = async (user_id: string): Promise<{ success: boolean; message?: string; data?: FnRtBResponse }> => {
   try {
     const current_user = await prisma.user.findUnique({ where: { id: user_id } });
     if (!current_user) throw new Error("Usuario no encontrado.");

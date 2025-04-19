@@ -1,3 +1,21 @@
+export interface FnRtBResponse {
+  name_lastname: string;
+  t_contract: string;
+  cond_lab: string;
+  oficina: string;
+  cargo: string;
+  profesion: string;
+  n_rem: string;
+  fecha_nac: string;
+  dni: string;
+  reg_lab: string;
+  meta: string;
+  lug_nac: string;
+  est_civil: string;
+  domicilio: string;
+  fecha: string;
+}
+
 export type FpData = {
   ip: FnFpIp | null;
   di: FnFpDi | null;

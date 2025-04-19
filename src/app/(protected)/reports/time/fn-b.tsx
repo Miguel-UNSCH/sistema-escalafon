@@ -3,17 +3,22 @@
 import { fn_rt_b } from "@/actions/reports-action";
 import { InputField } from "@/components/custom-fields/input-field";
 import { Form } from "@/components/ui/form";
+import { FnRtBResponse } from "@/types/reports";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-export type FnProps = { user_id: string };
+export type FnProps = {
+  user_id: string;
+  setFn_data?: (data: FnRtBResponse) => void;
+  setMotivo?: (motivo: string) => void;
+};
 
 const motivoSchema = z.object({ motivo: z.string().min(1, "El motivo es obligatorio") });
 
-export const FnB = ({ user_id }: FnProps) => {
-  const [data, setData] = useState<any>(null);
+export const FnB = ({ user_id, setFn_data, setMotivo }: FnProps) => {
+  const [data, setData] = useState<FnRtBResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const form = useForm<z.infer<typeof motivoSchema>>({
@@ -27,13 +32,19 @@ export const FnB = ({ user_id }: FnProps) => {
     const loadData = async () => {
       setIsLoading(true);
       const res = await fn_rt_b(user_id);
-      if (res.success && res.data) setData(res.data);
-
+      if (res.success && res.data) {
+        setData(res.data);
+        setFn_data?.(res.data);
+      }
       setIsLoading(false);
     };
 
     loadData();
-  }, [user_id, form]);
+  }, [user_id]);
+
+  useEffect(() => {
+    setMotivo?.(motivoValue);
+  }, [motivoValue]);
 
   if (isLoading) {
     return (

@@ -8,21 +8,33 @@ import { FnA } from "./fn-a";
 import { FnB } from "./fn-b";
 import { FnC } from "./fn-c";
 import { FnD } from "./fn-d";
-import { generatePDF } from "@/actions/genrate-pdf";
 import { ContractReportItem } from "@/actions/reports-action";
+import { time_report } from "@/actions/reports-gn-action";
+import { FnRtBResponse } from "@/types/reports";
+
+type FnData = {
+  fnB?: {
+    data: FnRtBResponse;
+    motivo: string;
+  };
+  fnC?: ContractReportItem[];
+};
 
 const page = () => {
   const [user_id, setuser_id] = useState<string>("");
-  const [dataFnB, setDataFnB] = useState<any | null>(null); // data de FnB
-  const [motivo, setMotivo] = useState<string>(""); // motivo del form
-  const [dataFnC, setDataFnC] = useState<ContractReportItem[] | null>(null); // data de FnC
+  const [fn_data, setFn_data] = useState<FnData>({
+    fnB: {
+      data: {} as FnRtBResponse,
+      motivo: "",
+    },
+  });
   const [isPending, startTransition] = useTransition();
 
   const handleBack = () => setuser_id("");
 
   const handleClick = () => {
     startTransition(async () => {
-      const url = await generatePDF("time_report");
+      const url = await time_report("time_report", fn_data);
       window.open(url, "_blank");
     });
   };
@@ -39,8 +51,12 @@ const page = () => {
 
           {user_id && (
             <>
-              <FnB user_id={user_id} setData={setDataFnB} setMotivo={setMotivo} />
-              <FnC user_id={user_id} setData={setDataFnC} />
+              <FnB
+                user_id={user_id}
+                setFn_data={(data) => setFn_data((prev) => ({ ...prev, fnB: { ...prev.fnB, data, motivo: prev.fnB?.motivo ?? "" } }))}
+                setMotivo={(motivo) => setFn_data((prev) => ({ ...prev, fnB: { ...prev.fnB!, motivo } }))}
+              />
+              <FnC user_id={user_id} setFn_data={(data) => setFn_data((prev) => ({ ...prev, fnC: data }))} />
               <FnD />
               <div className="flex flex-row justify-end gap-5 font-special text-xs">
                 <Button onClick={handleBack} className="bg-mantle px-4 py-2 text-text hover:text-base">
