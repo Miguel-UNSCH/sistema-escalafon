@@ -6,18 +6,19 @@ import { calculate_age, formatDate, getDuration, getDurationFormatted, getPeriod
 import { cond_lab_op, estadoCivilOp, gradoInstruccionOp, grupoSanguineoOp, lic_condOp, nivelEducativoOp, reg_lab_op, sexoOp, TContratoOp } from "@/constants/options";
 import { Prisma } from "@prisma/client";
 import { ContractReportItem, FnFpC, FnFpDh, FnFpDi, FnFpEc, FnFpEt, FnFpEtGr, FnFpIp, FnRtBResponse } from "@/types/reports";
+import { report_timeSchema } from "@/app/(protected)/reports/time/fn-b";
+import { z } from "zod";
 
-export const fn_report_time = async (id: string): Promise<{ success: boolean; message?: string; data?: any }> => {
+export const fn_report_time = async (user_id: string, data: any): Promise<{ success: boolean; message?: string; url?: string }> => {
   try {
-    // eslint-disable-next-line no-console
-    console.log(id);
-    return { success: true, message: "Reporte generado correctamente", data: {} };
+    return { success: true, message: "Reporte generado correctamente", url: `/pdf/${user_id}.pdf` };
   } catch (error: unknown) {
     return { success: false, message: error instanceof Error ? error.message : "Error al generar el reporte de tiempo." };
   }
 };
 
-export const fn_rt_b = async (user_id: string): Promise<{ success: boolean; message?: string; data?: FnRtBResponse }> => {
+export const fn_rt_b = async (user_id: string, data: z.infer<typeof report_timeSchema>): Promise<{ success: boolean; message?: string; data?: FnRtBResponse }> => {
+  const { init, end } = data ?? {};
   try {
     const current_user = await prisma.user.findUnique({ where: { id: user_id } });
     if (!current_user) throw new Error("Usuario no encontrado.");
@@ -29,7 +30,18 @@ export const fn_rt_b = async (user_id: string): Promise<{ success: boolean; mess
       include: { ucd: { include: { cargoDependencia: { include: { cargo: true, dependencia: true } } } } },
     });
 
-    const contracts_ord = contracts.sort((a, b) => {
+    const filtered = contracts.filter((c) => {
+      const from = new Date((c as ContractRecord).periodo.from);
+      const to = new Date((c as ContractRecord).periodo.to);
+
+      if (init && end) return from <= end && to >= init;
+      if (init && !end) return to >= init;
+      if (!init && end) return from <= end;
+
+      return true;
+    });
+
+    const contracts_ord = filtered.sort((a, b) => {
       const dateA = new Date((a as ContractRecord).periodo.from);
       const dateB = new Date((b as ContractRecord).periodo.from);
       return dateB.getTime() - dateA.getTime();
@@ -61,6 +73,7 @@ export const fn_rt_b = async (user_id: string): Promise<{ success: boolean; mess
       lug_nac: `${personal_data?.ubigeo?.departamento ?? ""} - ${personal_data?.ubigeo?.provincia ?? ""} - ${personal_data?.ubigeo?.distrito ?? ""}`,
       est_civil: estadoCivilOp.find((i) => i.key === personal_data?.estado_civil)?.value ?? "N/A",
       domicilio: personal_data?.domicilio ?? "",
+      motivo: data.motivo ?? "",
       fecha: fn_date(new Date()),
     };
 
@@ -75,7 +88,8 @@ export type ContractRecord = Omit<TFnRtC, "periodo"> & {
   periodo: { from: string; to: string };
 };
 
-export const fn_rt_c = async (user_id: string): Promise<{ success: boolean; message?: string; data?: ContractReportItem[] }> => {
+export const fn_rt_c = async (user_id: string, data: z.infer<typeof report_timeSchema>): Promise<{ success: boolean; message?: string; data?: ContractReportItem[] }> => {
+  const { init, end } = data ?? {};
   try {
     const current_user = await prisma.user.findUnique({ where: { id: user_id } });
     if (!current_user) throw new Error("Usuario no encontrado.");
@@ -85,7 +99,19 @@ export const fn_rt_c = async (user_id: string): Promise<{ success: boolean; mess
       include: { ucd: { include: { cargoDependencia: { include: { cargo: true, dependencia: true } } } } },
     });
     if (!contracts) throw new Error("Contratos no encontrados.");
-    const contracts_ord = contracts
+
+    const filtered = contracts.filter((c) => {
+      const from = new Date((c as ContractRecord).periodo.from);
+      const to = new Date((c as ContractRecord).periodo.to);
+
+      if (init && end) return from <= end && to >= init;
+      if (init && !end) return to >= init;
+      if (!init && end) return from <= end;
+
+      return true;
+    });
+
+    const contracts_ord = filtered
       .sort((a, b) => new Date((b as ContractRecord).periodo.from).getTime() - new Date((a as ContractRecord).periodo.from).getTime())
       .map((c): ContractReportItem => {
         const { from, to } = (c as ContractRecord).periodo;

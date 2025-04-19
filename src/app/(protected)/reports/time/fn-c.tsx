@@ -3,13 +3,16 @@
 import { fn_rt_c } from "@/actions/reports-action";
 import { ContractReportItem } from "@/types/reports";
 import { useEffect, useState } from "react";
+import { report_timeSchema } from "./fn-b";
+import { z } from "zod";
 
 export type FnProps = {
   user_id: string;
   setFn_data?: (data: ContractReportItem[]) => void;
+  formValues?: z.infer<typeof report_timeSchema>;
 };
 
-export const FnC = ({ user_id, setFn_data }: FnProps) => {
+export const FnC = ({ user_id, setFn_data, formValues }: FnProps) => {
   const [data, setData] = useState<ContractReportItem[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -27,16 +30,23 @@ export const FnC = ({ user_id, setFn_data }: FnProps) => {
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
-      const res = await fn_rt_c(user_id);
+      const res = await fn_rt_c(
+        user_id,
+        formValues ?? {
+          motivo: "sin especificar",
+          init: undefined,
+          end: undefined,
+        }
+      );
       if (res.success && res.data) {
         setData(res.data);
-        setFn_data?.(res.data); // <--- aquí notificamos al padre
+        setFn_data?.(res.data);
       }
       setIsLoading(false);
     };
 
     loadData();
-  }, [user_id]);
+  }, [user_id, formValues]); // <- Dependencia de formValues también
 
   if (isLoading) {
     return (

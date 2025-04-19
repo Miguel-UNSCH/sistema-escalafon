@@ -1,8 +1,5 @@
 export type FnData = {
-  fnB?: {
-    data: FnRtBResponse;
-    motivo: string;
-  };
+  fnB?: FnRtBResponse;
   fnC?: ContractReportItem[];
 };
 
@@ -30,6 +27,7 @@ export interface FnRtBResponse {
   meta: string;
   lug_nac: string;
   est_civil: string;
+  motivo: string;
   domicilio: string;
   fecha: string;
 }

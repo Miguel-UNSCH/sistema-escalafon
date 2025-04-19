@@ -5,19 +5,24 @@ import React, { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CloudDownload } from "lucide-react";
 import { FnA } from "./fn-a";
-import { FnB } from "./fn-b";
+import { FnB, report_timeSchema } from "./fn-b";
 import { FnC } from "./fn-c";
 import { FnD } from "./fn-d";
-import { time_report } from "@/actions/reports-gn-action";
-import { FnData, FnRtBResponse } from "@/types/reports";
+// import { time_report } from "@/actions/reports-gn-action";
+import { ContractReportItem, FnData, FnRtBResponse } from "@/types/reports";
+import { fn_report_time } from "@/actions/reports-action";
+import { z } from "zod";
 
 const page = () => {
   const [user_id, setuser_id] = useState<string>("");
   const [fn_data, setFn_data] = useState<FnData>({
-    fnB: {
-      data: {} as FnRtBResponse,
-      motivo: "",
-    },
+    fnB: {} as FnRtBResponse,
+    fnC: [] as ContractReportItem[],
+  });
+  const [formValues, setFormValues] = useState<z.infer<typeof report_timeSchema>>({
+    motivo: "sin especificar",
+    init: undefined,
+    end: undefined,
   });
   const [isPending, startTransition] = useTransition();
 
@@ -25,8 +30,9 @@ const page = () => {
 
   const handleClick = () => {
     startTransition(async () => {
-      const url = await time_report("time_report", fn_data);
-      window.open(url, "_blank");
+      // eslint-disable-next-line no-unused-vars
+      const url = await fn_report_time("time_report", fn_data);
+      // window.open(url, "_blank");
     });
   };
 
@@ -42,12 +48,8 @@ const page = () => {
 
           {user_id && (
             <>
-              <FnB
-                user_id={user_id}
-                setFn_data={(data) => setFn_data((prev) => ({ ...prev, fnB: { ...prev.fnB, data, motivo: prev.fnB?.motivo ?? "" } }))}
-                setMotivo={(motivo) => setFn_data((prev) => ({ ...prev, fnB: { ...prev.fnB!, motivo } }))}
-              />
-              <FnC user_id={user_id} setFn_data={(data) => setFn_data((prev) => ({ ...prev, fnC: data }))} />
+              <FnB user_id={user_id} setFnDataFull={({ data }) => setFn_data((prev) => ({ ...prev, fnB: data }))} setFormValues={setFormValues} />
+              <FnC user_id={user_id} setFn_data={(data) => setFn_data((prev) => ({ ...prev, fnC: data }))} formValues={formValues ?? undefined} />
               <FnD />
               <div className="flex flex-row justify-end gap-5 font-special text-xs">
                 <Button onClick={handleBack} className="bg-mantle px-4 py-2 text-text hover:text-base">
