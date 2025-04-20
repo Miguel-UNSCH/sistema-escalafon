@@ -3,6 +3,23 @@
     <link rel="stylesheet" href="fp-report-style.css" />
   </head>
   <body>
+    <header class="report__header">
+      <div class="report__header-left">
+        <div class="report__org-text">
+          <p>OFICINA REGIONAL DE ADMINISTRACIÓN</p>
+          <p>OFICINA DE RECURSOS HUMANOS</p>
+          <p>UNIDAD DE ADMINISTRACIÓN DEL PERSONAL</p>
+        </div>
+        <div class="report__logo">
+          {{logo}}
+          <!-- Este incluye directamente <img src="data:image/png;base64,..."> -->
+        </div>
+      </div>
+      <div class="report__header-photo"></div>
+    </header>
+
+    <h1 class="report__title">FICHA DE DATOS PERSONALES</h1>
+
     <h2 class="report__section-title">Identificación del personal</h2>
     <section class="report__grid">
       <!-- Fila 1 -->
@@ -223,6 +240,8 @@
         <p class="report__value">{{conyuge_dni}}</p>
       </div>
     </section>
+
+    <div class="page-break"></div>
 
     <h2 class="report__section-title">Datos de los hijos</h2>
     <section class="report__grid">

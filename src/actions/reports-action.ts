@@ -193,6 +193,11 @@ export const fn_report_fp = async (user_id: string): Promise<{ success: boolean;
       c: await getData(() => fn_fp_c(user_id)),
     };
 
+    const logoPath = path.resolve("public", "logo", "logo.png");
+    const logoBuffer = await fs.readFile(logoPath);
+    const logoBase64 = logoBuffer.toString("base64");
+    const logoSrc = `data:image/png;base64,${logoBase64}`;
+
     // Lee HTML y CSS desde los archivos de plantilla
     const htmlPath = path.resolve("src/templates/fp-report-sample.html");
     const cssPath = path.resolve("src/templates/fp-report-style.css");
@@ -203,6 +208,8 @@ export const fn_report_fp = async (user_id: string): Promise<{ success: boolean;
     // Inserta el CSS directamente en el HTML para que Puppeteer lo lea
     htmlContent = htmlContent.replace(/<link rel="stylesheet" href="fp-report-style\.css"\s*\/?>/, `<style>${cssContent}</style>`);
     htmlContent = injectFpData(htmlContent, data); // 👈 ahora inyecta los valores reales
+    htmlContent = htmlContent.replace("{{logo}}", `<img src="${logoSrc}" alt="Logo" class="report__logo-img" />`);
+
     // Define ruta de salida
     const filename = `fp-${user_id}.pdf`;
     const outputDir = path.resolve("public", "pdf");
@@ -214,7 +221,24 @@ export const fn_report_fp = async (user_id: string): Promise<{ success: boolean;
     const browser = await puppeteer.launch({ headless: "shell", args: ["--no-sandbox", "--disable-setuid-sandbox"] });
     const page = await browser.newPage();
     await page.setContent(htmlContent, { waitUntil: "networkidle0" });
-    await page.pdf({ path: outputPath, format: "A4", printBackground: true });
+    await page.pdf({
+      path: outputPath,
+      format: "A4",
+      printBackground: true,
+      displayHeaderFooter: true,
+      margin: {
+        top: "40px",
+        bottom: "60px",
+        left: "40px",
+        right: "40px",
+      },
+      footerTemplate: `
+        <div style="width:100%; text-align:center; font-size:9px; color:#999; padding-top:5px;">
+          Página <span class="pageNumber"></span> de <span class="totalPages"></span>
+        </div>
+      `,
+      headerTemplate: `<div></div>`, // sin encabezado
+    });
     await browser.close();
 
     return { success: true, message: "PDF generado correctamente", url: `/pdf/${filename}` };
