@@ -26,6 +26,85 @@ export const fn_report_fp = async (user_id: string): Promise<{ success: boolean;
     }
   };
 
+  function renderChildrenRows(data: FpDataInput): string {
+    const { dh } = data;
+    if (!dh) return "";
+
+    const rowCount = Math.max(dh.n.length, dh.nombre.length, dh.lugar_fecha_nacimiento.length, dh.edad.length, dh.instruccion.length);
+
+    let rows = "";
+    for (let i = 0; i < rowCount; i++) {
+      rows += `
+        <div class="report__cell report__cell--1"><p class="report__value">${dh.n[i] ?? ""}</p></div>
+        <div class="report__cell report__cell--4"><p class="report__value">${dh.nombre[i] ?? ""}</p></div>
+        <div class="report__cell report__cell--4"><p class="report__value">${dh.lugar_fecha_nacimiento[i] ?? ""}</p></div>
+        <div class="report__cell report__cell--1"><p class="report__value">${dh.edad[i] ?? ""}</p></div>
+        <div class="report__cell report__cell--2 report__cell--end"><p class="report__value">${dh.instruccion[i] ?? ""}</p></div>
+      `;
+    }
+
+    return rows;
+  }
+
+  function renderExperienciaGRRows(data: FpDataInput): string {
+    const { et_gr } = data;
+    if (!et_gr) return "";
+
+    const max = Math.max(et_gr.centro_trabajo.length, et_gr.cargo.length, et_gr.documento.length, et_gr.periodo.length);
+
+    let rows = "";
+
+    for (let i = 0; i < max; i++) {
+      rows += `
+        <div class="report__cell report__cell--3"><p class="report__value">${et_gr.centro_trabajo[i] ?? ""}</p></div>
+        <div class="report__cell report__cell--3"><p class="report__value">${et_gr.cargo[i] ?? ""}</p></div>
+        <div class="report__cell report__cell--4"><p class="report__value">${et_gr.documento[i] ?? ""}</p></div>
+        <div class="report__cell report__cell--2 report__cell--end"><p class="report__value">${et_gr.periodo[i] ?? ""}</p></div>
+      `;
+    }
+
+    return rows;
+  }
+
+  function renderExperienciaGeneralRows(data: FpDataInput): string {
+    const { et } = data;
+    if (!et) return "";
+
+    const max = Math.max(et.centro_trabajo.length, et.cargo.length, et.documento.length, et.periodo.length);
+
+    let rows = "";
+    for (let i = 0; i < max; i++) {
+      rows += `
+        <div class="report__cell report__cell--3"><p class="report__value">${et.centro_trabajo[i] ?? ""}</p></div>
+        <div class="report__cell report__cell--2"><p class="report__value">${et.cargo[i] ?? ""}</p></div>
+        <div class="report__cell report__cell--4"><p class="report__value">${et.documento[i] ?? ""}</p></div>
+        <div class="report__cell report__cell--3 report__cell--end"><p class="report__value">${et.periodo[i] ?? ""}</p></div>
+      `;
+    }
+
+    return rows;
+  }
+
+  function renderCapacitacionRows(data: FpDataInput): string {
+    const { c } = data;
+    if (!c) return "";
+
+    const max = Math.max(c.nro.length, c.descripcion.length, c.horas.length, c.duracion.length, c.periodo.length);
+
+    let rows = "";
+    for (let i = 0; i < max; i++) {
+      rows += `
+        <div class="report__cell report__cell--1"><p class="report__value">${c.nro[i] ?? ""}</p></div>
+        <div class="report__cell report__cell--5"><p class="report__value">${c.descripcion[i] ?? ""}</p></div>
+        <div class="report__cell report__cell--1"><p class="report__value">${c.horas[i] ?? ""}</p></div>
+        <div class="report__cell report__cell--2"><p class="report__value">${c.duracion[i] ?? ""}</p></div>
+        <div class="report__cell report__cell--3 report__cell--end"><p class="report__value">${c.periodo[i] ?? ""}</p></div>
+      `;
+    }
+
+    return rows;
+  }
+
   function injectFpData(template: string, data: FpDataInput): string {
     if (!data.ip) return template;
 
@@ -93,6 +172,12 @@ export const fn_report_fp = async (user_id: string): Promise<{ success: boolean;
     for (const [key, value] of Object.entries(replacements)) {
       result = result.replaceAll(`{{${key}}}`, value);
     }
+
+    // 👇 Aquí se inserta el bloque dinámico de hijos
+    result = result.replace("{{children_rows}}", renderChildrenRows(data));
+    result = result.replace("{{experiencia_trabajo_gr_rows}}", renderExperienciaGRRows(data));
+    result = result.replace("{{experiencia_trabajo_rows}}", renderExperienciaGeneralRows(data));
+    result = result.replace("{{capacitacion_reciente_rows}}", renderCapacitacionRows(data));
 
     return result;
   }

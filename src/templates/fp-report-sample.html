@@ -223,5 +223,57 @@
         <p class="report__value">{{conyuge_dni}}</p>
       </div>
     </section>
+
+    <h2 class="report__section-title">Datos de los hijos</h2>
+    <section class="report__grid">
+      <!-- HEADER FIJO -->
+      <div class="report__cell report__cell--1"><p class="report__label">Nº</p></div>
+      <div class="report__cell report__cell--4"><p class="report__label">Apellidos y Nombres</p></div>
+      <div class="report__cell report__cell--4"><p class="report__label">Lugar y fecha de nacimiento</p></div>
+      <div class="report__cell report__cell--1"><p class="report__label">Edad</p></div>
+      <div class="report__cell report__cell--2 report__cell--end"><p class="report__label">Grado de Instrucción</p></div>
+
+      <!-- FILAS DINÁMICAS -->
+      {{children_rows}}
+    </section>
+
+    <h2 class="report__section-title">Experiencia de trabajo dentro del gobierno regional</h2>
+    <section class="report__grid">
+      <!-- Cabecera fija -->
+      <div class="report__cell report__cell--3"><p class="report__label">Dependencia / Oficina</p></div>
+      <div class="report__cell report__cell--3"><p class="report__label">Cargo</p></div>
+      <div class="report__cell report__cell--4"><p class="report__label">Documento que sustenta</p></div>
+      <div class="report__cell report__cell--2 report__cell--end"><p class="report__label">Periodo</p></div>
+
+      <!-- Filas dinámicas -->
+      {{experiencia_trabajo_gr_rows}}
+    </section>
+
+    <!-- Experiencia de trabajo -->
+    <h2 class="report__section-title">Experiencia de trabajo</h2>
+    <section class="report__grid">
+      <!-- Cabecera -->
+      <div class="report__cell report__cell--3"><p class="report__label">Centro de Trabajo</p></div>
+      <div class="report__cell report__cell--2"><p class="report__label">Cargo</p></div>
+      <div class="report__cell report__cell--4"><p class="report__label">Documento que sustenta</p></div>
+      <div class="report__cell report__cell--3 report__cell--end"><p class="report__label">Año que laboró</p></div>
+
+      <!-- Filas dinámicas -->
+      {{experiencia_trabajo_rows}}
+    </section>
+
+    <!-- Capacitación reciente -->
+    <h2 class="report__section-title">Capacitación de los dos últimos años</h2>
+    <section class="report__grid">
+      <!-- Cabecera -->
+      <div class="report__cell report__cell--1"><p class="report__label">Nº</p></div>
+      <div class="report__cell report__cell--5"><p class="report__label">Descripción</p></div>
+      <div class="report__cell report__cell--1"><p class="report__label">Horas Lectivas</p></div>
+      <div class="report__cell report__cell--2"><p class="report__label">Duración</p></div>
+      <div class="report__cell report__cell--3 report__cell--end"><p class="report__label">Periodo</p></div>
+
+      <!-- Filas dinámicas -->
+      {{capacitacion_reciente_rows}}
+    </section>
   </body>
 </html>

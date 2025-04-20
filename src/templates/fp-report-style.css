@@ -65,6 +65,9 @@ body {
 .report__cell--4 {
   grid-column: span 4;
 }
+.report__cell--5 {
+  grid-column: span 5;
+}
 .report__cell--6 {
   grid-column: span 6;
 }
