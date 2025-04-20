@@ -1,0 +1,73 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+
+body {
+  font-family: "Poppins", sans-serif;
+  font-size: 10px;
+  padding: 40px;
+  color: #4c4f69;
+}
+
+.report__section-title {
+  font-size: 14px;
+  margin: 24px 0 8px 0;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #4c4f69;
+}
+
+.report__grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  border-top: 1px solid #4c4f69;
+  border-left: 1px solid #4c4f69;
+}
+
+.report__cell {
+  border-right: 1px solid #4c4f69;
+  border-bottom: 1px solid #4c4f69;
+  padding: 2px 4px;
+  font-size: 10px;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.report__cell--end {
+  border-right: 1px solid #4c4f69;
+}
+
+/* Etiquetas e información */
+.report__label {
+  font-weight: 600;
+  color: #4c4f69;
+  font-size: 10px;
+  margin: 0;
+}
+
+.report__value {
+  font-weight: 400;
+  color: #6c6f85;
+  font-size: 10px;
+  margin: 0;
+}
+
+/* Tamaños por colSpan (grid-column: span N) */
+.report__cell--1 {
+  grid-column: span 1;
+}
+.report__cell--2 {
+  grid-column: span 2;
+}
+.report__cell--3 {
+  grid-column: span 3;
+}
+.report__cell--4 {
+  grid-column: span 4;
+}
+.report__cell--6 {
+  grid-column: span 6;
+}
+.report__cell--12 {
+  grid-column: span 12;
+}

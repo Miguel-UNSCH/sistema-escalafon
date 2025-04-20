@@ -1,15 +1,26 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import { FnA } from "../time/fn-a";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CloudDownload } from "lucide-react";
 import { ContentData } from "./content-data";
+import { fn_report_fp } from "@/actions/reports-action";
 
 const page = () => {
   const [user_id, setuser_id] = useState<string>("");
+  const [isPending, startTransition] = useTransition();
 
   const handleBack = () => setuser_id("");
+
+  const handleClick = () => {
+    startTransition(async () => {
+      const res = await fn_report_fp(user_id);
+      if (res.success && res.url) {
+        window.open(res.url, "_blank");
+      }
+    });
+  };
 
   return (
     <div className="p-5 w-full h-full">
@@ -30,9 +41,9 @@ const page = () => {
                   Regresar
                 </Button>
 
-                <Button className="flex flex-row items-center bg-mantle hover:bg-green px-4 py-2 text-text hover:text-base">
+                <Button className="flex flex-row items-center bg-mantle hover:bg-green px-4 py-2 text-text hover:text-base" onClick={handleClick} disabled={isPending}>
                   <CloudDownload />
-                  Descargar Reporte
+                  {isPending ? "Generando..." : "Descargar Reporte"}
                 </Button>
               </div>
             </>

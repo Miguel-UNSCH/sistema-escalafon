@@ -5,20 +5,143 @@ import { fn_date } from "@/helpers";
 import { calculate_age, formatDate, getDuration, getDurationFormatted, getPeriodoString } from "@/helpers/date-helper";
 import { cond_lab_op, estadoCivilOp, gradoInstruccionOp, grupoSanguineoOp, lic_condOp, nivelEducativoOp, reg_lab_op, sexoOp, TContratoOp } from "@/constants/options";
 import { Prisma } from "@prisma/client";
-import { ContractReportItem, FnFpC, FnFpDh, FnFpDi, FnFpEc, FnFpEt, FnFpEtGr, FnFpIp, FnRtBResponse, PrepareRowFn } from "@/types/reports";
+import { ContractReportItem, FnFpC, FnFpDh, FnFpDi, FnFpEc, FnFpEt, FnFpEtGr, FnFpIp, FnRtBResponse, FpDataInput, PrepareRowFn } from "@/types/reports";
 import { report_timeSchema } from "@/app/(protected)/reports/time/fn-b";
 import { z } from "zod";
 
 import { FnData } from "@/types/reports";
+import puppeteer from "puppeteer";
 import fs from "fs/promises";
 import path from "path";
 import PDFDocumentWithTables from "pdfkit-table";
 import PDFDocument from "pdfkit-table";
 
+export const fn_report_fp = async (user_id: string): Promise<{ success: boolean; message?: string; url?: string }> => {
+  const getData = async <T>(fn: () => Promise<{ success: boolean; data?: T }>): Promise<T | undefined> => {
+    try {
+      const res = await fn();
+      return res.success ? res.data : undefined;
+    } catch {
+      return undefined;
+    }
+  };
+
+  function injectFpData(template: string, data: FpDataInput): string {
+    if (!data.ip) return template;
+
+    const replacements: Record<string, string> = {
+      apellido_paterno: data.ip.apellido_paterno ?? "",
+      apellido_materno: data.ip.apellido_materno ?? "",
+      nombres: data.ip.nombres ?? "",
+      sexo: data.ip.sexo ?? "",
+      edad: data.ip.edad?.toString() ?? "",
+      dni: data.ip.dni ?? "",
+      carnet_extranjeria: data.ip.carnet_extranjeria ?? "",
+      autogenerado: data.ip.autogenerado ?? "",
+      licencia_conducir: data.ip.licencia_conducir ?? "",
+      grupo_sanguineo: data.ip.grupo_sanguineo ?? "",
+      fecha_ingreso: data.ip.fecha_ingreso ?? "",
+      unidad_trabajo: data.ip.unidad_trabajo ?? "",
+      cargo: data.ip.cargo ?? "",
+      fecha_nacimiento: data.ip.fecha_nacimiento ?? "",
+      distrito: data.ip.distrito ?? "",
+      provincia: data.ip.provincia ?? "",
+      departamento: data.ip.departamento ?? "",
+      domicilio: data.ip.domicilio ?? "",
+      celular: data.ip.celular ?? "",
+      regimen: data.ip.regimen ?? "",
+      discapacidad: data.ip.discapacidad ?? "",
+      situacion: data.ip.situacion ?? "",
+      correo: data.ip.correo ?? "",
+    };
+
+    if (data.di) {
+      Object.assign(replacements, {
+        primaria: data.di.primaria ?? "",
+        anio_primaria: data.di.anio_primaria ?? "",
+        secundaria: data.di.secundaria ?? "",
+        anio_secundaria: data.di.anio_secundaria ?? "",
+        cetpro: data.di.cetpro ?? "",
+        anio_cetpro: data.di.anio_cetpro ?? "",
+        educ_sup: data.di.educ_sup ?? "",
+        profesion: data.di.profesion ?? "",
+        facultad: data.di.facultad ?? "",
+        universidad_sup: data.di.universidad_sup ?? "",
+        anio_sup: data.di.anio_sup ?? "",
+        postgrado: data.di.postgrado ?? "",
+        anio_titulo: data.di.anio_titulo ?? "",
+        otros_estudios: data.di.otros_estudios ?? "",
+        universidad_otros: data.di.universidad_otros ?? "",
+      });
+    }
+
+    if (data.ec) {
+      Object.assign(replacements, {
+        estado: data.ec.estado ?? "",
+        titulo_conyuge: data.ec.titulo_conyuge ?? "",
+        conyuge_nombre: data.ec.conyuge_nombre ?? "",
+        conyuge_nacimiento: data.ec.conyuge_nacimiento ?? "",
+        conyuge_departamento: data.ec.conyuge_departamento ?? "",
+        conyuge_provincia: data.ec.conyuge_provincia ?? "",
+        conyuge_distrito: data.ec.conyuge_distrito ?? "",
+        conyuge_instruccion: data.ec.conyuge_instruccion ?? "",
+        conyuge_dni: data.ec.conyuge_dni ?? "",
+      });
+    }
+
+    let result = template;
+    for (const [key, value] of Object.entries(replacements)) {
+      result = result.replaceAll(`{{${key}}}`, value);
+    }
+
+    return result;
+  }
+
+  try {
+    const data: FpDataInput = {
+      ip: (await getData(() => fn_fp_ip(user_id))) ?? null,
+      di: await getData(() => fn_fp_di(user_id)),
+      ec: await getData(() => fn_fp_ec(user_id)),
+      dh: await getData(() => fn_fp_dh(user_id)),
+      et_gr: await getData(() => fn_fp_et_gr(user_id)),
+      et: await getData(() => fn_ep_et(user_id)),
+      c: await getData(() => fn_fp_c(user_id)),
+    };
+
+    // Lee HTML y CSS desde los archivos de plantilla
+    const htmlPath = path.resolve("src/templates/fp-report-sample.html");
+    const cssPath = path.resolve("src/templates/fp-report-style.css");
+
+    let htmlContent = await fs.readFile(htmlPath, "utf-8");
+    const cssContent = await fs.readFile(cssPath, "utf-8");
+
+    // Inserta el CSS directamente en el HTML para que Puppeteer lo lea
+    htmlContent = htmlContent.replace(/<link rel="stylesheet" href="fp-report-style\.css"\s*\/?>/, `<style>${cssContent}</style>`);
+    htmlContent = injectFpData(htmlContent, data); // 👈 ahora inyecta los valores reales
+    // Define ruta de salida
+    const filename = `fp-${user_id}.pdf`;
+    const outputDir = path.resolve("public", "pdf");
+    const outputPath = path.join(outputDir, filename);
+
+    await fs.mkdir(outputDir, { recursive: true });
+
+    // Generar PDF
+    const browser = await puppeteer.launch({ headless: "shell", args: ["--no-sandbox", "--disable-setuid-sandbox"] });
+    const page = await browser.newPage();
+    await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+    await page.pdf({ path: outputPath, format: "A4", printBackground: true });
+    await browser.close();
+
+    return { success: true, message: "PDF generado correctamente", url: `/pdf/${filename}` };
+  } catch (error: unknown) {
+    return { success: false, message: error instanceof Error ? error.message : "Error al generar el reporte de ficha personal." };
+  }
+};
+
 export const fn_report_time = async (user_id: string, data: FnData): Promise<{ success: boolean; message?: string; url?: string }> => {
   try {
     const res_esc = "fredy almicar navarro ramos";
-    const filename = `${user_id}`;
+    const filename = `rct-${user_id}`;
     const { fnB, fnC } = data;
 
     const outputDir = path.resolve("public", "pdf");
@@ -204,10 +327,7 @@ export const fn_report_time = async (user_id: string, data: FnData): Promise<{ s
 
     return { success: true, message: "Reporte generado correctamente", url: `/pdf/${filename}.pdf` };
   } catch (error: unknown) {
-    return {
-      success: false,
-      message: error instanceof Error ? error.message : "Error al generar el reporte de tiempo.",
-    };
+    return { success: false, message: error instanceof Error ? error.message : "Error al generar el reporte de tiempo." };
   }
 };
 
@@ -278,9 +398,7 @@ export const fn_rt_b = async (user_id: string, data: z.infer<typeof report_timeS
 };
 
 export type TFnRtC = Prisma.ContratoGetPayload<{ include: { ucd: { include: { cargoDependencia: { include: { cargo: true; dependencia: true } } } } } }>;
-export type ContractRecord = Omit<TFnRtC, "periodo"> & {
-  periodo: { from: string; to: string };
-};
+export type ContractRecord = Omit<TFnRtC, "periodo"> & { periodo: { from: string; to: string } };
 
 export const fn_rt_c = async (user_id: string, data: z.infer<typeof report_timeSchema>): Promise<{ success: boolean; message?: string; data?: ContractReportItem[] }> => {
   const { init, end } = data ?? {};

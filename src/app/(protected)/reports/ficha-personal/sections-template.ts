@@ -47,7 +47,7 @@ export const buildSections = ({ ip, di, ec, dh, et_gr, et, c }: FpDataInput) => 
     ],
   });
 
-  if (di) {
+  if (di)
     sections.push({
       section: "instruccion",
       title: "Datos de Instrucción",
@@ -75,7 +75,6 @@ export const buildSections = ({ ip, di, ec, dh, et_gr, et, c }: FpDataInput) => 
         ],
       ],
     });
-  }
 
   if (ec) {
     sections.push({
