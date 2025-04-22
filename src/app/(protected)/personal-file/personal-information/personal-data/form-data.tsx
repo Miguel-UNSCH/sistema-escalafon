@@ -70,7 +70,7 @@ export const CreateData = ({ onRefresh, edit, id }: { onRefresh: () => void; edi
 
           <div className="gap-2 grid grid-cols-2">
             <InputField control={form.control} name="domicilio" label="Domicilio *" placeholder="Domicilio" disabled={!edit} />
-            <DateField control={form.control} name="fecha_nacimiento" label="Fecha de nacimiento" disabled={!edit} />
+            <DateField control={form.control} name="fecha_nacimiento" label="Fecha de nacimiento" disabled={!edit} dateLimit="past" />
           </div>
 
           <div className="gap-2 grid grid-cols-2">
@@ -83,10 +83,10 @@ export const CreateData = ({ onRefresh, edit, id }: { onRefresh: () => void; edi
             <SelectField control={form.control} name="licencia_conducir" label="Licencia de Conducir" placeholder="Seleccione la licencia" options={lic_condOp} disabled={!edit} />
           </div>
 
-          <DateField control={form.control} name="fecha_ingreso" label="Fecha de Ingreso al GRA" disabled={!edit} />
+          <DateField control={form.control} name="fecha_ingreso" label="Fecha de Ingreso al GRA" disabled={!edit} dateLimit="past" />
           <InputField control={form.control} name="numero_contacto" label="Numero de Contacto" placeholder="Ingrese el numero de contacto" disabled={!edit} />
           <SelectField control={form.control} name="estado_civil" label="Estado civil *" options={estadoCivilOp} disabled={!edit} />
-          <InputField control={form.control} name="numero_hijos" label="Numero de hijos" placeholder="Ingrese el numero de hijos" type="number" disabled={!edit} />
+          <InputField control={form.control} name="numero_hijos" label="Numero de hijos" placeholder="Ingrese el numero de hijos" type="text" disabled={!edit} />
           <SwitchField control={form.control} name="discapacidad" label="Discapacidad *" description="Presenta algun tipo de discapacidad." disabled={!edit} />
 
           {edit && (

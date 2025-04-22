@@ -15,6 +15,9 @@ export const Table = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  // if (currentPage > Math.ceil(dependencias.length / itemsPerPage)) {
+  //   setCurrentPage(1);
+  // }
 
   const paginatedDependencias = useMemo(() => dependencias.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage), [dependencias, currentPage]);
 
