@@ -75,7 +75,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-5">
           <div className="gap-2 grid grid-cols-2">
             <InputField control={form.control} name="resolucion_ascenso" label="Resolucion de Ascenso *" placeholder="Ingrese la resolucion de ascenso" disabled={!edit} />
-            <InputField control={form.control} name="cnp" label="CNP *" type="number" disabled={!edit} />
+            <InputField control={form.control} name="cnp" label="CNP *" type="text" disabled={!edit} />
           </div>
 
           <div className="gap-2 grid grid-cols-2">

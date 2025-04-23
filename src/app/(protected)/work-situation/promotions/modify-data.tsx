@@ -39,7 +39,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
   const defaultValues = {
     resolucion_ascenso: item.resolucion_ascenso,
     nivel_remunerativo: item.nivel_remunerativo,
-    cnp: item.cnp,
+    cnp: item.cnp.toString(),
     fecha: item.fecha.toString(),
     current_cargo_id: item.currentUCD.cargoDependencia.cargo.id.toString(),
     new_cargo_id: item.newUCD.cargoDependencia.cargo.id.toString(),
@@ -99,7 +99,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
           <div className="gap-2 grid grid-cols-2">
             <InputField control={form.control} name="resolucion_ascenso" label="Resolucion de Ascenso *" placeholder="Ingrese la resolucion de ascenso" disabled={!edit} />
-            <InputField control={form.control} name="cnp" label="CNP *" type="number" disabled={!edit} />
+            <InputField control={form.control} name="cnp" label="CNP *" type="text" disabled={!edit} />
           </div>
 
           <div className="gap-2 grid grid-cols-2">
