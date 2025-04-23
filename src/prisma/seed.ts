@@ -24,22 +24,22 @@ async function main() {
     await prisma.dependencia.createMany({ data: dependenciaData, skipDuplicates: true });
 
     const existingAdmin = await prisma.user.findUnique({
-      where: { email: "ADMIN@REGIONAYACUCHO.EDU" },
+      where: { email: "admin@regionayacucho.gob" },
     });
 
     if (!existingAdmin) {
-      const hashedPassword = await bcrypt.hash("admin123", 10);
+      const hashedPassword = await bcrypt.hash("GoRe2025", 10);
 
       await prisma.user.create({
         data: {
-          name: "ADMIN",
-          last_name: "SISTEMA",
-          email: "ADMIN@REGIONAYACUCHO.EDU",
+          name: "admin",
+          last_name: "sistema",
+          email: "admin@regionayacucho.gob",
           dni: "00000000",
           password: hashedPassword,
           role: "admin",
           must_change_pwd: 0,
-          modification_end_time: new Date(new Date().setFullYear(new Date().getFullYear() + 1)),
+          modification_end_time: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
         },
       });
     }
