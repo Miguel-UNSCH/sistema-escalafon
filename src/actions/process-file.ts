@@ -2,6 +2,7 @@
 
 import * as XLSX from "xlsx";
 import path from "path";
+import bcrypt from "bcryptjs";
 import fs from "fs/promises";
 import { prisma } from "@/config/prisma.config";
 
@@ -56,14 +57,19 @@ export const processFile = async (fileId: string, model: ModelType) => {
         })
       );
     } else if (model === "usuario") {
-      formattedRecords = dataRecords.map(
-        (record): UsuarioInput => ({
-          name: record.name?.toUpperCase() || "",
-          last_name: record.last_name?.toUpperCase() || "",
-          email: record.email?.toUpperCase() || "",
-          password: record.password || "default_password",
-          dni: record.dni.toString() || "",
-          modification_end_time: new Date(Date.now() + 1 * 60 * 1000), // 🔹 Agregado aquí
+      formattedRecords = await Promise.all(
+        dataRecords.map(async (record): Promise<UsuarioInput> => {
+          const dni = record.dni.toString();
+          const hashedPassword = await bcrypt.hash(dni, 10);
+
+          return {
+            name: record.nombres?.toUpperCase() || "",
+            last_name: record.apellidos?.toUpperCase() || "",
+            email: record.email?.toUpperCase() || "",
+            password: hashedPassword,
+            dni,
+            modification_end_time: new Date(Date.now() + 1 * 60 * 1000),
+          };
         })
       );
     } else if (model === "dependencia") {
