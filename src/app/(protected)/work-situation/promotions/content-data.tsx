@@ -18,6 +18,7 @@ export const ContentData = ({ userId, user_id }: ContentDataProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedItem, setSelectedItem] = useState<ascensoRecord | null>(null);
   const [showCreate, setShowCreate] = useState<boolean>(false);
+  // eslint-disable-next-line no-unused-vars
   const [canEdit, setCanEdit] = useState<boolean>(false);
 
   const id = (user_id ?? userId) || "";
@@ -71,7 +72,7 @@ export const ContentData = ({ userId, user_id }: ContentDataProps) => {
         <div className="bg-mantle p-4 rounded-md font-text font-semibold text-lavender text-center">No hay registros</div>
       )}
 
-      {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} edit={canEdit} id={id} />}
+      {selectedItem && <Modify item={selectedItem} onUpdated={handleRefresh} setSelectedItem={setSelectedItem} edit={true} id={id} />}
       {!showCreate && items.length > 0 && (
         <div className="flex flex-row items-center gap-2 font-text font-semibold text-subtext0">
           <p className="border-mauve border-b-2 hover:border-b-4 font-special hover:font-bold text-mauve cursor-pointer" onClick={() => setShowCreate(true)}>
@@ -81,9 +82,7 @@ export const ContentData = ({ userId, user_id }: ContentDataProps) => {
         </div>
       )}
 
-      {showCreate && (
-        <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} edit={canEdit} id={id} />
-      )}
+      {showCreate && <Create onCreated={handleRefresh} setSelectedItem={setSelectedItem} onCancel={() => setShowCreate(false)} showCancel={items.length > 0} edit={true} id={id} />}
     </div>
   );
 };

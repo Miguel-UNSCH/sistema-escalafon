@@ -26,7 +26,7 @@ export const personalSchema = z
         message: "Solo se permiten números positivos",
       })
       .transform((val) => Number(val))
-      .refine((val) => val >= 1 && val <= 10, {
+      .refine((val) => val >= 0 && val <= 10, {
         message: "El número de hijos debe estar entre 1 y 10",
       }),
     ubigeo: UbigeoSchema,

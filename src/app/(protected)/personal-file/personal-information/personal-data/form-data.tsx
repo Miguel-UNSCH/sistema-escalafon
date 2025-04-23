@@ -31,11 +31,11 @@ export const CreateData = ({ onRefresh, edit, id }: { onRefresh: () => void; edi
     domicilio: "",
     numero_contacto: "",
     estado_civil: undefined,
-    numero_hijos: 0,
+    numero_hijos: "0",
     discapacidad: false,
   };
 
-  const form = useForm<ZPersonal>({ resolver: zodResolver(personalSchema), defaultValues });
+  const form = useForm<ZPersonal>({ resolver: zodResolver(personalSchema), defaultValues: defaultValues as any });
 
   const onSubmit = (data: ZPersonal) => {
     startTransition(async () => {
