@@ -35,10 +35,20 @@ export const registerSchema = z.object({
 });
 export type ZRegisterS = z.infer<typeof registerSchema>;
 
-export const periodoSchema = z.object({
-  from: z.preprocess((val) => (typeof val === "string" ? new Date(val) : val), z.date()),
-  to: z.preprocess((val) => (typeof val === "string" ? new Date(val) : val), z.date()),
-});
+export const periodoSchema = z
+  .object({
+    from: z.preprocess((val) => (typeof val === "string" ? new Date(val) : val), z.date()),
+    to: z.preprocess((val) => (typeof val === "string" ? new Date(val) : val), z.date()),
+  })
+  .superRefine((data, ctx) => {
+    if (data.from && data.to && data.to <= data.from) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "La fecha final debe ser mayor que la fecha inicial.",
+        path: ["to"],
+      });
+    }
+  });
 
 export const fileSchema = z
   .instanceof(File, { message: "Debe ser un archivo válido." })

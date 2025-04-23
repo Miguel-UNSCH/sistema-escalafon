@@ -92,7 +92,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
 
           <div className="gap-4 grid grid-cols-2">
             <InputField control={form.control} name="especialidad" label="Especialidad *" placeholder="Ingrese la especialidad" disabled={!edit} />
-            <InputField control={form.control} name="horas_lectivas" label="Horas Lectivas *" type="number" placeholder="Ingrese las horas lectivas" disabled={!edit} />
+            <InputField control={form.control} name="horas_lectivas" label="Horas Lectivas *" type="text" placeholder="Ingrese las horas lectivas" disabled={!edit} />
           </div>
 
           <div className="gap-4 grid grid-cols-2">

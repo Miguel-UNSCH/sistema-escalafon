@@ -18,10 +18,14 @@ export const capacitacionSchema = z.object({
   centro_capacitacion: z.string(),
   materia: z.string(),
   especialidad: z.string(),
-  horas_lectivas: z.number(),
+  horas_lectivas: z.preprocess(
+    (val) => (typeof val === "string" ? Number(val) : val),
+    z.number({ invalid_type_error: "Las horas lectivas deben ser un número." }).positive("Las horas lectivas deben ser un número positivo.")
+  ),
   periodo: periodoSchema,
   file: fileSchema.optional(),
 });
+
 export type ZCapacitacionS = z.infer<typeof capacitacionSchema>;
 
 export const expSchema = z.object({

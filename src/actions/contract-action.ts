@@ -80,8 +80,8 @@ export const createContract = async (id: string, data: ZContratoS & { file_id: s
         regimen_laboral: data.regimen_laboral || null,
         resolucion_contrato: data.resolucion_contrato?.toUpperCase() || null,
         nivel_remuneracion: data.nivel_remuneracion?.toUpperCase() || null,
-        pap: data.pap || null,
-        cnp: data.cnp || null,
+        pap: Number(data.pap) || null,
+        cnp: Number(data.cnp) || null,
         meta: data.meta?.toUpperCase() || null,
         obra: data.obra?.toUpperCase() || null,
         periodo: { from: new Date(data.periodo.from).toISOString(), to: new Date(data.periodo.to).toISOString() },
@@ -133,9 +133,6 @@ export const updateContract = async (id: string, user_id: string, data: ZContrat
       usuarioCargoDependencia = await prisma.usuarioCargoDependencia.create({ data: { userId: currentUser.id, cargoDependenciaId: cargoDependencia.id } });
     }
 
-    const file = await prisma.file.findUnique({ where: { id: data.file_id } });
-    if (!file) throw new Error("Archivo no encontrado");
-
     if (data.file) {
       const filePath = path.resolve(process.cwd(), current_model.file.path, `${current_model.file.id}${current_model.file.extension}`);
       const fileBuffer = Buffer.from(await data.file.arrayBuffer());
@@ -150,15 +147,13 @@ export const updateContract = async (id: string, user_id: string, data: ZContrat
       regimen_laboral: ["cas", "dl_276", "pro_inv"].includes(data.tipo_contrato) ? data.regimen_laboral : null,
       resolucion_contrato: data.resolucion_contrato?.toUpperCase() || null,
       nivel_remuneracion: data.tipo_contrato === "dl_276" ? data.nivel_remuneracion?.toUpperCase() || null : null,
-      pap: data.tipo_contrato === "dl_276" ? data.pap || null : null,
-      cnp: data.tipo_contrato === "dl_276" ? data.cnp || null : null,
+      pap: data.tipo_contrato === "dl_276" ? Number(data.pap) || null : null,
+      cnp: data.tipo_contrato === "dl_276" ? Number(data.cnp) || null : null,
       meta: data.tipo_contrato === "pro_inv" ? data.meta?.toUpperCase() || null : null,
       obra: data.tipo_contrato === "pro_inv" ? data.obra?.toUpperCase() || null : null,
       periodo: { from: new Date(data.periodo.from).toISOString(), to: new Date(data.periodo.to).toISOString() },
       ucd_id: usuarioCargoDependencia.id,
     };
-
-    if (data.file_id) dataUpdate.file_id = data.file_id;
 
     await prisma.contrato.update({ where: { id }, data: dataUpdate });
 

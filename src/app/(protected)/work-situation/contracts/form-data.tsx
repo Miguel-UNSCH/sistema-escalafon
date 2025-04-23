@@ -37,8 +37,8 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
     regimen_laboral: undefined,
     resolucion_contrato: "",
     nivel_remuneracion: "",
-    pap: 0,
-    cnp: 0,
+    pap: "",
+    cnp: "",
     meta: "",
     obra: "",
     periodo: { from: undefined, to: undefined },
@@ -114,8 +114,8 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
             <>
               <InputField control={form.control} name="nivel_remuneracion" label="Nivel Remunerativo *" placeholder="Ingrese el nivel" disabled={!edit} />
               <div className="gap-2 grid grid-cols-2">
-                <InputField control={form.control} name="pap" label="PAP" placeholder="Ingrese el PAP" type="number" disabled={!edit} />
-                <InputField control={form.control} name="cnp" label="CNP" placeholder="Ingrese el CNP" type="number" disabled={!edit} />
+                <InputField control={form.control} name="pap" label="PAP" placeholder="Ingrese el PAP" type="text" disabled={!edit} />
+                <InputField control={form.control} name="cnp" label="CNP" placeholder="Ingrese el CNP" type="text" disabled={!edit} />
               </div>
             </>
           )}
@@ -133,8 +133,8 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
           <CargoIdDependenciaField control={form.control} name="cargo_id" dependencia_id={form.watch("dependencia_id")} disabled={!edit} />
 
           <div className="gap-4 grid grid-cols-2">
-            <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={!edit} />
-            <DateField control={form.control} name="periodo.to" label="Fecha de culminación" disabled={!edit} />
+            <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={!edit} dateLimit="past" />
+            <DateField control={form.control} name="periodo.to" label="Fecha de culminación" disabled={!edit} dateLimit="any" />
           </div>
 
           <UploadField control={form.control} name="file" label="Documento" allowedTypes={["pdf"]} disabled={!edit} />

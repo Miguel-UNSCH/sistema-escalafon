@@ -44,8 +44,8 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
     resolucion_contrato: item.resolucion_contrato,
     regimen_laboral: item.regimen_laboral || "",
     nivel_remuneracion: item.nivel_remuneracion || "",
-    pap: item.pap || 0,
-    cnp: item.cnp || 0,
+    pap: item.pap?.toString() || "",
+    cnp: item.cnp?.toString() || "",
     meta: item.meta || "",
     obrea: item.obra || "",
     cargo_id: item.ucd.cargoDependencia.cargo.id.toString(),
@@ -129,8 +129,8 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
             <>
               <InputField control={form.control} name="nivel_remuneracion" label="Nivel Remunerativo *" placeholder="Ingrese el nivel" disabled={!edit} />
               <div className="gap-2 grid grid-cols-2">
-                <InputField control={form.control} name="pap" label="PAP" placeholder="Ingrese el PAP" type="number" disabled={!edit} />
-                <InputField control={form.control} name="cnp" label="CNP" placeholder="Ingrese el CNP" type="number" disabled={!edit} />
+                <InputField control={form.control} name="pap" label="PAP" placeholder="Ingrese el PAP" type="text" disabled={!edit} />
+                <InputField control={form.control} name="cnp" label="CNP" placeholder="Ingrese el CNP" type="text" disabled={!edit} />
               </div>
             </>
           )}
@@ -148,8 +148,8 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
           <CargoIdDependenciaField control={form.control} name="cargo_id" dependencia_id={form.watch("dependencia_id")} disabled={!edit} />
 
           <div className="gap-4 grid grid-cols-2">
-            <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={!edit} />
-            <DateField control={form.control} name="periodo.to" label="Fecha de culminación" disabled={!edit} />
+            <DateField control={form.control} name="periodo.from" label="Fecha de inicio" disabled={!edit} dateLimit="past" />
+            <DateField control={form.control} name="periodo.to" label="Fecha de culminación" disabled={!edit} dateLimit="any" />
           </div>
 
           {fileUrl && !isChangingFile ? (

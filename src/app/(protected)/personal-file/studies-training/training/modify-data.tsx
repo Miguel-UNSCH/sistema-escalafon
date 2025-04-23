@@ -43,7 +43,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
     tipe: item.tipe,
     materia: item.materia,
     especialidad: item.especialidad,
-    horas_lectivas: item.horas_lectivas,
+    horas_lectivas: item.horas_lectivas.toString(),
     periodo: { from: item.periodo.from, to: item.periodo.to },
     file: undefined,
   };
@@ -108,7 +108,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
 
           <div className="gap-4 grid grid-cols-2">
             <InputField control={form.control} name="especialidad" label="Especialidad *" placeholder="Ingrese la especialidad" disabled={!edit} />
-            <InputField control={form.control} name="horas_lectivas" label="Horas Lectivas *" type="number" placeholder="Ingrese las horas lectivas" disabled={!edit} />
+            <InputField control={form.control} name="horas_lectivas" label="Horas Lectivas *" type="text" placeholder="Ingrese las horas lectivas" disabled={!edit} />
           </div>
 
           <div className="gap-4 grid grid-cols-2">

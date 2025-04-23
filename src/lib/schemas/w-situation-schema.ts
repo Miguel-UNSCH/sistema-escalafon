@@ -9,8 +9,14 @@ export const contratoSchema = z.object({
   regimen_laboral: RLaboral.optional(), // ** a, b, c
   resolucion_contrato: z.string().optional(), // Resolución de nombramiento, contrato o convenio
   nivel_remuneracion: z.string().optional(), // ** a
-  pap: z.number().optional(), // ** a
-  cnp: z.number().optional(), // ** a
+  pap: z.preprocess(
+    (val) => (typeof val === "string" && val.trim() !== "" ? Number(val) : undefined),
+    z.number({ invalid_type_error: "PAP debe ser un número válido." }).positive("PAP debe ser un número positivo.").optional()
+  ), // ** a
+  cnp: z.preprocess(
+    (val) => (typeof val === "string" && val.trim() !== "" ? Number(val) : undefined),
+    z.number({ invalid_type_error: "CNP debe ser un número válido." }).positive("CNP debe ser un número positivo.").optional()
+  ), // ** a
   meta: z.string().optional(), // ** c
   obra: z.string().optional(), // ** c
   periodo: periodoSchema,
