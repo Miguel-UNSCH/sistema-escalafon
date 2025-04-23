@@ -31,12 +31,12 @@ export const ModifyData = ({ personalData, onRefresh, edit }: { personalData: pe
     grupo_sanguineo: personalData.grupo_sanguineo,
     n_autogenerado: personalData.n_autogenerado || "",
     licencia_conducir: personalData.licencia_conducir || "",
-    fecha_ingreso: personalData.fecha_nacimiento.toISOString(),
+    fecha_ingreso: personalData.fecha_ingreso.toISOString(),
     fecha_nacimiento: personalData.fecha_nacimiento.toISOString(),
     domicilio: personalData.domicilio,
     numero_contacto: personalData.numero_contacto,
     estado_civil: personalData.estado_civil,
-    numero_hijos: personalData.numero_hijos,
+    numero_hijos: personalData.numero_hijos.toString(),
     discapacidad: personalData.discapacidad,
   };
 
@@ -106,7 +106,7 @@ export const ModifyData = ({ personalData, onRefresh, edit }: { personalData: pe
           <DateField control={form.control} name="fecha_ingreso" label="Fecha de Ingreso al GRA" disabled={!edit} />
           <InputField control={form.control} name="numero_contacto" label="Numero de Contacto" placeholder="Ingrese el numero de contacto" disabled={!edit} />
           <SelectField control={form.control} name="estado_civil" label="Estado civil *" options={estadoCivilOp} disabled={!edit} />
-          <InputField control={form.control} name="numero_hijos" label="Numero de hijos" placeholder="Ingrese el numero de hijos" type="number" disabled={!edit} />
+          <InputField control={form.control} name="numero_hijos" label="Numero de hijos" placeholder="Ingrese el numero de hijos" type="text" disabled={!edit} />
           <SwitchField control={form.control} name="discapacidad" label="Discapacidad *" description="Presenta algun tipo de discapacidad." disabled={!edit} />
 
           {edit && (

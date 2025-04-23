@@ -7,15 +7,23 @@ import { PageContent } from "@/components/page-context";
 
 const pageContent = {
   title: "Reportes",
-  description: "En esta sección el usuario podrá registrar las bonificaciones y evaluaciones que realizó a lo largo de su vida.",
+  description:
+    "En esta sección el usuario podrá generar reportes sobre su información personal y su historial de servicios, permitiendo visualizar y respaldar su trayectoria laboral.",
   sections: [
     {
-      title: "seccioes",
-      description:
-        "Responsible for organisation-wide matters. Such as setting the direction of the organisation, approving new ports, adding new maintainers, and cultivating a healthy community.",
+      title: "Secciones",
+      description: "Genera reportes detallados sobre distintos aspectos del expediente del servidor, como su información personal registrada y el cómputo de tiempo de servicios.",
       cards: [
-        { title: "ficha personal", description: "Learn how to create full-stack web applications with the Next.js App Router.", path: "/reports/ficha-personal" },
-        { title: "computo de tiempo", description: "Learn how to create full-stack web applications with the Next.js App Router.", path: "/reports/time" },
+        {
+          title: "Ficha personal",
+          description: "Visualiza y descarga un reporte con los datos personales y laborales registrados en el sistema.",
+          path: "/reports/ficha-personal",
+        },
+        {
+          title: "Cómputo de tiempo",
+          description: "Obtén un reporte del tiempo de servicios acumulado según los registros oficiales del sistema.",
+          path: "/reports/time",
+        },
       ],
     },
   ],

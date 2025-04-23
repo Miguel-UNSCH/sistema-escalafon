@@ -7,15 +7,23 @@ import { PageContent } from "@/components/page-context";
 
 const pageContent = {
   title: "documentos / otros",
-  description: "En esta sección el usuario podrá registrar las bonificaciones y evaluaciones que realizó a lo largo de su vida.",
+  description: "En esta sección el usuario podrá registrar  documentos relevantes obtenidos durante su trayectoria profesional.",
   sections: [
     {
-      title: "seccioes",
+      title: "Secciones",
       description:
-        "Responsible for organisation-wide matters. Such as setting the direction of the organisation, approving new ports, adding new maintainers, and cultivating a healthy community.",
+        "Accede a las diferentes categorías de documentos asociados a tu historial laboral, como constancias de participación, evaluaciones internas y otros archivos relacionados.",
       cards: [
-        { title: "documentos", description: "Learn how to create full-stack web applications with the Next.js App Router.", path: "/documents/doc" },
-        { title: "constancias", description: "Learn how to create full-stack web applications with the Next.js App Router.", path: "/documents/cons" },
+        {
+          title: "Documentos",
+          description: "Sube y gestiona documentos generales.",
+          path: "/documents/doc",
+        },
+        {
+          title: "Constancias",
+          description: "Registra constancias.",
+          path: "/documents/cons",
+        },
       ],
     },
   ],

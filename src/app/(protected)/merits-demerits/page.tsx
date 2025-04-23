@@ -7,15 +7,22 @@ import { PageContent } from "@/components/page-context";
 
 const pageContent = {
   title: "méritos y deméritos",
-  description: "En esta sección el usuario podrá registrar las bonificaciones y evaluaciones que realizó a lo largo de su vida.",
+  description: "En esta sección el usuario podrá registrar y consultar los méritos y deméritos acumulados durante su carrera profesional.",
   sections: [
     {
-      title: "seccioes",
-      description:
-        "Responsible for organisation-wide matters. Such as setting the direction of the organisation, approving new ports, adding new maintainers, and cultivating a healthy community.",
+      title: "Secciones",
+      description: "Gestiona los reconocimientos y sanciones que forman parte del historial del servidor público, permitiendo un seguimiento transparente de su desempeño.",
       cards: [
-        { title: "méritos", description: "Learn how to create full-stack web applications with the Next.js App Router.", path: "/merits-demerits/merits" },
-        { title: "deméritos", description: "Learn how to create full-stack web applications with the Next.js App Router.", path: "/merits-demerits/demerits" },
+        {
+          title: "Méritos",
+          description: "Registra condecoraciones, felicitaciones u otros reconocimientos obtenidos en el ejercicio de funciones.",
+          path: "/merits-demerits/merits",
+        },
+        {
+          title: "Deméritos",
+          description: "Documenta amonestaciones, sanciones u observaciones disciplinarias aplicadas durante el servicio.",
+          path: "/merits-demerits/demerits",
+        },
       ],
     },
   ],

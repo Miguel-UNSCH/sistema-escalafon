@@ -67,7 +67,6 @@ export const moduleTree: ModuleItem[] = [
         children: [
           { name: "Bonificaciones Personales", component: <ModuleBPersonal /> },
           { name: "Bonificaciones Familiares", component: <ModuleBFamily /> },
-          { name: "Reconocimientos", component: <div>Reconocimientos</div> },
         ],
       },
       { name: "Evaluaciones", component: <ModuleEvaluations /> },

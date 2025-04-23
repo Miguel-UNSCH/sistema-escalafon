@@ -67,7 +67,6 @@ export const navigationItems: NavigationItems[] = [
         submenus: [
           { label: "Bonificación Personal", path: "/personal" },
           { label: "Bonificación Familiar", path: "/family" },
-          { label: "Reconocimientos", path: "/acknowledgment" },
         ],
       },
       { label: "evaluaciones", icon: <File size={16} />, path: "/evaluations" },

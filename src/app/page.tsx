@@ -39,11 +39,6 @@ const page = () => {
                 Ingresar
               </Button>
             </Link>
-
-            <Button className="flex flex-row gap-5 bg-maroon hover:bg-red rounded-xl font-primary hover:font-semibold" disabled={false}>
-              <LogIn />
-              Ver Tutorial
-            </Button>
           </div>
         </div>
       </div>

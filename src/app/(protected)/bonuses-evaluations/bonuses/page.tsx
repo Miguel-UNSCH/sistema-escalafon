@@ -23,11 +23,6 @@ const pageContent = {
           description: "Registra bonificaciones relacionadas con cargas familiares según las normas vigentes.",
           path: "/bonuses-evaluations/bonuses/family",
         },
-        {
-          title: "Reconocimientos",
-          description: "Muestra los personales con años de servicio mayores a 15.",
-          path: "/bonuses-evaluations/bonuses/acknowledgment",
-        },
       ],
     },
   ],
