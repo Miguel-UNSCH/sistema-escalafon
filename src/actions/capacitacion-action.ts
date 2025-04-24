@@ -31,6 +31,9 @@ export const createCapacitacion = async (id: string, data: ZCapacitacionS & { fi
     const currentUser = await prisma.user.findUnique({ where: { id } });
     if (!currentUser) throw new Error("Usuario no encontrado");
 
+    const existFile = await prisma.file.findUnique({ where: { id: data.file_id } });
+    if (!existFile) throw new Error("Archivo no encontrado, necesita subir el documento de sustento.");
+
     if (currentUser.role !== "admin") {
       const check = await checkEditable();
       if (!check.success || check.editable === false) throw new Error(check.message || "No tienes permiso para modificar datos en este momento.");

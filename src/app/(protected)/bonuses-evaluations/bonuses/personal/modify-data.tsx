@@ -95,7 +95,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onUpdate)} className="space-y-8 pb-5">
           <InputField control={form.control} name="tipo" label="Tipo *" placeholder="Ingrese el tipo de bonificacion familiar" disabled={!edit} />
-          <InputField control={form.control} name="resolucion_bonus" label="Resolucion Bonus *" placeholder="Ingrese la resolucion" disabled={!edit} />
+          <InputField control={form.control} name="resolucion_bonus" label="Resolucion de la bonificacion *" placeholder="Ingrese la resolucion" disabled={!edit} />
 
           <DateField control={form.control} name="fecha" label="Fecha de la bonificacion" disabled={!edit} />
 

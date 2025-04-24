@@ -119,7 +119,7 @@ export const Modify: React.FC<ModifyProps> = ({ item, onUpdated, setSelectedItem
             <InputField
               control={form.control}
               name="resolucion_contrato"
-              label={tipoContrato === "cas" ? "Contrato CAS *" : "Resolución de Nombramiento o Contrato *"}
+              label={tipoContrato === "cas" ? "Resolucion de Contrato CAS *" : "Resolución de Nombramiento o Contrato *"}
               placeholder="Ingrese la resolución o contrato"
               disabled={!edit}
             />

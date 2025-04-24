@@ -104,7 +104,7 @@ export const Create: React.FC<CreateProps> = ({ onCreated, setSelectedItem, onCa
             <InputField
               control={form.control}
               name="resolucion_contrato"
-              label={tipoContrato === "cas" ? "Contrato CAS *" : "Resolución de Nombramiento *"}
+              label={tipoContrato === "cas" ? "Resolucion de Contrato CAS *" : "Resolución de Nombramiento *"}
               placeholder="Ingrese la resolución o contrato"
               disabled={!edit}
             />

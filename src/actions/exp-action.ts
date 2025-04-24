@@ -37,6 +37,9 @@ export const createExp = async (id: string, data: ZExpS & { file_id: string }): 
     const session = await auth();
     if (!session || !session?.user) throw new Error("No autorizado");
 
+    const existFile = await prisma.file.findUnique({ where: { id: data.file_id } });
+    if (!existFile) throw new Error("Archivo no encontrado, necesita subir el documento de sustento.");
+
     const user_edit = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user_edit) throw new Error("Usuario no encontrado");
 

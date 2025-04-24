@@ -61,6 +61,9 @@ export const createMerito = async (id: string, data: ZMerito & { file_id: string
     const session = await auth();
     if (!session || !session?.user) throw new Error("No autorizado");
 
+    const existFile = await prisma.file.findUnique({ where: { id: data.file_id } });
+    if (!existFile) throw new Error("Archivo no encontrado, necesita subir el documento de sustento.");
+
     const user_edit = await prisma.user.findUnique({ where: { id: session.user.id } });
     if (!user_edit) throw new Error("Usuario no encontrado");
 
@@ -113,6 +116,9 @@ export const createDemerito = async (data: ZDemerito & { file_id: string }): Pro
   try {
     const user: User | null = await prisma.user.findUnique({ where: { id: data.user.id } });
     if (!user) throw new Error("Usuario no encontrado");
+
+    const existFile = await prisma.file.findUnique({ where: { id: data.file_id } });
+    if (!existFile) throw new Error("Archivo no encontrado, necesita subir el documento de sustento.");
 
     const cargo = await prisma.cargo.findUnique({ where: { id: Number(data.cargo_id) } });
     if (!cargo) throw new Error("Cargo no encontrado");
