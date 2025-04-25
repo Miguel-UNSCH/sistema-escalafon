@@ -41,10 +41,10 @@ const page = () => {
                   Regresar
                 </Button>
 
-                <Button className="flex flex-row items-center bg-mantle hover:bg-green px-4 py-2 text-text hover:text-base" onClick={handleClick} disabled={isPending}>
+                {/* <Button className="flex flex-row items-center bg-mantle hover:bg-green px-4 py-2 text-text hover:text-base" onClick={handleClick} disabled={isPending}>
                   <CloudDownload />
                   {isPending ? "Generando..." : "Descargar Reporte"}
-                </Button>
+                </Button> */}
               </div>
             </>
           )}
