@@ -6,13 +6,16 @@ WORKDIR /app
 # Instalar dependencias del sistema
 RUN apk add --no-cache openssl
 
-# Copiar los archivos necesarios
+# Copiar archivos necesarios
+COPY package*.json ./
 COPY prisma ./prisma
 COPY public ./public
-COPY package*.json ./ 
 COPY .env .env
-RUN apk add --no-cache openssl
+
+# Instalar dependencias
 RUN npm install -g prisma && npm install --legacy-peer-deps
+
+# Copiar el resto del código
 COPY . .
 
 # Construir la aplicación Next.js
@@ -23,11 +26,9 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Instalar dependencias necesarias
-RUN apk add --no-cache openssl nginx nano tzdata
-
-# Configurar la zona horaria a Lima, Perú
-RUN cp /usr/share/zoneinfo/America/Lima /etc/localtime && \
+# Instalar dependencias necesarias y configurar zona horaria
+RUN apk add --no-cache openssl tzdata && \
+    cp /usr/share/zoneinfo/America/Lima /etc/localtime && \
     echo "America/Lima" > /etc/timezone
 
 # Copiar archivos desde la etapa de construcción
@@ -35,10 +36,11 @@ COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/next.config.js ./ 
-COPY --from=builder /app/prisma ./prisma  
+COPY --from=builder /app/next.config.js ./
+COPY --from=builder /app/prisma ./prisma
 
+# Exponer el puerto
 EXPOSE 3000
 
-# Iniciar Nginx y Next.js
-CMD ["sh", "-c", "nginx -g 'daemon off;' & npm start"]
+# Iniciar la aplicación
+CMD ["npm", "start"]
