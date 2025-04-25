@@ -26,7 +26,7 @@ export const fn_report_fp = async (user_id: string): Promise<{ success: boolean;
     }
   };
 
-  function renderChildrenRows(data: FpDataInput): string {
+  const renderChildrenRows = (data: FpDataInput): string => {
     const { dh } = data;
     if (!dh) return "";
 
@@ -44,9 +44,9 @@ export const fn_report_fp = async (user_id: string): Promise<{ success: boolean;
     }
 
     return rows;
-  }
+  };
 
-  function renderExperienciaGRRows(data: FpDataInput): string {
+  const renderExperienciaGRRows = (data: FpDataInput): string => {
     const { et_gr } = data;
     if (!et_gr) return "";
 
@@ -64,9 +64,9 @@ export const fn_report_fp = async (user_id: string): Promise<{ success: boolean;
     }
 
     return rows;
-  }
+  };
 
-  function renderExperienciaGeneralRows(data: FpDataInput): string {
+  const renderExperienciaGeneralRows = (data: FpDataInput): string => {
     const { et } = data;
     if (!et) return "";
 
@@ -83,9 +83,9 @@ export const fn_report_fp = async (user_id: string): Promise<{ success: boolean;
     }
 
     return rows;
-  }
+  };
 
-  function renderCapacitacionRows(data: FpDataInput): string {
+  const renderCapacitacionRows = (data: FpDataInput): string => {
     const { c } = data;
     if (!c) return "";
 
@@ -103,9 +103,9 @@ export const fn_report_fp = async (user_id: string): Promise<{ success: boolean;
     }
 
     return rows;
-  }
+  };
 
-  function injectFpData(template: string, data: FpDataInput): string {
+  const injectFpData = (template: string, data: FpDataInput): string => {
     if (!data.ip) return template;
 
     const replacements: Record<string, string> = {
@@ -180,7 +180,7 @@ export const fn_report_fp = async (user_id: string): Promise<{ success: boolean;
     result = result.replace("{{capacitacion_reciente_rows}}", renderCapacitacionRows(data));
 
     return result;
-  }
+  };
 
   try {
     const data: FpDataInput = {
@@ -198,9 +198,9 @@ export const fn_report_fp = async (user_id: string): Promise<{ success: boolean;
     const logoBase64 = logoBuffer.toString("base64");
     const logoSrc = `data:image/png;base64,${logoBase64}`;
 
-    // Lee HTML y CSS desde los archivos de plantilla
-    const htmlPath = path.resolve("src/templates/fp-report-sample.html");
-    const cssPath = path.resolve("src/templates/fp-report-style.css");
+    // Lee HTML y CSS desde los archivos de plantilla en la nueva ubicación
+    const htmlPath = path.resolve("public", "templates", "fp-report-sample.html");
+    const cssPath = path.resolve("public", "templates", "fp-report-style.css");
 
     let htmlContent = await fs.readFile(htmlPath, "utf-8");
     const cssContent = await fs.readFile(cssPath, "utf-8");
